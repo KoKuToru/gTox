@@ -31,12 +31,12 @@ void MyFriendMessageCallback(Tox *tox, int32_t friendnumber, const uint8_t * mes
 }
 
 #include <gtkmm.h>
-#include "Dialog/DialogChat.h"
+#include "Dialog/DialogContact.h"
 
 int main(int argc, char *argv[]) {
     Gtk::Main kit(argc, argv);
     Gtk::Settings::get_default()->property_gtk_application_prefer_dark_theme() = true;
-    DialogChat dialog;
+    DialogContact dialog;
     kit.run(dialog);
     return 0;
 
