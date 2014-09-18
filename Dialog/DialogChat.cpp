@@ -2,8 +2,8 @@
 
 DialogChat::DialogChat() {
     this->set_border_width(1);
-    this->set_default_geometry(/*300*/800, 600);
-    this->set_position(Gtk::WindowPosition::WIN_POS_CENTER);
+    this->set_default_geometry(256, 256);
+    this->set_position(Gtk::WindowPosition::WIN_POS_NONE);
 
     //Setup titlebar
     m_header.set_title("Chat");
@@ -14,10 +14,12 @@ DialogChat::DialogChat() {
 
     //Setup content
     this->add(m_chat);
-
-    this->show_all();
 }
 
 DialogChat::~DialogChat() {
 
+}
+
+void DialogChat::show() {
+    this->show_all();
 }

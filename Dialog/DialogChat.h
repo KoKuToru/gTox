@@ -15,6 +15,8 @@ class DialogChat: public Gtk::Window {
     public:
         DialogChat();
         ~DialogChat();
+
+        void show();
 };
 
 #endif
