@@ -11,6 +11,30 @@ link_directories(
 include_directories(
     ${GTKMM_INCLUDE_DIRS}  )
 
+if(NOT SUBMODULES_INITED)
+  execute_process(
+    COMMAND git submodule init
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+  )
+  execute_process(
+    COMMAND git submodule update
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+  )
+  set(SUBMODULES_INITED TRUE CACHE BOOL "Are submodules pulled ?" FORCE)
+endif()
+
+if(NOT TOXCORE_INITED)
+  execute_process(
+    COMMAND ./autogen.sh
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/toxcore
+  )
+  execute_process(
+    COMMAND ./configure
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/toxcore
+  )
+  set(TOXCORE_INITED TRUE CACHE BOOL "Is toxcore configured ?" FORCE)
+endif()
+
 add_custom_target(
    toxcore
    COMMAND make
