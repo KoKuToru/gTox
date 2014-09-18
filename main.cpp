@@ -5,9 +5,9 @@
 #include <fstream>
 
 #define SLEEP_TIME 50000
-#define BOOTSTRAP_ADDRESS "144.76.60.215"
+#define BOOTSTRAP_ADDRESS "23.226.230.47"
 #define BOOTSTRAP_PORT 33445
-const char* BOOTSTRAP_KEY = "04119E835DF3E78BACF0F84235B300546AF8B936F035185E2A8E9E0A67C8924F";
+const char* BOOTSTRAP_KEY = "A09162D68618E742FFBCA1C2C70385E6679604B2D80EA6E84AD0996A1AC8A074";
 
 void hex_string_to_bin(const char *in, uint8_t *out) {
     int pos = 0;
@@ -30,8 +30,16 @@ void MyFriendMessageCallback(Tox *tox, int32_t friendnumber, const uint8_t * mes
    std::cout << message << std::endl;
 }
 
+#include <gtkmm.h>
+#include "Dialog/DialogChat.h"
 
-int main(int argc, const char *argv[]) {
+int main(int argc, char *argv[]) {
+    Gtk::Main kit(argc, argv);
+    Gtk::Settings::get_default()->property_gtk_application_prefer_dark_theme() = true;
+    DialogChat dialog;
+    kit.run(dialog);
+    return 0;
+
     uint8_t *pub_key = new uint8_t[TOX_CLIENT_ID_SIZE];
     hex_string_to_bin(BOOTSTRAP_KEY, pub_key);
 
@@ -39,15 +47,15 @@ int main(int argc, const char *argv[]) {
     options.ipv6enabled = true;
     options.udp_disabled = false;
     options.proxy_enabled = false;
-    
+
     my_tox = tox_new(&options);
-    
+
     std::ifstream oi("save.bin");
     uint32_t fileSizei;
     oi.read((char*)&fileSizei, 4);
     uint8_t *datai = new uint8_t[fileSizei];
     oi.read((char*)datai, fileSizei);
-    
+
     tox_load(my_tox, datai, fileSizei);
 
     /* Register the callbacks */
@@ -66,19 +74,19 @@ int main(int argc, const char *argv[]) {
     if (!tox_bootstrap_from_address(my_tox, BOOTSTRAP_ADDRESS, BOOTSTRAP_PORT, (const uint8_t*)pub_key)) { // connect to a bootstrap to get into the network
         std::cout << "COULDN'T START" << std::endl;
     }
-    
-    
+
+
     uint32_t fileSize = tox_size(my_tox);
     uint8_t *data = new uint8_t[fileSize];
     std::ofstream o("save.bin");
     tox_save(my_tox, data);
     o.write((const char*)&fileSize, sizeof(uint32_t));
     o.write((const char*)data, fileSize);
-    
+
 
 uint8_t friendAddress[TOX_FRIEND_ADDRESS_SIZE];
     tox_get_address(my_tox, friendAddress);
-    
+
     std::cout << "Tox ID: ";
     for(int i = 0; i < TOX_FRIEND_ADDRESS_SIZE; ++i) {
      int a = friendAddress[i];
