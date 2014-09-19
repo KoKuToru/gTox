@@ -45,6 +45,7 @@ add_executable(${PROJECT_NAME}
     main.cpp
     Widget/WidgetChat.cpp
     Widget/WidgetContact.cpp
+    Widget/WidgetContactListItem.cpp
     Dialog/DialogChat.cpp
     Dialog/DialogContact.cpp
 )

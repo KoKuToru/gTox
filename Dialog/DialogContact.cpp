@@ -63,6 +63,6 @@ void DialogContact::detachChat() {
     m_paned.remove(m_chat);
 
     m_chat_dialog.move(x, y);
-    m_chat_dialog.resize(hw, h); //too small why ?
+    m_chat_dialog.resize(hw+52, h); //too small why ?
     m_chat_dialog.show();
 }
