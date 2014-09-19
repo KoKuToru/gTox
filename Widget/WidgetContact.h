@@ -3,10 +3,13 @@
 
 #include <gtkmm.h>
 
-class WidgetContact: public Gtk::Box {
+#include "WidgetContactListItem.h"
+
+class WidgetContact: public Gtk::ScrolledWindow {
     private:
-        Gtk::VBox   m_list;
-        Gtk::Label  m_test;
+        Gtk::ListBox m_list;
+
+        std::vector<std::shared_ptr<WidgetContactListItem>> items;
     public:
         WidgetContact();
         ~WidgetContact();

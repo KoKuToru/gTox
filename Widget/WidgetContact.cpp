@@ -2,10 +2,12 @@
 
 WidgetContact::WidgetContact() {
     //test data
-    m_test.set_text("Contact Nr. 1");
-    m_list.add(m_test);
-
-    this->add(m_list);
+    for(int i = 0; i < 20; ++i) {
+        items.emplace_back(new WidgetContactListItem);
+        m_list.add(*(items.back().get()));
+    }
+    //this->add(m_list);
+    this->add(m_list);//, true, true);
 }
 
 WidgetContact::~WidgetContact() {
