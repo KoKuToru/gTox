@@ -43,19 +43,12 @@ add_custom_target(
 
 add_subdirectory(Tools)
 
-add_custom_target(
-    svg_generated
+add_custom_command(
+    OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/Generated/icon.cpp"
     COMMAND "${PROJECT_BINARY_DIR}/Tools/text2h" ICON Generated/icon Icons/chat_attach.svg Icons/chat_detach.svg
-    DEPENDS text2h
+    DEPENDS text2h Icons/chat_attach.svg Icons/chat_detach.svg
     WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-    SOURCES Icons/chat_attach.svg Icons/chat_detach.svg
 )
-
-add_library(
-    svg STATIC
-    Generated/icon.cpp
-)
-add_dependencies(svg svg_generated)
 
 add_executable(${PROJECT_NAME}
     main.cpp
@@ -64,6 +57,7 @@ add_executable(${PROJECT_NAME}
     Widget/WidgetContactListItem.cpp
     Dialog/DialogChat.cpp
     Dialog/DialogContact.cpp
+    "${CMAKE_CURRENT_SOURCE_DIR}/Generated/icon.cpp"
 )
-target_link_libraries(${PROJECT_NAME} ${GTKMM_LIBRARIES} "${CMAKE_CURRENT_SOURCE_DIR}/toxcore/build/.libs/libtoxcore.a" -lsodium -lpthread svg)
-add_dependencies(${PROJECT_NAME} toxcore svg)
+target_link_libraries(${PROJECT_NAME} ${GTKMM_LIBRARIES} "${CMAKE_CURRENT_SOURCE_DIR}/toxcore/build/.libs/libtoxcore.a" -lsodium -lpthread)
+add_dependencies(${PROJECT_NAME} toxcore)
