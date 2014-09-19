@@ -1,9 +1,18 @@
 #include "DialogContact.h"
+#include "../Generated/icon.h"
+#include <gdkmm.h>
+
+Glib::RefPtr<Gdk::Pixbuf> load_icon(const std::string data) {
+    auto tmp = Gio::MemoryInputStream::create();
+    tmp->add_data(data);
+    return Gdk::Pixbuf::create_from_stream(tmp);
+}
 
 DialogContact::DialogContact():
-    m_icon_attach("/source/gTox/Icons/chat_attach.svg"),
-    m_icon_detach("/source/gTox/Icons/chat_detach.svg") //we will need to embed it
+    m_icon_attach(load_icon(ICON::chat_attach)),
+    m_icon_detach(load_icon(ICON::chat_detach))
 {
+
 
     this->set_border_width(1);
     this->set_default_geometry(/*300*/800, 600);
