@@ -1,8 +1,8 @@
 #include "WidgetChat.h"
 
-WidgetChat::WidgetChat() {
-    m_test.set_text("Chat in future");
-    this->add(m_test);
+WidgetChat::WidgetChat(){
+    pack1(output, true, true);
+    pack2(input, false, true);
 }
 
 WidgetChat::~WidgetChat() {

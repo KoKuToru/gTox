@@ -33,13 +33,13 @@ DialogContact::DialogContact():
     m_headerbar_chat.pack_end(m_headerbar_btn_right);
 
     m_header_paned.pack1(m_headerbar_chat  , true, true);
-    m_header_paned.pack2(m_headerbar_contact, true, false);
+    m_header_paned.pack2(m_headerbar_contact, false, true);
 
     this->set_titlebar(m_header_paned);
 
     //Setup content
     m_paned.pack1(m_chat, true, true);
-    m_paned.pack2(m_contact, true, true);
+    m_paned.pack2(m_contact, false, true);
     this->add(m_paned);
 
     //Connect properties C++ version ?
@@ -72,6 +72,6 @@ void DialogContact::detachChat() {
     m_paned.remove(m_chat);
 
     m_chat_dialog.move(x, y);
-    m_chat_dialog.resize(hw+52, h); //too small why ?
+    m_chat_dialog.resize(hw+300, h); //too small why ?
     m_chat_dialog.show();
 }
