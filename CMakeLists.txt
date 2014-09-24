@@ -55,6 +55,7 @@ add_executable(${PROJECT_NAME}
     Widget/WidgetChat.cpp
     Widget/WidgetContact.cpp
     Widget/WidgetContactListItem.cpp
+    Widget/WidgetChatBox.cpp
     Dialog/DialogChat.cpp
     Dialog/DialogContact.cpp
     "${CMAKE_CURRENT_SOURCE_DIR}/Generated/icon.cpp"
