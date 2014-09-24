@@ -1,3 +1,22 @@
+/**
+    gTox a GTK-based tox-client - https://github.com/KoKuToru/gTox.git
+
+    Copyright (C) 2014  Luca Béla Palkovics
+    Copyright (C) 2014  Maurice Mohlek
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>
+**/
 #include "DialogContact.h"
 #include "../Generated/icon.h"
 #include <gdkmm.h>
@@ -72,6 +91,6 @@ void DialogContact::detachChat() {
     m_paned.remove(m_chat);
 
     m_chat_dialog.move(x, y);
-    m_chat_dialog.resize(hw+300, h); //too small why ?
+    m_chat_dialog.resize(hw, h); //too small why ?
     m_chat_dialog.show();
 }
