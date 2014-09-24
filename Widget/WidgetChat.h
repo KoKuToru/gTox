@@ -2,12 +2,13 @@
 #define WIDGETCHAT_H
 
 #include <gtkmm.h>
+#include "WidgetChatBox.h"
 
 //Content of DialogChat
-class WidgetChat: public Gtk::Box {
+class WidgetChat: public Gtk::VPaned {
     private:
-        Gtk::Label m_test;
-
+        WidgetChatBox input;
+        WidgetChatBox output;
     public:
         WidgetChat();
         ~WidgetChat();
