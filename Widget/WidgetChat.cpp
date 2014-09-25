@@ -21,7 +21,7 @@
 
 WidgetChat::WidgetChat(){
     output.setEditable(false);
-    pack1(output, true, true);
+    pack1(output, true, false);
     //pack2(input, false, true);
    
     btn_send.set_label("Send");
