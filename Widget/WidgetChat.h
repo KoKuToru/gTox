@@ -28,6 +28,9 @@ class WidgetChat: public Gtk::VPaned {
     private:
         WidgetChatBox input;
         WidgetChatBox output;
+    
+        Gtk::HBox hbox;
+        Gtk::Button btn_send;
     public:
         WidgetChat();
         ~WidgetChat();

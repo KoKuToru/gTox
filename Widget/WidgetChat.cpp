@@ -21,7 +21,13 @@
 
 WidgetChat::WidgetChat(){
     pack1(output, true, true);
-    pack2(input, false, true);
+    //pack2(input, false, true);
+   
+    btn_send.set_label("Send");
+
+    hbox.pack_start(input, true, true);
+    hbox.pack_end(btn_send, false, false);
+    pack2(hbox);
 }
 
 WidgetChat::~WidgetChat() {
