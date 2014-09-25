@@ -20,6 +20,7 @@
 #include "WidgetChat.h"
 
 WidgetChat::WidgetChat(){
+    output.setEditable(false);
     pack1(output, true, true);
     //pack2(input, false, true);
    
@@ -27,7 +28,9 @@ WidgetChat::WidgetChat(){
 
     hbox.pack_start(input, true, true);
     hbox.pack_end(btn_send, false, false);
-    pack2(hbox);
+    pack2(hbox, false, false);
+
+    set_position(400);
 }
 
 WidgetChat::~WidgetChat() {

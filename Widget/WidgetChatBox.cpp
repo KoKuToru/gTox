@@ -28,5 +28,9 @@ WidgetChatBox::WidgetChatBox(){
     pack_start(m_ScrolledWindow);
 }
 
+void WidgetChatBox::setEditable(bool b){
+    m_TextView.set_editable(b);
+}
+
 WidgetChatBox::~WidgetChatBox(){
 }

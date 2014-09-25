@@ -28,6 +28,8 @@ class WidgetChatBox: public Gtk::Box{
         Gtk::TextView m_TextView;
         Glib::RefPtr<Gtk::TextBuffer> m_TextBuffer;
     public:
+        void setEditable(bool b);
+
         WidgetChatBox();
         ~WidgetChatBox();
 };
