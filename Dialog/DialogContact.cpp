@@ -51,7 +51,7 @@ DialogContact::DialogContact():
     m_headerbar_btn_right.add(m_btn_xxtach);
     m_headerbar_chat.pack_end(m_headerbar_btn_right);
 
-    m_header_paned.pack1(m_headerbar_chat  , true, true);
+    m_header_paned.pack1(m_headerbar_chat  , true, false);
     m_header_paned.pack2(m_headerbar_contact, false, false);
 
     this->set_titlebar(m_header_paned);
