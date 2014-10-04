@@ -58,6 +58,7 @@ add_executable(${PROJECT_NAME}
     Widget/WidgetChatBox.cpp
     Dialog/DialogChat.cpp
     Dialog/DialogContact.cpp
+    Tox/Tox.cpp
     "${CMAKE_CURRENT_SOURCE_DIR}/Generated/icon.cpp"
 )
 target_link_libraries(${PROJECT_NAME} ${GTKMM_LIBRARIES} "${CMAKE_CURRENT_SOURCE_DIR}/toxcore/build/.libs/libtoxcore.a" -lsodium -lpthread)
