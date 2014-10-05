@@ -14,7 +14,7 @@
    version="1.1"
    id="svg2"
    inkscape:version="0.48.5 r10040"
-   sodipodi:docname="chat_attach.svg">
+   sodipodi:docname="chat_detach.svg">
   <metadata
      id="metadata5566">
     <rdf:RDF>
@@ -23,7 +23,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -41,9 +41,9 @@
      id="namedview5564"
      showgrid="false"
      inkscape:zoom="22.627417"
-     inkscape:cx="5.9248559"
+     inkscape:cx="6.0132442"
      inkscape:cy="-6.0522709"
-     inkscape:window-x="518"
+     inkscape:window-x="0"
      inkscape:window-y="155"
      inkscape:window-maximized="0"
      inkscape:current-layer="g4396" />
@@ -2355,7 +2355,7 @@
        y="629.67499"
        x="43.416199"
        xlink:href="#glyph2-31"
-       transform="matrix(0,-1,1,0,-577.55566,674.73181)"
+       transform="matrix(-1,0,0,1,97.176152,-1.5234375e-6)"
        style="fill:#ffffff" />
   </g>
   <g

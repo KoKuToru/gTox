@@ -41,9 +41,9 @@
      id="namedview5564"
      showgrid="false"
      inkscape:zoom="22.627417"
-     inkscape:cx="5.9248559"
+     inkscape:cx="10.823381"
      inkscape:cy="-6.0522709"
-     inkscape:window-x="518"
+     inkscape:window-x="0"
      inkscape:window-y="155"
      inkscape:window-maximized="0"
      inkscape:current-layer="g4396" />
@@ -2355,7 +2355,8 @@
        y="629.67499"
        x="43.416199"
        xlink:href="#glyph2-31"
-       style="fill:#ffffff" />
+       style="fill:#ffffff"
+       transform="translate(4.0624999e-6,-4.0625e-6)" />
   </g>
   <g
      id="g4400"
