@@ -43,7 +43,7 @@ Tox& Tox::instance() {
     return *m_instance;
 }
 
-void Tox::destory() {
+void Tox::destroy() {
     std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_instance != nullptr) {
         delete m_instance;
@@ -72,6 +72,7 @@ void Tox::init(const Glib::ustring& statefile) {
     tox_callback_typing_change (m_tox, Tox::callback_typing_change        , nullptr);
     tox_callback_read_receipt  (m_tox, Tox::callback_read_receipt         , nullptr);
     tox_callback_connection_status (m_tox, Tox::callback_connection_status, nullptr);
+
     //load state
     if (statefile != "") {
         std::ifstream oi(statefile);

@@ -20,6 +20,8 @@
 #include "DialogContact.h"
 #include "../Generated/icon.h"
 #include <gdkmm.h>
+#include "../Tox/Tox.h"
+#include <iostream>
 
 Glib::RefPtr<Gdk::Pixbuf> load_icon(const std::string data) {
     auto tmp = Gio::MemoryInputStream::create();
@@ -69,11 +71,24 @@ DialogContact::DialogContact():
     //events
     m_btn_xxtach.signal_clicked().connect(sigc::mem_fun(this, &DialogContact::detachChat));
 
+    Tox::instance().init();
+    m_update_interval = Glib::signal_timeout().connect(sigc::mem_fun(this, &DialogContact::update), Tox::instance().update_optimal_interval());
+
+    //display friend id
+    Tox::FriendAddr my_addr = Tox::instance().get_address();
+    std::cout << "PUB: ";
+    for(auto c : my_addr) {
+        static const char hex[] = "0123456789ABCDEF";
+        std::cout << hex[(c >> 4) & 0xF] << hex[c & 0xF];
+    }
+    std::cout << std::endl;
+
     this->show_all();
 }
 
 DialogContact::~DialogContact() {
-
+    //save ?
+    Tox::instance().destroy();
 }
 
 void DialogContact::detachChat() {
@@ -93,4 +108,37 @@ void DialogContact::detachChat() {
     m_chat_dialog.move(x, y);
     m_chat_dialog.resize(hw, h); //too small why ?
     m_chat_dialog.show();
+}
+
+bool DialogContact::update() {
+    Tox::SEvent ev;
+    while(Tox::instance().update(ev)) {
+        switch(ev.event) {
+            case Tox::EEventType::FRIENDACTION:
+                std::cout << "FRIENDACTION !" << std::endl;
+                break;
+            case Tox::EEventType::FRIENDMESSAGE:
+                std::cout << "FRIENDMESSAGE !" << std::endl;
+                break;
+            case Tox::EEventType::FRIENDREQUEST:
+                std::cout << "FRIENDREQUEST !" << std::endl;
+                break;
+            case Tox::EEventType::NAMECHANGE:
+                std::cout << "NAMECHANGE !" << std::endl;
+                break;
+            case Tox::EEventType::READRECEIPT:
+                std::cout << "READRECEIPT !" << std::endl;
+                break;
+            case Tox::EEventType::STATUSMESSAGE:
+                std::cout << "STATUSMESSAGE !" << std::endl;
+                break;
+            case Tox::EEventType::TYPINGCHANGE:
+                std::cout << "TYPINGCHANGE !" << std::endl;
+                break;
+            case Tox::EEventType::USERSTATUS:
+                std::cout << "USERSTATUS !" << std::endl;
+                break;
+        }
+    }
+    return true;
 }

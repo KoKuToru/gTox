@@ -47,12 +47,17 @@ class DialogContact: public Gtk::Window {
         WidgetContact m_contact;
 
         DialogChat     m_chat_dialog; //probably a list in the future
+
+        sigc::connection m_update_interval;
+
     public:
         DialogContact();
         ~DialogContact();
 
     protected:
         void detachChat();
+
+        bool update();
 };
 
 #endif

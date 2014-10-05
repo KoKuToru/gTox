@@ -102,7 +102,7 @@ class Tox {
         };
 
         static Tox& instance();
-        static void destory();
+        static void destroy();
 
         void init(const Glib::ustring& statefile);
         void init() {
