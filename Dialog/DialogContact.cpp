@@ -22,6 +22,7 @@
 #include <gdkmm.h>
 #include "../Tox/Tox.h"
 #include <iostream>
+#include <libnotifymm.h>
 
 DialogContact::DialogContact():
     m_icon_attach(ICON::load_icon(ICON::chat_attach)),
