@@ -114,6 +114,7 @@ class Tox {
         std::vector<FriendNr> get_friendlist();
         FriendAddr get_address();
         FriendNr add_friend(FriendAddr addr, const Glib::ustring& message);
+        FriendNr add_friend_norequest(FriendAddr addr);
         FriendNr get_friend_number(FriendAddr address);
         void del_friend(FriendNr nr);
 

@@ -152,6 +152,18 @@ Tox::FriendNr Tox::add_friend(Tox::FriendAddr addr, const Glib::ustring& message
     return res;
 }
 
+Tox::FriendNr Tox::add_friend_norequest(FriendAddr addr) {
+    std::lock_guard<std::recursive_mutex> lg(m_mtx);
+    if (m_tox == nullptr) {
+        throw "ERROR";
+    }
+    FriendNr res = tox_add_friend_norequest(m_tox, addr.data());
+    if (res < 0) {
+        throw "ERROR";
+    }
+    return res;
+}
+
 Tox::FriendNr Tox::get_friend_number(Tox::FriendAddr addr) {
     std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
