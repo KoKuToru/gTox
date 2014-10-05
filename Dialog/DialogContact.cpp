@@ -53,7 +53,7 @@ DialogContact::DialogContact():
 
     m_headerbar_contact_box_left.get_style_context()->add_class("linked");
     m_headerbar_contact_box_left.add(m_btn_settings);
-    m_headerbar_contact.pack_start(m_headerbar_contact_box_left);
+    m_headerbar_contact.pack_end(m_headerbar_contact_box_left);
 
     m_header_paned.pack1(m_headerbar_chat  , true, false);
     m_header_paned.pack2(m_headerbar_contact, false, false);
