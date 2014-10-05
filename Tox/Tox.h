@@ -23,6 +23,7 @@
 #include <mutex>
 #include <functional>
 #include <vector>
+#include <deque>
 #include <glibmm/ustring.h>
 class Tox {
     private:
@@ -36,6 +37,50 @@ class Tox {
         typedef int FriendNr;
         typedef int ReceiptNr;
         typedef std::array<unsigned char, TOX_FRIEND_ADDRESS_SIZE> FriendAddr;
+
+        enum EEventType {
+            FRIENDREQUEST,
+            FRIENDMESSAGE,
+            FRIENDACTION,
+            NAMECHANGE,
+            STATUSMESSAGE,
+            USERSTATUS,
+            TYPINGCHANGE,
+            READRECEIPT
+        };
+
+        struct SFriendRequest {
+            FriendAddr    addr;
+            Glib::ustring message;
+        };
+
+        struct SFriendData {
+            FriendNr nr;
+            Glib::ustring data;
+        };
+
+        struct SFriendInt {
+           FriendNr nr;
+           int data;
+        };
+
+        struct SFriendBool {
+           FriendNr nr;
+           bool data;
+        };
+
+        struct SEvent {
+            EEventType event;
+            //not very optimal
+            SFriendRequest friend_request;
+            SFriendData friend_message;
+            SFriendData friend_action;
+            SFriendData name_change;
+            SFriendData status_message;
+            SFriendBool typing_change;
+            SFriendInt user_status;
+            SFriendInt readreceipt;
+        };
 
         enum EFAERR {
             TOOLONG = TOX_FAERR_TOOLONG,
@@ -86,6 +131,21 @@ class Tox {
         unsigned long long get_last_online(FriendNr nr);
 
         int update_optimal_interval();
-        void update();
+        bool update(SEvent& ev);
+
+    protected:
+        std::deque<SEvent> events;
+
+        static void callback_friend_request(Tox *, const unsigned char* addr,const unsigned char* data, unsigned short len, void *);
+        static void callback_friend_message(Tox *, FriendNr nr, const unsigned char* data, unsigned short len, void *);
+        static void callback_friend_action(Tox *, FriendNr nr, const unsigned char* data, unsigned short len, void *);
+        static void callback_name_change(Tox *, FriendNr nr, const unsigned char* data, unsigned short len, void *);
+        static void callback_status_message(Tox *, FriendNr nr, const unsigned char* data, unsigned short len, void *);
+        static void callback_user_status(Tox *, FriendNr nr, unsigned char data, void *);
+        static void callback_typing_change(Tox *, FriendNr nr, unsigned char data, void *);
+        static void callback_read_receipt(Tox *, FriendNr nr, unsigned data, void *);
+        static void callback_connection_status(Tox *, FriendNr nr, unsigned char data, void *);
+
+        void inject_event(const SEvent& ev);
 };
 #endif

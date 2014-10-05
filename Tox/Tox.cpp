@@ -62,6 +62,16 @@ void Tox::init(const Glib::ustring& statefile) {
     options.proxy_enabled = false;
     m_tox = tox_new(&options);
 
+    //install callbacks
+    tox_callback_friend_request(m_tox, Tox::callback_friend_request, nullptr);
+    tox_callback_friend_message(m_tox, Tox::callback_friend_message, nullptr);
+    tox_callback_friend_action (m_tox, Tox::callback_friend_action , nullptr);
+    tox_callback_name_change   (m_tox, Tox::callback_name_change   , nullptr);
+    tox_callback_status_message(m_tox, Tox::callback_status_message       , nullptr);
+    tox_callback_user_status   (m_tox, Tox::callback_user_status          , nullptr);
+    tox_callback_typing_change (m_tox, Tox::callback_typing_change        , nullptr);
+    tox_callback_read_receipt  (m_tox, Tox::callback_read_receipt         , nullptr);
+    tox_callback_connection_status (m_tox, Tox::callback_connection_status, nullptr);
     //load state
     if (statefile != "") {
         std::ifstream oi(statefile);
@@ -95,12 +105,18 @@ int Tox::update_optimal_interval() {
     return tox_do_interval(m_tox);
 }
 
-void Tox::update() {
+bool Tox::update(Tox::SEvent& ev) {
     std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
         throw "ERROR";
     }
     tox_do(m_tox);
+    if (events.empty()) {
+        return false;
+    }
+    ev = events.front();
+    events.pop_front();
+    return true;
 }
 
 std::vector<Tox::FriendNr> Tox::get_friendlist() {
@@ -301,4 +317,90 @@ void Tox::send_typing(FriendNr nr, bool is_typing) {
     if (tox_set_user_is_typing(m_tox, nr, is_typing) < 0) {
         throw "ERROR";
     }
+}
+
+void Tox::inject_event(const SEvent& ev) {
+    std::lock_guard<std::recursive_mutex> lg(m_mtx);
+    if (m_tox == nullptr) {
+        throw "ERROR";
+    }
+    events.push_back(ev);
+}
+
+
+void Tox::callback_friend_request(Tox *, const unsigned char* addr,const unsigned char* data, unsigned short len, void *) {
+    Tox::SEvent tmp;
+    tmp.event = EEventType::FRIENDREQUEST;
+    std::copy(addr, addr+ tmp.friend_request.addr.size(), tmp.friend_request.addr.begin());
+    tmp.friend_request.message = Glib::ustring(std::string((const char*)data, len)); //no shortcut ?
+    Tox::instance().inject_event(tmp);
+}
+
+void Tox::callback_friend_message(Tox *, FriendNr nr, const unsigned char* data, unsigned short len, void *) {
+    Tox::SEvent tmp;
+    tmp.event = EEventType::FRIENDMESSAGE;
+    tmp.friend_message.nr = nr;
+    tmp.friend_message.data = Glib::ustring(std::string((const char*)data, len));
+    Tox::instance().inject_event(tmp);
+}
+
+void Tox::callback_friend_action(Tox *, FriendNr nr, const unsigned char* data, unsigned short len, void *) {
+    Tox::SEvent tmp;
+    tmp.event = EEventType::FRIENDACTION;
+    tmp.friend_action.nr = nr;
+    tmp.friend_action.data = Glib::ustring(std::string((const char*)data, len));
+    Tox::instance().inject_event(tmp);
+}
+
+void Tox::callback_name_change(Tox *, FriendNr nr, const unsigned char* data, unsigned short len, void *) {
+    Tox::SEvent tmp;
+    tmp.event = EEventType::NAMECHANGE;
+    tmp.name_change.nr = nr;
+    tmp.name_change.data = Glib::ustring(std::string((const char*)data, len));
+    Tox::instance().inject_event(tmp);
+}
+
+void Tox::callback_status_message(Tox *, FriendNr nr, const unsigned char* data, unsigned short len, void *) {
+    Tox::SEvent tmp;
+    tmp.event = EEventType::STATUSMESSAGE;
+    tmp.status_message.nr = nr;
+    tmp.status_message.data = Glib::ustring(std::string((const char*)data, len));
+    Tox::instance().inject_event(tmp);
+}
+
+void Tox::callback_user_status(Tox *, FriendNr nr, unsigned char data, void *) {
+    Tox::SEvent tmp;
+    tmp.event = EEventType::USERSTATUS;
+    tmp.user_status.nr = nr;
+    tmp.user_status.data = data;
+    Tox::instance().inject_event(tmp);
+}
+
+void Tox::callback_typing_change(Tox *, FriendNr nr, unsigned char data, void *) {
+    Tox::SEvent tmp;
+    tmp.event = EEventType::TYPINGCHANGE;
+    tmp.typing_change.nr = nr;
+    tmp.typing_change.data = data;
+    Tox::instance().inject_event(tmp);
+}
+
+void Tox::callback_read_receipt(Tox *, FriendNr nr, unsigned data, void *) {
+    Tox::SEvent tmp;
+    tmp.event = EEventType::READRECEIPT;
+    tmp.readreceipt.nr = nr;
+    tmp.readreceipt.data = data;
+    Tox::instance().inject_event(tmp);
+}
+
+void Tox::callback_connection_status(Tox * m, FriendNr nr, unsigned char data, void *) {
+    Tox::SEvent tmp;
+    tmp.event = EEventType::USERSTATUS;
+    tmp.user_status.nr = nr;
+    if (data == 0) {
+        tmp.user_status.data = EUSERSTATUS::OFFLINE;
+    } else {
+        //went online get user status
+        tmp.user_status.data = tox_get_user_status(m, nr);
+    }
+    Tox::instance().inject_event(tmp);
 }
