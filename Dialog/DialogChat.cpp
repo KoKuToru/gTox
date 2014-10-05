@@ -18,8 +18,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 **/
 #include "DialogChat.h"
+#include "../Generated/icon.h"
 
-DialogChat::DialogChat() {
+DialogChat::DialogChat():
+    m_icon_attach(ICON::load_icon(ICON::chat_attach))
+{
     this->set_border_width(1);
     this->set_default_geometry(256, 256);
     this->set_position(Gtk::WindowPosition::WIN_POS_NONE);
@@ -27,8 +30,16 @@ DialogChat::DialogChat() {
     //Setup titlebar
     m_header.set_title("Chat");
     m_header.set_subtitle("with DemoUser");
-    //m_header.set_show_close_button();
+    m_header.set_show_close_button();
 
+    m_btn_xxtach.set_image(m_icon_attach);
+
+    m_headerbar_btn_left.get_style_context()->add_class("linked");
+    m_headerbar_btn_left.add(m_btn_xxtach);
+    m_header.pack_start(m_headerbar_btn_left);
+
+    
+    
     this->set_titlebar(m_header);
 
     //Setup content
