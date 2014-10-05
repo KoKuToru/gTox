@@ -22,6 +22,7 @@
 #include <gdkmm.h>
 #include "../Tox/Tox.h"
 #include <iostream>
+#include <libnotifymm.h>
 
 DialogContact::DialogContact():
     m_icon_attach(ICON::load_icon(ICON::chat_attach)),
@@ -135,6 +136,7 @@ bool DialogContact::update() {
             case Tox::EEventType::FRIENDREQUEST:
                 std::cout << "FRIENDREQUEST ! " << ev.friend_request.message << std::endl;
                 //auto accept
+                Notify::Notification("gTox", "got friend request", "dialog-information").show();
                 Tox::instance().add_friend_norequest(ev.friend_request.addr);
                 save = true;
                 break;

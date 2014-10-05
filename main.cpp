@@ -26,7 +26,10 @@
 #include <gtkmm.h>
 #include "Dialog/DialogContact.h"
 
+#include <libnotifymm.h>
+
 int main(int argc, char *argv[]) {
+    Notify::init("gTox");
     Gtk::Main kit(argc, argv);
     Gtk::Settings::get_default()->property_gtk_application_prefer_dark_theme() = true;
     DialogContact dialog;

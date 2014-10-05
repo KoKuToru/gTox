@@ -6,10 +6,11 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra -rdynamic -g3")
 
 find_package(PkgConfig)
 pkg_check_modules(GTKMM gtkmm-3.0)
+pkg_check_modules(LIBNOTIFYMM libnotifymm-1.0)
 link_directories(
-    ${GTKMM_LIBRARY_DIRS}  )
+    ${GTKMM_LIBRARY_DIRS} ${LIBNOTIFYMM_LIBRARY_DIRS})
 include_directories(
-    ${GTKMM_INCLUDE_DIRS}  )
+    ${GTKMM_INCLUDE_DIRS} ${LIBNOTIFYMM_INCLUDE_DIRS})
 
 if(NOT SUBMODULES_INITED)
   execute_process(
@@ -65,5 +66,5 @@ add_executable(${PROJECT_NAME}
     Tox/Tox.cpp
     "${CMAKE_CURRENT_SOURCE_DIR}/Generated/icon.cpp"
 )
-target_link_libraries(${PROJECT_NAME} ${GTKMM_LIBRARIES} "${CMAKE_CURRENT_SOURCE_DIR}/toxcore/build/.libs/libtoxcore.a" -lsodium -lpthread)
+target_link_libraries(${PROJECT_NAME} ${GTKMM_LIBRARIES} ${LIBNOTIFYMM_LIBRARIES} "${CMAKE_CURRENT_SOURCE_DIR}/toxcore/build/.libs/libtoxcore.a" -lsodium -lpthread)
 add_dependencies(${PROJECT_NAME} toxcore)
