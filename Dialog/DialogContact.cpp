@@ -23,15 +23,9 @@
 #include "../Tox/Tox.h"
 #include <iostream>
 
-Glib::RefPtr<Gdk::Pixbuf> load_icon(const std::string data) {
-    auto tmp = Gio::MemoryInputStream::create();
-    tmp->add_data(data);
-    return Gdk::Pixbuf::create_from_stream(tmp);
-}
-
 DialogContact::DialogContact():
-    m_icon_attach(load_icon(ICON::chat_attach)),
-    m_icon_detach(load_icon(ICON::chat_detach))
+    m_icon_attach(ICON::load_icon(ICON::chat_attach)),
+    m_icon_detach(ICON::load_icon(ICON::chat_detach))
 {
 
 
