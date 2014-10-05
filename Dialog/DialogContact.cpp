@@ -65,7 +65,15 @@ DialogContact::DialogContact():
     //events
     m_btn_xxtach.signal_clicked().connect(sigc::mem_fun(this, &DialogContact::detachChat));
 
-    Tox::instance().init();
+    try {
+        Tox::instance().init("demo.state");
+    } catch (...) {
+        //create new
+        std::cout << "Create new" << std::endl;
+        Tox::instance().init();
+        Tox::instance().save("demo.state");
+    }
+
     m_update_interval = Glib::signal_timeout().connect(sigc::mem_fun(this, &DialogContact::update), Tox::instance().update_optimal_interval());
 
     //display friend id
@@ -106,6 +114,7 @@ void DialogContact::detachChat() {
 
 bool DialogContact::update() {
     Tox::SEvent ev;
+    bool save = false;
     while(Tox::instance().update(ev)) {
         switch(ev.event) {
             case Tox::EEventType::FRIENDACTION:
@@ -120,15 +129,18 @@ bool DialogContact::update() {
                 std::cout << "FRIENDREQUEST ! " << ev.friend_request.message << std::endl;
                 //auto accept
                 Tox::instance().add_friend_norequest(ev.friend_request.addr);
+                save = true;
                 break;
             case Tox::EEventType::NAMECHANGE:
                 std::cout << "NAMECHANGE !" << ev.name_change.nr << " -> " << ev.name_change.data << std::endl;
+                save = true;
                 break;
             case Tox::EEventType::READRECEIPT:
                 std::cout << "READRECEIPT !" << ev.readreceipt.nr << " -> " << ev.readreceipt.data << std::endl;
                 break;
             case Tox::EEventType::STATUSMESSAGE:
                 std::cout << "STATUSMESSAGE !"<< ev.status_message.nr << " -> " << ev.status_message.data << std::endl;
+                save = true;
                 break;
             case Tox::EEventType::TYPINGCHANGE:
                 std::cout << "TYPINGCHANGE !" << ev.typing_change.nr << " -> " << ev.typing_change.data << std::endl;
@@ -137,6 +149,9 @@ bool DialogContact::update() {
                 std::cout << "USERSTATUS !" << ev.user_status.nr << " -> " << ev.user_status.data << std::endl;
                 break;
         }
+    }
+    if (save) {
+        Tox::instance().save("demo.state");
     }
     return true;
 }

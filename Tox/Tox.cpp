@@ -54,7 +54,8 @@ void Tox::destroy() {
 void Tox::init(const Glib::ustring& statefile) {
     std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox != nullptr) {
-        throw "ERROR";
+        tox_kill(m_tox);
+        m_tox = nullptr;
     }
     Tox_Options options;
     options.ipv6enabled = true;
@@ -80,12 +81,15 @@ void Tox::init(const Glib::ustring& statefile) {
             throw "ERROR";
         }
 
-        uint32_t state_size;
-        oi.read((char*)&state_size, 4);
-        std::vector<unsigned char> state(state_size);
+        oi.seekg (0, oi.end);
+        int length = oi.tellg();
+        oi.seekg (0, oi.beg);
+
+        std::vector<unsigned char> state(length);
+
         oi.read((char*)state.data(), state.size());
 
-        if (tox_load(m_tox, state.data(), state.size()) != -1) {
+        if (tox_load(m_tox, state.data(), state.size()) == -1) {
             throw "ERROR";
         }
     }
@@ -96,6 +100,22 @@ void Tox::init(const Glib::ustring& statefile) {
     if (!tox_bootstrap_from_address(m_tox, "23.226.230.47", 33445, pub_key)) { // connect to a bootstrap to get into the network
         throw "ERROR";
     }
+}
+
+void Tox::save(const Glib::ustring& statefile) {
+    std::lock_guard<std::recursive_mutex> lg(m_mtx);
+    if (m_tox == nullptr) {
+        throw "ERROR";
+    }
+    int length = (int)tox_size(m_tox);
+    std::vector<unsigned char> state(length);
+    tox_save(m_tox, (unsigned char*)state.data());
+    std::ofstream oi(statefile, std::ios::binary|std::ios::out|std::ios::trunc);
+    if (!oi.is_open()) {
+        throw "ERROR";
+    }
+    oi.write((const char*)state.data(), state.size());
+    oi.close();
 }
 
 int Tox::update_optimal_interval() {

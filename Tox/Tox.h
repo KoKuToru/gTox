@@ -109,6 +109,8 @@ class Tox {
             init("");
         }
 
+        void save(const Glib::ustring& statefile);
+
         ~Tox();
 
         std::vector<FriendNr> get_friendlist();
