@@ -115,28 +115,32 @@ bool DialogContact::update() {
     while(Tox::instance().update(ev)) {
         switch(ev.event) {
             case Tox::EEventType::FRIENDACTION:
-                std::cout << "FRIENDACTION !" << std::endl;
+                std::cout << "FRIENDACTION !" << ev.friend_action.nr << " -> " << ev.friend_action.data << std::endl;
+
                 break;
             case Tox::EEventType::FRIENDMESSAGE:
-                std::cout << "FRIENDMESSAGE !" << std::endl;
+                std::cout << "FRIENDMESSAGE !" << ev.friend_message.nr << " -> " << ev.friend_message.data << std::endl;
+                Tox::instance().send_message(ev.friend_message.nr, "I read your \""+ev.friend_message.data+"\" message");
                 break;
             case Tox::EEventType::FRIENDREQUEST:
-                std::cout << "FRIENDREQUEST !" << std::endl;
+                std::cout << "FRIENDREQUEST ! " << ev.friend_request.message << std::endl;
+                //auto accept
+                Tox::instance().add_friend_norequest(ev.friend_request.addr);
                 break;
             case Tox::EEventType::NAMECHANGE:
-                std::cout << "NAMECHANGE !" << std::endl;
+                std::cout << "NAMECHANGE !" << ev.name_change.nr << " -> " << ev.name_change.data << std::endl;
                 break;
             case Tox::EEventType::READRECEIPT:
-                std::cout << "READRECEIPT !" << std::endl;
+                std::cout << "READRECEIPT !" << ev.readreceipt.nr << " -> " << ev.readreceipt.data << std::endl;
                 break;
             case Tox::EEventType::STATUSMESSAGE:
-                std::cout << "STATUSMESSAGE !" << std::endl;
+                std::cout << "STATUSMESSAGE !"<< ev.status_message.nr << " -> " << ev.status_message.data << std::endl;
                 break;
             case Tox::EEventType::TYPINGCHANGE:
-                std::cout << "TYPINGCHANGE !" << std::endl;
+                std::cout << "TYPINGCHANGE !" << ev.typing_change.nr << " -> " << ev.typing_change.data << std::endl;
                 break;
             case Tox::EEventType::USERSTATUS:
-                std::cout << "USERSTATUS !" << std::endl;
+                std::cout << "USERSTATUS !" << ev.user_status.nr << " -> " << ev.user_status.data << std::endl;
                 break;
         }
     }
