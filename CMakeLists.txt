@@ -43,10 +43,14 @@ add_custom_target(
 
 add_subdirectory(Tools)
 
+set(ICONS
+    Icons/chat_attach.svg
+    Icons/chat_detach.svg
+    Icons/settings.svg)
 add_custom_command(
     OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/Generated/icon.cpp"
-    COMMAND "${PROJECT_BINARY_DIR}/Tools/text2h" ICON Generated/icon Icons/chat_attach.svg Icons/chat_detach.svg
-    DEPENDS text2h Icons/chat_attach.svg Icons/chat_detach.svg
+    COMMAND "${PROJECT_BINARY_DIR}/Tools/text2h" ICON Generated/icon ${ICONS}
+    DEPENDS text2h ${ICONS}
     WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
 )
 

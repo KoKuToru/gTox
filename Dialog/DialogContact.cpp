@@ -25,7 +25,8 @@
 
 DialogContact::DialogContact():
     m_icon_attach(ICON::load_icon(ICON::chat_attach)),
-    m_icon_detach(ICON::load_icon(ICON::chat_detach))
+    m_icon_detach(ICON::load_icon(ICON::chat_detach)),
+    m_icon_settings(ICON::load_icon(ICON::settings))
 {
 
 
@@ -43,9 +44,15 @@ DialogContact::DialogContact():
 
     m_btn_xxtach.set_image(m_icon_detach);
 
-    m_headerbar_btn_left.get_style_context()->add_class("linked");
-    m_headerbar_btn_left.add(m_btn_xxtach);
-    m_headerbar_chat.pack_start(m_headerbar_btn_left);
+    m_headerbar_chat_box_left.get_style_context()->add_class("linked");
+    m_headerbar_chat_box_left.add(m_btn_xxtach);
+    m_headerbar_chat.pack_start(m_headerbar_chat_box_left);
+
+    m_btn_settings.set_image(m_icon_settings);
+
+    m_headerbar_contact_box_left.get_style_context()->add_class("linked");
+    m_headerbar_contact_box_left.add(m_btn_settings);
+    m_headerbar_contact.pack_start(m_headerbar_contact_box_left);
 
     m_header_paned.pack1(m_headerbar_chat  , true, false);
     m_header_paned.pack2(m_headerbar_contact, false, false);

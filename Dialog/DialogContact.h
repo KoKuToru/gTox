@@ -38,10 +38,13 @@ class DialogContact: public Gtk::Window {
 
         Gtk::Image     m_icon_attach;
         Gtk::Image     m_icon_detach;
+        Gtk::Image     m_icon_settings;
 
         Gtk::Button    m_btn_xxtach;
+        Gtk::Button    m_btn_settings;
 
-        Gtk::Box       m_headerbar_btn_left;
+        Gtk::Box       m_headerbar_chat_box_left;
+        Gtk::Box       m_headerbar_contact_box_left;
 
         WidgetChat m_chat;
         WidgetContact m_contact;
