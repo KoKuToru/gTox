@@ -36,9 +36,7 @@ DialogChat::DialogChat():
 
     m_headerbar_btn_left.get_style_context()->add_class("linked");
     m_headerbar_btn_left.add(m_btn_xxtach);
-    m_header.pack_start(m_headerbar_btn_left);
-
-    
+    m_header.pack_start(m_headerbar_btn_left);   
     
     this->set_titlebar(m_header);
 
