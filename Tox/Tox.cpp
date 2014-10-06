@@ -253,6 +253,19 @@ Glib::ustring Tox::get_name() {
     return name;
 }
 
+Glib::ustring Tox::get_name(Tox::FriendNr nr) {
+    std::lock_guard<std::recursive_mutex> lg(m_mtx);
+    if (m_tox == nullptr) {
+        throw "ERROR";
+    }
+    std::string name(/*MAX_NAME_LENGTH*/128, 0);
+    name.resize(tox_get_name(m_tox, nr, (unsigned char*)(name.data())));
+    if (name.size() == 0) {
+        throw "ERROR";
+    }
+    return name;
+}
+
 Glib::ustring Tox::get_status_message() {
     std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {

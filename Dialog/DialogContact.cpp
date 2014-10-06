@@ -82,6 +82,8 @@ DialogContact::DialogContact():
         Tox::instance().save("demo.state");
     }
 
+    m_contact.load_list();
+
     m_update_interval = Glib::signal_timeout().connect(sigc::mem_fun(this, &DialogContact::update), Tox::instance().update_optimal_interval());
 
     //display friend id

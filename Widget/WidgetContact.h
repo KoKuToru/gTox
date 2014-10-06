@@ -28,10 +28,12 @@ class WidgetContact: public Gtk::ScrolledWindow {
     private:
         Gtk::ListBox m_list;
 
-        std::vector<std::shared_ptr<WidgetContactListItem>> items;
+        std::vector<Glib::RefPtr<WidgetContactListItem>> items;
     public:
         WidgetContact();
         ~WidgetContact();
+
+        void load_list();
 };
 
 #endif

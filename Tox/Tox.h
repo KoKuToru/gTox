@@ -17,7 +17,8 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 **/
-#ifndef TOX_H
+#ifndef TOXMM_H
+#define TOXMM_H
 #include "../toxcore/toxcore/tox.h"
 #include <thread>
 #include <mutex>
