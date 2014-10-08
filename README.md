@@ -1,4 +1,4 @@
-gTox
+<img src="https://rawgit.com/KoKuToru/gTox/master/Icons/icon_128.svg">
 ============
 GTK3-Style Tox-Client
 
