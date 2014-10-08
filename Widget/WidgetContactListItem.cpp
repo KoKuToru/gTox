@@ -18,10 +18,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 **/
 #include "WidgetContactListItem.h"
+#include "WidgetContact.h"
+#include "../Tox/Tox.h"
 
-WidgetContactListItem::WidgetContactListItem() {
-    m_name.set_text("Contact Nr. ?");
-    m_status.set_text("Status..");
+WidgetContactListItem::WidgetContactListItem(WidgetContact* contact, Tox::FriendNr nr): m_contact(contact) {
+    m_name.set_text(Tox::instance().get_name(nr));
+    m_status.set_text(Tox::instance().get_status_message(nr));
 
     m_avatar.set_size_request(64, 64);
 

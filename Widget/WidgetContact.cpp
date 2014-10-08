@@ -18,17 +18,20 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 **/
 #include "WidgetContact.h"
+#include "../Tox/Tox.h"
 
 WidgetContact::WidgetContact() {
-    //test data
-    for(int i = 0; i < 20; ++i) {
-        items.emplace_back(new WidgetContactListItem);
-        m_list.add(*(items.back().get()));
-    }
-    //this->add(m_list);
     this->add(m_list);//, true, true);
 }
 
 WidgetContact::~WidgetContact() {
 
+}
+
+void WidgetContact::load_list() {
+    items.clear();
+    for(auto fr : Tox::instance().get_friendlist()) {
+        items.emplace_back(new WidgetContactListItem(this, fr));
+        m_list.add(*items.back().operator->());
+    }
 }

@@ -21,7 +21,9 @@
 #define WIDGETCONTACTLISTITEM_H
 
 #include <gtkmm.h>
+#include "../Tox/Tox.h"
 
+class WidgetContact;
 class WidgetContactListItem: public Gtk::ListBoxRow {
     private:
         Gtk::Image  m_avatar;
@@ -29,8 +31,10 @@ class WidgetContactListItem: public Gtk::ListBoxRow {
         Gtk::Label  m_status;
 
         Gtk::Grid   m_layout;
+
+        WidgetContact* m_contact;
     public:
-        WidgetContactListItem();
+        WidgetContactListItem(WidgetContact* contact, Tox::FriendNr nr);
         ~WidgetContactListItem();
 };
 
