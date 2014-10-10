@@ -38,7 +38,7 @@ DialogContact::DialogContact(const std::string &config_path):
 
     //Setup titlebar
     m_headerbar_contact.set_title("Contacts");
-    m_headerbar_contact.set_subtitle("KoKuToru");
+    m_headerbar_contact.set_subtitle(Tox::instance().get_name());
     m_headerbar_contact.set_show_close_button();
 
     m_headerbar_chat.set_title("Chat");

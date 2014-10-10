@@ -25,6 +25,7 @@
 
 #include <gtkmm.h>
 #include "Dialog/DialogContact.h"
+#include "Dialog/FirstStartAssistant.h"
 #include <libnotifymm.h>
 
 #include "Tox/Tox.h"
@@ -33,8 +34,7 @@ int main(int argc, char *argv[]) {
     Notify::init("gTox");
 
     Gtk::Main kit(argc, argv);
-    Gtk::Settings::get_default()->property_gtk_application_prefer_dark_theme() = true;
-
+	Gtk::Settings::get_default()->property_gtk_application_prefer_dark_theme() = true;
     Glib::set_application_name("gTox");
 
     std::string config_path = Glib::build_filename(Glib::get_user_config_dir(), "gTox");
@@ -51,17 +51,21 @@ int main(int argc, char *argv[]) {
 
     if (accounts.empty()) {
         //start new account assistant
-        //TODO
-        Tox::instance().init();
-        config_path = Glib::build_filename(config_path, "demo.state");
-        Tox::instance().save(config_path);
+    	FirstStartAssistant assistant(config_path);
+    	kit.run(assistant);
+
+    	if(assistant.isAborted()){
+    		return 0;
+    	}
+
+    	config_path = assistant.getPath();
     } else if (accounts.size() > 1) {
         //start user select
         //TODO
-        config_path = accounts.front();
+    	config_path = Glib::build_filename(config_path, accounts.front());
         Tox::instance().init(config_path);
     } else {
-        config_path = accounts.front();
+        config_path = Glib::build_filename(config_path, accounts.front());
         Tox::instance().init(config_path);
     }
 
