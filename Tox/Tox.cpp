@@ -450,3 +450,13 @@ void Tox::callback_connection_status(Tox * m, FriendNr nr, unsigned char data, v
     }
     Tox::instance().inject_event(tmp);
 }
+
+Glib::ustring Tox::to_hex(const unsigned char* data, size_t len){
+	std::string s;
+	for(size_t i = 0; i < len; ++i) {
+		static const char hex[] = "0123456789ABCDEF";
+		s += hex[(data[i] >> 4) & 0xF];
+		s += hex[data[i] & 0xF];
+	}
+	return s;
+}

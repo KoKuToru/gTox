@@ -137,6 +137,8 @@ class Tox {
         int update_optimal_interval();
         bool update(SEvent& ev);
 
+        static Glib::ustring to_hex(const unsigned char* data, size_t len);
+
     protected:
         std::deque<SEvent> events;
 

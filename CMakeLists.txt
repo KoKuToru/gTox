@@ -61,6 +61,10 @@ add_executable(${PROJECT_NAME}
     Widget/WidgetContact.cpp
     Widget/WidgetContactListItem.cpp
     Widget/WidgetChatBox.cpp
+    Widget/Assistant/WelcomePage.cpp
+    Widget/Assistant/AccountWidget.cpp
+    Widget/Assistant/NewAccountWidget.cpp
+    Dialog/FirstStartAssistant.cpp
     Dialog/DialogChat.cpp
     Dialog/DialogContact.cpp
     Tox/Tox.cpp
