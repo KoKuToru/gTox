@@ -47,6 +47,7 @@ add_subdirectory(Tools)
 set(ICONS
     Icons/chat_attach.svg
     Icons/chat_detach.svg
+    Icons/icon_128.svg
     Icons/settings.svg)
 add_custom_command(
     OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/Generated/icon.cpp"

@@ -30,7 +30,7 @@ DialogContact::DialogContact(const std::string &config_path):
     m_icon_settings(ICON::load_icon(ICON::settings)),
     m_config_path(config_path)
 {
-
+    this->set_icon(ICON::load_icon(ICON::icon_128));
 
     this->set_border_width(1);
     this->set_default_geometry(/*300*/800, 600);
