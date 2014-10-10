@@ -24,10 +24,11 @@
 #include <iostream>
 #include <libnotifymm.h>
 
-DialogContact::DialogContact():
+DialogContact::DialogContact(const std::string &config_path):
     m_icon_attach(ICON::load_icon(ICON::chat_attach)),
     m_icon_detach(ICON::load_icon(ICON::chat_detach)),
-    m_icon_settings(ICON::load_icon(ICON::settings))
+    m_icon_settings(ICON::load_icon(ICON::settings)),
+    m_config_path(config_path)
 {
 
 
@@ -60,9 +61,12 @@ DialogContact::DialogContact():
 
     this->set_titlebar(m_header_paned);
 
+    m_vbox.add(m_contact);
+    m_vbox.pack_end(m_notification, false, false);
+
     //Setup content
     m_paned.pack1(m_chat, false, false);
-    m_paned.pack2(m_contact, true, true);
+    m_paned.pack2(m_vbox, true, true);
     this->add(m_paned);
 
     //Connect properties C++ version ?
@@ -87,6 +91,8 @@ DialogContact::DialogContact():
     std::cout << std::endl;
 
     this->show_all();
+
+    m_notification.hide();
 }
 
 DialogContact::~DialogContact() {
@@ -128,13 +134,14 @@ bool DialogContact::update() {
                 break;
             case Tox::EEventType::FRIENDREQUEST:
                 std::cout << "FRIENDREQUEST ! " << ev.friend_request.message << std::endl;
-                //auto accept
-                Notify::Notification("gTox", "got friend request", "dialog-information").show();
-                Tox::instance().add_friend_norequest(ev.friend_request.addr);
-                save = true;
+                m_notification.add_notification("Friend request [Addr in future]", ev.friend_request.message, "Accept", [this, ev]() {
+                    m_contact.add_contact(Tox::instance().add_friend_norequest(ev.friend_request.addr));
+                    Tox::instance().save(m_config_path);
+                });
                 break;
             case Tox::EEventType::NAMECHANGE:
                 std::cout << "NAMECHANGE !" << ev.name_change.nr << " -> " << ev.name_change.data << std::endl;
+                m_contact.refresh_contact(ev.name_change.nr);
                 save = true;
                 break;
             case Tox::EEventType::READRECEIPT:
@@ -142,6 +149,7 @@ bool DialogContact::update() {
                 break;
             case Tox::EEventType::STATUSMESSAGE:
                 std::cout << "STATUSMESSAGE !"<< ev.status_message.nr << " -> " << ev.status_message.data << std::endl;
+                m_contact.refresh_contact(ev.status_message.nr);
                 save = true;
                 break;
             case Tox::EEventType::TYPINGCHANGE:

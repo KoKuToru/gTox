@@ -25,10 +25,13 @@
 
 #include <gtkmm.h>
 #include "Dialog/DialogContact.h"
+#include <libnotifymm.h>
 
 #include "Tox/Tox.h"
 
 int main(int argc, char *argv[]) {
+    Notify::init("gTox");
+
     Gtk::Main kit(argc, argv);
     Gtk::Settings::get_default()->property_gtk_application_prefer_dark_theme() = true;
 
@@ -50,17 +53,19 @@ int main(int argc, char *argv[]) {
         //start new account assistant
         //TODO
         Tox::instance().init();
-        Tox::instance().save(Glib::build_filename(config_path, "demo.state"));
+        config_path = Glib::build_filename(config_path, "demo.state");
+        Tox::instance().save(config_path);
     } else if (accounts.size() > 1) {
         //start user select
         //TODO
-        Tox::instance().init(accounts.front());
+        config_path = accounts.front();
+        Tox::instance().init(config_path);
     } else {
-        Tox::instance().init(accounts.front());
-
+        config_path = accounts.front();
+        Tox::instance().init(config_path);
     }
 
-    DialogContact dialog;
+    DialogContact dialog(config_path);
     kit.run(dialog);
     return 0;
 }

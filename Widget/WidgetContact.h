@@ -28,12 +28,13 @@ class WidgetContact: public Gtk::ScrolledWindow {
     private:
         Gtk::ListBox m_list;
 
-        std::vector<Glib::RefPtr<WidgetContactListItem>> items;
     public:
         WidgetContact();
         ~WidgetContact();
 
         void load_list();
+        void add_contact(Tox::FriendNr nr);
+        void refresh_contact(Tox::FriendNr nr);
 };
 
 #endif

@@ -21,9 +21,13 @@
 #include "WidgetContact.h"
 #include "../Tox/Tox.h"
 
-WidgetContactListItem::WidgetContactListItem(WidgetContact* contact, Tox::FriendNr nr): m_contact(contact) {
-    m_name.set_text(Tox::instance().get_name(nr));
-    m_status.set_text(Tox::instance().get_status_message(nr));
+WidgetContactListItem::WidgetContactListItem(WidgetContact* contact, Tox::FriendNr nr): m_contact(contact), m_friend_nr(nr) {
+    try {
+        m_name.set_text(Tox::instance().get_name(nr));
+        m_status.set_text(Tox::instance().get_status_message(nr));
+    } catch (...) {
+
+    }
 
     m_avatar.set_size_request(64, 64);
 
@@ -39,4 +43,17 @@ WidgetContactListItem::WidgetContactListItem(WidgetContact* contact, Tox::Friend
 
 WidgetContactListItem::~WidgetContactListItem() {
 
+}
+
+Tox::FriendNr WidgetContactListItem::get_friend_nr() {
+    return m_friend_nr;
+}
+
+void WidgetContactListItem::refresh() {
+    try {
+        m_name.set_text(Tox::instance().get_name(m_friend_nr));
+        m_status.set_text(Tox::instance().get_status_message(m_friend_nr));
+    } catch (...) {
+
+    }
 }

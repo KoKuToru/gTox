@@ -248,7 +248,9 @@ Glib::ustring Tox::get_name() {
     std::string name(/*MAX_NAME_LENGTH*/128, 0);
     name.resize(tox_get_self_name(m_tox, (unsigned char*)(name.data())));
     if (name.size() == 0) {
-        throw "ERROR";
+        name = "gTox User";
+        set_name(name);
+        //throw "ERROR";
     }
     return name;
 }

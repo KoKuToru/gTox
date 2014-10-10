@@ -29,9 +29,22 @@ WidgetContact::~WidgetContact() {
 }
 
 void WidgetContact::load_list() {
-    items.clear();
     for(auto fr : Tox::instance().get_friendlist()) {
-        items.emplace_back(new WidgetContactListItem(this, fr));
-        m_list.add(*items.back().operator->());
+        add_contact(fr);
+    }
+}
+
+void WidgetContact::add_contact(Tox::FriendNr nr) {
+    Gtk::Widget* w = Gtk::manage(new WidgetContactListItem(this, nr));
+    m_list.add(*w);
+    w->show_all();
+}
+
+void WidgetContact::refresh_contact(Tox::FriendNr nr) {
+    for(Gtk::Widget* it : m_list.get_children()) {
+        WidgetContactListItem* item = dynamic_cast<WidgetContactListItem*>(it);
+        if (item->get_friend_nr() == nr) {
+            item->refresh();
+        }
     }
 }

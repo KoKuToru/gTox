@@ -17,30 +17,39 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 **/
-#ifndef WIDGETCONTACTLISTITEM_H
-#define WIDGETCONTACTLISTITEM_H
+#ifndef WIDGETNOTIFICATION_H
+#define WIDGETNOTIFICATION_H
 
 #include <gtkmm.h>
-#include "../Tox/Tox.h"
-
-class WidgetContact;
-class WidgetContactListItem: public Gtk::ListBoxRow {
+class WidgetNotification: public Gtk::Box {
     private:
-        Gtk::Image  m_avatar;
-        Gtk::Label  m_name;
-        Gtk::Label  m_status;
+        Gtk::Label  m_title;
+        Gtk::Label  m_message;
 
         Gtk::Grid   m_layout;
 
-        WidgetContact* m_contact;
+        Gtk::Button m_remove;
+        Gtk::Button m_button;
 
-        Tox::FriendNr m_friend_nr;
+        struct Noti {
+            Glib::ustring titel;
+            Glib::ustring message;
+            Glib::ustring button;
+            std::function<void(void)> callback;
+        };
+
+        std::vector<Noti> m_messages;
+
+        std::function<void(void)> m_callback;
+
     public:
-        WidgetContactListItem(WidgetContact* contact, Tox::FriendNr nr);
-        ~WidgetContactListItem();
+        WidgetNotification();
+        ~WidgetNotification();
 
-        Tox::FriendNr get_friend_nr();
-        void refresh();
+        void add_notification(Glib::ustring titel, Glib::ustring message, Glib::ustring button = "", std::function<void(void)> callback = [](){});
+
+    protected:
+        void on_button_clicked();
 };
 
 #endif

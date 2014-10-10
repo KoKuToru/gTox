@@ -63,6 +63,7 @@ add_executable(${PROJECT_NAME}
     Widget/WidgetChatBox.cpp
     Dialog/DialogChat.cpp
     Dialog/DialogContact.cpp
+    Widget/WidgetNotification.cpp
     Tox/Tox.cpp
     "${CMAKE_CURRENT_SOURCE_DIR}/Generated/icon.cpp"
 )

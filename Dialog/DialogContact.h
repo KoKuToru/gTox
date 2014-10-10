@@ -24,6 +24,7 @@
 
 #include "../Widget/WidgetChat.h"
 #include "../Widget/WidgetContact.h"
+#include "../Widget/WidgetNotification.h"
 
 #include "DialogChat.h"
 
@@ -46,15 +47,20 @@ class DialogContact: public Gtk::Window {
         Gtk::Box       m_headerbar_chat_box_left;
         Gtk::Box       m_headerbar_contact_box_left;
 
+        Gtk::VBox      m_vbox;
+
         WidgetChat m_chat;
         WidgetContact m_contact;
+        WidgetNotification m_notification;
 
         DialogChat     m_chat_dialog; //probably a list in the future
 
         sigc::connection m_update_interval;
 
+        std::string m_config_path;
+
     public:
-        DialogContact();
+        DialogContact(const std::string& config_path);
         ~DialogContact();
 
     protected:
