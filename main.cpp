@@ -26,12 +26,40 @@
 #include <gtkmm.h>
 #include "Dialog/DialogContact.h"
 
-#include <libnotifymm.h>
+#include "Tox/Tox.h"
 
 int main(int argc, char *argv[]) {
-    Notify::init("gTox");
     Gtk::Main kit(argc, argv);
     Gtk::Settings::get_default()->property_gtk_application_prefer_dark_theme() = true;
+
+    Glib::set_application_name("gTox");
+
+    std::string config_path = Glib::build_filename(Glib::get_user_config_dir(), "gTox");
+    if (!Glib::file_test(config_path, Glib::FILE_TEST_IS_DIR)) {
+        Gio::File::create_for_path(config_path)->make_directory();
+    }
+
+    Glib::Dir dir(config_path);
+    std::vector<std::string> accounts(dir.begin(), dir.end());
+    accounts.resize(std::distance(accounts.begin(), std::remove_if(accounts.begin(), accounts.end(), [](const std::string& name) {
+        const std::string state_ext = ".state";
+        return !(name.size() > state_ext.size() && name.substr(name.size()-state_ext.size(), state_ext.size()) == state_ext);
+    })));
+
+    if (accounts.empty()) {
+        //start new account assistant
+        //TODO
+        Tox::instance().init();
+        Tox::instance().save(Glib::build_filename(config_path, "demo.state"));
+    } else if (accounts.size() > 1) {
+        //start user select
+        //TODO
+        Tox::instance().init(accounts.front());
+    } else {
+        Tox::instance().init(accounts.front());
+
+    }
+
     DialogContact dialog;
     kit.run(dialog);
     return 0;
