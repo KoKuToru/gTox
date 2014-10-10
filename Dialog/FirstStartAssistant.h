@@ -47,6 +47,9 @@ class FirstStartAssistant: public Gtk::Assistant{
     public:
         FirstStartAssistant(Glib::ustring path);
         ~FirstStartAssistant();
+
+        bool isAborted(){ return aborted; }
+        Glib::ustring getPath(){ return path; }
 };
 
 #endif
