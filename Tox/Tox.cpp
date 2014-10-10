@@ -453,6 +453,18 @@ void Tox::callback_connection_status(Tox * m, FriendNr nr, unsigned char data, v
     Tox::instance().inject_event(tmp);
 }
 
+Tox::FriendAddr Tox::get_address(Tox::FriendNr nr) {
+    std::lock_guard<std::recursive_mutex> lg(m_mtx);
+    if (m_tox == nullptr) {
+        throw "ERROR";
+    }
+    FriendAddr tmp;
+    if (tox_get_client_id(m_tox, nr, tmp.data()) != 0) {
+        throw "ERROR";
+    }
+    return tmp;
+}
+
 Glib::ustring Tox::to_hex(const unsigned char* data, size_t len){
 	std::string s;
 	for(size_t i = 0; i < len; ++i) {
