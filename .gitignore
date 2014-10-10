@@ -1,2 +1,5 @@
 /build
 /toxcore
+/.cproject
+/.project
+/.settings/
