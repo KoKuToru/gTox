@@ -21,3 +21,19 @@
 #WidgetContactListItem:selected {
     background: rgba(0,0,0,0.2);
 }
+
+#Debug {
+    border: 2px solid #FF0000;
+}
+
+#WidgetChatLineRight {
+    padding: 1em;
+    background-color: rgba(0,0,0,0.3);
+    border-radius: 2px 0 0 15px;
+}
+
+#WidgetChatLineLeft {
+    padding: 1em;
+    background-color: rgba(0,0,0,0.3);
+    border-radius: 0 2px 15px 0;
+}

@@ -71,6 +71,7 @@ add_executable(${PROJECT_NAME}
     Widget/WidgetContact.cpp
     Widget/WidgetContactListItem.cpp
     Widget/WidgetChatBox.cpp
+    Widget/WidgetChatLine.cpp
     Widget/Assistant/WelcomePage.cpp
     Widget/Assistant/AccountWidget.cpp
     Widget/Assistant/NewAccountWidget.cpp

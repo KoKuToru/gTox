@@ -19,11 +19,14 @@
 **/
 #include "WidgetChat.h"
 #include "Tox/Tox.h"
+#include "WidgetChatLine.h"
 
 WidgetChat::WidgetChat(Tox::FriendNr nr): m_nr(nr) {
 
     m_output.set_editable(false);
-    pack1(m_output, true, false);
+    m_scrolled.add(m_vbox);
+    m_vbox.set_spacing(5);
+    pack1(m_scrolled, true, false);
     //pack2(input, false, true);
 
     m_btn_send.set_label("Send");
@@ -32,11 +35,17 @@ WidgetChat::WidgetChat(Tox::FriendNr nr): m_nr(nr) {
     m_hbox.pack_end(m_btn_send, false, false);
     pack2(m_hbox, false, false);
 
-    set_position(400);
+    //set_position(400);
+    m_hbox.set_size_request(-1, 80);
 
     m_btn_send.signal_clicked().connect([this](){
-        Tox::instance().send_message(get_friend_nr(), m_input.get_buffer()->get_text());
-        add_line("me:" + m_input.get_buffer()->get_text() + "\n");
+        try {
+            Tox::instance().send_message(get_friend_nr(), m_input.get_buffer()->get_text());
+            add_line(0, false, m_input.get_buffer()->get_text());
+            m_input.get_buffer()->set_text("");
+        } catch(...) {
+            //not online ?
+        }
     });
 }
 
@@ -54,4 +63,28 @@ Tox::FriendNr WidgetChat::get_friend_nr() const {
 
 void WidgetChat::add_line(Glib::ustring text) {
     m_output.add_line(text);
+}
+
+void WidgetChat::add_line(unsigned long long timestamp, bool left_side, const Glib::ustring& message) {
+    std::vector<Gtk::Widget*> childs = m_vbox.get_children();
+    if (!childs.empty()) {
+        WidgetChatLine* item = dynamic_cast<WidgetChatLine*>(childs.back());
+        if (item != nullptr) {
+            if (item->get_side() == left_side) {
+                item->add_line(timestamp, message);
+                //scroll down
+                auto adj = m_scrolled.get_vadjustment();
+                adj->set_value(adj->get_upper() - adj->get_page_size());
+                return;
+            }
+        }
+    }
+    //add new line
+    auto new_line = Gtk::manage(new WidgetChatLine(left_side));
+    new_line->add_line(timestamp, message);
+    new_line->show_all();
+    m_vbox.pack_start(*new_line, false, false);
+    //scroll down
+    auto adj = m_scrolled.get_vadjustment();
+    adj->set_value(adj->get_upper() - adj->get_page_size());
 }

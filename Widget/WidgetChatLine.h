@@ -17,35 +17,23 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 **/
-#ifndef WIDGETCHAT_H
-#define WIDGETCHAT_H
+#ifndef WIDGETCHATLINE_H
+#define WIDGETCHATLINE_H
 
 #include <gtkmm.h>
-#include "WidgetChatBox.h"
-#include "Tox/Tox.h"
 
-//Content of DialogChat
-class WidgetChat: public Gtk::VPaned {
+class WidgetChatLine: public Gtk::Box {
     private:
-        Gtk::TextView m_input;
-        WidgetChatBox m_output;
+        bool m_side;
 
-        Gtk::HBox   m_hbox;
-        Gtk::Button m_btn_send;
+        Gtk::VBox m_vbox;
 
-        Tox::FriendNr m_nr;
-
-        Gtk::ScrolledWindow m_scrolled;
-        Gtk::VBox           m_vbox;
     public:
-        WidgetChat(Tox::FriendNr nr);
-        ~WidgetChat();
+        WidgetChatLine(bool side);
+        ~WidgetChatLine();
 
-        Tox::FriendNr get_friend_nr() const;
-        void focus();
-        void add_line(Glib::ustring text);
-
-        void add_line(unsigned long long timestamp, bool left_side, const Glib::ustring& message);
+        bool get_side();
+        void add_line(unsigned long long timestamp, const Glib::ustring& message);
 };
 
 #endif
