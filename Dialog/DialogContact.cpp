@@ -52,9 +52,10 @@ DialogContact::DialogContact(const std::string &config_path):
     m_headerbar_contact.set_name("HeaderBarRight");
     m_headerbar_chat   .set_name("HeaderBarLeft");
 
-    //Setup titlebar
-    m_headerbar_contact.set_title("Contacts");
-    m_headerbar_contact.set_subtitle(Tox::instance().get_name());
+    //Setup titleba
+    set_title("gTox");
+    m_headerbar_contact.set_title(Tox::instance().get_name_or_address());
+    m_headerbar_contact.set_subtitle(Tox::instance().get_status_message());
     m_headerbar_contact.set_show_close_button();
 
     m_headerbar_chat.set_title("Chat");
@@ -187,7 +188,7 @@ bool DialogContact::update() {
         }
     }
     if (save) {
-        Tox::instance().save("demo.state");
+        Tox::instance().save(m_config_path);
     }
     return true;
 }
