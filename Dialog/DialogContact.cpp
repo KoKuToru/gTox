@@ -222,16 +222,8 @@ void DialogContact::activate_chat(Tox::FriendNr nr) {
     //3. make the actual chat visible
     item->show_all();
     //4. update headerbard
-    //TODO: add a function Tox::get_name_or_addr() <- will return name or addr as hex
-    //TODO: change function Tox::get_status_message() <- to return "" when empty
-    //TODO: change function Tox::get_name() <- to return "" when empty
-    try {
-        m_headerbar_chat.set_title(Tox::instance().get_name(nr));
-        m_headerbar_chat.set_subtitle(Tox::instance().get_status_message(nr));
-    } catch (...) {
-        m_headerbar_chat.set_title("No username");
-        m_headerbar_chat.set_subtitle("");
-    }
+    m_headerbar_chat.set_title(Tox::instance().get_name_or_address(nr));
+    m_headerbar_chat.set_subtitle(Tox::instance().get_status_message(nr));
     //6. change focus to inputfiled
     item->focus();
 }

@@ -25,12 +25,9 @@
 
 WidgetContactListItem::WidgetContactListItem(WidgetContact* contact, Tox::FriendNr nr): m_contact(contact), m_friend_nr(nr) {
     set_name("WidgetContactListItem");
-    try {
-        m_name.set_text(Tox::instance().get_name(nr));
-        m_status_msg.set_text(Tox::instance().get_status_message(nr));
-    } catch (...) {
-        m_name.set_text(Tox::to_hex(Tox::instance().get_address(nr).data(), 32));
-    }
+
+    m_name.set_text(Tox::instance().get_name_or_address(nr));
+    m_status_msg.set_text(Tox::instance().get_status_message(nr));
 
     m_name.set_line_wrap(false);
     m_name.set_ellipsize(Pango::ELLIPSIZE_END);
@@ -74,7 +71,7 @@ Tox::FriendNr WidgetContactListItem::get_friend_nr() {
 
 void WidgetContactListItem::refresh() {
     try {
-        m_name.set_text(Tox::instance().get_name(m_friend_nr));
+        m_name.set_text(Tox::instance().get_name_or_address(m_friend_nr));
         m_status_msg.set_text(Tox::instance().get_status_message(m_friend_nr));
 
         Glib::RefPtr<Gdk::Pixbuf> status;

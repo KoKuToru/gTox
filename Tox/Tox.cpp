@@ -246,12 +246,11 @@ Glib::ustring Tox::get_name() {
         throw "ERROR";
     }
     std::string name(/*MAX_NAME_LENGTH*/128, 0);
-    name.resize(tox_get_self_name(m_tox, (unsigned char*)(name.data())));
-    if (name.size() == 0) {
-        name = "gTox User";
-        set_name(name);
-        //throw "ERROR";
+    int size = tox_get_self_name(m_tox, (unsigned char*)(name.data()));
+    if (size < 0) {
+        throw "ERROR";
     }
+    name.resize(size);
     return name;
 }
 
@@ -261,11 +260,20 @@ Glib::ustring Tox::get_name(Tox::FriendNr nr) {
         throw "ERROR";
     }
     std::string name(/*MAX_NAME_LENGTH*/128, 0);
-    name.resize(tox_get_name(m_tox, nr, (unsigned char*)(name.data())));
-    if (name.size() == 0) {
+    int size = tox_get_name(m_tox, nr, (unsigned char*)(name.data()));
+    if (size < 0) {
         throw "ERROR";
     }
+    name.resize(size);
     return name;
+}
+
+Glib::ustring Tox::get_name_or_address(Tox::FriendNr nr) {
+    Glib::ustring tmp = get_name(nr);
+    if (tmp.empty()) {
+        return to_hex(get_address(nr).data(), 32);
+    }
+    return tmp;
 }
 
 Glib::ustring Tox::get_status_message() {
@@ -278,10 +286,11 @@ Glib::ustring Tox::get_status_message() {
         throw "ERROR";
     }
     std::string name(size, 0);
-    name.resize(tox_get_self_status_message(m_tox, (unsigned char*)name.data(), name.size()));
-    if (name.size() == 0) {
+    size = tox_get_self_status_message(m_tox, (unsigned char*)name.data(), name.size());
+    if (size < 0) {
         throw "ERROR";
     }
+    name.resize(size);
     return name;
 }
 
@@ -295,10 +304,11 @@ Glib::ustring Tox::get_status_message(FriendNr nr) {
         throw "ERROR";
     }
     std::string name(size, 0);
-    name.resize(tox_get_status_message(m_tox, nr, (unsigned char*)name.data(), name.size()));
-    if (name.size() == 0) {
+    size = tox_get_status_message(m_tox, nr, (unsigned char*)name.data(), name.size());
+    if (size < 0) {
         throw "ERROR";
     }
+    name.resize(size);
     return name;
 }
 
@@ -466,11 +476,11 @@ Tox::FriendAddr Tox::get_address(Tox::FriendNr nr) {
 }
 
 Glib::ustring Tox::to_hex(const unsigned char* data, size_t len){
-	std::string s;
-	for(size_t i = 0; i < len; ++i) {
-		static const char hex[] = "0123456789ABCDEF";
-		s += hex[(data[i] >> 4) & 0xF];
-		s += hex[data[i] & 0xF];
-	}
-	return s;
+    std::string s;
+    for(size_t i = 0; i < len; ++i) {
+        static const char hex[] = "0123456789ABCDEF";
+        s += hex[(data[i] >> 4) & 0xF];
+        s += hex[data[i] & 0xF];
+    }
+    return s;
 }
