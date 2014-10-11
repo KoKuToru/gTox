@@ -80,12 +80,20 @@ void WidgetContactListItem::refresh() {
 
         switch(Tox::instance().get_status(m_friend_nr)){
             case Tox::EUSERSTATUS::BUSY:
+                status = ICON::load_icon(ICON::status_busy);
+                break;
             case Tox::EUSERSTATUS::INVALID:
-            case Tox::EUSERSTATUS::NONE: status = ICON::load_icon(ICON::status_online); break;
-            case Tox::EUSERSTATUS::AWAY: status = ICON::load_icon(ICON::status_away); break;
-            default : status = ICON::load_icon(ICON::status_offline); break;
+            case Tox::EUSERSTATUS::NONE:
+                status = ICON::load_icon(ICON::status_online);
+                break;
+            case Tox::EUSERSTATUS::AWAY:
+                status = ICON::load_icon(ICON::status_away);
+                break;
+            default :
+                status = ICON::load_icon(ICON::status_offline);
+                break;
         }
-        m_status_icon.set(status->scale_simple(24, 24, Gdk::INTERP_BILINEAR));
+        m_status_icon.set(status);
     } catch (...) {
 
     }

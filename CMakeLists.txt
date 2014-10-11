@@ -60,6 +60,7 @@ set(ICONS
     Icons/settings.svg
     Icons/status_online.svg
     Icons/status_offline.svg
+    Icons/status_busy.svg
     Icons/avatar.svg
     Icons/status_away.svg)
 add_custom_command(
