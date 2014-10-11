@@ -31,8 +31,9 @@ DialogContact* DialogContact::m_instance = nullptr;
 DialogContact::DialogContact(const std::string &config_path):
     m_icon_attach(ICON::load_icon(ICON::chat_attach)),
     m_icon_detach(ICON::load_icon(ICON::chat_detach)),
-    m_icon_settings(ICON::load_icon(ICON::settings)),
-    m_config_path(config_path)
+    m_icon_settings(ICON::load_icon(ICON::status_offline)),
+    m_config_path(config_path),
+    m_settings_popover(m_btn_settings)
 {
     auto css = Gtk::CssProvider::create();
     if(!css->load_from_data(THEME::main)) {
@@ -75,6 +76,10 @@ DialogContact::DialogContact(const std::string &config_path):
 
     m_header_paned.pack1(m_headerbar_chat  , true, false);
     m_header_paned.pack2(m_headerbar_contact, false, false);
+
+    m_btn_settings.signal_clicked().connect([this]() {
+        m_settings_popover.set_visible(true);
+    });
 
     this->set_titlebar(m_header_paned);
 
@@ -249,4 +254,3 @@ void DialogContact::destroy() {
         m_instance = nullptr;
     }
 }
-

@@ -25,6 +25,7 @@
 #include "Widget/WidgetChat.h"
 #include "Widget/WidgetContact.h"
 #include "Widget/WidgetNotification.h"
+#include "Widget/PopoverSettings.h"
 
 #include "DialogChat.h"
 
@@ -61,6 +62,8 @@ class DialogContact: public Gtk::Window {
         sigc::connection m_update_interval;
 
         std::string m_config_path;
+
+        PopoverSettings m_settings_popover;
 
         DialogContact(const std::string& config_path);
 

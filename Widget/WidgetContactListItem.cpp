@@ -20,7 +20,7 @@
 #include "WidgetContactListItem.h"
 #include "WidgetContact.h"
 #include "Tox/Tox.h"
-
+#include "Dialog/DialogContact.h"
 #include "Generated/icon.h"
 
 WidgetContactListItem::WidgetContactListItem(WidgetContact* contact, Tox::FriendNr nr): m_contact(contact), m_friend_nr(nr) {
@@ -37,27 +37,26 @@ WidgetContactListItem::WidgetContactListItem(WidgetContact* contact, Tox::Friend
     m_status_msg.set_ellipsize(Pango::ELLIPSIZE_END);
     m_status_msg.set_name("Status");
 
-    m_avatar.set(ICON::load_icon(ICON::avatar));
-    m_avatar.set_size_request(64, 64);
+    m_avatar.set(ICON::load_icon(ICON::avatar)->scale_simple(64, 64, Gdk::INTERP_BILINEAR)); //i would like to resize this depending on font-scale settings
     m_avatar.set_margin_top(5);
     m_avatar.set_margin_bottom(5);
     m_avatar.set_margin_left(5);
     m_avatar.set_margin_right(5); //css padding not working ?
     m_avatar.set_name("Avatar");
 
-    m_status_icon.set(ICON::load_icon(ICON::status_offline)->scale_simple(24, 24, Gdk::INTERP_BILINEAR));
+    m_status_icon.set(ICON::load_icon(ICON::status_offline));
     m_status_icon.set_margin_top(5);
     m_status_icon.set_margin_bottom(5);
-    m_status_icon.set_margin_left(5);
+    m_status_icon.set_margin_left(11);
     m_status_icon.set_margin_right(5);
 
-    m_layout.attach(m_avatar, 0, 0, 1, 2);
+    m_layout.attach(m_status_icon, 0, 0, 1, 2);
     m_layout.attach(m_name, 1, 0, 1, 1);
     m_layout.attach(m_status_msg, 1, 1, 1, 1);
-    m_layout.attach(m_status_icon, 2, 0, 1, 2);
+    m_layout.attach(m_avatar, 2, 0, 1, 2);
 
-    m_name.set_halign(Gtk::Align::ALIGN_START);
-    m_status_msg.set_halign(Gtk::Align::ALIGN_START);
+    m_name.set_halign(Gtk::Align::ALIGN_END);
+    m_status_msg.set_halign(Gtk::Align::ALIGN_END);
 
     m_name.set_hexpand(true);
     m_status_msg.set_hexpand(true);
