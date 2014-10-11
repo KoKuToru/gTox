@@ -51,7 +51,7 @@ set(ICONS
     Icons/settings.svg)
 add_custom_command(
     OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/Generated/icon.cpp"
-    COMMAND "${PROJECT_BINARY_DIR}/Tools/text2h" ICON Generated/icon ${ICONS}
+    COMMAND "${PROJECT_BINARY_DIR}/Tools/svg2h" ICON Generated/icon ${ICONS}
     DEPENDS text2h ${ICONS}
     WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
 )
