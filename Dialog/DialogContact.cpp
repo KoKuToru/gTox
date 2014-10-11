@@ -44,7 +44,7 @@ DialogContact::DialogContact(const std::string &config_path):
     this->set_icon(ICON::load_icon(ICON::icon_128));
 
     this->set_border_width(1);
-    this->set_default_geometry(/*300*/800, 600);
+    this->set_default_geometry(300, 600);
     this->set_position(Gtk::WindowPosition::WIN_POS_CENTER);
 
     m_headerbar_contact.set_name("HeaderBarRight");
@@ -104,9 +104,12 @@ DialogContact::DialogContact(const std::string &config_path):
     }
     std::cout << std::endl;
 
-    this->show_all();
-
-    m_notification.hide();
+    m_header_paned.show();
+    m_headerbar_contact.show_all();
+    m_contact.show_all();
+    m_paned.show();
+    m_vbox.show();
+    show();
 }
 
 DialogContact::~DialogContact() {
