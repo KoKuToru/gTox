@@ -19,7 +19,7 @@
  **/
 
 #include "FirstStartAssistant.h"
-#include "../Tox/Tox.h"
+#include "Tox/Tox.h"
 
 FirstStartAssistant::FirstStartAssistant(Glib::ustring path):
 path(path),
@@ -57,7 +57,7 @@ aborted(false){
 
 
     create.getEntryName().signal_changed().connect([this](){
-    	set_page_complete(create, !create.getEntryName().get_text().empty());
+        set_page_complete(create, !create.getEntryName().get_text().empty());
     });
 
     show_all_children();
@@ -67,42 +67,42 @@ FirstStartAssistant::~FirstStartAssistant(){
 }
 
 int FirstStartAssistant::getPage(Gtk::Widget& widget){
-	for(int i = 0; i < get_n_pages(); ++i)
-		if(get_nth_page(i) == (Gtk::Widget*)&widget)
-			return i;
-	return -1;
+    for(int i = 0; i < get_n_pages(); ++i)
+        if(get_nth_page(i) == (Gtk::Widget*)&widget)
+            return i;
+    return -1;
 }
 
 int FirstStartAssistant::on_next(int page){
-	if(page == getPage(account)){
-		if(account.getRbImport().get_active())
-			return getPage(import);
-	}
-	if(page == getPage(create)){
-		return getPage(finish);
-	}
-	return page+1;
+    if(page == getPage(account)){
+        if(account.getRbImport().get_active())
+            return getPage(import);
+    }
+    if(page == getPage(create)){
+        return getPage(finish);
+    }
+    return page+1;
 }
 
 void FirstStartAssistant::on_cancel(){
     int status = Gtk::MessageDialog("Do you really want to guit the assistant?", true, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO, true).run();
 
     if(status == Gtk::RESPONSE_YES){
-    	aborted = true;
+        aborted = true;
         Gtk::Main::quit();
     }
 }
 
 void FirstStartAssistant::on_close(){
-	if(!aborted){
-		Tox::instance().init();
-		Tox::FriendAddr myAddr = Tox::instance().get_address();
+    if(!aborted){
+        Tox::instance().init();
+        Tox::FriendAddr myAddr = Tox::instance().get_address();
 
-		Glib::ustring sMyAddr = Tox::to_hex(myAddr.data(), 32);
-		Tox::instance().set_name(create.getEntryName().get_text());
-		//Tox::instance().set_status("Powered by gTox");
-		path = Glib::build_filename(path, sMyAddr + ".state");
-		Tox::instance().save(path);
-	}
-	Gtk::Main::quit();
+        Glib::ustring sMyAddr = Tox::to_hex(myAddr.data(), 32);
+        Tox::instance().set_name(create.getEntryName().get_text());
+        //Tox::instance().set_status("Powered by gTox");
+        path = Glib::build_filename(path, sMyAddr + ".state");
+        Tox::instance().save(path);
+    }
+    Gtk::Main::quit();
 }

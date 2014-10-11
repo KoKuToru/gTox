@@ -21,7 +21,7 @@
 #define WIDGETCONTACTLISTITEM_H
 
 #include <gtkmm.h>
-#include "../Tox/Tox.h"
+#include "Tox/Tox.h"
 
 class WidgetContact;
 class WidgetContactListItem: public Gtk::ListBoxRow {

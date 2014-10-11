@@ -23,9 +23,9 @@
 
 #include <gtkmm.h>
 
-#include "../Widget/Assistant/AccountWidget.h"
-#include "../Widget/Assistant/WelcomePage.h"
-#include "../Widget/Assistant/NewAccountWidget.h"
+#include "Widget/Assistant/AccountWidget.h"
+#include "Widget/Assistant/WelcomePage.h"
+#include "Widget/Assistant/NewAccountWidget.h"
 
 class FirstStartAssistant: public Gtk::Assistant{
     private:
@@ -34,7 +34,7 @@ class FirstStartAssistant: public Gtk::Assistant{
         NewAccountWidget create;
         Gtk::Box import;
         Gtk::Box finish;
-        
+
         Glib::ustring path;
 
         bool aborted;

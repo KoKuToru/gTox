@@ -18,7 +18,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 **/
 #include "WidgetContact.h"
-#include "../Tox/Tox.h"
+#include "Tox/Tox.h"
 
 WidgetContact::WidgetContact() {
     this->add(m_list);//, true, true);
