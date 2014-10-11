@@ -128,6 +128,7 @@ class Tox {
         void set_name(const Glib::ustring& name);
         Glib::ustring get_name();
         Glib::ustring get_name(FriendNr nr);
+        Glib::ustring get_name_or_address();
         Glib::ustring get_name_or_address(FriendNr nr);
         Glib::ustring get_status_message();
         Glib::ustring get_status_message(FriendNr nr);

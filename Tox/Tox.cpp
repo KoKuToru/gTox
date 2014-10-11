@@ -268,6 +268,14 @@ Glib::ustring Tox::get_name(Tox::FriendNr nr) {
     return name;
 }
 
+Glib::ustring Tox::get_name_or_address() {
+    Glib::ustring tmp = get_name();
+    if (tmp.empty()) {
+        return to_hex(get_address().data(), 32);
+    }
+    return tmp;
+}
+
 Glib::ustring Tox::get_name_or_address(Tox::FriendNr nr) {
     Glib::ustring tmp = get_name(nr);
     if (tmp.empty()) {
