@@ -134,6 +134,8 @@ class Tox {
         Glib::ustring get_status_message(FriendNr nr);
         EUSERSTATUS get_status();
         EUSERSTATUS get_status(FriendNr nr);
+        void set_status(EUSERSTATUS value);
+        bool is_connected();
         unsigned long long get_last_online(FriendNr nr);
 
         int update_optimal_interval();

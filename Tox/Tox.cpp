@@ -320,6 +320,18 @@ Glib::ustring Tox::get_status_message(FriendNr nr) {
     return name;
 }
 
+bool Tox::is_connected() {
+    std::lock_guard<std::recursive_mutex> lg(m_mtx);
+    if (m_tox == nullptr) {
+        throw "ERROR";
+    }
+    int status = tox_isconnected(m_tox);
+    if (status < 0) {
+        throw "ERROR";
+    }
+    return status != 0;
+}
+
 Tox::EUSERSTATUS Tox::get_status() {
     std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
@@ -361,6 +373,17 @@ Tox::EUSERSTATUS Tox::get_status(FriendNr nr) {
     }
 
     return (EUSERSTATUS)status;
+}
+
+void Tox::set_status(Tox::EUSERSTATUS value) {
+    std::lock_guard<std::recursive_mutex> lg(m_mtx);
+    if (m_tox == nullptr) {
+        throw "ERROR";
+    }
+    if (value == Tox::OFFLINE) value = Tox::AWAY; //we can't set status to offline
+    if (tox_set_user_status(m_tox, value) != 0) {
+        throw "ERROR";
+    }
 }
 
 unsigned long long Tox::get_last_online(Tox::FriendNr nr) {

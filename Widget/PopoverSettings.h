@@ -23,6 +23,7 @@
 #include <gtkmm.h>
 class PopoverSettings: public Gtk::Popover {
     private:
+        Gtk::ListBoxRow& create_item(Glib::RefPtr<Gdk::Pixbuf> icon, Glib::ustring text);
 
     public:
         PopoverSettings(const Widget& relative_to);

@@ -118,6 +118,8 @@ DialogContact::DialogContact(const std::string &config_path):
     m_paned.show();
     m_vbox.show();
     show();
+
+    m_btn_settings.set_sensitive(false);
 }
 
 DialogContact::~DialogContact() {
@@ -145,6 +147,10 @@ void DialogContact::detach_chat() {
 }
 
 bool DialogContact::update() {
+    if (!m_btn_settings.get_sensitive() && Tox::instance().is_connected()) {
+        m_btn_settings.set_sensitive(true);
+        set_status(Tox::instance().get_status());
+    }
     Tox::SEvent ev;
     bool save = false;
     while(Tox::instance().update(ev)) {
@@ -253,4 +259,29 @@ void DialogContact::destroy() {
         delete m_instance;
         m_instance = nullptr;
     }
+}
+
+void DialogContact::set_status(Tox::EUSERSTATUS status_code) {
+    Tox::instance().set_status(status_code);
+    //TODO: implement a get_status_icon function
+    switch(status_code) {
+        case Tox::NONE:
+            m_icon_settings.property_pixbuf() = ICON::load_icon(ICON::status_online);
+            break;
+        case Tox::BUSY:
+            m_icon_settings.property_pixbuf() = ICON::load_icon(ICON::status_busy);
+            break;
+        case Tox::AWAY:
+            m_icon_settings.property_pixbuf() = ICON::load_icon(ICON::status_away);
+            break;
+        default:
+             break;
+    }
+    Tox::instance().save(m_config_path);
+}
+
+void DialogContact::exit() {
+    Tox::instance().save(m_config_path);
+    //TODO: ask for confirmation
+    Gtk::Main::quit();
 }

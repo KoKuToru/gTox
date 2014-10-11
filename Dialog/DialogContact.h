@@ -74,6 +74,8 @@ class DialogContact: public Gtk::Window {
         static void destroy();
 
         void activate_chat(Tox::FriendNr nr);
+        void set_status(Tox::EUSERSTATUS status_code);
+        void exit();
 
     protected:
         void detach_chat();
