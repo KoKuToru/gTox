@@ -35,11 +35,13 @@ WidgetContactListItem::WidgetContactListItem(WidgetContact* contact, Tox::Friend
     m_status_msg.set_line_wrap(false);
     m_status_msg.set_ellipsize(Pango::ELLIPSIZE_END);
 
+    m_avatar.set(ICON::load_icon(ICON::avatar));
     m_avatar.set_size_request(64, 64);
     m_avatar.set_margin_top(5);
     m_avatar.set_margin_bottom(5);
     m_avatar.set_margin_left(5);
     m_avatar.set_margin_right(5); //css padding not working ?
+    m_avatar.set_name("Avatar");
 
     m_status_icon.set(ICON::load_icon(ICON::status_offline)->scale_simple(24, 24, Gdk::INTERP_BILINEAR));
     m_status_icon.set_margin_top(5);

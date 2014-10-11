@@ -60,6 +60,7 @@ set(ICONS
     Icons/settings.svg
     Icons/status_online.svg
     Icons/status_offline.svg
+    Icons/avatar.svg
     Icons/status_away.svg)
 add_custom_command(
     OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/Generated/icon.cpp"
