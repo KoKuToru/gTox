@@ -92,7 +92,8 @@ int main(int argc, char *argv[]) {
         Tox::instance().init(config_path);
     }
 
-    DialogContact dialog(config_path);
-    kit.run(dialog);
+    DialogContact::init(config_path);
+    kit.run(DialogContact::instance());
+    DialogContact::destroy();
     return 0;
 }

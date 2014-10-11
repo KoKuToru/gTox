@@ -41,7 +41,7 @@ DialogChat::DialogChat():
     this->set_titlebar(m_header);
 
     //Setup content
-    this->add(m_chat);
+    //this->add(m_chat);
 }
 
 DialogChat::~DialogChat() {
