@@ -76,5 +76,6 @@ Gtk::ListBoxRow& PopoverSettings::create_item(Glib::RefPtr<Gdk::Pixbuf> icon, Gl
     hbox->pack_start(*img, false, false);
     hbox->pack_start(*label, false, true);
     row->add(*hbox);
+    row->set_name("PopoverStatusListItem");
     return *row;
 }

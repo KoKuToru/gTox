@@ -18,7 +18,7 @@
     border-bottom: 1px solid rgba(0,0,0,0.3);
 }
 
-#WidgetContactListItem:selected {
+#WidgetContactListItem:selected, #PopoverStatusListItem:selected {
     background: rgba(0,0,0,0.2);
 }
 
@@ -49,4 +49,8 @@
 
 #WidgetContactListItem #Status {
     font-size: 80%;
+}
+
+#PopoverStatusListItem {
+    border-radius: 5px;
 }
