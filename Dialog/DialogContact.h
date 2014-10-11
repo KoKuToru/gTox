@@ -47,9 +47,10 @@ class DialogContact: public Gtk::Window {
         Gtk::Box       m_headerbar_chat_box_left;
         Gtk::Box       m_headerbar_contact_box_left;
 
+        Gtk::Box       m_chat;
+
         Gtk::VBox      m_vbox;
 
-        WidgetChat m_chat;
         WidgetContact m_contact;
         WidgetNotification m_notification;
 
