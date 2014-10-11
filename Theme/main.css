@@ -38,8 +38,15 @@
     border-radius: 0 2px 15px 0;
 }
 
-#Avatar {
+#WidgetContactListItem #Avatar {
     border-radius: 5px; /*wont cut image ?*/
     border: 2px solid rgba(0,0,0,0.3);
 }
 
+#WidgetContactListItem #Name {
+    font-size: 120%;
+}
+
+#WidgetContactListItem #Status {
+    font-size: 80%;
+}

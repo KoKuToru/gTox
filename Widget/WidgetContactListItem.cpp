@@ -31,9 +31,11 @@ WidgetContactListItem::WidgetContactListItem(WidgetContact* contact, Tox::Friend
 
     m_name.set_line_wrap(false);
     m_name.set_ellipsize(Pango::ELLIPSIZE_END);
+    m_name.set_name("Name");
 
     m_status_msg.set_line_wrap(false);
     m_status_msg.set_ellipsize(Pango::ELLIPSIZE_END);
+    m_status_msg.set_name("Status");
 
     m_avatar.set(ICON::load_icon(ICON::avatar));
     m_avatar.set_size_request(64, 64);
