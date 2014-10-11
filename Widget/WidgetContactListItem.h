@@ -28,8 +28,8 @@ class WidgetContactListItem: public Gtk::ListBoxRow {
     private:
         Gtk::Image  m_avatar;
         Gtk::Label  m_name;
-        Gtk::Label  m_status;
-        Gtk::Image	m_onlineStatus;
+        Gtk::Label  m_status_msg;
+        Gtk::Image  m_status_icon;
 
         Gtk::Grid   m_layout;
 
