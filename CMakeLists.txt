@@ -45,10 +45,10 @@ add_custom_target(
 add_subdirectory(Tools)
 
 set(THEME
-    Theme/default.css)
+    Theme/main.css)
 add_custom_command(
     OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/Generated/theme.cpp"
-    COMMAND "${PROJECT_BINARY_DIR}/Tools/text2h" ICON Generated/theme ${THEME}
+    COMMAND "${PROJECT_BINARY_DIR}/Tools/text2h" THEME Generated/theme ${THEME}
     DEPENDS text2h ${THEME}
     WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
 )
@@ -80,6 +80,7 @@ add_executable(${PROJECT_NAME}
     Widget/WidgetNotification.cpp
     Tox/Tox.cpp
     "${CMAKE_CURRENT_SOURCE_DIR}/Generated/icon.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/Generated/theme.cpp"
 )
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(${PROJECT_NAME} ${GTKMM_LIBRARIES} ${LIBNOTIFYMM_LIBRARIES} "${CMAKE_CURRENT_SOURCE_DIR}/toxcore/build/.libs/libtoxcore.a" -lsodium -lpthread)
