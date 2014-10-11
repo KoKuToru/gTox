@@ -1,0 +1,6 @@
+#WidgetNotification {
+    margin: 1em;
+    background-color: rgb(255, 0, 0);
+    color: rgb(0, 0, 255);
+    border-radius: 0.25em 0.25em 0 0;
+}

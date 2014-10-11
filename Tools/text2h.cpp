@@ -65,6 +65,7 @@ int main(int argc, const char* argv[]) {
     header << "#ifndef " << to_upper(argv[1]) << "_H" << std::endl;
     header << "#define " << to_upper(argv[1]) << "_H" << std::endl << std::endl;
     header << "#include <string>" << std::endl << std::endl;
+    header << "namespace " << argv[1] << " {" << std::endl;
 
     source << "#include \"" << basename(argv[2]) << ".h\"" << std::endl << std::endl;
 
