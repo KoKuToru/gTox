@@ -21,12 +21,10 @@
 #define WIDGETNOTIFICATION_H
 
 #include <gtkmm.h>
-class WidgetNotification: public Gtk::Box {
+class WidgetNotification: public Gtk::Grid {
     private:
         Gtk::Label  m_title;
         Gtk::Label  m_message;
-
-        Gtk::Grid   m_layout;
 
         Gtk::Button m_remove;
         Gtk::Button m_button;

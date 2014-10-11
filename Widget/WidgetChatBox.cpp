@@ -20,17 +20,25 @@
 #include "WidgetChatBox.h"
 
 WidgetChatBox::WidgetChatBox(){
-    m_ScrolledWindow.add(m_TextView);
+    m_ScrolledWindow.add(m_text_view);
     m_ScrolledWindow.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
     m_TextBuffer = Gtk::TextBuffer::create();
     m_TextBuffer->set_text("Hello World!");
-    m_TextView.set_buffer(m_TextBuffer);
+    m_text_view.set_buffer(m_TextBuffer);
     pack_start(m_ScrolledWindow);
 }
 
-void WidgetChatBox::setEditable(bool b){
-    m_TextView.set_editable(b);
+void WidgetChatBox::set_editable(bool b){
+    m_text_view.set_editable(b);
 }
 
 WidgetChatBox::~WidgetChatBox(){
+}
+
+void WidgetChatBox::focus() {
+    m_text_view.grab_focus();
+}
+
+void WidgetChatBox::add_line(const Glib::ustring& text) {
+    m_text_view.get_buffer()->insert(m_text_view.get_buffer()->end(), text);
 }

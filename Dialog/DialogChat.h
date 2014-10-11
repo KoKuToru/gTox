@@ -22,7 +22,7 @@
 
 #include <gtkmm.h>
 
-#include "../Widget/WidgetChat.h"
+#include "Widget/WidgetChat.h"
 
 //Single chat window
 class DialogChat: public Gtk::Window {
@@ -32,8 +32,6 @@ class DialogChat: public Gtk::Window {
         Gtk::Image m_icon_attach;
         Gtk::Button m_btn_xxtach;
 
-        WidgetChat m_chat;
-    
     public:
         DialogChat();
         ~DialogChat();

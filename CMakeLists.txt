@@ -44,6 +44,15 @@ add_custom_target(
 
 add_subdirectory(Tools)
 
+set(THEME
+    Theme/main.css)
+add_custom_command(
+    OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/Generated/theme.cpp"
+    COMMAND "${PROJECT_BINARY_DIR}/Tools/text2h" THEME Generated/theme ${THEME}
+    DEPENDS text2h ${THEME}
+    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+)
+
 set(ICONS
     Icons/chat_attach.svg
     Icons/chat_detach.svg
@@ -51,8 +60,8 @@ set(ICONS
     Icons/settings.svg)
 add_custom_command(
     OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/Generated/icon.cpp"
-    COMMAND "${PROJECT_BINARY_DIR}/Tools/text2h" ICON Generated/icon ${ICONS}
-    DEPENDS text2h ${ICONS}
+    COMMAND "${PROJECT_BINARY_DIR}/Tools/svg2h" ICON Generated/icon ${ICONS}
+    DEPENDS svg2h ${ICONS}
     WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
 )
 
@@ -71,6 +80,8 @@ add_executable(${PROJECT_NAME}
     Widget/WidgetNotification.cpp
     Tox/Tox.cpp
     "${CMAKE_CURRENT_SOURCE_DIR}/Generated/icon.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/Generated/theme.cpp"
 )
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(${PROJECT_NAME} ${GTKMM_LIBRARIES} ${LIBNOTIFYMM_LIBRARIES} "${CMAKE_CURRENT_SOURCE_DIR}/toxcore/build/.libs/libtoxcore.a" -lsodium -lpthread)
 add_dependencies(${PROJECT_NAME} toxcore)

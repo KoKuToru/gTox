@@ -1,0 +1,23 @@
+/*TODO: use border-radius of original window*/
+
+#WidgetNotification {
+    padding: 1em; /* NOT WORKING WHY ?`LOOKS LIKE BUTTONS IGNORE PADDING..*/
+    background-color: rgba(0,0,0,0.3);
+    border-radius: 10px 10px 0 0;
+}
+
+#HeaderBarRight {
+    border-radius: 0 10px 0 0;
+}
+
+#HeaderBarLeft {
+    border-radius: 10px 0 0 0;
+}
+
+#WidgetContactListItem {
+    border-bottom: 1px solid rgba(0,0,0,0.3);
+}
+
+#WidgetContactListItem:selected {
+    background: rgba(0,0,0,0.2);
+}

@@ -18,10 +18,17 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 **/
 #include "WidgetContact.h"
-#include "../Tox/Tox.h"
+#include "Tox/Tox.h"
+#include "Dialog/DialogContact.h"
 
 WidgetContact::WidgetContact() {
     this->add(m_list);//, true, true);
+
+    m_list.set_activate_on_single_click(false);
+    m_list.signal_row_activated().connect([this](Gtk::ListBoxRow* it) {
+        WidgetContactListItem* item = dynamic_cast<WidgetContactListItem*>(it);
+        DialogContact::instance().activate_chat(item->get_friend_nr());
+    });
 }
 
 WidgetContact::~WidgetContact() {

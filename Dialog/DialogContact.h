@@ -22,15 +22,17 @@
 
 #include <gtkmm.h>
 
-#include "../Widget/WidgetChat.h"
-#include "../Widget/WidgetContact.h"
-#include "../Widget/WidgetNotification.h"
+#include "Widget/WidgetChat.h"
+#include "Widget/WidgetContact.h"
+#include "Widget/WidgetNotification.h"
 
 #include "DialogChat.h"
 
 //contact list with pinned chat
 class DialogContact: public Gtk::Window {
     private:
+        static DialogContact* m_instance;
+
         Gtk::Paned     m_header_paned;
         Gtk::HeaderBar m_headerbar_chat;
         Gtk::HeaderBar m_headerbar_contact;
@@ -47,9 +49,10 @@ class DialogContact: public Gtk::Window {
         Gtk::Box       m_headerbar_chat_box_left;
         Gtk::Box       m_headerbar_contact_box_left;
 
+        Gtk::Box       m_chat;
+
         Gtk::VBox      m_vbox;
 
-        WidgetChat m_chat;
         WidgetContact m_contact;
         WidgetNotification m_notification;
 
@@ -59,14 +62,21 @@ class DialogContact: public Gtk::Window {
 
         std::string m_config_path;
 
-    public:
         DialogContact(const std::string& config_path);
+
+    public:
         ~DialogContact();
+        static void init(const std::string& config_path);
+        static DialogContact& instance();
+        static void destroy();
+
+        void activate_chat(Tox::FriendNr nr);
 
     protected:
-        void detachChat();
-
+        void detach_chat();
         bool update();
+        WidgetChat* get_chat(Tox::FriendNr nr);
+
 };
 
 #endif

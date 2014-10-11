@@ -18,7 +18,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 **/
 #include "DialogChat.h"
-#include "../Generated/icon.h"
+#include "Generated/icon.h"
 
 DialogChat::DialogChat():
     m_icon_attach(ICON::load_icon(ICON::chat_attach))
@@ -36,12 +36,12 @@ DialogChat::DialogChat():
 
     m_headerbar_btn_left.get_style_context()->add_class("linked");
     m_headerbar_btn_left.add(m_btn_xxtach);
-    m_header.pack_start(m_headerbar_btn_left);   
-    
+    m_header.pack_start(m_headerbar_btn_left);
+
     this->set_titlebar(m_header);
 
     //Setup content
-    this->add(m_chat);
+    //this->add(m_chat);
 }
 
 DialogChat::~DialogChat() {

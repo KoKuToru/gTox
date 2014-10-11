@@ -30,11 +30,34 @@
 
 #include "Tox/Tox.h"
 
+void print_copyright() {
+    std::clog <<
+        "gTox a GTK-based tox-client - https://github.com/KoKuToru/gTox.git" << std::endl <<
+        std::endl <<
+        "Copyright (C) 2014  Luca Béla Palkovics" << std::endl <<
+        "Copyright (C) 2014  Maurice Mohlek" << std::endl <<
+        std::endl <<
+        "This program is free software: you can redistribute it and/or modify" << std::endl <<
+        "it under the terms of the GNU General Public License as published by" << std::endl <<
+        "the Free Software Foundation, either version 3 of the License, or" << std::endl <<
+        "(at your option) any later version." << std::endl <<
+        std::endl <<
+        "This program is distributed in the hope that it will be useful," << std::endl <<
+        "but WITHOUT ANY WARRANTY; without even the implied warranty of" << std::endl <<
+        "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the" << std::endl <<
+        "GNU General Public License for more details." << std::endl <<
+        std::endl <<
+        "You should have received a copy of the GNU General Public License"<< std::endl <<
+        "along with this program.  If not, see <http://www.gnu.org/licenses/>" << std::endl << std::endl;
+}
+
 int main(int argc, char *argv[]) {
+    print_copyright();
+
     Notify::init("gTox");
 
     Gtk::Main kit(argc, argv);
-	Gtk::Settings::get_default()->property_gtk_application_prefer_dark_theme() = true;
+    Gtk::Settings::get_default()->property_gtk_application_prefer_dark_theme() = true;
     Glib::set_application_name("gTox");
 
     std::string config_path = Glib::build_filename(Glib::get_user_config_dir(), "gTox");
@@ -51,25 +74,26 @@ int main(int argc, char *argv[]) {
 
     if (accounts.empty()) {
         //start new account assistant
-    	FirstStartAssistant assistant(config_path);
-    	kit.run(assistant);
+        FirstStartAssistant assistant(config_path);
+        kit.run(assistant);
 
-    	if(assistant.isAborted()){
-    		return 0;
-    	}
+        if(assistant.isAborted()){
+            return 0;
+        }
 
-    	config_path = assistant.getPath();
+        config_path = assistant.getPath();
     } else if (accounts.size() > 1) {
         //start user select
         //TODO
-    	config_path = Glib::build_filename(config_path, accounts.front());
+        config_path = Glib::build_filename(config_path, accounts.front());
         Tox::instance().init(config_path);
     } else {
         config_path = Glib::build_filename(config_path, accounts.front());
         Tox::instance().init(config_path);
     }
 
-    DialogContact dialog(config_path);
-    kit.run(dialog);
+    DialogContact::init(config_path);
+    kit.run(DialogContact::instance());
+    DialogContact::destroy();
     return 0;
 }

@@ -22,18 +22,25 @@
 
 #include <gtkmm.h>
 #include "WidgetChatBox.h"
+#include "Tox/Tox.h"
 
 //Content of DialogChat
 class WidgetChat: public Gtk::VPaned {
     private:
-        WidgetChatBox input;
-        WidgetChatBox output;
-    
-        Gtk::HBox hbox;
-        Gtk::Button btn_send;
+        Gtk::TextView m_input;
+        WidgetChatBox m_output;
+
+        Gtk::HBox   m_hbox;
+        Gtk::Button m_btn_send;
+
+        Tox::FriendNr m_nr;
     public:
-        WidgetChat();
+        WidgetChat(Tox::FriendNr nr);
         ~WidgetChat();
+
+        Tox::FriendNr get_friend_nr() const;
+        void focus();
+        void add_line(Glib::ustring text);
 };
 
 #endif

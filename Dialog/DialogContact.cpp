@@ -18,11 +18,15 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 **/
 #include "DialogContact.h"
-#include "../Generated/icon.h"
+#include "Generated/icon.h"
 #include <gdkmm.h>
-#include "../Tox/Tox.h"
+#include "Tox/Tox.h"
 #include <iostream>
 #include <libnotifymm.h>
+#include "Generated/theme.h"
+#include <iostream>
+
+DialogContact* DialogContact::m_instance = nullptr;
 
 DialogContact::DialogContact(const std::string &config_path):
     m_icon_attach(ICON::load_icon(ICON::chat_attach)),
@@ -30,11 +34,23 @@ DialogContact::DialogContact(const std::string &config_path):
     m_icon_settings(ICON::load_icon(ICON::settings)),
     m_config_path(config_path)
 {
+    auto css = Gtk::CssProvider::create();
+    if(!css->load_from_data(THEME::main)) {
+        std::cerr << "Failed to load theme\n";
+    } else {
+        auto screen = Gdk::Screen::get_default();
+        auto ctx = get_style_context();
+        ctx->add_provider_for_screen(screen, css, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+    }
+
     this->set_icon(ICON::load_icon(ICON::icon_128));
 
     this->set_border_width(1);
-    this->set_default_geometry(/*300*/800, 600);
+    this->set_default_geometry(300, 600);
     this->set_position(Gtk::WindowPosition::WIN_POS_CENTER);
+
+    m_headerbar_contact.set_name("HeaderBarRight");
+    m_headerbar_chat   .set_name("HeaderBarLeft");
 
     //Setup titlebar
     m_headerbar_contact.set_title("Contacts");
@@ -75,7 +91,7 @@ DialogContact::DialogContact(const std::string &config_path):
                            GBindingFlags(G_BINDING_DEFAULT | G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE));
 
     //events
-    m_btn_xxtach.signal_clicked().connect(sigc::mem_fun(this, &DialogContact::detachChat));
+    m_btn_xxtach.signal_clicked().connect(sigc::mem_fun(this, &DialogContact::detach_chat));
 
     m_contact.load_list();
 
@@ -90,9 +106,12 @@ DialogContact::DialogContact(const std::string &config_path):
     }
     std::cout << std::endl;
 
-    this->show_all();
-
-    m_notification.hide();
+    m_header_paned.show();
+    m_headerbar_contact.show_all();
+    m_contact.show_all();
+    m_paned.show();
+    m_vbox.show();
+    show();
 }
 
 DialogContact::~DialogContact() {
@@ -100,8 +119,8 @@ DialogContact::~DialogContact() {
     Tox::instance().destroy();
 }
 
-void DialogContact::detachChat() {
-    this->property_gravity() = Gdk::GRAVITY_NORTH_WEST;
+void DialogContact::detach_chat() {
+    /*this->property_gravity() = Gdk::GRAVITY_NORTH_WEST;
     int x,y;
     this->get_position(x, y);
     this->property_gravity() = Gdk::GRAVITY_NORTH_EAST;
@@ -116,7 +135,7 @@ void DialogContact::detachChat() {
 
     m_chat_dialog.move(x, y);
     m_chat_dialog.resize(hw, h); //too small why ?
-    m_chat_dialog.show();
+    m_chat_dialog.show();*/
 }
 
 bool DialogContact::update() {
@@ -130,7 +149,15 @@ bool DialogContact::update() {
                 break;
             case Tox::EEventType::FRIENDMESSAGE:
                 std::cout << "FRIENDMESSAGE !" << ev.friend_message.nr << " -> " << ev.friend_message.data << std::endl;
-                Tox::instance().send_message(ev.friend_message.nr, "I read your \""+ev.friend_message.data+"\" message");
+                {
+                    WidgetChat* item = get_chat(ev.friend_message.nr);
+                    if (item == nullptr) {
+                        //open chat.. but don't bring in front
+                        //todo
+                    } else {
+                        item->add_line("other:"+ev.friend_message.data+'\n');
+                    }
+                }
                 break;
             case Tox::EEventType::FRIENDREQUEST:
                 std::cout << "FRIENDREQUEST ! " << ev.friend_request.message << std::endl;
@@ -165,3 +192,88 @@ bool DialogContact::update() {
     }
     return true;
 }
+
+WidgetChat* DialogContact::get_chat(Tox::FriendNr nr) {
+    //TODO check detached windows
+    for(Gtk::Widget* it : m_chat.get_children()) {
+        WidgetChat* item = dynamic_cast<WidgetChat*>(it);
+        if (item->get_friend_nr() == nr) {
+            return item;
+        }
+    }
+    return nullptr;
+}
+
+void DialogContact::activate_chat(Tox::FriendNr nr) {
+    property_gravity() = Gdk::GRAVITY_NORTH_EAST;
+    m_headerbar_chat.show();
+    m_chat.show();
+
+    //1. Search if contact has already a open chat
+    WidgetChat* item = get_chat(nr);
+    if (item != nullptr) {
+        //3. hide all chats
+        for(Gtk::Widget* w : m_chat.get_children()) {
+            w->hide();
+        }
+        //4. make the actual chat visible
+        item->show_all();
+        //5. update headerbard
+        //TODO: add a function Tox::get_name_or_addr() <- will return name or addr as hex
+        //TODO: change function Tox::get_status_message() <- to return "" when empty
+        //TODO: change function Tox::get_name() <- to return "" when empty
+        try {
+            m_headerbar_chat.set_title(Tox::instance().get_name(nr));
+            m_headerbar_chat.set_subtitle(Tox::instance().get_status_message(nr));
+        } catch (...) {
+            m_headerbar_chat.set_title("No username");
+            m_headerbar_chat.set_subtitle("");
+        }
+        //6. change focus to inputfiled
+        item->focus();
+        return;
+    }
+
+    //Create new chat
+    item = Gtk::manage(new WidgetChat(nr));
+    item->show_all();
+
+    //hide all chats
+    for(Gtk::Widget* w : m_chat.get_children()) {
+        w->hide();
+    }
+
+    try {
+        m_headerbar_chat.set_title(Tox::instance().get_name(nr));
+        m_headerbar_chat.set_subtitle(Tox::instance().get_status_message(nr));
+    } catch (...) {
+        m_headerbar_chat.set_title("No username");
+        m_headerbar_chat.set_subtitle("");
+    }
+    //add to window
+    m_chat.pack_start(*item, true, true);
+    //change focus to inputfiled
+    item->focus();
+}
+
+DialogContact& DialogContact::instance() {
+    if (m_instance == nullptr) {
+       throw "Error";
+    }
+    return *m_instance;
+}
+
+void DialogContact::init(const std::string& config_path) {
+    if (m_instance != nullptr) {
+        destroy();
+    }
+    m_instance = new DialogContact(config_path);
+}
+
+void DialogContact::destroy() {
+    if (m_instance != nullptr) {
+        delete m_instance;
+        m_instance = nullptr;
+    }
+}
+

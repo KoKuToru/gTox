@@ -19,15 +19,22 @@
 **/
 #include "WidgetContactListItem.h"
 #include "WidgetContact.h"
-#include "../Tox/Tox.h"
+#include "Tox/Tox.h"
 
 WidgetContactListItem::WidgetContactListItem(WidgetContact* contact, Tox::FriendNr nr): m_contact(contact), m_friend_nr(nr) {
-	try {
+    set_name("WidgetContactListItem");
+    try {
         m_name.set_text(Tox::instance().get_name(nr));
         m_status.set_text(Tox::instance().get_status_message(nr));
     } catch (...) {
-    	m_name.set_text(Tox::to_hex(Tox::instance().get_address(nr).data(), 32));
+        m_name.set_text(Tox::to_hex(Tox::instance().get_address(nr).data(), 32));
     }
+
+    m_name.set_line_wrap(false);
+    m_name.set_ellipsize(Pango::ELLIPSIZE_END);
+
+    m_status.set_line_wrap(false);
+    m_status.set_ellipsize(Pango::ELLIPSIZE_END);
 
     m_avatar.set_size_request(64, 64);
 

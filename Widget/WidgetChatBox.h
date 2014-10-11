@@ -21,17 +21,22 @@
 #define WIDGETCHATBOX_H
 
 #include <gtkmm.h>
+#include "Tox/Tox.h"
 
+class WidgetChat;
 class WidgetChatBox: public Gtk::Box{
     private:
         Gtk::ScrolledWindow m_ScrolledWindow;
-        Gtk::TextView m_TextView;
+        Gtk::TextView m_text_view;
         Glib::RefPtr<Gtk::TextBuffer> m_TextBuffer;
     public:
-        void setEditable(bool b);
+        void set_editable(bool b);
+        void focus();
 
         WidgetChatBox();
         ~WidgetChatBox();
+
+        void add_line(const Glib::ustring& text);
 };
 
 #endif
