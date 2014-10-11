@@ -182,6 +182,7 @@ bool DialogContact::update() {
                 break;
             case Tox::EEventType::USERSTATUS:
                 std::cout << "USERSTATUS !" << ev.user_status.nr << " -> " << ev.user_status.data << std::endl;
+                m_contact.refresh_contact(ev.user_status.nr);
                 break;
         }
     }
