@@ -22,6 +22,7 @@
 #include "Tox/Tox.h"
 
 WidgetContactListItem::WidgetContactListItem(WidgetContact* contact, Tox::FriendNr nr): m_contact(contact), m_friend_nr(nr) {
+    set_name("WidgetContactListItem");
     try {
         m_name.set_text(Tox::instance().get_name(nr));
         m_status.set_text(Tox::instance().get_status_message(nr));

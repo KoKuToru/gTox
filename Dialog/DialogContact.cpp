@@ -23,6 +23,8 @@
 #include "Tox/Tox.h"
 #include <iostream>
 #include <libnotifymm.h>
+#include "Generated/theme.h"
+#include <iostream>
 
 DialogContact::DialogContact(const std::string &config_path):
     m_icon_attach(ICON::load_icon(ICON::chat_attach)),
@@ -30,11 +32,23 @@ DialogContact::DialogContact(const std::string &config_path):
     m_icon_settings(ICON::load_icon(ICON::settings)),
     m_config_path(config_path)
 {
+    auto css = Gtk::CssProvider::create();
+    if(!css->load_from_data(THEME::main)) {
+        std::cerr << "Failed to load theme\n";
+    } else {
+        auto screen = Gdk::Screen::get_default();
+        auto ctx = get_style_context();
+        ctx->add_provider_for_screen(screen, css, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+    }
+
     this->set_icon(ICON::load_icon(ICON::icon_128));
 
     this->set_border_width(1);
     this->set_default_geometry(/*300*/800, 600);
     this->set_position(Gtk::WindowPosition::WIN_POS_CENTER);
+
+    m_headerbar_contact.set_name("HeaderBarRight");
+    m_headerbar_chat   .set_name("HeaderBarLeft");
 
     //Setup titlebar
     m_headerbar_contact.set_title("Contacts");

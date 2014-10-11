@@ -21,18 +21,33 @@
 #include <libnotifymm.h>
 
 WidgetNotification::WidgetNotification(){
+    set_name("WidgetNotification");
+
+    //not working with css ? why ?
+    m_remove.set_margin_left(5);
+    m_remove.set_margin_right(5);
+    m_remove.set_margin_top(5);
+    m_remove.set_margin_bottom(5);
+
+    m_button.set_margin_left(5);
+    m_button.set_margin_right(5);
+    m_button.set_margin_top(5);
+    m_button.set_margin_bottom(5);
+
     m_remove.set_label("X");
-    m_layout.attach(m_remove, 0, 0, 1, 2);
-    m_layout.attach(m_button, 1, 0, 1, 2);
-    m_layout.attach(m_title, 2, 0, 1, 1);
-    m_layout.attach(m_message, 2, 1, 1, 1);
+    attach(m_remove, 3, 0, 1, 2);
+    attach(m_button, 1, 0, 1, 2);
+    attach(m_title, 2, 0, 1, 1);
+    attach(m_message, 2, 1, 1, 1);
+    m_title.set_hexpand(true);
 
     m_title.set_halign(Gtk::Align::ALIGN_START);
     m_message.set_halign(Gtk::Align::ALIGN_START);
 
-    m_button.signal_clicked().connect(sigc::mem_fun(this, &WidgetNotification::on_button_clicked));
+    m_title.set_text("Placeholder");
+    m_message.set_text("Placeholder");
 
-    this->pack_start(m_layout, Gtk::PACK_EXPAND_WIDGET, 5);
+    m_button.signal_clicked().connect(sigc::mem_fun(this, &WidgetNotification::on_button_clicked));
 }
 
 WidgetNotification::~WidgetNotification() {
