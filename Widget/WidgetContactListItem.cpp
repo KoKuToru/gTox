@@ -30,6 +30,12 @@ WidgetContactListItem::WidgetContactListItem(WidgetContact* contact, Tox::Friend
         m_name.set_text(Tox::to_hex(Tox::instance().get_address(nr).data(), 32));
     }
 
+    m_name.set_line_wrap(false);
+    m_name.set_ellipsize(Pango::ELLIPSIZE_END);
+
+    m_status.set_line_wrap(false);
+    m_status.set_ellipsize(Pango::ELLIPSIZE_END);
+
     m_avatar.set_size_request(64, 64);
 
     m_layout.attach(m_avatar, 0, 0, 1, 2);
