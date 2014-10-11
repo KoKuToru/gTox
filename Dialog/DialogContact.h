@@ -75,6 +75,7 @@ class DialogContact: public Gtk::Window {
     protected:
         void detach_chat();
         bool update();
+        WidgetChat* get_chat(Tox::FriendNr nr);
 
 };
 
