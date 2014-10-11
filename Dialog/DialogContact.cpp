@@ -149,7 +149,15 @@ bool DialogContact::update() {
                 break;
             case Tox::EEventType::FRIENDMESSAGE:
                 std::cout << "FRIENDMESSAGE !" << ev.friend_message.nr << " -> " << ev.friend_message.data << std::endl;
-                Tox::instance().send_message(ev.friend_message.nr, "I read your \""+ev.friend_message.data+"\" message");
+                {
+                    WidgetChat* item = get_chat(ev.friend_message.nr);
+                    if (item == nullptr) {
+                        //open chat.. but don't bring in front
+                        //todo
+                    } else {
+                        item->add_line("other:"+ev.friend_message.data+'\n');
+                    }
+                }
                 break;
             case Tox::EEventType::FRIENDREQUEST:
                 std::cout << "FRIENDREQUEST ! " << ev.friend_request.message << std::endl;
@@ -185,43 +193,49 @@ bool DialogContact::update() {
     return true;
 }
 
-void DialogContact::activate_chat(Tox::FriendNr nr) {
+WidgetChat* DialogContact::get_chat(Tox::FriendNr nr) {
     //TODO check detached windows
+    for(Gtk::Widget* it : m_chat.get_children()) {
+        WidgetChat* item = dynamic_cast<WidgetChat*>(it);
+        if (item->get_friend_nr() == nr) {
+            return item;
+        }
+    }
+    return nullptr;
+}
 
+void DialogContact::activate_chat(Tox::FriendNr nr) {
     property_gravity() = Gdk::GRAVITY_NORTH_EAST;
     m_headerbar_chat.show();
     m_chat.show();
 
     //1. Search if contact has already a open chat
-    for(Gtk::Widget* it : m_chat.get_children()) {
-        WidgetChat* item = dynamic_cast<WidgetChat*>(it);
-        //2. check if same nr
-        if (item->get_friend_nr() == nr) {
-            //3. hide all chats
-            for(Gtk::Widget* w : m_chat.get_children()) {
-                w->hide();
-            }
-            //4. make the actual chat visible
-            item->show_all();
-            //5. update headerbard
-            //TODO: add a function Tox::get_name_or_addr() <- will return name or addr as hex
-            //TODO: change function Tox::get_status_message() <- to return "" when empty
-            //TODO: change function Tox::get_name() <- to return "" when empty
-            try {
-                m_headerbar_chat.set_title(Tox::instance().get_name(nr));
-                m_headerbar_chat.set_subtitle(Tox::instance().get_status_message(nr));
-            } catch (...) {
-                m_headerbar_chat.set_title("No username");
-                m_headerbar_chat.set_subtitle("");
-            }
-            //6. change focus to inputfiled
-            item->focus();
-            return;
+    WidgetChat* item = get_chat(nr);
+    if (item != nullptr) {
+        //3. hide all chats
+        for(Gtk::Widget* w : m_chat.get_children()) {
+            w->hide();
         }
+        //4. make the actual chat visible
+        item->show_all();
+        //5. update headerbard
+        //TODO: add a function Tox::get_name_or_addr() <- will return name or addr as hex
+        //TODO: change function Tox::get_status_message() <- to return "" when empty
+        //TODO: change function Tox::get_name() <- to return "" when empty
+        try {
+            m_headerbar_chat.set_title(Tox::instance().get_name(nr));
+            m_headerbar_chat.set_subtitle(Tox::instance().get_status_message(nr));
+        } catch (...) {
+            m_headerbar_chat.set_title("No username");
+            m_headerbar_chat.set_subtitle("");
+        }
+        //6. change focus to inputfiled
+        item->focus();
+        return;
     }
 
     //Create new chat
-    WidgetChat* item = Gtk::manage(new WidgetChat(nr));
+    item = Gtk::manage(new WidgetChat(nr));
     item->show_all();
 
     //hide all chats

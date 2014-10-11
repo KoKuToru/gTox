@@ -21,7 +21,9 @@
 #define WIDGETCHATBOX_H
 
 #include <gtkmm.h>
+#include "Tox/Tox.h"
 
+class WidgetChat;
 class WidgetChatBox: public Gtk::Box{
     private:
         Gtk::ScrolledWindow m_ScrolledWindow;
@@ -33,6 +35,8 @@ class WidgetChatBox: public Gtk::Box{
 
         WidgetChatBox();
         ~WidgetChatBox();
+
+        void add_line(const Glib::ustring& text);
 };
 
 #endif

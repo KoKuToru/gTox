@@ -27,7 +27,7 @@
 //Content of DialogChat
 class WidgetChat: public Gtk::VPaned {
     private:
-        WidgetChatBox m_input;
+        Gtk::TextView m_input;
         WidgetChatBox m_output;
 
         Gtk::HBox   m_hbox;
@@ -40,6 +40,7 @@ class WidgetChat: public Gtk::VPaned {
 
         Tox::FriendNr get_friend_nr() const;
         void focus();
+        void add_line(Glib::ustring text);
 };
 
 #endif
