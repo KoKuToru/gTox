@@ -19,20 +19,28 @@
 **/
 #include "WidgetChat.h"
 
-WidgetChat::WidgetChat(){
-    output.setEditable(false);
-    pack1(output, true, false);
+WidgetChat::WidgetChat(Tox::FriendNr nr): m_nr(nr) {
+    m_output.set_editable(false);
+    pack1(m_output, true, false);
     //pack2(input, false, true);
-   
-    btn_send.set_label("Send");
 
-    hbox.pack_start(input, true, true);
-    hbox.pack_end(btn_send, false, false);
-    pack2(hbox, false, false);
+    m_btn_send.set_label("Send");
+
+    m_hbox.pack_start(m_input, true, true);
+    m_hbox.pack_end(m_btn_send, false, false);
+    pack2(m_hbox, false, false);
 
     set_position(400);
 }
 
 WidgetChat::~WidgetChat() {
 
+}
+
+void WidgetChat::focus() {
+    m_input.focus();
+}
+
+Tox::FriendNr WidgetChat::get_friend_nr() const {
+    return m_nr;
 }

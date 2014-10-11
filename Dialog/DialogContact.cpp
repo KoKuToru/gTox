@@ -26,6 +26,8 @@
 #include "Generated/theme.h"
 #include <iostream>
 
+DialogContact* DialogContact::m_instance = nullptr;
+
 DialogContact::DialogContact(const std::string &config_path):
     m_icon_attach(ICON::load_icon(ICON::chat_attach)),
     m_icon_detach(ICON::load_icon(ICON::chat_detach)),
@@ -89,7 +91,7 @@ DialogContact::DialogContact(const std::string &config_path):
                            GBindingFlags(G_BINDING_DEFAULT | G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE));
 
     //events
-    m_btn_xxtach.signal_clicked().connect(sigc::mem_fun(this, &DialogContact::detachChat));
+    m_btn_xxtach.signal_clicked().connect(sigc::mem_fun(this, &DialogContact::detach_chat));
 
     m_contact.load_list();
 
@@ -117,8 +119,8 @@ DialogContact::~DialogContact() {
     Tox::instance().destroy();
 }
 
-void DialogContact::detachChat() {
-    this->property_gravity() = Gdk::GRAVITY_NORTH_WEST;
+void DialogContact::detach_chat() {
+    /*this->property_gravity() = Gdk::GRAVITY_NORTH_WEST;
     int x,y;
     this->get_position(x, y);
     this->property_gravity() = Gdk::GRAVITY_NORTH_EAST;
@@ -133,7 +135,7 @@ void DialogContact::detachChat() {
 
     m_chat_dialog.move(x, y);
     m_chat_dialog.resize(hw, h); //too small why ?
-    m_chat_dialog.show();
+    m_chat_dialog.show();*/
 }
 
 bool DialogContact::update() {
@@ -182,3 +184,82 @@ bool DialogContact::update() {
     }
     return true;
 }
+
+void DialogContact::activate_chat(Tox::FriendNr nr) {
+    //TODO check detached windows
+
+    property_gravity() = Gdk::GRAVITY_NORTH_EAST;
+    m_headerbar_chat.show();
+    m_chat.show();
+
+    //1. Search if contact has already a open chat
+    for(Gtk::Widget* it : m_chat.get_children()) {
+        WidgetChat* item = dynamic_cast<WidgetChat*>(it);
+        //2. check if same nr
+        if (item->get_friend_nr() == nr) {
+            //3. hide all chats
+            for(Gtk::Widget* w : m_chat.get_children()) {
+                w->hide();
+            }
+            //4. make the actual chat visible
+            item->show_all();
+            //5. update headerbard
+            //TODO: add a function Tox::get_name_or_addr() <- will return name or addr as hex
+            //TODO: change function Tox::get_status_message() <- to return "" when empty
+            //TODO: change function Tox::get_name() <- to return "" when empty
+            try {
+                m_headerbar_chat.set_title(Tox::instance().get_name(nr));
+                m_headerbar_chat.set_subtitle(Tox::instance().get_status_message(nr));
+            } catch (...) {
+                m_headerbar_chat.set_title("No username");
+                m_headerbar_chat.set_subtitle("");
+            }
+            //6. change focus to inputfiled
+            item->focus();
+            return;
+        }
+    }
+
+    //Create new chat
+    WidgetChat* item = Gtk::manage(new WidgetChat(nr));
+    item->show_all();
+
+    //hide all chats
+    for(Gtk::Widget* w : m_chat.get_children()) {
+        w->hide();
+    }
+
+    try {
+        m_headerbar_chat.set_title(Tox::instance().get_name(nr));
+        m_headerbar_chat.set_subtitle(Tox::instance().get_status_message(nr));
+    } catch (...) {
+        m_headerbar_chat.set_title("No username");
+        m_headerbar_chat.set_subtitle("");
+    }
+    //add to window
+    m_chat.pack_start(*item, true, true);
+    //change focus to inputfiled
+    item->focus();
+}
+
+DialogContact& DialogContact::instance() {
+    if (m_instance == nullptr) {
+       throw "Error";
+    }
+    return *m_instance;
+}
+
+void DialogContact::init(const std::string& config_path) {
+    if (m_instance != nullptr) {
+        destroy();
+    }
+    m_instance = new DialogContact(config_path);
+}
+
+void DialogContact::destroy() {
+    if (m_instance != nullptr) {
+        delete m_instance;
+        m_instance = nullptr;
+    }
+}
+

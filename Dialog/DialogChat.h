@@ -32,8 +32,6 @@ class DialogChat: public Gtk::Window {
         Gtk::Image m_icon_attach;
         Gtk::Button m_btn_xxtach;
 
-        WidgetChat m_chat;
-
     public:
         DialogChat();
         ~DialogChat();
