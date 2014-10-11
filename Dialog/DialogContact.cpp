@@ -18,9 +18,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 **/
 #include "DialogContact.h"
-#include "../Generated/icon.h"
+#include "Generated/icon.h"
 #include <gdkmm.h>
-#include "../Tox/Tox.h"
+#include "Tox/Tox.h"
 #include <iostream>
 #include <libnotifymm.h>
 

@@ -22,9 +22,9 @@
 
 #include <gtkmm.h>
 
-#include "../Widget/WidgetChat.h"
-#include "../Widget/WidgetContact.h"
-#include "../Widget/WidgetNotification.h"
+#include "Widget/WidgetChat.h"
+#include "Widget/WidgetContact.h"
+#include "Widget/WidgetNotification.h"
 
 #include "DialogChat.h"
 
