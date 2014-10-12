@@ -23,7 +23,8 @@
 #include <gtkmm.h>
 class PopoverAddContact: public Gtk::Popover {
     private:
-
+        Gtk::Entry m_addr;
+        Gtk::TextView m_msg;
     public:
         PopoverAddContact(const Widget& relative_to);
         ~PopoverAddContact();

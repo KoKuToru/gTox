@@ -194,7 +194,7 @@ bool DialogContact::update() {
             case Tox::EEventType::FRIENDREQUEST:
                 std::cout << "FRIENDREQUEST ! " << ev.friend_request.message << std::endl;
                 m_notification.add_notification("Friend request [Addr in future]", ev.friend_request.message, "Accept", [this, ev]() {
-                    m_contact.add_contact(Tox::instance().add_friend_norequest(ev.friend_request.addr));
+                    add_contact(Tox::instance().add_friend_norequest(ev.friend_request.addr));
                     Tox::instance().save(m_config_path);
                 });
                 break;
@@ -224,6 +224,11 @@ bool DialogContact::update() {
         Tox::instance().save(m_config_path);
     }
     return true;
+}
+
+void DialogContact::add_contact(Tox::FriendNr nr) {
+    m_contact.add_contact(nr);
+    Tox::instance().save(m_config_path);
 }
 
 WidgetChat* DialogContact::get_chat(Tox::FriendNr nr) {

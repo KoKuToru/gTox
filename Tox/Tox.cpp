@@ -19,6 +19,7 @@
 **/
 #include "Tox.h"
 #include <fstream>
+#include <string>
 
 std::recursive_mutex Tox::m_mtx;
 Tox* Tox::m_instance = nullptr;
@@ -514,4 +515,13 @@ Glib::ustring Tox::to_hex(const unsigned char* data, size_t len){
         s += hex[data[i] & 0xF];
     }
     return s;
+}
+
+std::vector<unsigned char> Tox::from_hex(std::string data) {
+    std::vector<unsigned char> tmp;
+    tmp.reserve(tmp.size()/2);
+    for(size_t i = 0; i < data.size(); i+=2) {
+        tmp.push_back(std::stoi(data.substr(i, 2), 0, 16)); //pretty stupid
+    }
+    return tmp;
 }

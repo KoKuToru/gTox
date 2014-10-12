@@ -144,6 +144,7 @@ class Tox {
         Tox::FriendAddr get_address(Tox::FriendNr nr);
 
         static Glib::ustring to_hex(const unsigned char* data, size_t len);
+        static std::vector<unsigned char> from_hex(std::string data);
 
     protected:
         std::deque<SEvent> events;

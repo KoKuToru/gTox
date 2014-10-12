@@ -21,8 +21,45 @@
 #include "Generated/icon.h"
 #include "Dialog/DialogContact.h"
 
+#include <iostream>
+
 PopoverAddContact::PopoverAddContact(const Widget& relative_to): Gtk::Popover(relative_to) {
-    add_label("Add a contact..");
+    auto grid = Gtk::manage(new Gtk::Grid());
+    auto label1 = new Gtk::Label("Tox ID");
+    auto label2 = new Gtk::Label("Message");
+    auto btn_add = new Gtk::Button("Add");
+    m_addr.set_size_request(400);
+    m_msg.set_size_request(400, 200);
+    m_msg.set_wrap_mode(Gtk::WRAP_WORD_CHAR);
+    grid->attach(*label1, 0, 0, 1, 1);
+    grid->attach(*label2, 0, 1, 1, 1);
+    grid->attach(m_addr, 1, 0, 1, 1);
+    grid->attach(m_msg , 1, 1, 1, 1);
+    grid->attach(*btn_add , 1, 2, 1, 1);
+    grid->show_all();
+    add(*grid);
+
+    btn_add->signal_clicked().connect([this](){
+        std::cout << m_addr.get_text().length() << std::endl;
+        if (m_addr.get_text().length() != 76) {
+            //TODO error message
+            std::cout << "ERROR2" << std::endl;
+            return;
+        }
+        try {
+            Tox::FriendAddr adr;
+            auto adr_c = Tox::from_hex(m_addr.get_text());
+            std::copy(adr_c.begin(), adr_c.end(), adr.begin());
+            DialogContact::instance().add_contact(Tox::instance().add_friend(adr, m_msg.get_buffer()->get_text()));
+
+            m_addr.set_text("");
+            m_msg.get_buffer()->set_text("");
+            set_visible(false);
+        } catch (...) {
+            //TODO: Error handling
+            std::cout << "ERROR" << std::endl;
+        }
+    });
 }
 
 PopoverAddContact::~PopoverAddContact() {
