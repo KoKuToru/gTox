@@ -34,7 +34,8 @@ DialogContact::DialogContact(const std::string &config_path):
     m_icon_settings(ICON::load_icon(ICON::settings)),
     m_icon_status(ICON::load_icon(ICON::status_offline)),
     m_config_path(config_path),
-    m_popover_status(m_btn_status)
+    m_popover_status(m_btn_status),
+    m_popover_settings(m_btn_settings)
 {
     auto css = Gtk::CssProvider::create();
     if(!css->load_from_data(THEME::main)) {
@@ -86,6 +87,10 @@ DialogContact::DialogContact(const std::string &config_path):
 
     m_btn_status.signal_clicked().connect([this]() {
         m_popover_status.set_visible(true);
+    });
+
+    m_btn_settings.signal_clicked().connect([this]() {
+        m_popover_settings.set_visible(true);
     });
 
     this->set_titlebar(m_header_paned);
