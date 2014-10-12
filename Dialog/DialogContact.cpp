@@ -312,3 +312,10 @@ void DialogContact::exit() {
     //TODO: ask for confirmation
     Gtk::Main::quit();
 }
+
+void DialogContact::change_name(Glib::ustring name, Glib::ustring msg) {
+    Tox::instance().set_name(name);
+    Tox::instance().set_status_message(msg);
+    m_headerbar_contact.set_title(Tox::instance().get_name_or_address());
+    m_headerbar_contact.set_subtitle(Tox::instance().get_status_message());
+}

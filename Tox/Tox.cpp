@@ -343,6 +343,16 @@ Glib::ustring Tox::get_status_message(FriendNr nr) {
     return name;
 }
 
+void Tox::set_status_message(Glib::ustring msg) {
+    std::lock_guard<std::recursive_mutex> lg(m_mtx);
+    if (m_tox == nullptr) {
+        throw Exception(UNITIALIZED);
+    }
+    if(tox_set_status_message(m_tox, reinterpret_cast<const unsigned char*>(msg.data()), msg.bytes()) != 0) {
+        throw Exception(FAILED);
+    }
+}
+
 bool Tox::is_connected() {
     std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {

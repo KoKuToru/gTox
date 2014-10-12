@@ -100,7 +100,7 @@ void FirstStartAssistant::on_close(){
 
         Glib::ustring sMyAddr = Tox::to_hex(myAddr.data(), 32);
         Tox::instance().set_name(create.getEntryName().get_text());
-        //Tox::instance().set_status("Powered by gTox");
+        Tox::instance().set_status_message("Powered by gTox");
         path = Glib::build_filename(path, sMyAddr + ".state");
         Tox::instance().save(path);
     }
