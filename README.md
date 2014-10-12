@@ -14,7 +14,7 @@ Check "How to build"
 
 How to build
 ============
-First read `https://github.com/irungentoo/toxcore/blob/master/INSTALL.md`.
+First read <a href="https://github.com/irungentoo/toxcore/blob/master/INSTALL.md">`https://github.com/irungentoo/toxcore/blob/master/INSTALL.md`</a>.<br />
 This project will download and compile toxcore.
 Make sure you have all dependencys.
 
