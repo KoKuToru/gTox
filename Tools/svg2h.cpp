@@ -65,18 +65,28 @@ int main(int argc, const char* argv[]) {
     header << "#ifndef " << to_upper(argv[1]) << "_H" << std::endl;
     header << "#define " << to_upper(argv[1]) << "_H" << std::endl << std::endl;
     header << "#include <string>" << std::endl << std::endl;
+    header << "#include <map>" << std::endl << std::endl;
     header << "#include <gtkmm.h>" << std::endl << std::endl;
     header << "namespace " << argv[1] << " {" << std::endl;
-    header << "    Glib::RefPtr<Gdk::Pixbuf> load_icon(const std::string data);" << std::endl;
+    header << "    Glib::RefPtr<Gdk::Pixbuf> load_icon(const std::string& data);" << std::endl;
 
 
     source << "#include \"" << basename(argv[2]) << ".h\"" << std::endl << std::endl;
 
-    source << "Glib::RefPtr<Gdk::Pixbuf> ICON::load_icon(const std::string data){" << std::endl;
-    source << "    auto tmp = Gio::MemoryInputStream::create();" << std::endl;
-    source << "    tmp->add_data(data);" << std::endl;
-    source << "    return Gdk::Pixbuf::create_from_stream(tmp);" << std::endl;
-    source << "}" << std::endl;
+    source << R"rawstring(
+    Glib::RefPtr<Gdk::Pixbuf> ICON::load_icon(const std::string& data){
+        static std::map<const std::string*, Glib::RefPtr<Gdk::Pixbuf>> cache;
+        auto cache_iter = cache.find(&data);
+
+        if (cache_iter != cache.end()) {
+            return cache_iter->second;
+        }
+
+        auto tmp = Gio::MemoryInputStream::create();
+        tmp->add_data(data);
+        return cache.insert({&data, Gdk::Pixbuf::create_from_stream(tmp)}).first->second;
+    })rawstring";
+    source << std::endl << std::endl;
 
     for(int i = 3; i < argc; ++i) {
         std::ifstream input(argv[i]);
