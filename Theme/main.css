@@ -4,6 +4,7 @@
 
 GtkFrame {
     background-color: @theme_base_color;
+    border: none;
 }
 
 GtkPopover {
@@ -50,7 +51,7 @@ GtkHeaderBar GtkButton:hover {
 #WidgetChatLineRight {
     padding: 1em;
     background-color: rgba(0,0,0,0.2);
-    border-radius: 2px 0 0 15px;
+    border-radius: 5px 0px 0px 30px;
 }
 
 #WidgetChatLineLeft {

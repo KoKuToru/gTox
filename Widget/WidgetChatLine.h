@@ -27,6 +27,9 @@ class WidgetChatLine: public Gtk::Frame {
         bool m_side;
 
         Gtk::VBox m_vbox;
+        Gtk::Image m_avatar;
+
+        void on_size_allocate (Gtk::Allocation& allocation);
 
     public:
         WidgetChatLine(bool side);
