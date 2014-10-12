@@ -28,6 +28,7 @@ class WidgetContact: public Gtk::ScrolledWindow {
     private:
         Gtk::ListBox m_list;
 
+        bool on_button_press(GdkEventButton* event);
     public:
         WidgetContact();
         ~WidgetContact();
