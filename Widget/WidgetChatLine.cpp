@@ -60,18 +60,21 @@ void WidgetChatLine::add_line(unsigned long long timestamp, const Glib::ustring&
     m_vbox.add(*label);
     label->show();
 
-    queue_draw(); //<- wont redraw last line ?
+    queue_draw();
 }
 
 void WidgetChatLine::on_size_allocate(Gtk::Allocation& allocation) {
     Gtk::Frame::on_size_allocate(allocation);
     int h = allocation.get_height();
     auto ic = ICON::load_icon(ICON::avatar);
+    h -= 30; //(10 padding 5 margin)*2
     if (h < ic->get_height()) {
         m_avatar.property_pixbuf() = ICON::load_icon(ICON::avatar)->scale_simple(h, h, Gdk::INTERP_BILINEAR);
     } else {
         //TODO check if already done..
+        h = ic->get_height();
         m_avatar.property_pixbuf() = ICON::load_icon(ICON::avatar);
         m_avatar.set_valign(Gtk::Align::ALIGN_START);
     }
+    //somehow need to force to redraw avatar ?
 }
