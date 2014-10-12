@@ -33,6 +33,7 @@ DialogContact::DialogContact(const std::string &config_path):
     m_icon_detach(ICON::load_icon(ICON::chat_detach)),
     m_icon_settings(ICON::load_icon(ICON::settings)),
     m_icon_status(ICON::load_icon(ICON::status_offline)),
+    m_icon_add(ICON::load_icon(ICON::plus)),
     m_config_path(config_path),
     m_popover_status(m_btn_status),
     m_popover_settings(m_btn_settings)
@@ -76,11 +77,17 @@ DialogContact::DialogContact(const std::string &config_path):
     m_headerbar_contact_box_left.add(m_btn_status);
     m_headerbar_contact.pack_start(m_headerbar_contact_box_left);
 
+    //Add button
+    m_btn_add.set_image(m_icon_add);
+    m_headerbar_contact_box_right.add(m_btn_add);
+
     //Settings button
     m_btn_settings.set_image(m_icon_settings);
     m_headerbar_contact_box_right.get_style_context()->add_class("linked");
     m_headerbar_contact_box_right.add(m_btn_settings);
     m_headerbar_contact.pack_end(m_headerbar_contact_box_right);
+
+
 
     m_header_paned.pack1(m_headerbar_chat  , true, false);
     m_header_paned.pack2(m_headerbar_contact, false, false);
