@@ -39,6 +39,25 @@ class Tox {
         typedef int ReceiptNr;
         typedef std::array<unsigned char, TOX_FRIEND_ADDRESS_SIZE> FriendAddr;
 
+        enum EError {
+            UNITIALIZED,
+            LOADERROR,
+            BOOTERROR,
+            FILEERROR,
+            FAILED,
+            MSGTOOLONG,
+            MSGEMPTY,
+            CANTADDYOURSELF,
+            ALREADYSENT,
+            BADCHECKSUM,
+            NOSPAM
+        };
+
+        struct Exception {
+             const EError code;
+             Exception(const EError code): code(code) {}
+        };
+
         enum EEventType {
             FRIENDREQUEST,
             FRIENDMESSAGE,
@@ -81,17 +100,6 @@ class Tox {
             SFriendBool typing_change;
             SFriendInt user_status;
             SFriendInt readreceipt;
-        };
-
-        enum EFAERR {
-            TOOLONG = TOX_FAERR_TOOLONG,
-            NOMESSAGE = TOX_FAERR_NOMESSAGE,
-            OWNKEY = TOX_FAERR_OWNKEY,
-            ALREADYSENT = TOX_FAERR_ALREADYSENT,
-            UNKNOWN = TOX_FAERR_UNKNOWN,
-            BADCHECKSUM = TOX_FAERR_BADCHECKSUM,
-            SETNEWNOSPAM = TOX_FAERR_SETNEWNOSPAM,
-            NOMEM = TOX_FAERR_NOMEM
         };
 
         enum EUSERSTATUS {
