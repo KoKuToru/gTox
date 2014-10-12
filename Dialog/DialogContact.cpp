@@ -25,6 +25,7 @@
 #include <libnotifymm.h>
 #include "Generated/theme.h"
 #include <iostream>
+#include <glibmm/i18n.h>
 
 DialogContact* DialogContact::m_instance = nullptr;
 
@@ -41,7 +42,7 @@ DialogContact::DialogContact(const std::string &config_path):
 {
     auto css = Gtk::CssProvider::create();
     if(!css->load_from_data(THEME::main)) {
-        std::cerr << "Failed to load theme\n";
+        std::cerr << _("Failed to load theme") << std::endl;
     } else {
         auto screen = Gdk::Screen::get_default();
         auto ctx = get_style_context();
@@ -143,7 +144,7 @@ DialogContact::DialogContact(const std::string &config_path):
 
     m_btn_status.set_sensitive(false);
 
-    m_notification.add_notification("PreAlpha Software", "Not ready yet", "Okay", []() {
+    m_notification.add_notification(_("PreAlpha Software"), _("Not ready yet"), "Okay", []() {
         //nothing
     });
 }

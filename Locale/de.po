@@ -1,0 +1,9 @@
+
+msgid "Failed to load theme"
+msgstr "Theme konnte nicht geladen werden"
+
+msgid "Not ready yet"
+msgstr "Noch nicht fertig"
+
+msgid "PreAlpha Software"
+msgstr "Preα Software"
