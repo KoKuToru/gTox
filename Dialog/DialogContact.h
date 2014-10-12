@@ -27,6 +27,7 @@
 #include "Widget/WidgetNotification.h"
 #include "Popover/PopoverStatus.h"
 #include "Popover/PopoverSettings.h"
+#include "Popover/PopoverAddContact.h"
 
 #include "DialogChat.h"
 
@@ -71,6 +72,7 @@ class DialogContact: public Gtk::Window {
 
         PopoverStatus   m_popover_status;
         PopoverSettings m_popover_settings;
+        PopoverAddContact m_popover_add;
 
         DialogContact(const std::string& config_path);
 

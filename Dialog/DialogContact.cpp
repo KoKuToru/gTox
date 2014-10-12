@@ -36,7 +36,8 @@ DialogContact::DialogContact(const std::string &config_path):
     m_icon_add(ICON::load_icon(ICON::plus)),
     m_config_path(config_path),
     m_popover_status(m_btn_status),
-    m_popover_settings(m_btn_settings)
+    m_popover_settings(m_btn_settings),
+    m_popover_add(m_btn_add)
 {
     auto css = Gtk::CssProvider::create();
     if(!css->load_from_data(THEME::main)) {
@@ -87,8 +88,6 @@ DialogContact::DialogContact(const std::string &config_path):
     m_headerbar_contact_box_right.add(m_btn_settings);
     m_headerbar_contact.pack_end(m_headerbar_contact_box_right);
 
-
-
     m_header_paned.pack1(m_headerbar_chat  , true, false);
     m_header_paned.pack2(m_headerbar_contact, false, false);
 
@@ -98,6 +97,10 @@ DialogContact::DialogContact(const std::string &config_path):
 
     m_btn_settings.signal_clicked().connect([this]() {
         m_popover_settings.set_visible(true);
+    });
+
+    m_btn_add.signal_clicked().connect([this]() {
+        m_popover_add.set_visible(true);
     });
 
     this->set_titlebar(m_header_paned);
