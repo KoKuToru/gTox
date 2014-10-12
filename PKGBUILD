@@ -34,9 +34,9 @@ package()
 	cd ${pkgname%-git}
 	#maybe put this into cmakelists
 	mkdir -p ${pkgdir}/usr/bin
-	cp build/gTox ${pkgdir}/usr/bin/gTox
-	mkdir -p ${pkgdir}/share/applications
-	cp gTox.desktop ${pkgdir}/share/applications/gTox.desktop
-	mkdir -p ${pkgdir}/share/icons/hicolor/scalable/apps
-	cp Icons/icon.svg ${pkgdir}/share/icons/hicolor/scalable/apps/gTox.svg
+	install -m 0755 build/gTox ${pkgdir}/usr/bin/gTox
+	mkdir -p ${pkgdir}/usr/share/applications
+	install -m 644 gTox.desktop ${pkgdir}/usr/share/applications/gTox.desktop
+	mkdir -p ${pkgdir}/usr/share/icons/hicolor/scalable/apps
+	install -m 644 Icons/icon.svg ${pkgdir}/usr/share/icons/hicolor/scalable/apps/gTox.svg
 }
