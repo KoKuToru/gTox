@@ -21,7 +21,7 @@
 #define WIDGETNOTIFICATION_H
 
 #include <gtkmm.h>
-class WidgetNotification: public Gtk::Grid {
+class WidgetNotification: public Gtk::Frame {
     private:
         Gtk::Label  m_title;
         Gtk::Label  m_message;

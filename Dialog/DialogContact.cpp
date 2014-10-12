@@ -142,6 +142,10 @@ DialogContact::DialogContact(const std::string &config_path):
     show();
 
     m_btn_status.set_sensitive(false);
+
+    m_notification.add_notification("PreAlpha Software", "Not ready yet", "Okay", []() {
+        //nothing
+    });
 }
 
 DialogContact::~DialogContact() {
@@ -193,7 +197,7 @@ bool DialogContact::update() {
                 break;
             case Tox::EEventType::FRIENDREQUEST:
                 std::cout << "FRIENDREQUEST ! " << ev.friend_request.message << std::endl;
-                m_notification.add_notification("Friend request [Addr in future]", ev.friend_request.message, "Accept", [this, ev]() {
+                m_notification.add_notification("Friend request ["+ Tox::to_hex(ev.friend_request.addr.data(), 32) +"]", ev.friend_request.message, "Accept", [this, ev]() {
                     add_contact(Tox::instance().add_friend_norequest(ev.friend_request.addr));
                     Tox::instance().save(m_config_path);
                 });
@@ -217,6 +221,7 @@ bool DialogContact::update() {
             case Tox::EEventType::USERSTATUS:
                 std::cout << "USERSTATUS !" << ev.user_status.nr << " -> " << ev.user_status.data << std::endl;
                 m_contact.refresh_contact(ev.user_status.nr);
+                save = true;
                 break;
         }
     }
