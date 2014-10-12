@@ -24,26 +24,25 @@
 PopoverStatus::PopoverStatus(const Widget& relative_to): Gtk::Popover(relative_to) {
     //add_label("Settings");
 
-    auto listbox = Gtk::manage(new Gtk::ListBox());
-    listbox->add(create_item(ICON::load_icon(ICON::status_online), "Online"));
-    listbox->add(create_item(ICON::load_icon(ICON::status_busy), "Busy"));
-    listbox->add(create_item(ICON::load_icon(ICON::status_away), "Away"));
-    listbox->add(create_item(ICON::load_icon(ICON::status_offline), "Exit"));
-    listbox->show_all();
-    add(*listbox);
+    m_listbox.add(create_item(ICON::load_icon(ICON::status_online), "Online"));
+    m_listbox.add(create_item(ICON::load_icon(ICON::status_busy), "Busy"));
+    m_listbox.add(create_item(ICON::load_icon(ICON::status_away), "Away"));
+    m_listbox.add(create_item(ICON::load_icon(ICON::status_offline), "Exit"));
+    m_listbox.show_all();
+    add(m_listbox);
 
     //signal handling
-    listbox->signal_row_activated().connect([this](Gtk::ListBoxRow* row) {
+    m_listbox.signal_row_activated().connect([this](Gtk::ListBoxRow* row) {
 
        switch (row->get_index()) {
            case 0:
                DialogContact::instance().set_status(Tox::NONE);
                break;
            case 1:
-               DialogContact::instance().set_status(Tox::AWAY);
+               DialogContact::instance().set_status(Tox::BUSY);
                break;
            case 2:
-               DialogContact::instance().set_status(Tox::BUSY);
+               DialogContact::instance().set_status(Tox::AWAY);
                break;
            case 3:
                DialogContact::instance().exit();
@@ -78,4 +77,29 @@ Gtk::ListBoxRow& PopoverStatus::create_item(Glib::RefPtr<Gdk::Pixbuf> icon, Glib
     row->add(*hbox);
     row->set_name("PopoverStatusListItem");
     return *row;
+}
+
+void PopoverStatus::set_visible(bool visible) {
+    Gtk::Popover::set_visible(visible);
+
+    //update selection
+    if (!visible) {
+        return;
+    }
+
+    int select = 3;
+    switch(Tox::instance().get_status()) {
+        case Tox::NONE:
+            select = 0;
+            break;
+        case Tox::BUSY:
+            select = 1;
+            break;
+        case Tox::AWAY:
+            select = 2;
+            break;
+        default:
+            break;
+    }
+    m_listbox.select_row(*m_listbox.get_row_at_index(select));
 }
