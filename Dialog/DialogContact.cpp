@@ -33,7 +33,7 @@ DialogContact::DialogContact(const std::string &config_path):
     m_icon_detach(ICON::load_icon(ICON::chat_detach)),
     m_icon_settings(ICON::load_icon(ICON::status_offline)),
     m_config_path(config_path),
-    m_settings_popover(m_btn_settings)
+    m_popover_status(m_btn_status)
 {
     auto css = Gtk::CssProvider::create();
     if(!css->load_from_data(THEME::main)) {
@@ -68,17 +68,17 @@ DialogContact::DialogContact(const std::string &config_path):
     m_headerbar_chat_box_left.add(m_btn_xxtach);
     m_headerbar_chat.pack_start(m_headerbar_chat_box_left);
 
-    m_btn_settings.set_image(m_icon_settings);
+    m_btn_status.set_image(m_icon_settings);
 
     m_headerbar_contact_box_left.get_style_context()->add_class("linked");
-    m_headerbar_contact_box_left.add(m_btn_settings);
+    m_headerbar_contact_box_left.add(m_btn_status);
     m_headerbar_contact.pack_start(m_headerbar_contact_box_left);
 
     m_header_paned.pack1(m_headerbar_chat  , true, false);
     m_header_paned.pack2(m_headerbar_contact, false, false);
 
-    m_btn_settings.signal_clicked().connect([this]() {
-        m_settings_popover.set_visible(true);
+    m_btn_status.signal_clicked().connect([this]() {
+        m_popover_status.set_visible(true);
     });
 
     this->set_titlebar(m_header_paned);
@@ -119,7 +119,7 @@ DialogContact::DialogContact(const std::string &config_path):
     m_vbox.show();
     show();
 
-    m_btn_settings.set_sensitive(false);
+    m_btn_status.set_sensitive(false);
 }
 
 DialogContact::~DialogContact() {
@@ -147,8 +147,8 @@ void DialogContact::detach_chat() {
 }
 
 bool DialogContact::update() {
-    if (!m_btn_settings.get_sensitive() && Tox::instance().is_connected()) {
-        m_btn_settings.set_sensitive(true);
+    if (!m_btn_status.get_sensitive() && Tox::instance().is_connected()) {
+        m_btn_status.set_sensitive(true);
         set_status(Tox::instance().get_status());
     }
     Tox::SEvent ev;

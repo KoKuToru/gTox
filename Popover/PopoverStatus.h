@@ -17,17 +17,17 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 **/
-#ifndef WIDGETPOPOVERSETTINGS_H
-#define WIDGETPOPOVERSETTINGS_H
+#ifndef WIDGETPOPOVERSTATUS_H
+#define WIDGETPOPOVERSTATUS_H
 
 #include <gtkmm.h>
-class PopoverSettings: public Gtk::Popover {
+class PopoverStatus: public Gtk::Popover {
     private:
         Gtk::ListBoxRow& create_item(Glib::RefPtr<Gdk::Pixbuf> icon, Glib::ustring text);
 
     public:
-        PopoverSettings(const Widget& relative_to);
-        ~PopoverSettings();
+        PopoverStatus(const Widget& relative_to);
+        ~PopoverStatus();
 };
 
 #endif

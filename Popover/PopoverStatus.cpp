@@ -17,11 +17,11 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 **/
-#include "PopoverSettings.h"
+#include "PopoverStatus.h"
 #include "Generated/icon.h"
 #include "Dialog/DialogContact.h"
 
-PopoverSettings::PopoverSettings(const Widget& relative_to): Gtk::Popover(relative_to) {
+PopoverStatus::PopoverStatus(const Widget& relative_to): Gtk::Popover(relative_to) {
     //add_label("Settings");
 
     auto listbox = Gtk::manage(new Gtk::ListBox());
@@ -53,11 +53,11 @@ PopoverSettings::PopoverSettings(const Widget& relative_to): Gtk::Popover(relati
     });
 }
 
-PopoverSettings::~PopoverSettings() {
+PopoverStatus::~PopoverStatus() {
 
 }
 
-Gtk::ListBoxRow& PopoverSettings::create_item(Glib::RefPtr<Gdk::Pixbuf> icon, Glib::ustring text) {
+Gtk::ListBoxRow& PopoverStatus::create_item(Glib::RefPtr<Gdk::Pixbuf> icon, Glib::ustring text) {
     auto row   = Gtk::manage(new Gtk::ListBoxRow());
     auto hbox  = Gtk::manage(new Gtk::HBox());
     auto label = Gtk::manage(new Gtk::Label(text));
