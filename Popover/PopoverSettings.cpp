@@ -20,13 +20,14 @@
 #include "PopoverSettings.h"
 #include "Generated/icon.h"
 #include "Dialog/DialogContact.h"
+#include "Dialog/Debug/DialogCss.h"
 
 PopoverSettings::PopoverSettings(const Widget& relative_to): Gtk::Popover(relative_to) {
     auto grid = Gtk::manage(new Gtk::Grid());
     auto label1 = new Gtk::Label("Username");
     auto label2 = new Gtk::Label("Message");
     //auto btn_about = new Gtk::Button("About");
-
+    auto btn_debug = new Gtk::Button("Css Debug");
     grid->set_column_homogeneous(false);
     grid->set_row_spacing(5);
     grid->set_column_spacing(10);
@@ -35,16 +36,12 @@ PopoverSettings::PopoverSettings(const Widget& relative_to): Gtk::Popover(relati
     grid->attach(m_name, 1, 0, 1, 1);
     grid->attach(m_msg , 1, 1, 1, 1);
     //grid->attach(*btn_about , 0, 2, 2, 1);
+    grid->attach(*btn_debug , 0, 2, 2, 1);
     grid->show_all();
     add(*grid);
 
     m_name.set_size_request(300);
     m_msg.set_size_request(300);
-
-    grid->set_margin_top(5);
-    grid->set_margin_bottom(5);
-    grid->set_margin_left(5);
-    grid->set_margin_right(5);
 
     label1->set_halign(Gtk::ALIGN_START);
     label2->set_halign(Gtk::ALIGN_START);
@@ -57,6 +54,11 @@ PopoverSettings::PopoverSettings(const Widget& relative_to): Gtk::Popover(relati
 
     m_msg.signal_changed().connect([this]() {
         DialogContact::instance().change_name(m_name.get_text(), m_msg.get_text());
+    });
+
+    btn_debug->signal_clicked().connect([this]() {
+        static DialogCss dialog;
+        dialog.show();
     });
 }
 

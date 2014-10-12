@@ -1,18 +1,38 @@
-/*TODO: use border-radius of original window*/
+* > GtkWindow {
+    border-radius: 15px 15px 0 0;
+}
+
+GtkFrame {
+    background-color: @theme_base_color;
+}
+
+GtkPopover {
+    padding: 0.5em;
+}
+
+GtkHeaderBar GtkButton {
+   background: transparent;
+   border: none;
+}
+
+GtkHeaderBar GtkButton:hover {
+    background: rgba(0,0,0,0.3);
+}
 
 #WidgetNotification {
     padding: 1em; /* NOT WORKING WHY ?`LOOKS LIKE BUTTONS IGNORE PADDING..*/
-    background-color: rgba(0,0,0,0.3);
+    background-color: @info_bg_color;
+    color: @info_fg_color;
     border-radius: 10px 10px 0 0;
 }
 
-#HeaderBarRight {
-    border-radius: 0 10px 0 0;
+/*#HeaderBarRight {
+    background-color: transparent;
 }
 
 #HeaderBarLeft {
-    border-radius: 10px 0 0 0;
-}
+    background-color: transparent;
+}*/
 
 #WidgetContactListItem {
     border-bottom: 1px solid rgba(0,0,0,0.3);
@@ -28,29 +48,43 @@
 
 #WidgetChatLineRight {
     padding: 1em;
-    background-color: rgba(0,0,0,0.3);
+    background-color: rgba(0,0,0,0.2);
     border-radius: 2px 0 0 15px;
 }
 
 #WidgetChatLineLeft {
     padding: 1em;
-    background-color: rgba(0,0,0,0.3);
+    background-color: rgba(0,0,0,0.2);
     border-radius: 0 2px 15px 0;
 }
 
+#WidgetContactListItem {
+	padding: 5px;
+}
+
 #WidgetContactListItem #Avatar {
-    border-radius: 5px; /*wont cut image ?*/
-    border: 2px solid rgba(0,0,0,0.3);
+    padding: 4px
 }
 
 #WidgetContactListItem #Name {
     font-size: 120%;
+    padding: 5px;
 }
 
 #WidgetContactListItem #Status {
     font-size: 80%;
+    padding: 5px;
+}
+
+#WidgetContactListItem #StatusIcon {
+    padding-left: 5px;
+    padding-right: 5px;
 }
 
 #PopoverStatusListItem {
     border-radius: 5px;
 }
+
+
+
+

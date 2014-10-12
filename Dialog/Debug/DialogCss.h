@@ -17,23 +17,26 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 **/
-#ifndef WIDGETCHATLINE_H
-#define WIDGETCHATLINE_H
+#ifndef DIALOGCSS_H
+#define DIALOGCSS_H
 
 #include <gtkmm.h>
 
-class WidgetChatLine: public Gtk::Frame {
+
+//Single chat window
+class DialogCss: public Gtk::Window {
     private:
-        bool m_side;
+        Gtk::HeaderBar m_header;
+        Gtk::Box m_headerbar_btn_left;
 
-        Gtk::VBox m_vbox;
+        Gtk::TextView m_text;
 
+        Glib::RefPtr<Gtk::CssProvider> m_last;
     public:
-        WidgetChatLine(bool side);
-        ~WidgetChatLine();
+        DialogCss();
+        ~DialogCss();
 
-        bool get_side();
-        void add_line(unsigned long long timestamp, const Glib::ustring& message);
+        void show();
 };
 
 #endif

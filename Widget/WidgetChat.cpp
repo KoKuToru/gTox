@@ -26,7 +26,9 @@ WidgetChat::WidgetChat(Tox::FriendNr nr): m_nr(nr) {
     m_output.set_editable(false);
     m_scrolled.add(m_vbox);
     m_vbox.set_spacing(5);
-    pack1(m_scrolled, true, false);
+    auto frame = Gtk::manage(new Gtk::Frame());
+    frame->add(m_scrolled);
+    pack1(*frame, true, false);
     //pack2(input, false, true);
 
     m_btn_send.set_label("Send");

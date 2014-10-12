@@ -38,17 +38,10 @@ WidgetContactListItem::WidgetContactListItem(WidgetContact* contact, Tox::Friend
     m_status_msg.set_name("Status");
 
     m_avatar.set(ICON::load_icon(ICON::avatar)->scale_simple(64, 64, Gdk::INTERP_BILINEAR)); //i would like to resize this depending on font-scale settings
-    m_avatar.set_margin_top(5);
-    m_avatar.set_margin_bottom(5);
-    m_avatar.set_margin_left(5);
-    m_avatar.set_margin_right(5); //css padding not working ?
     m_avatar.set_name("Avatar");
 
     m_status_icon.set(ICON::load_icon(ICON::status_offline));
-    m_status_icon.set_margin_top(5);
-    m_status_icon.set_margin_bottom(5);
-    m_status_icon.set_margin_left(11);
-    m_status_icon.set_margin_right(5);
+    m_status_icon.set_name("StatusIcon");
 
     m_layout.attach(m_status_icon, 0, 0, 1, 2);
     m_layout.attach(m_name, 1, 0, 1, 1);
