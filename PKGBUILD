@@ -2,17 +2,17 @@
 
 pkgrel=1
 pkgver=20141012
-pkgname=('gTox-git')
-pkgdesc="gTox a GTK-based tox-client"
+pkgname=('gtox-git')
+pkgdesc="a GTK-based tox-client"
 url="https://github.com/KoKuToru/gTox.git"
 license='GPL3'
 arch=('i686' 'x86_64')
 depends=('gtkmm3' 'libnotifymm' 'libconfig' 'libsodium' 'libvpx' 'opus')
 makedepends=('check' 'git' 'cmake')
-source=("${pkgname%-git}::git+https://github.com/KoKuToru/gTox.git")
-sha256sums=('SKIP')
-provides=('gTox')
-conflicts=('gTox')
+source=(.AURINFO "${pkgname%-git}::git+https://github.com/KoKuToru/gTox.git")
+sha256sums=('SKIP' 'SKIP')
+provides=('gtox')
+conflicts=('gtox')
 
 pkgver()
 {
@@ -32,6 +32,11 @@ build()
 package()
 {
 	cd ${pkgname%-git}
-	cd build
-	cp gTox /usr/bin/
+	#maybe put this into cmakelists
+	mkdir -p ${pkgdir}/usr/bin
+	cp build/gTox ${pkgdir}/usr/bin/gTox
+	mkdir -p ${pkgdir}/share/applications
+	cp gTox.desktop ${pkgdir}/share/applications/gTox.desktop
+	mkdir -p ${pkgdir}/share/icons/hicolor/scalable/apps
+	cp Icons/icon.svg ${pkgdir}/share/icons/hicolor/scalable/apps/gTox.svg
 }
