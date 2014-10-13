@@ -8,15 +8,20 @@ Archlinux
 ```bash
 yaourt gtox-git
 ```
-Linux, Mac, Windows
+Linux
 ------------
-Check "How to build"
+Check "How to build" and `make install`
+
+Mac, Windows
+------------
+No idea. Somehow get dependencies installed.
+*Good luck.*
 
 How to build
 ============
 First read <a href="https://github.com/irungentoo/toxcore/blob/master/INSTALL.md">`https://github.com/irungentoo/toxcore/blob/master/INSTALL.md`</a>.<br />
 This project will download and compile `toxcore`.
-Make sure you have all dependencys.
+Make sure you have all dependencies.
 
 ```bash
 mkdir build
@@ -25,7 +30,7 @@ cmake ..
 make
 ```
 
-Linux Dependecy
+Linux Dependencies
 -----------
 `gtkmm3`, `libnotifymm`, `librsvg`
 
