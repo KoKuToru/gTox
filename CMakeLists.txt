@@ -63,8 +63,8 @@ set(ICONS
     Icons/status_busy.svg
     Icons/avatar.svg
     Icons/plus.svg
-    Icons/status_away.svg
-    Icons/remove.svg)
+    Icons/remove.svg
+    Icons/status_away.svg)
 add_custom_command(
     OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/Generated/icon.cpp"
     COMMAND "${PROJECT_BINARY_DIR}/Tools/svg2h" ICON Generated/icon ${ICONS}
@@ -101,6 +101,9 @@ add_executable(${PROJECT_NAME}
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(${PROJECT_NAME} ${GTKMM_LIBRARIES} ${LIBNOTIFYMM_LIBRARIES} "${CMAKE_CURRENT_SOURCE_DIR}/toxcore/build/.libs/libtoxcore.a" -lsodium -lpthread)
 add_dependencies(${PROJECT_NAME} toxcore)
+install(PROGRAMS "${PROJECT_BINARY_DIR}/${PROJECT_NAME}"
+        DESTINATION bin
+        PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ WORLD_EXECUTE WORLD_READ)
 
 SET(TRANSLATIONS
     de
@@ -112,8 +115,11 @@ add_custom_command(
    TARGET ${PROJECT_NAME}
    PRE_BUILD
    COMMAND mkdir -p Locale/${_trans}/LC_MESSAGES
-   COMMAND msgfmt "${CMAKE_CURRENT_SOURCE_DIR}/Locale/${_trans}.po" -o Locale/${_trans}/LC_MESSAGES/gTox.mo
+   COMMAND msgfmt "${CMAKE_CURRENT_SOURCE_DIR}/Locale/${_trans}.po" -o "${PROJECT_BINARY_DIR}/Locale/${_trans}/LC_MESSAGES/gTox.mo"
    DEPENDS Locale/${_trans}.po)
+   install(DIRECTORY "${PROJECT_BINARY_DIR}/Locale/${_trans}"
+           DESTINATION share/locale
+           FILE_PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)
 endforeach()
 
 add_custom_command(
