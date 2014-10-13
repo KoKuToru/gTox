@@ -1,7 +1,7 @@
 # Maintainer: Luca Béla Palkovics <luca.bela.palkovics@gmail.com>
 
 pkgrel=1
-pkgver=20141012
+pkgver=20141013
 pkgname=('gtox-git')
 pkgdesc="a GTK-based tox-client"
 url="https://github.com/KoKuToru/gTox.git"
@@ -25,18 +25,13 @@ build()
     cd ${pkgname%-git}
     mkdir build
     cd build
-    cmake ..
+    cmake -DCMAKE_INSTALL_PREFIX:PATH=${pkgdir}/usr .. 
     make
 }
 
 package()
 {
 	cd ${pkgname%-git}
-	#maybe put this into cmakelists
-	mkdir -p ${pkgdir}/usr/bin
-	install -m 0755 build/gTox ${pkgdir}/usr/bin/gTox
-	mkdir -p ${pkgdir}/usr/share/applications
-	install -m 644 gTox.desktop ${pkgdir}/usr/share/applications/gTox.desktop
-	mkdir -p ${pkgdir}/usr/share/icons/hicolor/scalable/apps
-	install -m 644 Icons/icon.svg ${pkgdir}/usr/share/icons/hicolor/scalable/apps/gTox.svg
+	cd build
+	make install
 }
