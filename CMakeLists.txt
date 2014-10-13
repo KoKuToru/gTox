@@ -12,7 +12,7 @@ link_directories(
 include_directories(
     ${GTKMM_INCLUDE_DIRS} ${LIBNOTIFYMM_INCLUDE_DIRS})
 
-#if(NOT SUBMODULES_INITED)
+if(NOT SUBMODULES_INITED)
   execute_process(
     COMMAND git submodule init
     WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
@@ -22,9 +22,9 @@ include_directories(
     WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
   )
   set(SUBMODULES_INITED TRUE CACHE BOOL "Are submodules pulled ?" FORCE)
-#endif()
+endif()
 
-#if(NOT TOXCORE_INITED)
+if(NOT TOXCORE_INITED)
   execute_process(
     COMMAND ./autogen.sh
     WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/toxcore"
@@ -34,7 +34,7 @@ include_directories(
     WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/toxcore"
   )
   set(TOXCORE_INITED TRUE CACHE BOOL "Is toxcore configured ?" FORCE)
-#endif()
+endif()
 
 add_custom_target(
    toxcore
@@ -121,6 +121,49 @@ add_custom_command(
            DESTINATION share/locale
            FILE_PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)
 endforeach()
+
+#Application icon
+SET(SIZES
+    14x14
+    16x16
+    22x22
+    24x24
+    32x32
+    36x36
+    48x48
+    64x64
+    72x72
+    96x96
+    128x128
+    192x192
+    256x256
+    512x512
+)
+foreach(_size ${SIZES})
+    add_custom_command(
+        COMMENT "Generate Icon '${_size}'"
+        TARGET ${PROJECT_NAME}
+        COMMAND mkdir -p "${PROJECT_BINARY_DIR}/share/icons/hicolor/${_size}/apps"
+        COMMAND convert Icons/icon.svg -resize ${_size} "${PROJECT_BINARY_DIR}/share/icons/hicolor/${_size}/apps/gTox.png"
+        PRE_BUILD
+        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+        DEPENDS Icons/icon.svg)
+    install(DIRECTORY "${PROJECT_BINARY_DIR}/share/icons/hicolor/${_size}"
+           DESTINATION share/icons/hicolor
+           FILE_PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)
+endforeach()
+
+add_custom_command(
+    COMMENT "Generate Icon 'scalable'"
+    TARGET ${PROJECT_NAME}
+    COMMAND mkdir -p "${PROJECT_BINARY_DIR}/share/icons/hicolor/scalable/apps"
+    COMMAND cp Icons/icon.svg "${PROJECT_BINARY_DIR}/share/icons/hicolor/scalable/apps/gTox.svg"
+    PRE_BUILD
+    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+    DEPENDS Icons/icon.svg)
+install(DIRECTORY "${PROJECT_BINARY_DIR}/share/icons/hicolor/scalable"
+    DESTINATION share/icons/hicolor
+    FILE_PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)
 
 add_custom_command(
    COMMENT "Generate pot file"
