@@ -87,6 +87,7 @@ class DialogContact: public Gtk::Window {
         void exit();
         void add_contact(Tox::FriendNr nr);
         void change_name(Glib::ustring name, Glib::ustring msg);
+        void delete_friend(Tox::FriendNr nr);
 
     protected:
         void detach_chat();
