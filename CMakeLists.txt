@@ -12,7 +12,7 @@ link_directories(
 include_directories(
     ${GTKMM_INCLUDE_DIRS} ${LIBNOTIFYMM_INCLUDE_DIRS})
 
-if(NOT SUBMODULES_INITED)
+#if(NOT SUBMODULES_INITED)
   execute_process(
     COMMAND git submodule init
     WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
@@ -22,9 +22,9 @@ if(NOT SUBMODULES_INITED)
     WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
   )
   set(SUBMODULES_INITED TRUE CACHE BOOL "Are submodules pulled ?" FORCE)
-endif()
+#endif()
 
-if(NOT TOXCORE_INITED)
+#if(NOT TOXCORE_INITED)
   execute_process(
     COMMAND ./autogen.sh
     WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/toxcore"
@@ -34,7 +34,7 @@ if(NOT TOXCORE_INITED)
     WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/toxcore"
   )
   set(TOXCORE_INITED TRUE CACHE BOOL "Is toxcore configured ?" FORCE)
-endif()
+#endif()
 
 add_custom_target(
    toxcore
@@ -43,8 +43,34 @@ add_custom_target(
 )
 
 add_subdirectory(Tools)
-add_subdirectory(Theme)
-add_subdirectory(Icons)
+
+set(THEME
+    Theme/main.css)
+add_custom_command(
+    OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/Generated/theme.cpp"
+    COMMAND "${PROJECT_BINARY_DIR}/Tools/text2h" THEME Generated/theme ${THEME}
+    DEPENDS text2h ${THEME}
+    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+)
+
+set(ICONS
+    Icons/chat_attach.svg
+    Icons/chat_detach.svg
+    Icons/icon_128.svg
+    Icons/settings.svg
+    Icons/status_online.svg
+    Icons/status_offline.svg
+    Icons/status_busy.svg
+    Icons/avatar.svg
+    Icons/plus.svg
+    Icons/remove.svg
+    Icons/status_away.svg)
+add_custom_command(
+    OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/Generated/icon.cpp"
+    COMMAND "${PROJECT_BINARY_DIR}/Tools/svg2h" ICON Generated/icon ${ICONS}
+    DEPENDS svg2h ${ICONS}
+    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+)
 
 set(SOURCES
     main.cpp
@@ -79,7 +105,22 @@ install(PROGRAMS "${PROJECT_BINARY_DIR}/${PROJECT_NAME}"
         DESTINATION bin
         PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ WORLD_EXECUTE WORLD_READ)
 
-add_subdirectory(Locale)
+SET(TRANSLATIONS
+    de
+)
+
+foreach(_trans ${TRANSLATIONS})
+add_custom_command(
+   COMMENT "Generate Locale '${_trans}'"
+   TARGET ${PROJECT_NAME}
+   PRE_BUILD
+   COMMAND mkdir -p Locale/${_trans}/LC_MESSAGES
+   COMMAND msgfmt "${CMAKE_CURRENT_SOURCE_DIR}/Locale/${_trans}.po" -o "${PROJECT_BINARY_DIR}/Locale/${_trans}/LC_MESSAGES/gTox.mo"
+   DEPENDS Locale/${_trans}.po)
+   install(DIRECTORY "${PROJECT_BINARY_DIR}/Locale/${_trans}"
+           DESTINATION share/locale
+           FILE_PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)
+endforeach()
 
 add_custom_command(
    COMMENT "Generate pot file"
