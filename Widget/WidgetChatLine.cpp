@@ -18,14 +18,27 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 **/
 #include "WidgetChatLine.h"
-
+#include "Generated/icon.h"
 WidgetChatLine::WidgetChatLine(bool left_side) : m_side(left_side) {
+
     this->set_halign(m_side?Gtk::Align::ALIGN_START:Gtk::Align::ALIGN_END);
-    add(m_vbox);
+    auto hbox = Gtk::manage(new Gtk::HBox());
+    add(*hbox);
+    if (m_side) {
+        m_avatar.set_halign(Gtk::Align::ALIGN_START);
+        hbox->add(m_avatar);
+    }
+    hbox->add(m_vbox);
+    if (!m_side) {
+        m_avatar.set_halign(Gtk::Align::ALIGN_END);
+        hbox->add(m_avatar);
+    }
     m_vbox.set_spacing(5);
 
+    m_avatar.set_name("Avatar");
+
     this->set_name(m_side?"WidgetChatLineLeft":"WidgetChatLineRight");
-    set_size_request(200);
+    set_size_request(500);
 }
 
 WidgetChatLine::~WidgetChatLine(){
@@ -47,15 +60,21 @@ void WidgetChatLine::add_line(unsigned long long timestamp, const Glib::ustring&
     m_vbox.add(*label);
     label->show();
 
-    queue_draw(); //<- wont redraw last line ?
+    queue_draw();
 }
 
-/*void WidgetChatLine::on_size_allocate(Gtk::Allocation& allocation) {
-    //force a redraw
-    Glib::RefPtr<Gdk::Window> win = get_window();
-    if (win)
-    {
-        Gdk::Rectangle r(allocation.get_x(), allocation.get_y(), allocation.get_width(), allocation.get_height());
-        win->invalidate_rect(r, true);
+void WidgetChatLine::on_size_allocate(Gtk::Allocation& allocation) {
+    Gtk::Frame::on_size_allocate(allocation);
+    int h = allocation.get_height();
+    auto ic = ICON::load_icon(ICON::avatar);
+    h -= 30; //(10 padding 5 margin)*2
+    if (h < ic->get_height()) {
+        m_avatar.property_pixbuf() = ICON::load_icon(ICON::avatar)->scale_simple(h, h, Gdk::INTERP_BILINEAR);
+    } else {
+        //TODO check if already done..
+        h = ic->get_height();
+        m_avatar.property_pixbuf() = ICON::load_icon(ICON::avatar);
+        m_avatar.set_valign(Gtk::Align::ALIGN_START);
     }
-}*/
+    //somehow need to force to redraw avatar ?
+}

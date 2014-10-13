@@ -27,6 +27,7 @@
 #include "Dialog/DialogContact.h"
 #include "Dialog/FirstStartAssistant.h"
 #include <libnotifymm.h>
+#include <glibmm/i18n.h>
 
 #include "Tox/Tox.h"
 
@@ -52,6 +53,12 @@ void print_copyright() {
 }
 
 int main(int argc, char *argv[]) {
+    if (Glib::file_test("./Locale", Glib::FILE_TEST_IS_DIR)) {
+        bindtextdomain("gTox", "./Locale");
+    }
+    bind_textdomain_codeset("gTox", "UTF-8");
+    textdomain("gTox");
+
     print_copyright();
 
     Notify::init("gTox");

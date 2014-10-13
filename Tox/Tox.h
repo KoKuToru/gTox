@@ -139,6 +139,7 @@ class Tox {
         Glib::ustring get_name_or_address();
         Glib::ustring get_name_or_address(FriendNr nr);
         Glib::ustring get_status_message();
+        void set_status_message(Glib::ustring msg);
         Glib::ustring get_status_message(FriendNr nr);
         EUSERSTATUS get_status();
         EUSERSTATUS get_status(FriendNr nr);

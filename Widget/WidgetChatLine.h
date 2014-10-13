@@ -22,11 +22,14 @@
 
 #include <gtkmm.h>
 
-class WidgetChatLine: public Gtk::Box {
+class WidgetChatLine: public Gtk::Frame {
     private:
         bool m_side;
 
         Gtk::VBox m_vbox;
+        Gtk::Image m_avatar;
+
+        void on_size_allocate (Gtk::Allocation& allocation);
 
     public:
         WidgetChatLine(bool side);

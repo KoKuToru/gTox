@@ -25,6 +25,7 @@
 #include <libnotifymm.h>
 #include "Generated/theme.h"
 #include <iostream>
+#include <glibmm/i18n.h>
 
 DialogContact* DialogContact::m_instance = nullptr;
 
@@ -41,7 +42,7 @@ DialogContact::DialogContact(const std::string &config_path):
 {
     auto css = Gtk::CssProvider::create();
     if(!css->load_from_data(THEME::main)) {
-        std::cerr << "Failed to load theme\n";
+        std::cerr << _("Failed to load theme") << std::endl;
     } else {
         auto screen = Gdk::Screen::get_default();
         auto ctx = get_style_context();
@@ -142,6 +143,10 @@ DialogContact::DialogContact(const std::string &config_path):
     show();
 
     m_btn_status.set_sensitive(false);
+
+    m_notification.add_notification(_("PreAlpha Software"), _("Not ready yet"), "Okay", []() {
+        //nothing
+    });
 }
 
 DialogContact::~DialogContact() {
@@ -193,7 +198,7 @@ bool DialogContact::update() {
                 break;
             case Tox::EEventType::FRIENDREQUEST:
                 std::cout << "FRIENDREQUEST ! " << ev.friend_request.message << std::endl;
-                m_notification.add_notification("Friend request [Addr in future]", ev.friend_request.message, "Accept", [this, ev]() {
+                m_notification.add_notification("Friend request ["+ Tox::to_hex(ev.friend_request.addr.data(), 32) +"]", ev.friend_request.message, "Accept", [this, ev]() {
                     add_contact(Tox::instance().add_friend_norequest(ev.friend_request.addr));
                     Tox::instance().save(m_config_path);
                 });
@@ -217,6 +222,7 @@ bool DialogContact::update() {
             case Tox::EEventType::USERSTATUS:
                 std::cout << "USERSTATUS !" << ev.user_status.nr << " -> " << ev.user_status.data << std::endl;
                 m_contact.refresh_contact(ev.user_status.nr);
+                save = true;
                 break;
         }
     }
@@ -311,4 +317,12 @@ void DialogContact::exit() {
     Tox::instance().save(m_config_path);
     //TODO: ask for confirmation
     Gtk::Main::quit();
+}
+
+void DialogContact::change_name(Glib::ustring name, Glib::ustring msg) {
+    Tox::instance().set_name(name);
+    Tox::instance().set_status_message(msg);
+    m_headerbar_contact.set_title(Tox::instance().get_name_or_address());
+    m_headerbar_contact.set_subtitle(Tox::instance().get_status_message());
+    Tox::instance().save(m_config_path);
 }

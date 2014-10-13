@@ -17,37 +17,26 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 **/
-#ifndef WIDGETNOTIFICATION_H
-#define WIDGETNOTIFICATION_H
+#ifndef DIALOGCSS_H
+#define DIALOGCSS_H
 
 #include <gtkmm.h>
-class WidgetNotification: public Gtk::Frame {
+
+
+//Single chat window
+class DialogCss: public Gtk::Window {
     private:
-        Gtk::Label  m_title;
-        Gtk::Label  m_message;
+        Gtk::HeaderBar m_header;
+        Gtk::Box m_headerbar_btn_left;
 
-        Gtk::Button m_remove;
-        Gtk::Button m_button;
+        Gtk::TextView m_text;
 
-        struct Noti {
-            Glib::ustring titel;
-            Glib::ustring message;
-            Glib::ustring button;
-            std::function<void(void)> callback;
-        };
-
-        std::vector<Noti> m_messages;
-
-        std::function<void(void)> m_callback;
-
+        Glib::RefPtr<Gtk::CssProvider> m_last;
     public:
-        WidgetNotification();
-        ~WidgetNotification();
+        DialogCss();
+        ~DialogCss();
 
-        void add_notification(Glib::ustring titel, Glib::ustring message, Glib::ustring button = "", std::function<void(void)> callback = [](){});
-
-    protected:
-        void on_button_clicked();
+        void show();
 };
 
 #endif

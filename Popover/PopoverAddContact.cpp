@@ -42,11 +42,6 @@ PopoverAddContact::PopoverAddContact(const Widget& relative_to): Gtk::Popover(re
     grid->show_all();
     add(*grid);
 
-    grid->set_margin_top(5);
-    grid->set_margin_bottom(5);
-    grid->set_margin_left(5);
-    grid->set_margin_right(5);
-
     btn_add->set_hexpand(false);
     btn_add->set_halign(Gtk::ALIGN_END);
 

@@ -23,6 +23,8 @@
 #include <gtkmm.h>
 class PopoverSettings: public Gtk::Popover {
     private:
+        Gtk::Entry m_name;
+        Gtk::Entry m_msg;
 
     public:
         PopoverSettings(const Widget& relative_to);

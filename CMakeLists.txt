@@ -71,7 +71,7 @@ add_custom_command(
     WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
 )
 
-add_executable(${PROJECT_NAME}
+set(SOURCES
     main.cpp
     Widget/WidgetChat.cpp
     Widget/WidgetContact.cpp
@@ -88,10 +88,36 @@ add_executable(${PROJECT_NAME}
     Dialog/DialogChat.cpp
     Dialog/DialogContact.cpp
     Widget/WidgetNotification.cpp
-    Tox/Tox.cpp
+    Dialog/Debug/DialogCss.cpp
+    Tox/Tox.cpp)
+
+add_executable(${PROJECT_NAME}
+     ${SOURCES}
     "${CMAKE_CURRENT_SOURCE_DIR}/Generated/icon.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/Generated/theme.cpp"
 )
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(${PROJECT_NAME} ${GTKMM_LIBRARIES} ${LIBNOTIFYMM_LIBRARIES} "${CMAKE_CURRENT_SOURCE_DIR}/toxcore/build/.libs/libtoxcore.a" -lsodium -lpthread)
 add_dependencies(${PROJECT_NAME} toxcore)
+
+SET(TRANSLATIONS
+    de
+)
+
+foreach(_trans ${TRANSLATIONS})
+add_custom_command(
+   COMMENT "Generate Locale '${_trans}'"
+   TARGET ${PROJECT_NAME}
+   PRE_BUILD
+   COMMAND mkdir -p Locale/${_trans}/LC_MESSAGES
+   COMMAND msgfmt "${CMAKE_CURRENT_SOURCE_DIR}/Locale/${_trans}.po" -o Locale/${_trans}/LC_MESSAGES/gTox.mo
+   DEPENDS Locale/${_trans}.po)
+endforeach()
+
+add_custom_command(
+   COMMENT "Generate pot file"
+   TARGET ${PROJECT_NAME}
+   PRE_BUILD
+   COMMAND xgettext -o "${CMAKE_CURRENT_SOURCE_DIR}/Locale/template.pot" --from-code=UTF-8 --c++ --omit-header -k_ -s ${SOURCES}
+   DEPENDS ${SOURCES}
+   WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
