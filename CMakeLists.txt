@@ -173,3 +173,14 @@ add_custom_command(
    COMMAND xgettext -o "${CMAKE_CURRENT_SOURCE_DIR}/Locale/template.pot" --from-code=UTF-8 --c++ --omit-header -k_ -s ${SOURCES}
    DEPENDS ${SOURCES}
    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
+
+add_custom_command(
+    COMMENT "Copy .desktop"
+    TARGET ${PROJECT_NAME}
+    COMMAND mkdir -p "${PROJECT_BINARY_DIR}/share/applications"
+    COMMAND cp gTox.desktop "${PROJECT_BINARY_DIR}/share/applications/gTox.desktop"
+    DEPENDS gTox.desktop
+    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
+install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/share/applications"
+    DESTINATION share
+    FILE_PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)
