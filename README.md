@@ -27,7 +27,7 @@ make
 
 Linux Dependecy
 -----------
-gtkmm3, libnotifymm
+`gtkmm3`, `libnotifymm`, `librsvg`
 
 Screenshot
 ============

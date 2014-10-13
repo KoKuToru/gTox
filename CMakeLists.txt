@@ -124,31 +124,32 @@ endforeach()
 
 #Application icon
 SET(SIZES
-    14x14
-    16x16
-    22x22
-    24x24
-    32x32
-    36x36
-    48x48
-    64x64
-    72x72
-    96x96
-    128x128
-    192x192
-    256x256
-    512x512
+    14
+    16
+    22
+    24
+    32
+    36
+    48
+    64
+    72
+    96
+    128
+    192
+    256
+    512
 )
 foreach(_size ${SIZES})
     add_custom_command(
-        COMMENT "Generate Icon '${_size}'"
+        COMMENT "Generate Icon '${_size}x${_size}'"
         TARGET ${PROJECT_NAME}
-        COMMAND mkdir -p "${PROJECT_BINARY_DIR}/share/icons/hicolor/${_size}/apps"
-        COMMAND convert Icons/icon.svg -resize ${_size} "${PROJECT_BINARY_DIR}/share/icons/hicolor/${_size}/apps/gTox.png"
+        COMMAND mkdir -p "${PROJECT_BINARY_DIR}/share/icons/hicolor/${_size}x${_size}/apps"
+        #COMMAND convert -density 1024 Icons/icon.svg -resize "${_size}^" "${PROJECT_BINARY_DIR}/share/icons/hicolor/${_size}x${_size}/apps/gTox.png"
+        COMMAND rsvg-convert Icons/icon.svg -w ${_size} -h ${_size} -f png -o "${PROJECT_BINARY_DIR}/share/icons/hicolor/${_size}x${_size}/apps/gTox.png"
         PRE_BUILD
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
         DEPENDS Icons/icon.svg)
-    install(DIRECTORY "${PROJECT_BINARY_DIR}/share/icons/hicolor/${_size}"
+    install(DIRECTORY "${PROJECT_BINARY_DIR}/share/icons/hicolor/${_size}x${_size}"
            DESTINATION share/icons/hicolor
            FILE_PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)
 endforeach()
