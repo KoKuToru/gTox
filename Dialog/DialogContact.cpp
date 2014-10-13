@@ -326,3 +326,9 @@ void DialogContact::change_name(Glib::ustring name, Glib::ustring msg) {
     m_headerbar_contact.set_subtitle(Tox::instance().get_status_message());
     Tox::instance().save(m_config_path);
 }
+
+void DialogContact::delete_friend(Tox::FriendNr nr){
+	m_contact.delete_contact(nr);
+	Tox::instance().del_friend(nr);
+	Tox::instance().save(m_config_path);
+}

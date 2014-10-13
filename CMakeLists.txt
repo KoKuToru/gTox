@@ -63,7 +63,8 @@ set(ICONS
     Icons/status_busy.svg
     Icons/avatar.svg
     Icons/plus.svg
-    Icons/status_away.svg)
+    Icons/status_away.svg
+    Icons/remove.svg)
 add_custom_command(
     OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/Generated/icon.cpp"
     COMMAND "${PROJECT_BINARY_DIR}/Tools/svg2h" ICON Generated/icon ${ICONS}
@@ -81,6 +82,7 @@ set(SOURCES
     Popover/PopoverStatus.cpp
     Popover/PopoverSettings.cpp
     Popover/PopoverAddContact.cpp
+    Popover/PopoverContextContact.cpp
     Widget/Assistant/WelcomePage.cpp
     Widget/Assistant/AccountWidget.cpp
     Widget/Assistant/NewAccountWidget.cpp

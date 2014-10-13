@@ -33,7 +33,6 @@ PopoverStatus::PopoverStatus(const Widget& relative_to): Gtk::Popover(relative_t
 
     //signal handling
     m_listbox.signal_row_activated().connect([this](Gtk::ListBoxRow* row) {
-
        switch (row->get_index()) {
            case 0:
                DialogContact::instance().set_status(Tox::NONE);

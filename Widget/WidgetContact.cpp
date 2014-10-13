@@ -20,6 +20,7 @@
 #include "WidgetContact.h"
 #include "Tox/Tox.h"
 #include "Dialog/DialogContact.h"
+#include "../Popover/PopoverContextContact.h"
 
 WidgetContact::WidgetContact() {
     this->add(m_list);//, true, true);
@@ -29,6 +30,7 @@ WidgetContact::WidgetContact() {
         WidgetContactListItem* item = dynamic_cast<WidgetContactListItem*>(it);
         DialogContact::instance().activate_chat(item->get_friend_nr());
     });
+    m_list.signal_button_press_event().connect(sigc::mem_fun(this, &WidgetContact::on_button_press));
 }
 
 WidgetContact::~WidgetContact() {
@@ -54,4 +56,24 @@ void WidgetContact::refresh_contact(Tox::FriendNr nr) {
             item->refresh();
         }
     }
+}
+
+bool WidgetContact::on_button_press(GdkEventButton* event){
+	WidgetContactListItem* item = dynamic_cast<WidgetContactListItem*>(m_list.get_row_at_y(event->y));
+	if(item == nullptr)
+		return false;
+	auto popover = Gtk::manage(new PopoverContextContact(item->get_friend_nr()));
+	popover->set_relative_to(*item);
+	popover->set_visible(true);
+	return true;
+}
+
+void WidgetContact::delete_contact(Tox::FriendNr nr) {
+	for (Gtk::Widget* it : m_list.get_children()) {
+		WidgetContactListItem* item = dynamic_cast<WidgetContactListItem*>(it);
+		if (item->get_friend_nr() == nr) {
+			m_list.remove(*item);
+			return;
+		}
+	}
 }
