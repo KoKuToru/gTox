@@ -59,21 +59,26 @@ void WidgetContact::refresh_contact(Tox::FriendNr nr) {
 }
 
 bool WidgetContact::on_button_press(GdkEventButton* event){
-	WidgetContactListItem* item = dynamic_cast<WidgetContactListItem*>(m_list.get_row_at_y(event->y));
-	if(item == nullptr)
-		return false;
-	auto popover = Gtk::manage(new PopoverContextContact(item->get_friend_nr()));
-	popover->set_relative_to(*item);
-	popover->set_visible(true);
-	return true;
+    //check for right click
+    if (event->button != 3) {
+        return false;
+    }
+    WidgetContactListItem* item = dynamic_cast<WidgetContactListItem*>(m_list.get_row_at_y(event->y));
+    if(item == nullptr) {
+        return false;
+    }
+    auto popover = Gtk::manage(new PopoverContextContact(item->get_friend_nr()));
+    popover->set_relative_to(*item);
+    popover->set_visible(true);
+    return true;
 }
 
 void WidgetContact::delete_contact(Tox::FriendNr nr) {
-	for (Gtk::Widget* it : m_list.get_children()) {
-		WidgetContactListItem* item = dynamic_cast<WidgetContactListItem*>(it);
-		if (item->get_friend_nr() == nr) {
-			m_list.remove(*item);
-			return;
-		}
-	}
+    for (Gtk::Widget* it : m_list.get_children()) {
+        WidgetContactListItem* item = dynamic_cast<WidgetContactListItem*>(it);
+        if (item->get_friend_nr() == nr) {
+            m_list.remove(*item);
+            return;
+        }
+    }
 }
