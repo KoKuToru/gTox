@@ -78,6 +78,8 @@ void WidgetContact::delete_contact(Tox::FriendNr nr) {
         WidgetContactListItem* item = dynamic_cast<WidgetContactListItem*>(it);
         if (item->get_friend_nr() == nr) {
             m_list.remove(*item);
+            //free memory
+            delete item;
             return;
         }
     }
