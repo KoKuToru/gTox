@@ -254,6 +254,9 @@ WidgetChat* DialogContact::get_chat(Tox::FriendNr nr) {
 
 void DialogContact::activate_chat(Tox::FriendNr nr) {
     property_gravity() = Gdk::GRAVITY_NORTH_EAST;
+    if (!m_headerbar_chat.is_visible()) {
+        resize(600+get_width(), get_height());
+    }
     m_headerbar_chat.show();
     m_chat.show();
 
@@ -328,7 +331,7 @@ void DialogContact::change_name(Glib::ustring name, Glib::ustring msg) {
 }
 
 void DialogContact::delete_friend(Tox::FriendNr nr){
-	m_contact.delete_contact(nr);
-	Tox::instance().del_friend(nr);
-	Tox::instance().save(m_config_path);
+    m_contact.delete_contact(nr);
+    Tox::instance().del_friend(nr);
+    Tox::instance().save(m_config_path);
 }
