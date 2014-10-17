@@ -20,25 +20,36 @@
 #include "WidgetChatLine.h"
 #include "Generated/icon.h"
 WidgetChatLine::WidgetChatLine(bool left_side) : m_side(left_side) {
-
     this->set_halign(m_side?Gtk::Align::ALIGN_START:Gtk::Align::ALIGN_END);
+
     auto hbox = Gtk::manage(new Gtk::HBox());
+    auto frame = Gtk::manage(new Gtk::Frame());
     add(*hbox);
     if (m_side) {
-        m_avatar.set_halign(Gtk::Align::ALIGN_START);
-        hbox->add(m_avatar);
+        hbox->pack_start(m_avatar);
+        m_avatar.set_valign(Gtk::ALIGN_START);
+        m_avatar.set_halign(Gtk::ALIGN_END);
     }
-    hbox->add(m_vbox);
+    hbox->add(*frame);
     if (!m_side) {
-        m_avatar.set_halign(Gtk::Align::ALIGN_END);
-        hbox->add(m_avatar);
+        hbox->pack_end(m_avatar);
+        m_avatar.set_valign(Gtk::ALIGN_END);
+        m_avatar.set_halign(Gtk::ALIGN_START);
     }
-    m_vbox.set_spacing(5);
+    frame->add(m_msg);
+
+    //m_msg.set_size_request(500);
+    m_msg.set_selectable(true);
+    m_msg.set_line_wrap(true);
+    m_msg.set_line_wrap_mode(Pango::WRAP_WORD_CHAR);
+    m_msg.set_justify(Gtk::JUSTIFY_LEFT);
 
     m_avatar.set_name("Avatar");
+    m_avatar.set_size_request(64, 0);
 
-    this->set_name(m_side?"WidgetChatLineLeft":"WidgetChatLineRight");
-    set_size_request(500);
+    frame->set_name(m_side?"WidgetChatLineLeft":"WidgetChatLineRight");
+
+    show_all();
 }
 
 WidgetChatLine::~WidgetChatLine(){
@@ -51,30 +62,34 @@ bool WidgetChatLine::get_side() {
 void WidgetChatLine::add_line(unsigned long long timestamp, const Glib::ustring& message) {
     //TODO display timestmap
     (void)timestamp;
-    auto label = Gtk::manage(new Gtk::Label());
-    label->set_text(message);
-    label->set_halign(Gtk::Align::ALIGN_START);
-    label->set_selectable(true);
-    label->set_line_wrap(true);
-    label->set_line_wrap_mode(Pango::WrapMode::WRAP_WORD_CHAR);
-    m_vbox.add(*label);
-    label->show();
 
-    queue_draw();
+    //Todo use text view ?
+    if (m_msg.get_text().bytes() != 0) {
+        m_msg.set_text(m_msg.get_text() + "\n");
+    }
+    m_msg.set_text(m_msg.get_text() + message);
 }
 
+#include <iostream>
 void WidgetChatLine::on_size_allocate(Gtk::Allocation& allocation) {
-    Gtk::Frame::on_size_allocate(allocation);
     int h = allocation.get_height();
     auto ic = ICON::load_icon(ICON::avatar);
-    h -= 30; //(10 padding 5 margin)*2
     if (h < ic->get_height()) {
+        std::cout << "h:" << h << std::endl;
+        m_avatar.set_size_request(64, h);
+        m_avatar.clear();
         m_avatar.property_pixbuf() = ICON::load_icon(ICON::avatar)->scale_simple(h, h, Gdk::INTERP_BILINEAR);
+        //force allocation (is this a bug ? why do I need to do this =?
+        Gtk::Allocation al = m_avatar.get_allocation();
+        al.set_y(al.get_height()-h);
+        al.set_height(h);
     } else {
         //TODO check if already done..
         h = ic->get_height();
+        m_avatar.set_size_request(64, h);
+        m_avatar.clear();
         m_avatar.property_pixbuf() = ICON::load_icon(ICON::avatar);
-        m_avatar.set_valign(Gtk::Align::ALIGN_START);
     }
-    //somehow need to force to redraw avatar ?
+    //Important to do last !
+    Gtk::Box::on_size_allocate(allocation);
 }

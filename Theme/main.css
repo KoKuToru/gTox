@@ -48,15 +48,15 @@ GtkPopover {
 }
 
 #WidgetChatLineRight {
-    padding: 1em;
+    padding: 0.25em;
     background-color: rgba(0,0,0,0.2);
-    border-radius: 5px 0px 0px 30px;
+    border-radius: 7px 7px 0px 7px;
 }
 
 #WidgetChatLineLeft {
-    padding: 1em;
+    padding: 0.25em;
     background-color: rgba(0,0,0,0.2);
-    border-radius: 0 2px 15px 0;
+    border-radius: 0 7px 7px 7px;
 }
 
 #WidgetContactListItem {
@@ -93,3 +93,4 @@ GtkPopover {
 #PopoverStatusListItem {
     border-radius: 5px;
 }
+
