@@ -49,6 +49,9 @@ WidgetChat::WidgetChat(Tox::FriendNr nr): m_nr(nr) {
             //not online ?
         }
     });
+
+    m_vbox.set_name("WidgetChat");
+    m_vbox.property_margin() = 10; //wont work via css
 }
 
 WidgetChat::~WidgetChat() {
