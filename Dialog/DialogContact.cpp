@@ -51,7 +51,7 @@ DialogContact::DialogContact(const std::string &config_path):
 
     this->set_icon(ICON::load_icon(ICON::icon_128));
 
-    this->set_border_width(1);
+    this->set_border_width(0);
     this->set_default_geometry(300, 600);
     this->set_position(Gtk::WindowPosition::WIN_POS_CENTER);
 
@@ -247,8 +247,8 @@ WidgetChat* DialogContact::get_chat(Tox::FriendNr nr) {
     }
     auto item = Gtk::manage(new WidgetChat(nr));
     item->show_all();
-    item->hide();
-    m_chat.pack_start(*item, true, true);
+    //item->hide();
+    m_chat.add(*item/*, true, true*/);
     return item;
 }
 
@@ -264,11 +264,13 @@ void DialogContact::activate_chat(Tox::FriendNr nr) {
     WidgetChat* item = get_chat(nr);
 
     //2. hide all chats
-    for(Gtk::Widget* w : m_chat.get_children()) {
+    /*for(Gtk::Widget* w : m_chat.get_children()) {
         w->hide();
-    }
+    }*/
     //3. make the actual chat visible
-    item->show_all();
+    //item->show_all();
+    m_chat.set_transition_type(Gtk::STACK_TRANSITION_TYPE_CROSSFADE);
+    m_chat.set_visible_child(*item);
     //4. update headerbard
     m_headerbar_chat.set_title(Tox::instance().get_name_or_address(nr));
     m_headerbar_chat.set_subtitle(Tox::instance().get_status_message(nr));
