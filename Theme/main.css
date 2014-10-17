@@ -11,13 +11,12 @@ GtkPopover {
     padding: 0.5em;
 }
 
-GtkHeaderBar GtkButton {
-   background: transparent;
-   border: none;
+#HeaderBarRight {
+    border-top-left-radius: 0;
 }
 
-GtkHeaderBar GtkButton:hover {
-    background: rgba(0,0,0,0.3);
+#HeaderBarLeft {
+    border-top-right-radius: 0;
 }
 
 #WidgetNotification {
@@ -87,7 +86,7 @@ GtkHeaderBar GtkButton:hover {
 }
 
 #WidgetContactListItem #StatusIcon {
-    padding-left: 5px;
+    padding-left: 9px;
     padding-right: 5px;
 }
 
