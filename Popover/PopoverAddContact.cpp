@@ -25,11 +25,15 @@
 
 PopoverAddContact::PopoverAddContact(const Widget& relative_to): Gtk::Popover(relative_to) {
     auto grid = Gtk::manage(new Gtk::Grid());
-    auto label1 = new Gtk::Label("Tox ID");
-    auto label2 = new Gtk::Label("Message");
-    auto btn_add = new Gtk::Button("Add");
-    m_addr.set_size_request(400);
-    m_msg.set_size_request(400, 200);
+    auto label1 = Gtk::manage(new Gtk::Label("Tox ID"));
+    auto label2 = Gtk::manage(new Gtk::Label("Message"));
+    auto btn_add = Gtk::manage(new Gtk::Button("Add"));
+    auto box_msg = Gtk::manage(new Gtk::Frame());
+    box_msg->add(m_msg);
+    box_msg->get_style_context()->add_class("entry");
+    box_msg->get_style_context()->remove_class("frame");
+    m_addr.set_size_request(300);
+    m_msg.set_size_request(300, 200);
     m_msg.set_wrap_mode(Gtk::WRAP_WORD_CHAR);
     grid->set_column_homogeneous(false);
     grid->set_row_spacing(5);
@@ -37,7 +41,7 @@ PopoverAddContact::PopoverAddContact(const Widget& relative_to): Gtk::Popover(re
     grid->attach(*label1, 0, 0, 1, 1);
     grid->attach(*label2, 0, 1, 1, 1);
     grid->attach(m_addr, 1, 0, 1, 1);
-    grid->attach(m_msg , 1, 1, 1, 1);
+    grid->attach(*box_msg , 1, 1, 1, 1);
     grid->attach(*btn_add , 1, 2, 1, 1);
     grid->show_all();
     add(*grid);
