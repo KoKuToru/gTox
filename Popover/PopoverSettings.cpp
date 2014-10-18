@@ -21,11 +21,12 @@
 #include "Generated/icon.h"
 #include "Dialog/DialogContact.h"
 #include "Dialog/Debug/DialogCss.h"
+#include <glibmm/i18n.h>
 
 PopoverSettings::PopoverSettings(const Widget& relative_to): Gtk::Popover(relative_to) {
     auto grid = Gtk::manage(new Gtk::Grid());
-    auto label1 = new Gtk::Label("Username");
-    auto label2 = new Gtk::Label("Message");
+    auto label1 = new Gtk::Label(_("Username"));
+    auto label2 = new Gtk::Label(_("Message"));
     //auto btn_about = new Gtk::Button("About");
     auto btn_debug = new Gtk::Button("Css Debug");
     grid->set_column_homogeneous(false);

@@ -20,14 +20,15 @@
 #include "PopoverAddContact.h"
 #include "Generated/icon.h"
 #include "Dialog/DialogContact.h"
+#include <glibmm/i18n.h>
 
 #include <iostream>
 
 PopoverAddContact::PopoverAddContact(const Widget& relative_to): Gtk::Popover(relative_to) {
     auto grid = Gtk::manage(new Gtk::Grid());
-    auto label1 = Gtk::manage(new Gtk::Label("Tox ID"));
-    auto label2 = Gtk::manage(new Gtk::Label("Message"));
-    auto btn_add = Gtk::manage(new Gtk::Button("Add"));
+    auto label1 = Gtk::manage(new Gtk::Label(_("Tox ID")));
+    auto label2 = Gtk::manage(new Gtk::Label(_("Message")));
+    auto btn_add = Gtk::manage(new Gtk::Button(_("Add")));
     auto box_msg = Gtk::manage(new Gtk::Frame());
     box_msg->add(m_msg);
     box_msg->get_style_context()->add_class("entry");

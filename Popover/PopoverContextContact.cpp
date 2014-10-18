@@ -21,21 +21,22 @@
 #include "PopoverContextContact.h"
 #include "../Generated/icon.h"
 #include "../Dialog/DialogContact.h"
+#include <glibmm/i18n.h>
 
 PopoverContextContact::PopoverContextContact(Tox::FriendNr friendNr): friendNr(friendNr){
-	m_listbox.add(create_item(ICON::load_icon(ICON::remove), "Remove"));
-	m_listbox.show_all();
-	add(m_listbox);
+    m_listbox.add(create_item(ICON::load_icon(ICON::remove), _("Remove")));
+    m_listbox.show_all();
+    add(m_listbox);
 
-	//signal handling
-	m_listbox.signal_row_activated().connect([this](Gtk::ListBoxRow* row) {
-	   switch (row->get_index()) {
-		   case 0:
-			   DialogContact::instance().delete_friend(this->friendNr);
-			   break;
-	   }
-	   set_visible(false);
-	});
+    //signal handling
+    m_listbox.signal_row_activated().connect([this](Gtk::ListBoxRow* row) {
+       switch (row->get_index()) {
+           case 0:
+               DialogContact::instance().delete_friend(this->friendNr);
+               break;
+       }
+       set_visible(false);
+    });
 }
 
 Gtk::ListBoxRow& PopoverContextContact::create_item(Glib::RefPtr<Gdk::Pixbuf> icon, Glib::ustring text) {

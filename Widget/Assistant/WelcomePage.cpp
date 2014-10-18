@@ -19,9 +19,10 @@
  **/
 
 #include "WelcomePage.h"
+#include <glibmm/i18n.h>
 
 WelcomePage::WelcomePage():
-    test("Welcome to gTox\n\nThis is the first time you start gTox.\n\nPlease take a moment and follow the instruction.")
+    test(_("Welcome to gTox\n\nThis is the first time you start gTox.\n\nPlease take a moment and follow the instruction."))
 {
     pack_start(test);
 }

@@ -20,14 +20,15 @@
 
 #include "FirstStartAssistant.h"
 #include "Tox/Tox.h"
+#include <glibmm/i18n.h>
 
 FirstStartAssistant::FirstStartAssistant(Glib::ustring path):
 path(path),
 aborted(false){
     set_default_size(800, 600);
 
-    import.pack_start(*Gtk::manage(new Gtk::Label("Not implemented yet")));
-    finish.pack_start(*Gtk::manage(new Gtk::Label("You are done.\n Have fun using gTox!")));
+    import.pack_start(*Gtk::manage(new Gtk::Label(_("Not implemented yet"))));
+    finish.pack_start(*Gtk::manage(new Gtk::Label(_("You are done.\n Have fun using gTox!"))));
 
     append_page(welcome);
     append_page(account);
@@ -47,11 +48,11 @@ aborted(false){
     set_page_type(import, Gtk::ASSISTANT_PAGE_CONTENT);
     set_page_type(finish, Gtk::ASSISTANT_PAGE_SUMMARY);
 
-    set_page_title(*get_nth_page(0), "Welcome");
-    set_page_title(*get_nth_page(1), "Account");
-    set_page_title(*get_nth_page(2), "New account");
-    set_page_title(*get_nth_page(3), "Import");
-    set_page_title(*get_nth_page(4), "Finish");
+    set_page_title(*get_nth_page(0), _("Welcome"));
+    set_page_title(*get_nth_page(1), _("Account"));
+    set_page_title(*get_nth_page(2), _("New account"));
+    set_page_title(*get_nth_page(3), _("Import"));
+    set_page_title(*get_nth_page(4), _("Finish"));
 
     set_forward_page_func(sigc::mem_fun(this, &FirstStartAssistant::on_next));
 
@@ -85,7 +86,7 @@ int FirstStartAssistant::on_next(int page){
 }
 
 void FirstStartAssistant::on_cancel(){
-    int status = Gtk::MessageDialog("Do you really want to guit the assistant?", true, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO, true).run();
+    int status = Gtk::MessageDialog(_("Do you really want to guit the assistant?"), true, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO, true).run();
 
     if(status == Gtk::RESPONSE_YES){
         aborted = true;

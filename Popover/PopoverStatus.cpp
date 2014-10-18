@@ -20,14 +20,15 @@
 #include "PopoverStatus.h"
 #include "Generated/icon.h"
 #include "Dialog/DialogContact.h"
+#include <glibmm/i18n.h>
 
 PopoverStatus::PopoverStatus(const Widget& relative_to): Gtk::Popover(relative_to) {
     //add_label("Settings");
 
-    m_listbox.add(create_item(ICON::load_icon(ICON::status_online), "Online"));
-    m_listbox.add(create_item(ICON::load_icon(ICON::status_busy), "Busy"));
-    m_listbox.add(create_item(ICON::load_icon(ICON::status_away), "Away"));
-    m_listbox.add(create_item(ICON::load_icon(ICON::status_offline), "Exit"));
+    m_listbox.add(create_item(ICON::load_icon(ICON::status_online), _("Online")));
+    m_listbox.add(create_item(ICON::load_icon(ICON::status_busy), _("Busy")));
+    m_listbox.add(create_item(ICON::load_icon(ICON::status_away), _("Away")));
+    m_listbox.add(create_item(ICON::load_icon(ICON::status_offline), _("Exit")));
     m_listbox.show_all();
     add(m_listbox);
 

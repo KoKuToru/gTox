@@ -20,6 +20,7 @@
 #include "WidgetChat.h"
 #include "Tox/Tox.h"
 #include "WidgetChatLine.h"
+#include <glibmm/i18n.h>
 
 WidgetChat::WidgetChat(Tox::FriendNr nr): m_nr(nr) {
 
@@ -31,7 +32,7 @@ WidgetChat::WidgetChat(Tox::FriendNr nr): m_nr(nr) {
     pack1(*frame, true, false);
     //pack2(input, false, true);
 
-    m_btn_send.set_label("Send");
+    m_btn_send.set_label(_("Send"));
 
     m_hbox.pack_start(m_input, true, true);
     m_hbox.pack_end(m_btn_send, false, false);

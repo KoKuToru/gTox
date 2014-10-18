@@ -19,22 +19,23 @@
  **/
 
 #include "AccountWidget.h"
+#include <glibmm/i18n.h>
 
 #include <stdio.h>
 
 AccountWidget::AccountWidget():
-importText("Would you like to import an existing account or create a new one?"),
-rbNew("Create a new account"),
-rbImport("Import an existing account"){
-	add(gridLayout);
-	gridLayout.add(importText);
+importText(_("Would you like to import an existing account or create a new one?")),
+rbNew(_("Create a new account")),
+rbImport(_("Import an existing account")){
+    add(gridLayout);
+    gridLayout.add(importText);
 
-	rbImport.join_group(rbNew);
+    rbImport.join_group(rbNew);
 
-	radioBtnBox.pack_start(rbNew);
-	radioBtnBox.pack_start(rbImport);
+    radioBtnBox.pack_start(rbNew);
+    radioBtnBox.pack_start(rbImport);
 
-	gridLayout.attach(radioBtnBox, 0, 1, 1, 1);
+    gridLayout.attach(radioBtnBox, 0, 1, 1, 1);
 }
 
 AccountWidget::~AccountWidget(){
