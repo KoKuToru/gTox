@@ -73,6 +73,19 @@ DialogContact::DialogContact(const std::string &config_path):
     m_headerbar_chat_box_left.add(m_btn_xxtach);
     m_headerbar_chat.pack_start(m_headerbar_chat_box_left);
 
+    //custom close button for chat
+    auto x_box = Gtk::manage(new Gtk::Box());
+    x_box->add(*Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_VERTICAL)));
+    auto x_btn = Gtk::manage(new Gtk::Button());
+    x_btn->set_image_from_icon_name("window-close-symbolic");
+    x_btn->get_style_context()->add_class("titlebutton");
+    x_btn->set_valign(Gtk::ALIGN_CENTER);
+    x_box->add(*x_btn);
+    x_box->show_all();
+    x_box->get_style_context()->add_class("right");
+    x_box->set_spacing(6);
+    m_headerbar_chat.pack_end(*x_box);
+
     //Status button
     m_btn_status.set_image(m_icon_status);
     m_headerbar_contact_box_left.get_style_context()->add_class("linked");
