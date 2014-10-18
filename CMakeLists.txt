@@ -42,6 +42,9 @@ add_custom_target(
    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/toxcore"
 )
 
+add_subdirectory(SQLiteCpp)
+include_directories(SQLiteCpp/include)
+
 add_subdirectory(Tools)
 
 set(THEME
@@ -50,6 +53,15 @@ add_custom_command(
     OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/Generated/theme.cpp"
     COMMAND "${PROJECT_BINARY_DIR}/Tools/text2h" THEME Generated/theme ${THEME}
     DEPENDS text2h ${THEME}
+    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+)
+
+set(DATABASE
+    Database/version_1.sql)
+add_custom_command(
+    OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/Generated/database.cpp"
+    COMMAND "${PROJECT_BINARY_DIR}/Tools/text2h" DATABASE Generated/database ${DATABASE}
+    DEPENDS text2h ${DATABASE}
     WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
 )
 
@@ -97,10 +109,11 @@ add_executable(${PROJECT_NAME}
      ${SOURCES}
     "${CMAKE_CURRENT_SOURCE_DIR}/Generated/icon.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/Generated/theme.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/Generated/database.cpp"
 )
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(${PROJECT_NAME} ${GTKMM_LIBRARIES} ${LIBNOTIFYMM_LIBRARIES} "${CMAKE_CURRENT_SOURCE_DIR}/toxcore/build/.libs/libtoxcore.a" -lsodium -lpthread)
-add_dependencies(${PROJECT_NAME} toxcore)
+target_link_libraries(${PROJECT_NAME} ${GTKMM_LIBRARIES} ${LIBNOTIFYMM_LIBRARIES} "${CMAKE_CURRENT_SOURCE_DIR}/toxcore/build/.libs/libtoxcore.a" -lsodium -lpthread -lsqlite3 SQLiteCpp)
+add_dependencies(${PROJECT_NAME} toxcore SQLiteCpp)
 install(PROGRAMS "${PROJECT_BINARY_DIR}/${PROJECT_NAME}"
         DESTINATION bin
         PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ WORLD_EXECUTE WORLD_READ)

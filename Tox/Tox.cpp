@@ -20,6 +20,7 @@
 #include "Tox.h"
 #include <fstream>
 #include <string>
+#include "Generated/database.h"
 
 std::recursive_mutex Tox::m_mtx;
 Tox* Tox::m_instance = nullptr;
@@ -75,22 +76,36 @@ void Tox::init(const Glib::ustring& statefile) {
     tox_callback_read_receipt  (m_tox, Tox::callback_read_receipt         , nullptr);
     tox_callback_connection_status (m_tox, Tox::callback_connection_status, nullptr);
 
+    m_db.reset();
     //load state
     if (statefile != "") {
+        /* try to open the db */
+        m_db = std::make_shared<SQLite::Database>(statefile, SQLITE_OPEN_READWRITE);
+
+        //ceck version of the db
+        int version = m_db->execAndGet("SELECT value FROM config WHERE name='version'").getInt();
+
+        while(version != 1/*current version*/)
+        switch(version) {
+            case 1:
+                /* IN FUTURE UPGRADE CODE TO VERSION 2 */
+                break;
+            default:
+                throw Exception(UNKNOWDBVERSION);
+                break;
+        }
+
+        //take the last saved state
+        auto col = m_db->execAndGet("SELECT state FROM toxcore ORDER BY id DESC LIMIT 1");
+        const void* state = col.getBlob();
+        size_t state_size = col.getBytes();
+
         std::ifstream oi(statefile);
         if (!oi.is_open()) {
             throw Exception(FILEERROR);
         }
 
-        oi.seekg (0, oi.end);
-        int length = oi.tellg();
-        oi.seekg (0, oi.beg);
-
-        std::vector<unsigned char> state(length);
-
-        oi.read((char*)state.data(), state.size());
-
-        if (tox_load(m_tox, state.data(), state.size()) == -1) {
+        if (tox_load(m_tox, (const unsigned char*)state, state_size) == -1) {
             throw Exception(LOADERROR);
         }
     }
@@ -108,15 +123,21 @@ void Tox::save(const Glib::ustring& statefile) {
     if (m_tox == nullptr) {
         throw Exception(UNITIALIZED);
     }
+
+    if (!m_db) {
+        //first time saving create database
+        m_db = std::make_shared<SQLite::Database>(statefile, SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE);
+        m_db->exec(DATABASE::version_1);
+    }
+
+    //store state
     int length = (int)tox_size(m_tox);
     std::vector<unsigned char> state(length);
     tox_save(m_tox, (unsigned char*)state.data());
-    std::ofstream oi(statefile, std::ios::binary|std::ios::out|std::ios::trunc);
-    if (!oi.is_open()) {
-        throw Exception(FILEERROR);
-    }
-    oi.write((const char*)state.data(), state.size());
-    oi.close();
+
+    SQLite::Statement storeq(*m_db, "INSERT INTO toxcore(savetime, state) VALUES (CURRENT_TIMESTAMP, ?1)");
+    storeq.bind(1, state.data(), state.size());
+    storeq.exec();
 }
 
 int Tox::update_optimal_interval() {

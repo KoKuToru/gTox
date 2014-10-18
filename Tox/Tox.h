@@ -19,13 +19,18 @@
 **/
 #ifndef TOXMM_H
 #define TOXMM_H
-#include "../toxcore/toxcore/tox.h"
+#include "toxcore/toxcore/tox.h"
 #include <thread>
 #include <mutex>
 #include <functional>
 #include <vector>
 #include <deque>
 #include <glibmm/ustring.h>
+#include "SQLiteCpp/Database.h"
+
+/**
+ * @brief Wraps the toxcore but also add features with a sqlitedb
+ */
 class Tox {
     private:
         static std::recursive_mutex m_mtx;
@@ -33,6 +38,7 @@ class Tox {
         Tox();
 
         Tox *m_tox;
+        std::shared_ptr<SQLite::Database> m_db;
 
     public:
         typedef int FriendNr;
@@ -50,7 +56,8 @@ class Tox {
             CANTADDYOURSELF,
             ALREADYSENT,
             BADCHECKSUM,
-            NOSPAM
+            NOSPAM,
+            UNKNOWDBVERSION
         };
 
         struct Exception {
