@@ -26,7 +26,14 @@ class WidgetChatLine: public Gtk::Box {
     private:
         bool m_side;
 
-        Gtk::Label m_msg;
+        int m_row_count;
+        struct {
+            Gtk::Label* msg;
+            Gtk::Label* time;
+            unsigned long long timestamp;
+        } m_last_row;
+
+        Gtk::Grid  m_grid;
         Gtk::Image m_avatar;
 
         void on_size_allocate (Gtk::Allocation& allocation);

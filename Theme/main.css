@@ -117,3 +117,16 @@ GtkPopover {
     border-radius: 5px;
 }
 
+#ChatTime {
+    background: rgba(255,255,255,0.2);
+    color: black;
+    border-radius: 3px;
+}
+
+#WidgetChatLineRight GtkLabel {
+    padding: 2px;
+}
+
+#WidgetChatLineLeft GtkLabel {
+    padding: 2px;
+}

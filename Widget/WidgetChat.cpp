@@ -72,6 +72,9 @@ void WidgetChat::add_line(Glib::ustring text) {
 }
 
 void WidgetChat::add_line(unsigned long long timestamp, bool left_side, const Glib::ustring& message) {
+    if (timestamp == 0) {
+        timestamp = Glib::DateTime::create_now_utc().to_unix();
+    }
     std::vector<Gtk::Widget*> childs = m_vbox.get_children();
     if (!childs.empty()) {
         WidgetChatLine* item = dynamic_cast<WidgetChatLine*>(childs.back());
