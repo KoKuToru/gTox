@@ -46,6 +46,8 @@ WidgetChatLine::WidgetChatLine(bool left_side) : m_side(left_side), m_row_count(
 
     m_avatar.set_name("Avatar");
     m_avatar.set_size_request(64, 0);
+    m_avatar.property_xalign() = m_side?1:0;
+    m_avatar.property_yalign() = m_side?1:0;
 
     frame->set_name(m_side?"WidgetChatLineLeft":"WidgetChatLineRight");
 
@@ -117,9 +119,8 @@ void WidgetChatLine::add_line(unsigned long long timestamp, const Glib::ustring&
     m_grid.show_all();
 }
 
-#include <iostream>
 void WidgetChatLine::on_size_allocate(Gtk::Allocation& allocation) {
-    int h = allocation.get_height();
+    int h = allocation.get_height() - 5 /*5px radius*/;
     auto ic = ICON::load_icon(ICON::avatar);
     if (h < ic->get_height()) {
         m_avatar.set_size_request(64, h);
@@ -138,4 +139,8 @@ void WidgetChatLine::on_size_allocate(Gtk::Allocation& allocation) {
     }
     //Important to do last !
     Gtk::Box::on_size_allocate(allocation);
+}
+
+unsigned long long WidgetChatLine::last_timestamp() {
+    return m_last_row.timestamp;
 }

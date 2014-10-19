@@ -44,6 +44,8 @@ class WidgetChatLine: public Gtk::Box {
 
         bool get_side();
         void add_line(unsigned long long timestamp, const Glib::ustring& message);
+
+        unsigned long long last_timestamp();
 };
 
 #endif

@@ -121,6 +121,7 @@ GtkPopover {
     background: rgba(255,255,255,0.2);
     color: black;
     border-radius: 3px;
+    padding: 2px;
 }
 
 #WidgetChatLineRight GtkLabel {

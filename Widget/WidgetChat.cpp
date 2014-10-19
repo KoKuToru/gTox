@@ -72,22 +72,43 @@ void WidgetChat::add_line(Glib::ustring text) {
 }
 
 void WidgetChat::add_line(unsigned long long timestamp, bool left_side, const Glib::ustring& message) {
+    //check if time i set, if not we will give it actual time
     if (timestamp == 0) {
         timestamp = Glib::DateTime::create_now_utc().to_unix();
     }
+    auto new_time =  Glib::DateTime::create_now_utc(timestamp);
+    new_time = Glib::DateTime::create_utc(new_time.get_year(), new_time.get_month(), new_time.get_day_of_month(), 0, 0, 0);
+    decltype(new_time) last_time = Glib::DateTime::create_now_utc(0);
+
+    //check last message blob
     std::vector<Gtk::Widget*> childs = m_vbox.get_children();
     if (!childs.empty()) {
         WidgetChatLine* item = dynamic_cast<WidgetChatLine*>(childs.back());
         if (item != nullptr) {
+            last_time = Glib::DateTime::create_now_utc(item->last_timestamp());
+            last_time = Glib::DateTime::create_utc(last_time.get_year(), last_time.get_month(), last_time.get_day_of_month(), 0, 0, 0);
+            //check if blob is on same side
             if (item->get_side() == left_side) {
-                item->add_line(timestamp, message);
-                //scroll down
-                auto adj = m_scrolled.get_vadjustment();
-                adj->set_value(adj->get_upper() - adj->get_page_size());
-                return;
+                //check if it's same day month year
+                if (last_time.compare(new_time) == 0) {
+                    item->add_line(timestamp, message);
+                    return;
+                }
             }
         }
     }
+
+    //check if we need to add a date-line
+    if (last_time.compare(new_time) != 0) {
+        //add a date message
+        auto msg = Gtk::manage(new Gtk::Label());
+        msg->set_text(Glib::DateTime::create_now_local(timestamp).format(_("%A, %e. %B %Y")));
+        msg->set_name("ChatTime");
+        msg->set_halign(Gtk::ALIGN_CENTER);
+        msg->show_all();
+        m_vbox.pack_start(*msg, false, false);
+    }
+
     //add new line
     auto new_line = Gtk::manage(new WidgetChatLine(left_side));
     new_line->add_line(timestamp, message);
