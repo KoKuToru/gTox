@@ -102,6 +102,8 @@ void WidgetChatLine::add_line(unsigned long long timestamp, const Glib::ustring&
 
     m_last_row.time->set_text(msg_time.format("%R"));
     m_last_row.msg->set_text(message);
+    m_last_row.msg->set_line_wrap(true);
+    m_last_row.msg->set_line_wrap_mode(Pango::WRAP_WORD_CHAR);
 
     //add to grid
     m_grid.attach(*m_last_row.msg , m_side?1:0, m_row_count, 1, 1);
