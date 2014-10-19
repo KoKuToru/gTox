@@ -21,6 +21,10 @@
 	background-size: 10px 10px;
 }
 
+*:insensitive > * {
+	background-image: initial;
+}
+
 GtkFrame {
     background-color: @theme_base_color;
     border: none;
