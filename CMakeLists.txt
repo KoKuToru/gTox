@@ -98,6 +98,8 @@ set(SOURCES
     Widget/Assistant/WelcomePage.cpp
     Widget/Assistant/AccountWidget.cpp
     Widget/Assistant/NewAccountWidget.cpp
+    Widget/Chat/WidgetChatMessage.cpp
+    Widget/Chat/WidgetChatLayout.cpp
     Dialog/FirstStartAssistant.cpp
     Dialog/DialogChat.cpp
     Dialog/DialogContact.cpp

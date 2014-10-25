@@ -17,37 +17,32 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 **/
-#ifndef WIDGETCHATLINE_H
-#define WIDGETCHATLINE_H
+#ifndef WIDGETCHATLAYOUTE_H
+#define WIDGETCHATLAYOUTE_H
 
 #include <gtkmm.h>
 
-class WidgetChatMessage;
-
-class WidgetChatLine: public Gtk::Box {
+class WidgetChatLayout: public Gtk::EventBox {
     private:
-        bool m_side;
+        Gtk::VBox m_vbox;
+        int from_x;
+        int from_y;
 
-        int m_row_count;
-        struct {
-            WidgetChatMessage* msg;
-            Gtk::Label* time;
-            unsigned long long timestamp;
-        } m_last_row;
-
-        Gtk::Grid  m_grid;
-        Gtk::Image m_avatar;
-
-        void on_size_allocate (Gtk::Allocation& allocation);
+        void update_children(GdkEventMotion* event, std::vector<Gtk::Widget*> children);
 
     public:
-        WidgetChatLine(bool side);
-        ~WidgetChatLine();
+        WidgetChatLayout();
+        ~WidgetChatLayout();
 
-        bool get_side();
-        void add_line(unsigned long long timestamp, const Glib::ustring& message);
+        void set_spacing(int space);
+        void pack_start(Gtk::Widget &w, bool a, bool b);
 
-        unsigned long long last_timestamp();
+        std::vector<Gtk::Widget*> get_children();
+        std::vector<const Gtk::Widget*> get_children() const;
+
+        virtual bool on_button_press_event(GdkEventButton* event);
+        virtual bool on_button_release_event(GdkEventButton* event);
+        virtual bool on_motion_notify_event(GdkEventMotion* event);
 };
 
 #endif

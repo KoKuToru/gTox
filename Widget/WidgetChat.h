@@ -23,6 +23,7 @@
 #include <gtkmm.h>
 #include "WidgetChatBox.h"
 #include "Tox/Tox.h"
+#include "Chat/WidgetChatLayout.h"
 
 //Content of DialogChat
 class WidgetChat: public Gtk::VPaned {
@@ -36,7 +37,7 @@ class WidgetChat: public Gtk::VPaned {
         Tox::FriendNr m_nr;
 
         Gtk::ScrolledWindow m_scrolled;
-        Gtk::VBox           m_vbox;
+        WidgetChatLayout    m_vbox;
     public:
         WidgetChat(Tox::FriendNr nr);
         ~WidgetChat();

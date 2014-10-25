@@ -124,10 +124,11 @@ GtkPopover {
     padding: 2px;
 }
 
-#WidgetChatLineRight GtkLabel {
+#WidgetChatLineRight .chatmsg {
     padding: 2px;
 }
 
-#WidgetChatLineLeft GtkLabel {
+#WidgetChatLineLeft .chatmsg {
     padding: 2px;
 }
+

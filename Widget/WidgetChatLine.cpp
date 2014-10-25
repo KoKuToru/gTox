@@ -19,6 +19,8 @@
 **/
 #include "WidgetChatLine.h"
 #include "Generated/icon.h"
+#include "Chat/WidgetChatMessage.h"
+
 WidgetChatLine::WidgetChatLine(bool left_side) : m_side(left_side), m_row_count(0) {
     this->set_halign(m_side?Gtk::Align::ALIGN_START:Gtk::Align::ALIGN_END);
 
@@ -93,7 +95,7 @@ void WidgetChatLine::add_line(unsigned long long timestamp, const Glib::ustring&
     }
 
     //create a new row
-    m_last_row.msg = Gtk::manage(new Gtk::Label());
+    m_last_row.msg = Gtk::manage(/*new Gtk::Label()*/ new WidgetChatMessage());
     m_last_row.time = Gtk::manage(new Gtk::Label());
     m_last_row.timestamp = timestamp;
 
@@ -102,9 +104,9 @@ void WidgetChatLine::add_line(unsigned long long timestamp, const Glib::ustring&
 
     m_last_row.time->set_text(msg_time.format("%R"));
     m_last_row.msg->set_text(message);
-    m_last_row.msg->set_line_wrap(true);
+    /*m_last_row.msg->set_line_wrap(true);
     m_last_row.msg->set_line_wrap_mode(Pango::WRAP_WORD_CHAR);
-    m_last_row.msg->set_justify(Gtk::JUSTIFY_FILL);
+    m_last_row.msg->set_justify(Gtk::JUSTIFY_FILL);*/
 
     //add to grid
     m_grid.attach(*m_last_row.msg , m_side?1:0, m_row_count, 1, 1);

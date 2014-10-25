@@ -20,6 +20,7 @@
 #include "WidgetChat.h"
 #include "Tox/Tox.h"
 #include "WidgetChatLine.h"
+#include "Chat/WidgetChatMessage.h"
 #include <glibmm/i18n.h>
 
 WidgetChat::WidgetChat(Tox::FriendNr nr): m_nr(nr) {
@@ -101,7 +102,7 @@ void WidgetChat::add_line(unsigned long long timestamp, bool left_side, const Gl
     //check if we need to add a date-line
     if (last_time.compare(new_time) != 0) {
         //add a date message
-        auto msg = Gtk::manage(new Gtk::Label());
+        auto msg = Gtk::manage(new WidgetChatMessage()/*new Gtk::Label()*/);
         msg->set_text(Glib::DateTime::create_now_local(timestamp).format(_("%A, %e. %B %Y")));
         msg->set_name("ChatTime");
         msg->set_halign(Gtk::ALIGN_CENTER);
