@@ -19,7 +19,7 @@
 **/
 #include "WidgetChatLine.h"
 #include "Generated/icon.h"
-#include "Chat/WidgetChatMessage.h"
+#include "Chat/WidgetChatLabel.h"
 
 WidgetChatLine::WidgetChatLine(bool left_side): Glib::ObjectBase("WidgetChatLine"), m_side(left_side), m_row_count(0) {
     this->set_halign(m_side?Gtk::Align::ALIGN_START:Gtk::Align::ALIGN_END);
@@ -95,7 +95,7 @@ void WidgetChatLine::add_line(unsigned long long timestamp, const Glib::ustring&
     }
 
     //create a new row
-    m_last_row.msg = Gtk::manage(/*new Gtk::Label()*/ new WidgetChatMessage());
+    m_last_row.msg = Gtk::manage(/*new Gtk::Label()*/ new WidgetChatLabel());
     m_last_row.time = Gtk::manage(new Gtk::Label());
     m_last_row.timestamp = timestamp;
 

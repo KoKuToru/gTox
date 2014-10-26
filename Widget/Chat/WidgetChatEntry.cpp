@@ -17,26 +17,28 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 **/
-#ifndef WIDGETCHATBOX_H
-#define WIDGETCHATBOX_H
+#include "WidgetChatEntry.h"
 
-#include <gtkmm.h>
-#include "Tox/Tox.h"
+WidgetChatEntry::WidgetChatEntry(): Glib::ObjectBase("WidgetChatEntry") {
+    m_ScrolledWindow.add(m_text_view);
+    m_ScrolledWindow.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
+    m_TextBuffer = Gtk::TextBuffer::create();
+    m_TextBuffer->set_text("Hello World!");
+    m_text_view.set_buffer(m_TextBuffer);
+    pack_start(m_ScrolledWindow);
+}
 
-class WidgetChat;
-class WidgetChatBox: public Gtk::Box{
-    private:
-        Gtk::ScrolledWindow m_ScrolledWindow;
-        Gtk::TextView m_text_view;
-        Glib::RefPtr<Gtk::TextBuffer> m_TextBuffer;
-    public:
-        void set_editable(bool b);
-        void focus();
+void WidgetChatEntry::set_editable(bool b){
+    m_text_view.set_editable(b);
+}
 
-        WidgetChatBox();
-        ~WidgetChatBox();
+WidgetChatEntry::~WidgetChatEntry(){
+}
 
-        void add_line(const Glib::ustring& text);
-};
+void WidgetChatEntry::focus() {
+    m_text_view.grab_focus();
+}
 
-#endif
+void WidgetChatEntry::add_line(const Glib::ustring& text) {
+    m_text_view.get_buffer()->insert(m_text_view.get_buffer()->end(), text);
+}

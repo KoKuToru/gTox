@@ -89,7 +89,6 @@ set(SOURCES
     Widget/WidgetChat.cpp
     Widget/WidgetContact.cpp
     Widget/WidgetContactListItem.cpp
-    Widget/WidgetChatBox.cpp
     Widget/WidgetChatLine.cpp
     Popover/PopoverStatus.cpp
     Popover/PopoverSettings.cpp
@@ -98,7 +97,8 @@ set(SOURCES
     Widget/Assistant/WelcomePage.cpp
     Widget/Assistant/AccountWidget.cpp
     Widget/Assistant/NewAccountWidget.cpp
-    Widget/Chat/WidgetChatMessage.cpp
+    Widget/Chat/WidgetChatLabel.cpp
+    Widget/Chat/WidgetChatEntry.cpp
     Widget/Chat/WidgetChatLayout.cpp
     Dialog/FirstStartAssistant.cpp
     Dialog/DialogChat.cpp

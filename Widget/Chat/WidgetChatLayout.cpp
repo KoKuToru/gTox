@@ -20,7 +20,7 @@
 #include "WidgetChatLayout.h"
 #include <pangomm/renderer.h>
 #include "Widget/WidgetChatLine.h"
-#include "WidgetChatMessage.h"
+#include "WidgetChatLabel.h"
 
 WidgetChatLayout::WidgetChatLayout(): Glib::ObjectBase("WidgetChatLayout") {
     add(m_vbox);
@@ -100,7 +100,7 @@ void WidgetChatLayout::update_children(GdkEventMotion* event, std::vector<Gtk::W
             continue;
         }
         //check if it's WidgetChatMessage
-        auto c_message = dynamic_cast<WidgetChatMessage*>(c);
+        auto c_message = dynamic_cast<WidgetChatLabel*>(c);
         if (!c_message) {
             //
             continue;
@@ -141,7 +141,7 @@ Glib::ustring WidgetChatLayout::get_children_selection(std::vector<Gtk::Widget*>
             tmp = get_children_selection(c_container->get_children());
         }
         //check if it's WidgetChatMessage
-        auto c_message = dynamic_cast<WidgetChatMessage*>(c);
+        auto c_message = dynamic_cast<WidgetChatLabel*>(c);
         if (c_message) {
             tmp = c_message->get_selection();
         }

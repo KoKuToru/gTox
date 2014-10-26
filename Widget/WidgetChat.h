@@ -21,7 +21,7 @@
 #define WIDGETCHAT_H
 
 #include <gtkmm.h>
-#include "WidgetChatBox.h"
+#include "Chat/WidgetChatEntry.h"
 #include "Tox/Tox.h"
 #include "Chat/WidgetChatLayout.h"
 
@@ -29,7 +29,7 @@
 class WidgetChat: public Gtk::VPaned {
     private:
         Gtk::TextView m_input;
-        WidgetChatBox m_output;
+        WidgetChatEntry m_output;
 
         Gtk::HBox   m_hbox;
         Gtk::Button m_btn_send;

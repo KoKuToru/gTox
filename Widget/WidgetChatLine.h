@@ -22,7 +22,7 @@
 
 #include <gtkmm.h>
 
-class WidgetChatMessage;
+class WidgetChatLabel;
 
 class WidgetChatLine: public Gtk::Box {
     private:
@@ -30,7 +30,7 @@ class WidgetChatLine: public Gtk::Box {
 
         int m_row_count;
         struct {
-            WidgetChatMessage* msg;
+            WidgetChatLabel* msg;
             Gtk::Label* time;
             unsigned long long timestamp;
         } m_last_row;

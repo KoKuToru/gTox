@@ -17,22 +17,22 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 **/
-#include "WidgetChatMessage.h"
+#include "WidgetChatLabel.h"
 #include <pangomm/renderer.h>
 #include <cmath>
 #include <iostream>
 
-WidgetChatMessage::WidgetChatMessage(): Glib::ObjectBase("WidgetChatMessage"), m_clip(nullptr) {
+WidgetChatLabel::WidgetChatLabel(): Glib::ObjectBase("WidgetChatLabel"), m_clip(nullptr) {
     //add default name because
     //styling with "gtkmm_CustomObject_WudgetChatMessage" is not nice
     get_style_context()->add_class("chatmsg");
 }
 
-WidgetChatMessage::~WidgetChatMessage() {
+WidgetChatLabel::~WidgetChatLabel() {
 
 }
 
-bool WidgetChatMessage::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
+bool WidgetChatLabel::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
     Glib::RefPtr<Gtk::StyleContext> stylecontext = get_style_context();
     auto padding = stylecontext->get_padding();
 
@@ -67,7 +67,7 @@ bool WidgetChatMessage::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
     return true;
 }
 
-void WidgetChatMessage::set_text(const Glib::ustring &text) {
+void WidgetChatLabel::set_text(const Glib::ustring &text) {
     m_text = create_pango_layout(text);
     m_text->set_wrap(Pango::WRAP_WORD_CHAR);
 
@@ -85,18 +85,18 @@ void WidgetChatMessage::set_text(const Glib::ustring &text) {
     queue_resize();
 }
 
-void WidgetChatMessage::force_redraw() {
+void WidgetChatLabel::force_redraw() {
     Glib::RefPtr<Gdk::Window> win = get_window();
     if (win) {
         win->invalidate(false);
     }
 }
 
-Gtk::SizeRequestMode WidgetChatMessage::get_request_mode_vfunc() const {
+Gtk::SizeRequestMode WidgetChatLabel::get_request_mode_vfunc() const {
     return Gtk::SIZE_REQUEST_HEIGHT_FOR_WIDTH;
 }
 
-void WidgetChatMessage::get_preferred_width_vfunc (int& minimum_width, int& natural_width) const {
+void WidgetChatLabel::get_preferred_width_vfunc (int& minimum_width, int& natural_width) const {
     Glib::RefPtr<Gtk::StyleContext> stylecontext = get_style_context();
     auto padding = stylecontext->get_padding();
 
@@ -109,7 +109,7 @@ void WidgetChatMessage::get_preferred_width_vfunc (int& minimum_width, int& natu
     natural_width += padding.get_left() + padding.get_right();
 }
 
-void WidgetChatMessage::get_preferred_height_for_width_vfunc (int width, int& minimum_height, int& natural_height) const {
+void WidgetChatLabel::get_preferred_height_for_width_vfunc (int width, int& minimum_height, int& natural_height) const {
     Glib::RefPtr<Gtk::StyleContext> stylecontext = get_style_context();
     auto padding = stylecontext->get_padding();
 
@@ -121,7 +121,7 @@ void WidgetChatMessage::get_preferred_height_for_width_vfunc (int width, int& mi
     natural_height += padding.get_top() + padding.get_bottom();
 }
 
-void WidgetChatMessage::get_preferred_height_vfunc (int& minimum_height, int& natural_height) const {
+void WidgetChatLabel::get_preferred_height_vfunc (int& minimum_height, int& natural_height) const {
     Glib::RefPtr<Gtk::StyleContext> stylecontext = get_style_context();
     auto padding = stylecontext->get_padding();
 
@@ -134,11 +134,11 @@ void WidgetChatMessage::get_preferred_height_vfunc (int& minimum_height, int& na
     natural_height += padding.get_top() + padding.get_bottom();
 }
 
-Glib::ustring WidgetChatMessage::get_text() {
+Glib::ustring WidgetChatLabel::get_text() {
     return m_text->get_text();
 }
 
-void WidgetChatMessage::on_selection(int from_x, int from_y, int to_x, int to_y) {
+void WidgetChatLabel::on_selection(int from_x, int from_y, int to_x, int to_y) {
     if (from_x == to_x && from_y == to_y) {
         if (m_clip) {
             m_clip.clear();
@@ -189,7 +189,7 @@ void WidgetChatMessage::on_selection(int from_x, int from_y, int to_x, int to_y)
     force_redraw();
 }
 
-Glib::ustring WidgetChatMessage::get_selection() {
+Glib::ustring WidgetChatLabel::get_selection() {
     if (!m_clip) {
         return Glib::ustring();
     }

@@ -22,7 +22,7 @@
 
 #include <gtkmm.h>
 
-class WidgetChatMessage: public Gtk::DrawingArea {
+class WidgetChatLabel: public Gtk::DrawingArea {
     private:
         Glib::RefPtr<Pango::Layout> m_text;
         Cairo::RefPtr<Cairo::Region> m_clip;
@@ -33,8 +33,8 @@ class WidgetChatMessage: public Gtk::DrawingArea {
         void force_redraw();
 
     public:
-        WidgetChatMessage();
-        ~WidgetChatMessage();
+        WidgetChatLabel();
+        ~WidgetChatLabel();
 
         void set_text(const Glib::ustring& text);
         Glib::ustring get_text();
