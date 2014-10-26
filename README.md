@@ -1,4 +1,15 @@
 <h1><img src="https://rawgit.com/KoKuToru/gTox/master/Icons/icon_128.svg">GTK3-Style Tox-Client</h1>
+Features
+============
+* Invite contact
+* Delete contact
+* Accept invites
+* Basic chat
+* Change name
+* Change status message
+* Change online status
+
+Not much, not ready for daily use ! Please wait for the first release.
 
 How to install
 ============
@@ -32,7 +43,7 @@ make
 
 Linux Dependencies
 -----------
-`gtkmm3`, `libnotifymm`, `librsvg`
+`gtkmm3`, `libnotifymm`, `librsvg`, `sqlite`
 
 Screenshot
 ============
