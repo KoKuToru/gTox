@@ -22,8 +22,8 @@
 #include "WidgetChatLine.h"
 #include "Chat/WidgetChatLabel.h"
 #include <glibmm/i18n.h>
-
-WidgetChat::WidgetChat(Tox::FriendNr nr): Glib::ObjectBase("WidgetChat"), m_nr(nr) {
+#include <iostream>
+WidgetChat::WidgetChat(Tox::FriendNr nr): Glib::ObjectBase("WidgetChat"), m_nr(nr), m_autoscroll(false) {
 
     m_output.set_editable(false);
     m_scrolled.add(m_vbox);
@@ -45,7 +45,15 @@ WidgetChat::WidgetChat(Tox::FriendNr nr): Glib::ObjectBase("WidgetChat"), m_nr(n
     m_btn_send.signal_clicked().connect([this](){
         try {
             Tox::instance().send_message(get_friend_nr(), m_input.get_buffer()->get_text());
+
+            //scroll down
+            auto adj = m_scrolled.get_vadjustment();
+            adj->set_value(adj->get_upper() - adj->get_page_size());
+
+            //add to chat
             add_line(0, false, m_input.get_buffer()->get_text());
+
+            //clear chat input
             m_input.get_buffer()->set_text("");
         } catch(...) {
             //not online ?
@@ -54,6 +62,22 @@ WidgetChat::WidgetChat(Tox::FriendNr nr): Glib::ObjectBase("WidgetChat"), m_nr(n
 
     m_vbox.set_name("WidgetChat");
     m_vbox.property_margin() = 10; //wont work via css
+
+    //auto scroll:
+    m_vbox.signal_size_allocate().connect_notify([this](Gtk::Allocation&) {
+        //check if we are at lowest position
+        auto adj = m_scrolled.get_vadjustment();
+        //very stupid ... can't directly check before resize ?
+        m_autoscroll = true; //(adj->get_upper() - adj->get_page_size()) == adj->get_value();
+    }, false);
+
+    m_vbox.signal_size_allocate().connect_notify([this](Gtk::Allocation&) {
+        //only scroll down when we were at lowest position before the size_allocate
+        if (m_autoscroll) {
+            auto adj = m_scrolled.get_vadjustment();
+            adj->set_value(adj->get_upper() - adj->get_page_size());
+        }
+    }, true);
 }
 
 WidgetChat::~WidgetChat() {

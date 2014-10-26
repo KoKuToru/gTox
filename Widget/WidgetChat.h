@@ -38,6 +38,9 @@ class WidgetChat: public Gtk::VPaned {
 
         Gtk::ScrolledWindow m_scrolled;
         WidgetChatLayout    m_vbox;
+
+        bool m_autoscroll;
+
     public:
         WidgetChat(Tox::FriendNr nr);
         ~WidgetChat();
