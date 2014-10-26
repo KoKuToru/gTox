@@ -139,6 +139,14 @@ Glib::ustring WidgetChatMessage::get_text() {
 }
 
 void WidgetChatMessage::on_selection(int from_x, int from_y, int to_x, int to_y) {
+    if (from_x == to_x && from_y == to_y) {
+        if (m_clip) {
+            m_clip.clear();
+            force_redraw();
+        }
+        return;
+    }
+
     Glib::RefPtr<Gtk::StyleContext> stylecontext = get_style_context();
     auto padding = stylecontext->get_padding();
 
@@ -164,18 +172,27 @@ void WidgetChatMessage::on_selection(int from_x, int from_y, int to_x, int to_y)
 
     //get the selection
     int trailing;
-    int from_index, to_index;
-    m_text->xy_to_index(from_x * Pango::SCALE, from_y * Pango::SCALE, from_index, trailing);
+    m_text->xy_to_index(from_x * Pango::SCALE, from_y * Pango::SCALE, selection_index_from, trailing);
     if (trailing) {
-        from_index += 1;
+        selection_index_from += 1;
     }
-    m_text->xy_to_index(to_x * Pango::SCALE, to_y * Pango::SCALE, to_index, trailing);
+    m_text->xy_to_index(to_x * Pango::SCALE, to_y * Pango::SCALE, selection_index_to, trailing);
     if (trailing) {
-        to_index += 1;
+        selection_index_to += 1;
     }
 
     //get the selected region
-    gint reg[] = {std::min(from_index, to_index), std::max(from_index, to_index)};
+    gint reg[] = {std::min(selection_index_from, selection_index_to), std::max(selection_index_from, selection_index_to)};
+    selection_index_from = reg[0];
+    selection_index_to   = reg[1];
     m_clip = Cairo::RefPtr<Cairo::Region>(new Cairo::Region(gdk_pango_layout_get_clip_region(m_text->gobj(), 0, 0, reg, 1))); //cpp-version ?
     force_redraw();
+}
+
+Glib::ustring WidgetChatMessage::get_selection() {
+    if (!m_clip) {
+        return Glib::ustring();
+    }
+    //todo append date/time
+    return std::string(m_text->get_text()).substr(selection_index_from, selection_index_to - selection_index_from);
 }

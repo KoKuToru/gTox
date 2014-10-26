@@ -29,6 +29,9 @@ WidgetChatLayout::WidgetChatLayout() {
     add_events(Gdk::BUTTON_PRESS_MASK);
     add_events(Gdk::BUTTON_RELEASE_MASK);
     add_events(Gdk::BUTTON1_MOTION_MASK);
+    add_events(Gdk::KEY_PRESS_MASK);
+
+    set_can_focus(true);
 }
 
 WidgetChatLayout::~WidgetChatLayout() {
@@ -65,6 +68,8 @@ bool WidgetChatLayout::on_button_press_event(GdkEventButton* event) {
     dummy_event.x = from_x;
     dummy_event.y = from_y;
     update_children(&dummy_event, get_children());
+
+    grab_focus();
 
     return true;
 }
@@ -123,4 +128,47 @@ void WidgetChatLayout::update_children(GdkEventMotion* event, std::vector<Gtk::W
 
         }
     }
+}
+
+Glib::ustring WidgetChatLayout::get_children_selection(std::vector<Gtk::Widget*> children) {
+    Glib::ustring res;
+    Glib::ustring tmp;
+    for(auto c : children) {
+        tmp.clear();
+
+        //check if it's a container
+        auto c_container = dynamic_cast<Gtk::Container*>(c);
+        if (c_container) {
+            tmp = get_children_selection(c_container->get_children());
+        }
+        //check if it's WidgetChatMessage
+        auto c_message = dynamic_cast<WidgetChatMessage*>(c);
+        if (c_message) {
+            tmp = c_message->get_selection();
+        }
+
+        //add to result
+        if (!tmp.empty()) {
+            if(!res.empty()) {
+                res += '\n';
+            }
+            res += tmp;
+        }
+    }
+    return res;
+}
+
+bool WidgetChatLayout::on_key_press_event(GdkEventKey*event) {
+    if (! (event->state & GDK_CONTROL_MASK)) {
+        return false;
+    }
+    if (event->keyval != 'c') {
+        return false;
+    }
+    std::cout << "Strg+C" << std::endl;
+    //copy to clipboard
+    auto data = get_children_selection(get_children());
+    std::cout << "Clip: " << data << std::endl;
+    Gtk::Clipboard::get()->set_text(data);
+    return true;
 }

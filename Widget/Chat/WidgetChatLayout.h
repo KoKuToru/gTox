@@ -29,6 +29,7 @@ class WidgetChatLayout: public Gtk::EventBox {
         int from_y;
 
         void update_children(GdkEventMotion* event, std::vector<Gtk::Widget*> children);
+        Glib::ustring get_children_selection(std::vector<Gtk::Widget*> children);
 
     public:
         WidgetChatLayout();
@@ -40,9 +41,11 @@ class WidgetChatLayout: public Gtk::EventBox {
         std::vector<Gtk::Widget*> get_children();
         std::vector<const Gtk::Widget*> get_children() const;
 
+    protected:
         virtual bool on_button_press_event(GdkEventButton* event);
         virtual bool on_button_release_event(GdkEventButton* event);
         virtual bool on_motion_notify_event(GdkEventMotion* event);
+        virtual bool on_key_press_event(GdkEventKey*event);
 };
 
 #endif
