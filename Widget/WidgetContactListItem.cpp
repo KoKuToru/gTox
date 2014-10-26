@@ -23,7 +23,7 @@
 #include "Dialog/DialogContact.h"
 #include "Generated/icon.h"
 
-WidgetContactListItem::WidgetContactListItem(WidgetContact* contact, Tox::FriendNr nr): m_contact(contact), m_friend_nr(nr) {
+WidgetContactListItem::WidgetContactListItem(WidgetContact* contact, Tox::FriendNr nr): Glib::ObjectBase("WidgetContactListItem"), m_contact(contact), m_friend_nr(nr) {
     set_name("WidgetContactListItem");
 
     m_name.set_text(Tox::instance().get_name_or_address(nr));

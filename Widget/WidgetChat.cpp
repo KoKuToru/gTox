@@ -23,7 +23,7 @@
 #include "Chat/WidgetChatMessage.h"
 #include <glibmm/i18n.h>
 
-WidgetChat::WidgetChat(Tox::FriendNr nr): m_nr(nr) {
+WidgetChat::WidgetChat(Tox::FriendNr nr): Glib::ObjectBase("WidgetChat"), m_nr(nr) {
 
     m_output.set_editable(false);
     m_scrolled.add(m_vbox);

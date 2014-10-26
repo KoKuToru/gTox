@@ -19,7 +19,7 @@
 **/
 #include "WidgetChatBox.h"
 
-WidgetChatBox::WidgetChatBox(){
+WidgetChatBox::WidgetChatBox(): Glib::ObjectBase("WidgetChatBox") {
     m_ScrolledWindow.add(m_text_view);
     m_ScrolledWindow.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
     m_TextBuffer = Gtk::TextBuffer::create();

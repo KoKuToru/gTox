@@ -22,7 +22,7 @@
 #include "Dialog/DialogContact.h"
 #include "../Popover/PopoverContextContact.h"
 
-WidgetContact::WidgetContact() {
+WidgetContact::WidgetContact(): Glib::ObjectBase("WidgetContact") {
     this->add(m_list);//, true, true);
 
     m_list.set_activate_on_single_click(false);

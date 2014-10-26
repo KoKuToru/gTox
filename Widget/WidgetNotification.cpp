@@ -20,7 +20,7 @@
 #include "WidgetNotification.h"
 #include <libnotifymm.h>
 
-WidgetNotification::WidgetNotification(){
+WidgetNotification::WidgetNotification(): Glib::ObjectBase("WidgetNotification") {
     set_name("WidgetNotification");
 
     auto grid = Gtk::manage(new Gtk::Grid());

@@ -22,7 +22,7 @@
 #include "Widget/WidgetChatLine.h"
 #include "WidgetChatMessage.h"
 
-WidgetChatLayout::WidgetChatLayout() {
+WidgetChatLayout::WidgetChatLayout(): Glib::ObjectBase("WidgetChatLayout") {
     add(m_vbox);
     show_all();
 
