@@ -54,7 +54,6 @@ std::vector<const Gtk::Widget*> WidgetChatLayout::get_children() const {
     return m_vbox.get_children();
 }
 
-#include <iostream>
 bool WidgetChatLayout::on_button_press_event(GdkEventButton* event) {
     if (event->button != 1) {
         return false;
@@ -165,10 +164,9 @@ bool WidgetChatLayout::on_key_press_event(GdkEventKey*event) {
     if (event->keyval != 'c') {
         return false;
     }
-    std::cout << "Strg+C" << std::endl;
+
     //copy to clipboard
     auto data = get_children_selection(get_children());
-    std::cout << "Clip: " << data << std::endl;
     Gtk::Clipboard::get()->set_text(data);
     return true;
 }
