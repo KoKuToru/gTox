@@ -47,7 +47,7 @@ Linux Dependencies
 
 Screenshot
 ============
-<img src="https://rawgit.com/KoKuToru/gTox/master/20141018.png">
+<img src="https://rawgit.com/KoKuToru/gTox/master/screenshot.png">
 
 Mockup
 ============
