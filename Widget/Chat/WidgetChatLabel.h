@@ -49,6 +49,8 @@ class WidgetChatLabel: public Gtk::DrawingArea {
         virtual void get_preferred_width_vfunc (int& minimum_width, int& natural_width) const;
         virtual void get_preferred_height_for_width_vfunc (int width, int& minimum_height, int& natural_height) const;
         virtual void get_preferred_height_vfunc (int& minimum_height, int& natural_height) const;
+
+        bool is_shape(PangoLayoutRun* run);
 };
 
 #endif

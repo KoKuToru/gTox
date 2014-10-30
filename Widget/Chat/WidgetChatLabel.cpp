@@ -32,6 +32,24 @@ WidgetChatLabel::~WidgetChatLabel() {
 
 }
 
+bool WidgetChatLabel::is_shape(PangoLayoutRun* run) {
+    if (!run) {
+        return false;
+    }
+
+    auto attr = run->item->analysis.extra_attrs;
+
+    while(attr) {
+        if (((PangoAttribute*)attr->data)->klass->type == PANGO_ATTR_SHAPE) {
+            return true;
+        }
+
+        attr = attr->next;
+    }
+
+    return false;
+}
+
 bool WidgetChatLabel::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
     Glib::RefPtr<Gtk::StyleContext> stylecontext = get_style_context();
     auto padding = stylecontext->get_padding();
@@ -61,7 +79,29 @@ bool WidgetChatLabel::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
     stylecontext->render_layout(cr, 0, 0, m_text);
 
     //draw emojis
-    //but how ?
+    auto iter = m_text->get_iter();
+    if (iter.gobj() != nullptr) do {
+        //auto run = iter.get_run(); //crashes
+        //work around via C
+        auto run_gobj = pango_layout_iter_get_run_readonly(iter.gobj());
+        if (run_gobj == nullptr) {
+            continue;
+        }
+
+        if (is_shape(run_gobj)) {
+            auto run_extends = iter.get_run_logical_extents();
+
+            //render emoji in future
+            cr->
+              rectangle(run_extends.get_x()/Pango::SCALE,
+                        run_extends.get_y()/Pango::SCALE,
+                        run_extends.get_width()/Pango::SCALE,
+                        run_extends.get_height()/Pango::SCALE);
+
+            cr->set_source_rgb(1, 0, 0);
+            cr->fill();
+        }
+    } while(iter.next_run());
 
     cr->restore();
     return true;
@@ -72,10 +112,11 @@ void WidgetChatLabel::set_text(const Glib::ustring &text) {
     m_text->set_wrap(Pango::WRAP_WORD_CHAR);
 
     //add emojis
-    /*auto attr_list = Pango::AttrList(); //m_text->get_attributes();
+    /*auto attr_list = Pango::AttrList();
     //replace every 2nd with a 20px emoji
-    for(int i = 1; i < text.bytes(); i+=2) {
-        auto attr = Pango::Attribute::create_attr_shape(Pango::Rectangle(0,0,20*Pango::SCALE,20*Pango::SCALE), Pango::Rectangle(0,0,20*Pango::SCALE,20*Pango::SCALE));
+    for(size_t i = 1; i < text.bytes(); i+=2) {
+        auto rect = Pango::Rectangle(0,-20*Pango::SCALE,20*Pango::SCALE,20*Pango::SCALE);
+        auto attr = Pango::Attribute::create_attr_shape(rect, rect);
         attr.set_start_index(i);
         attr.set_end_index(i+1);
         attr_list.insert(attr);
