@@ -43,8 +43,6 @@ WidgetContactListItem::WidgetContactListItem(WidgetContact* contact, Tox::Friend
     m_status_icon.set(ICON::load_icon(ICON::status_offline));
     m_status_icon.set_name("StatusIcon");
 
-    set_sensitive(false);
-
     m_layout.attach(m_status_icon, 0, 0, 1, 2);
     m_layout.attach(m_name, 1, 0, 1, 1);
     m_layout.attach(m_status_msg, 1, 1, 1, 1);
@@ -90,8 +88,6 @@ void WidgetContactListItem::refresh() {
                 break;
         }
         m_status_icon.set(status);
-
-        set_sensitive(Tox::instance().get_status(m_friend_nr) != Tox::OFFLINE);
     } catch (...) {
 
     }
