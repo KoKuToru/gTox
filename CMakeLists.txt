@@ -57,7 +57,8 @@ add_custom_command(
 )
 
 set(DATABASE
-    Database/version_1.sql)
+    Database/version_1.sql
+    Database/version_2.sql)
 add_custom_command(
     OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/Generated/database.cpp"
     COMMAND "${PROJECT_BINARY_DIR}/Tools/text2h" DATABASE Generated/database ${DATABASE}
