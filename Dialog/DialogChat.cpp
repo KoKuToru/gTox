@@ -19,9 +19,11 @@
 **/
 #include "DialogChat.h"
 #include "Generated/icon.h"
+#include "DialogContact.h"
 
-DialogChat::DialogChat():
-    m_icon_attach(ICON::load_icon(ICON::chat_attach))
+DialogChat::DialogChat(Tox::FriendNr nr):
+    m_icon_attach(ICON::load_icon(ICON::chat_attach)),
+    m_chat(nr)
 {
     this->set_border_width(1);
     this->set_default_geometry(256, 256);
@@ -41,7 +43,11 @@ DialogChat::DialogChat():
     this->set_titlebar(m_header);
 
     //Setup content
-    //this->add(m_chat);
+    add(m_chat);
+
+    m_btn_xxtach.signal_clicked().connect([this]() {
+        DialogContact::instance().attach_chat(m_chat.get_friend_nr());
+    });
 }
 
 DialogChat::~DialogChat() {
@@ -49,5 +55,9 @@ DialogChat::~DialogChat() {
 }
 
 void DialogChat::show() {
-    this->show_all();
+    show_all();
+}
+
+WidgetChat& DialogChat::get_chat() {
+    return m_chat;
 }

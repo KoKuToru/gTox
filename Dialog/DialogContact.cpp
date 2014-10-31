@@ -196,6 +196,10 @@ void DialogContact::detach_chat() {
     if (!child) {
         return;
     }
+    WidgetChat* item = dynamic_cast<WidgetChat*>(child);
+    if (!item) {
+        return;
+    }
 
     this->property_gravity() = Gdk::GRAVITY_NORTH_WEST;
     int x, y, w, h;
@@ -203,12 +207,32 @@ void DialogContact::detach_chat() {
     get_size(w, h);
     w -= m_headerbar_contact.get_width();
 
-    m_chat_dialog.move(x, y);
-    m_chat_dialog.resize(w, h);
-    m_chat_dialog.show();
+    auto new_chat = new DialogChat(item->get_friend_nr());
+    m_chat_dialog.push_back(std::shared_ptr<DialogChat>(new_chat));
+    new_chat->move(x, y);
+    new_chat->resize(w, h);
+    new_chat->show();
 
     //remove child
     m_btn_xchat.clicked();
+}
+
+void DialogContact::attach_chat(Tox::FriendNr nr) {
+    DialogChat* dialog = nullptr;
+    WidgetChat* item = get_chat(nr, dialog);
+
+    if (!item || !dialog) {
+        return;
+    }
+
+    m_chat_dialog.resize(
+        std::distance(m_chat_dialog.begin(),
+            std::remove_if(m_chat_dialog.begin(), m_chat_dialog.end(),
+                [dialog](const std::shared_ptr<DialogChat>& o) {
+        return o.get() == dialog;
+    })));
+
+    activate_chat(nr);
 }
 
 bool DialogContact::update() {
@@ -223,14 +247,16 @@ bool DialogContact::update() {
             case Tox::EEventType::FRIENDACTION:
                 std::cout << "FRIENDACTION !" << ev.friend_action.nr << " -> " << ev.friend_action.data << std::endl;
                 {
-                    WidgetChat* item = get_chat(ev.friend_message.nr);
+                    DialogChat* chat;
+                    WidgetChat* item = get_chat(ev.friend_message.nr, chat);
                     item->add_line(0, true, ev.friend_message.data);
                 }
                 break;
             case Tox::EEventType::FRIENDMESSAGE:
                 std::cout << "FRIENDMESSAGE !" << ev.friend_message.nr << " -> " << ev.friend_message.data << std::endl;
                 {
-                    WidgetChat* item = get_chat(ev.friend_message.nr);
+                    DialogChat* chat;
+                    WidgetChat* item = get_chat(ev.friend_message.nr, chat);
                     item->add_line(0, true, ev.friend_message.data);
                 }
                 break;
@@ -253,6 +279,7 @@ bool DialogContact::update() {
                 std::cout << "STATUSMESSAGE !"<< ev.status_message.nr << " -> " << ev.status_message.data << std::endl;
                 m_contact.refresh_contact(ev.status_message.nr);
                 save = true;
+                //TODO UPDATE CHAT
                 break;
             case Tox::EEventType::TYPINGCHANGE:
                 std::cout << "TYPINGCHANGE !" << ev.typing_change.nr << " -> " << ev.typing_change.data << std::endl;
@@ -261,6 +288,7 @@ bool DialogContact::update() {
                 std::cout << "USERSTATUS !" << ev.user_status.nr << " -> " << ev.user_status.data << std::endl;
                 m_contact.refresh_contact(ev.user_status.nr);
                 save = true;
+                //TODO UPDATE CHAT
                 break;
         }
     }
@@ -275,11 +303,18 @@ void DialogContact::add_contact(Tox::FriendNr nr) {
     Tox::instance().save(m_config_path);
 }
 
-WidgetChat* DialogContact::get_chat(Tox::FriendNr nr) {
-    //TODO check detached windows
+WidgetChat* DialogContact::get_chat(Tox::FriendNr nr, DialogChat*& dialog) {
+    dialog = nullptr;
     for(Gtk::Widget* it : m_chat.get_children()) {
         WidgetChat* item = dynamic_cast<WidgetChat*>(it);
         if (item->get_friend_nr() == nr) {
+            return item;
+        }
+    }
+    for(auto c: m_chat_dialog) {
+        WidgetChat* item = &(c->get_chat());
+        if (item->get_friend_nr() == nr) {
+            dialog = c.get();
             return item;
         }
     }
@@ -291,15 +326,22 @@ WidgetChat* DialogContact::get_chat(Tox::FriendNr nr) {
 }
 
 void DialogContact::activate_chat(Tox::FriendNr nr) {
+    //1. Search if contact has already a open chat
+    DialogChat* dialog = nullptr;
+    WidgetChat* item = get_chat(nr, dialog);
+
+    if (dialog) {
+        dialog->present();
+        return;
+    }
+
+
     property_gravity() = Gdk::GRAVITY_NORTH_EAST;
     if (!m_headerbar_chat.is_visible()) {
         resize(600+get_width(), get_height());
     }
     m_headerbar_chat.show();
     m_chat.show();
-
-    //1. Search if contact has already a open chat
-    WidgetChat* item = get_chat(nr);
 
     //2. hide all chats
     /*for(Gtk::Widget* w : m_chat.get_children()) {

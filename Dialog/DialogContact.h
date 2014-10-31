@@ -65,7 +65,7 @@ class DialogContact: public Gtk::Window {
         WidgetContact m_contact;
         WidgetNotification m_notification;
 
-        DialogChat     m_chat_dialog; //probably a list in the future
+        std::vector<std::shared_ptr<DialogChat>> m_chat_dialog;
 
         sigc::connection m_update_interval;
 
@@ -90,10 +90,11 @@ class DialogContact: public Gtk::Window {
         void change_name(Glib::ustring name, Glib::ustring msg);
         void delete_friend(Tox::FriendNr nr);
 
+        void attach_chat(Tox::FriendNr nr);
     protected:
         void detach_chat();
         bool update();
-        WidgetChat* get_chat(Tox::FriendNr nr);
+        WidgetChat* get_chat(Tox::FriendNr nr, DialogChat*& dialog);
 
 };
 
