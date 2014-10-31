@@ -78,6 +78,16 @@ WidgetChat::WidgetChat(Tox::FriendNr nr): Glib::ObjectBase("WidgetChat"), m_nr(n
             adj->set_value(adj->get_upper() - adj->get_page_size());
         }
     }, true);
+
+    //load log
+    auto log = Tox::instance().get_log(nr);
+    for(auto l : log) {
+        if (l.sendtime != 0) {
+            add_line(l.sendtime, false, l.data);
+        } else {
+            add_line(l.recvtime, true, l.data);
+        }
+    }
 }
 
 WidgetChat::~WidgetChat() {

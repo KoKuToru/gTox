@@ -109,6 +109,20 @@ class Tox {
             SFriendInt readreceipt;
         };
 
+        enum ELogType {
+            LOGMSG = 1,
+            LOGACTION = 2
+        };
+
+        struct SLog {
+            ELogType type;
+
+            unsigned long long sendtime;
+            unsigned long long recvtime;
+
+            Glib::ustring data;
+        };
+
         enum EUSERSTATUS {
             OFFLINE = -1,
             NONE = TOX_USERSTATUS_NONE,
@@ -161,6 +175,8 @@ class Tox {
 
         static Glib::ustring to_hex(const unsigned char* data, size_t len);
         static std::vector<unsigned char> from_hex(std::string data);
+
+        std::vector<SLog> get_log(FriendNr nr, int offset = 0, int limit = 100);
 
     protected:
         std::deque<SEvent> events;

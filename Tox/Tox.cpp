@@ -20,6 +20,7 @@
 #include "Tox.h"
 #include <fstream>
 #include <string>
+#include <algorithm>
 #include "Generated/database.h"
 
 std::recursive_mutex Tox::m_mtx;
@@ -308,8 +309,8 @@ Tox::ReceiptNr Tox::send_message(Tox::FriendNr nr, const Glib::ustring& message)
         SQLite::Statement storeq(*m_db, "INSERT INTO log(friendaddr, sendtime, type, message, receipt) VALUES (?1, CURRENT_TIMESTAMP, ?2, ?3, ?4)");
 
         storeq.bind(1, get_address(nr).data(), TOX_CLIENT_ID_SIZE);
-        storeq.bind(2, 1);
-        storeq.bind(3, (std::string)message);
+        storeq.bind(2, ELogType::LOGMSG);
+        storeq.bind(3, message.data(), message.bytes());
         storeq.bind(4, res);
 
         storeq.exec();
@@ -332,8 +333,8 @@ Tox::ReceiptNr Tox::send_action(Tox::FriendNr nr, const Glib::ustring& action) {
         SQLite::Statement storeq(*m_db, "INSERT INTO log(friendaddr, sendtime, type, message, receipt) VALUES (?1, CURRENT_TIMESTAMP, ?2, ?3, ?4)");
 
         storeq.bind(1, get_address(nr).data(), TOX_CLIENT_ID_SIZE);
-        storeq.bind(2, 2);
-        storeq.bind(3, (std::string)action);
+        storeq.bind(2, ELogType::LOGACTION);
+        storeq.bind(3, action.data(), action.bytes());
         storeq.bind(4, res);
 
         storeq.exec();
@@ -543,20 +544,53 @@ void Tox::inject_event(const SEvent& ev) {
             SQLite::Statement storeq(*m_db, "INSERT INTO log(friendaddr, recvtime, type, message) VALUES (?1, CURRENT_TIMESTAMP, ?2, ?3)");
 
             storeq.bind(1, get_address(ev.friend_message.nr).data(), TOX_CLIENT_ID_SIZE);
-            storeq.bind(2, 1);
-            storeq.bind(3, (std::string)ev.friend_message.data);
+            storeq.bind(2, ELogType::LOGMSG);
+            storeq.bind(3, ev.friend_message.data.data(), ev.friend_message.data.bytes());
 
             storeq.exec();
         } else if (ev.event == FRIENDACTION) {
             SQLite::Statement storeq(*m_db, "INSERT INTO log(friendaddr, recvtime, type, message) VALUES (?1, CURRENT_TIMESTAMP, ?2, ?3)");
 
             storeq.bind(1, get_address(ev.friend_action.nr).data(), TOX_CLIENT_ID_SIZE);
-            storeq.bind(2, 2);
-            storeq.bind(3, (std::string)ev.friend_action.data);
+            storeq.bind(2, ELogType::LOGACTION);
+            storeq.bind(3, ev.friend_action.data.data(), ev.friend_action.data.bytes());
 
             storeq.exec();
         }
     }
+}
+
+std::vector<Tox::SLog> Tox::get_log(Tox::FriendNr nr, int offset, int limit) {
+    std::lock_guard<std::recursive_mutex> lg(m_mtx);
+    if (m_tox == nullptr) {
+        throw Exception(UNITIALIZED);
+    }
+
+    std::vector<Tox::SLog> result;
+
+    if (m_db) {
+        SQLite::Statement loadq(*m_db, "SELECT strftime('%s', sendtime), strftime('%s', recvtime), type, message FROM log WHERE friendaddr = ?1 ORDER BY id DESC LIMIT ?2, ?3");
+
+        loadq.bind(1, get_address(nr).data(), TOX_CLIENT_ID_SIZE);
+        loadq.bind(2, offset);
+        loadq.bind(3, limit);
+
+        while(loadq.executeStep()) {
+            Tox::SLog n;
+            n.sendtime = loadq.getColumn(0).getInt64();
+            n.recvtime = loadq.getColumn(1).getInt64();
+            n.type     = (ELogType)loadq.getColumn(2).getInt();
+            auto data = loadq.getColumn(3);
+            auto data_ptr = (const char*)data.getBlob();
+            n.data     = Glib::ustring(data_ptr, data_ptr + data.getBytes());
+
+            result.push_back(n);
+        }
+    }
+
+    std::reverse(result.begin(), result.end());
+
+    return result;
 }
 
 
