@@ -26,6 +26,8 @@ WidgetChatLayout::WidgetChatLayout(): Glib::ObjectBase("WidgetChatLayout") {
     add(m_vbox);
     show_all();
 
+    m_vbox.set_valign(Gtk::ALIGN_END);
+
     add_events(Gdk::BUTTON_PRESS_MASK);
     add_events(Gdk::BUTTON_RELEASE_MASK);
     add_events(Gdk::BUTTON1_MOTION_MASK);
