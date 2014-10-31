@@ -1,4 +1,4 @@
-BEGIN TRANSACTION;
+--BEGIN TRANSACTION;
 
 --UPDATE LOG
 ALTER TABLE log RENAME TO log_tmp;
@@ -38,4 +38,4 @@ DELETE FROM config WHERE name = 'version';
 INSERT INTO config(name, value) VALUES('version', 2);
 INSERT INTO config(name, value) VALUES('runid', 1);
 
-COMMIT TRANSACTION;
+--COMMIT TRANSACTION;
