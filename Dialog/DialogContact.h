@@ -52,6 +52,7 @@ class DialogContact: public Gtk::Window {
         Gtk::Button    m_btn_status;
         Gtk::Button    m_btn_settings;
         Gtk::Button    m_btn_add;
+        Gtk::Button    m_btn_xchat;
 
         Gtk::Box       m_headerbar_chat_box_left;
         Gtk::Box       m_headerbar_contact_box_left;

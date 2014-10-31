@@ -76,11 +76,10 @@ DialogContact::DialogContact(const std::string &config_path):
     //custom close button for chat
     auto x_box = Gtk::manage(new Gtk::Box());
     x_box->add(*Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_VERTICAL)));
-    auto x_btn = Gtk::manage(new Gtk::Button());
-    x_btn->set_image_from_icon_name("window-close-symbolic");
-    x_btn->get_style_context()->add_class("titlebutton");
-    x_btn->set_valign(Gtk::ALIGN_CENTER);
-    x_box->add(*x_btn);
+    m_btn_xchat.set_image_from_icon_name("window-close-symbolic");
+    m_btn_xchat.get_style_context()->add_class("titlebutton");
+    m_btn_xchat.set_valign(Gtk::ALIGN_CENTER);
+    x_box->add(m_btn_xchat);
     x_box->show_all();
     x_box->get_style_context()->add_class("right");
     x_box->set_spacing(6);
@@ -117,7 +116,7 @@ DialogContact::DialogContact(const std::string &config_path):
         m_popover_add.set_visible(true);
     });
 
-    x_btn->signal_clicked().connect([this]() {
+    m_btn_xchat.signal_clicked().connect([this]() {
         auto child = m_chat.get_visible_child();
         if (!child) {
             return;
@@ -126,13 +125,18 @@ DialogContact::DialogContact(const std::string &config_path):
         delete child;
 
         //check if empty
-        if (!m_chat.get_visible_child()) {
+        child = m_chat.get_visible_child();
+        if (!child) {
             property_gravity() = Gdk::GRAVITY_NORTH_EAST;
             if (m_headerbar_chat.is_visible()) {
                 resize(m_headerbar_contact.get_width(), get_height());
             }
             m_headerbar_chat.hide();
             m_chat.hide();
+        } else {
+            WidgetChat* item = dynamic_cast<WidgetChat*>(child);
+            m_headerbar_chat.set_title(Tox::instance().get_name_or_address(item->get_friend_nr()));
+            m_headerbar_chat.set_subtitle(Tox::instance().get_status_message(item->get_friend_nr()));
         }
     });
 
@@ -172,6 +176,7 @@ DialogContact::DialogContact(const std::string &config_path):
     m_contact.show_all();
     m_paned.show();
     m_vbox.show();
+    m_headerbar_chat_box_left.show_all();
     show();
 
     m_btn_status.set_sensitive(false);
@@ -187,22 +192,23 @@ DialogContact::~DialogContact() {
 }
 
 void DialogContact::detach_chat() {
-    /*this->property_gravity() = Gdk::GRAVITY_NORTH_WEST;
-    int x,y;
-    this->get_position(x, y);
-    this->property_gravity() = Gdk::GRAVITY_NORTH_EAST;
-    int w,h;
-    this->get_size(w, h);
-    int hw = m_headerbar_chat.get_width();
-    w -= hw;
-    this->resize(w, h);
+    auto child = m_chat.get_visible_child();
+    if (!child) {
+        return;
+    }
 
-    m_header_paned.remove(m_headerbar_chat);
-    m_paned.remove(m_chat);
+    this->property_gravity() = Gdk::GRAVITY_NORTH_WEST;
+    int x, y, w, h;
+    get_position(x, y);
+    get_size(w, h);
+    w -= m_headerbar_contact.get_width();
 
     m_chat_dialog.move(x, y);
-    m_chat_dialog.resize(hw, h); //too small why ?
-    m_chat_dialog.show();*/
+    m_chat_dialog.resize(w, h);
+    m_chat_dialog.show();
+
+    //remove child
+    m_btn_xchat.clicked();
 }
 
 bool DialogContact::update() {
