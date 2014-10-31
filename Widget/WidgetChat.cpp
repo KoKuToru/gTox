@@ -23,6 +23,12 @@
 #include "Chat/WidgetChatLabel.h"
 #include <glibmm/i18n.h>
 #include <iostream>
+
+namespace sigc{
+	//HOLY F*CKING CRAP? O.o
+	SIGC_FUNCTORS_DEDUCE_RESULT_TYPE_WITH_DECLTYPE
+}
+
 WidgetChat::WidgetChat(Tox::FriendNr nr): Glib::ObjectBase("WidgetChat"), m_nr(nr), m_autoscroll(false) {
 
     m_output.set_editable(false);
@@ -59,6 +65,19 @@ WidgetChat::WidgetChat(Tox::FriendNr nr): Glib::ObjectBase("WidgetChat"), m_nr(n
             //not online ?
         }
     });
+
+    m_input.signal_key_press_event().connect([this](GdkEventKey* event){
+    	if(event->keyval == GDK_KEY_Return && !(event->state & GDK_SHIFT_MASK)){
+    		std::string text = m_input.get_buffer()->get_text();
+    		if(text.size() > 0){
+				//text.resize(text.size()-1);
+				m_input.get_buffer()->set_text(text);
+				m_btn_send.clicked();
+				return true;
+    		}
+    	}
+		return false;
+    }, false);
 
     m_vbox.set_name("WidgetChat");
     m_vbox.property_margin() = 10; //wont work via css
