@@ -117,6 +117,25 @@ DialogContact::DialogContact(const std::string &config_path):
         m_popover_add.set_visible(true);
     });
 
+    x_btn->signal_clicked().connect([this]() {
+        auto child = m_chat.get_visible_child();
+        if (!child) {
+            return;
+        }
+        m_chat.remove(*child);
+        delete child;
+
+        //check if empty
+        if (!m_chat.get_visible_child()) {
+            property_gravity() = Gdk::GRAVITY_NORTH_EAST;
+            if (m_headerbar_chat.is_visible()) {
+                resize(m_headerbar_contact.get_width(), get_height());
+            }
+            m_headerbar_chat.hide();
+            m_chat.hide();
+        }
+    });
+
     this->set_titlebar(m_header_paned);
 
     m_vbox.add(m_contact);
