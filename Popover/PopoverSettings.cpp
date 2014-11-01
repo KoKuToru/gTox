@@ -58,9 +58,7 @@ PopoverSettings::PopoverSettings(const Gtk::Widget& relative_to)
     DialogContact::instance().change_name(m_name.get_text(), m_msg.get_text());
   });
 
-  btn_settings->signal_clicked().connect([this]() {
-    m_settings.show();
-  });
+  btn_settings->signal_clicked().connect([this]() { m_settings.show(); });
 }
 
 PopoverSettings::~PopoverSettings() {}

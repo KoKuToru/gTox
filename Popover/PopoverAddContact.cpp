@@ -64,8 +64,8 @@ PopoverAddContact::PopoverAddContact(const Gtk::Widget& relative_to)
       return;
     }
 
-    if(m_msg.get_buffer()->get_text(true).size() == 0){
-    	m_msg.get_buffer()->set_text("I am using gTox. Add me");
+    if (m_msg.get_buffer()->get_text(true).size() == 0) {
+      m_msg.get_buffer()->set_text("I am using gTox. Add me");
     }
 
     try {
