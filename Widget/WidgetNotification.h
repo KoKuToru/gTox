@@ -21,33 +21,36 @@
 #define WIDGETNOTIFICATION_H
 
 #include <gtkmm.h>
-class WidgetNotification: public Gtk::Frame {
-    private:
-        Gtk::Label  m_title;
-        Gtk::Label  m_message;
+class WidgetNotification : public Gtk::Frame {
+ private:
+  Gtk::Label m_title;
+  Gtk::Label m_message;
 
-        Gtk::Button m_remove;
-        Gtk::Button m_button;
+  Gtk::Button m_remove;
+  Gtk::Button m_button;
 
-        struct Noti {
-            Glib::ustring titel;
-            Glib::ustring message;
-            Glib::ustring button;
-            std::function<void(void)> callback;
-        };
+  struct Noti {
+    Glib::ustring titel;
+    Glib::ustring message;
+    Glib::ustring button;
+    std::function<void(void)> callback;
+  };
 
-        std::vector<Noti> m_messages;
+  std::vector<Noti> m_messages;
 
-        std::function<void(void)> m_callback;
+  std::function<void(void)> m_callback;
 
-    public:
-        WidgetNotification();
-        ~WidgetNotification();
+ public:
+  WidgetNotification();
+  ~WidgetNotification();
 
-        void add_notification(Glib::ustring titel, Glib::ustring message, Glib::ustring button = "", std::function<void(void)> callback = [](){});
+  void add_notification(Glib::ustring titel,
+                        Glib::ustring message,
+                        Glib::ustring button = "",
+                        std::function<void(void)> callback = []() {});
 
-    protected:
-        void on_button_clicked();
+ protected:
+  void on_button_clicked();
 };
 
 #endif

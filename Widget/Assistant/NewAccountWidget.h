@@ -23,16 +23,17 @@
 
 #include <gtkmm.h>
 
-class NewAccountWidget: public Gtk::Box{
-	private:
-		Gtk::Grid gridLayout;
-		Gtk::Label labelName;
-		Gtk::Entry entryName;
-	public:
-		NewAccountWidget();
-		~NewAccountWidget();
+class NewAccountWidget : public Gtk::Box {
+ private:
+  Gtk::Grid gridLayout;
+  Gtk::Label labelName;
+  Gtk::Entry entryName;
 
-		Gtk::Entry& getEntryName(){ return entryName; }
+ public:
+  NewAccountWidget();
+  ~NewAccountWidget();
+
+  Gtk::Entry& getEntryName() { return entryName; }
 };
 
 #endif /* WIDGET_ASSISTANT_NEWACCOUNTWIDGET_H_ */

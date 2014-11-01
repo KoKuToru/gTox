@@ -23,17 +23,18 @@
 
 #include <gtkmm.h>
 
-class AccountWidget: public Gtk::Box{
-    private:
-		Gtk::Label importText;
-		Gtk::Grid gridLayout;
-		Gtk::VBox radioBtnBox;
-		Gtk::RadioButton rbNew, rbImport;
-    public:
-        AccountWidget();
-        ~AccountWidget();
+class AccountWidget : public Gtk::Box {
+ private:
+  Gtk::Label importText;
+  Gtk::Grid gridLayout;
+  Gtk::VBox radioBtnBox;
+  Gtk::RadioButton rbNew, rbImport;
 
-        Gtk::RadioButton& getRbImport(){ return rbImport; }
+ public:
+  AccountWidget();
+  ~AccountWidget();
+
+  Gtk::RadioButton& getRbImport() { return rbImport; }
 };
 
 #endif
