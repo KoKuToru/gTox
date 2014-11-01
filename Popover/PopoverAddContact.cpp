@@ -52,7 +52,7 @@ PopoverAddContact::PopoverAddContact(const Widget& relative_to): Gtk::Popover(re
 
     label1->set_halign(Gtk::ALIGN_START);
     label2->set_halign(Gtk::ALIGN_START);
-    label1->set_valign(Gtk::ALIGN_START);
+    label1->set_valign(Gtk::ALIGN_BASELINE);
     label2->set_valign(Gtk::ALIGN_START);
 
     btn_add->signal_clicked().connect([this](){

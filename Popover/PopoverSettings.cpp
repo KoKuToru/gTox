@@ -46,8 +46,8 @@ PopoverSettings::PopoverSettings(const Widget& relative_to): Gtk::Popover(relati
 
     label1->set_halign(Gtk::ALIGN_START);
     label2->set_halign(Gtk::ALIGN_START);
-    label1->set_valign(Gtk::ALIGN_START);
-    label2->set_valign(Gtk::ALIGN_START);
+    label1->set_valign(Gtk::ALIGN_BASELINE);
+    label2->set_valign(Gtk::ALIGN_BASELINE);
 
     m_name.signal_changed().connect([this]() {
         DialogContact::instance().change_name(m_name.get_text(), m_msg.get_text());

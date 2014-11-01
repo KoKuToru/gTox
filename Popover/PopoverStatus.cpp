@@ -62,8 +62,8 @@ Gtk::ListBoxRow& PopoverStatus::create_item(Glib::RefPtr<Gdk::Pixbuf> icon, Glib
     auto label = Gtk::manage(new Gtk::Label(text));
     auto img = Gtk::manage(new Gtk::Image(icon));
     hbox->set_homogeneous(false);
-    img->set_valign(Gtk::Align::ALIGN_START);
-    label->set_valign(Gtk::Align::ALIGN_START);
+    img->set_valign(Gtk::Align::ALIGN_CENTER);
+    label->set_valign(Gtk::Align::ALIGN_CENTER);
     img->set_margin_top(5);
     img->set_margin_bottom(5);
     img->set_margin_left(5);
