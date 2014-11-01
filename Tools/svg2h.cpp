@@ -75,21 +75,22 @@ int main(int argc, const char* argv[]) {
 
   source << "#include \"" << basename(argv[2]) << ".h\"" << std::endl
          << std::endl;
-
-  source << R "rawstring(
+// clang-format off
+  source << R"rawstring(
       Glib::RefPtr<Gdk::Pixbuf> ICON::load_icon(const std::string & data) {
-    static std::map<const std::string*, Glib::RefPtr<Gdk::Pixbuf> > cache;
-    auto cache_iter = cache.find(&data);
+        static std::map<const std::string*, Glib::RefPtr<Gdk::Pixbuf> > cache;
+        auto cache_iter = cache.find(&data);
 
-    if (cache_iter != cache.end()) {
-      return cache_iter->second;
-    }
+        if (cache_iter != cache.end()) {
+          return cache_iter->second;
+        }
 
-    auto tmp = Gio::MemoryInputStream::create();
-    tmp->add_data(data);
-    return cache.insert({&data, Gdk::Pixbuf::create_from_stream(tmp)})
-        .first->second;
-  })rawstring";
+        auto tmp = Gio::MemoryInputStream::create();
+        tmp->add_data(data);
+        return cache.insert({&data, Gdk::Pixbuf::create_from_stream(tmp)})
+            .first->second;
+      })rawstring";
+// clang-format on
     source << std::endl << std::endl;
 
   for (int i = 3; i < argc; ++i) {
