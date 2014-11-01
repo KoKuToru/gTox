@@ -22,7 +22,7 @@
 #include "Dialog/DialogContact.h"
 #include <glibmm/i18n.h>
 
-PopoverStatus::PopoverStatus(const Widget& relative_to): Gtk::Popover(relative_to) {
+PopoverStatus::PopoverStatus(const Gtk::Widget& relative_to): Gtk::Popover(relative_to) {
     //add_label("Settings");
 
     m_listbox.add(create_item(ICON::load_icon(ICON::status_online), _("Online")));

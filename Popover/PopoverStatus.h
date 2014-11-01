@@ -27,7 +27,7 @@ class PopoverStatus: public Gtk::Popover {
         Gtk::ListBox m_listbox;
 
     public:
-        PopoverStatus(const Widget& relative_to);
+        PopoverStatus(const Gtk::Widget& relative_to);
         ~PopoverStatus();
 
         void set_visible(bool visible =  true);

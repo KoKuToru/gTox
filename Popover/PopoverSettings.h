@@ -27,7 +27,7 @@ class PopoverSettings: public Gtk::Popover {
         Gtk::Entry m_msg;
 
     public:
-        PopoverSettings(const Widget& relative_to);
+        PopoverSettings(const Gtk::Widget& relative_to);
         ~PopoverSettings();
 
         void set_visible(bool visible =  true);

@@ -24,7 +24,7 @@
 
 #include <iostream>
 
-PopoverAddContact::PopoverAddContact(const Widget& relative_to): Gtk::Popover(relative_to) {
+PopoverAddContact::PopoverAddContact(const Gtk::Widget& relative_to): Gtk::Popover(relative_to) {
     auto grid = Gtk::manage(new Gtk::Grid());
     auto label1 = Gtk::manage(new Gtk::Label(_("Tox ID")));
     auto label2 = Gtk::manage(new Gtk::Label(_("Message")));

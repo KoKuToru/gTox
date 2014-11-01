@@ -26,7 +26,7 @@ class PopoverAddContact: public Gtk::Popover {
         Gtk::Entry m_addr;
         Gtk::TextView m_msg;
     public:
-        PopoverAddContact(const Widget& relative_to);
+        PopoverAddContact(const Gtk::Widget& relative_to);
         ~PopoverAddContact();
 };
 
