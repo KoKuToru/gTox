@@ -28,8 +28,8 @@ DialogChat::DialogChat(Tox::FriendNr nr)
   this->set_position(Gtk::WindowPosition::WIN_POS_NONE);
 
   // Setup titlebar
-  m_header.set_title("Chat");
-  m_header.set_subtitle("with DemoUser");
+  m_header.set_title(Tox::instance().get_name_or_address(nr));
+  m_header.set_subtitle(Tox::instance().get_status_message(nr));
   m_header.set_show_close_button();
 
   m_btn_xxtach.set_image(m_icon_attach);
