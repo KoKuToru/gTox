@@ -45,6 +45,8 @@ WidgetChat::WidgetChat(Tox::FriendNr nr): Glib::ObjectBase("WidgetChat"), m_nr(n
     m_hbox.pack_end(m_btn_send, false, false);
     pack2(m_hbox, false, false);
 
+    m_input.set_wrap_mode(Gtk::WRAP_WORD_CHAR);
+
     //set_position(400);
     m_hbox.set_size_request(-1, 80);
 
