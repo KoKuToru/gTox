@@ -97,8 +97,8 @@ WidgetChat::WidgetChat(Tox::FriendNr nr)
                         auto adj = m_scrolled.get_vadjustment();
                         // very stupid ... can't directly check before resize ?
                         m_autoscroll = true;  //(adj->get_upper() -
-                                              //adj->get_page_size()) ==
-                                              //adj->get_value();
+                        // adj->get_page_size()) ==
+                        // adj->get_value();
                       },
                       false);
 
