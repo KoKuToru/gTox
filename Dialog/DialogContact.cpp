@@ -248,8 +248,8 @@ bool DialogContact::update() {
                 std::cout << "FRIENDACTION !" << ev.friend_action.nr << " -> " << ev.friend_action.data << std::endl;
                 {
                     DialogChat* chat;
-                    WidgetChat* item = get_chat(ev.friend_message.nr, chat);
-                    item->add_line(0, true, ev.friend_message.data);
+                    WidgetChat* item = get_chat(ev.friend_message.nr, chat); //automatically creates chat if not exits
+                    item->add_line(0, true, ev.friend_message.data); //add line, when automatically created chat -> last line 2 times !
                 }
                 break;
             case Tox::EEventType::FRIENDMESSAGE:
