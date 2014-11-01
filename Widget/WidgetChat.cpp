@@ -25,13 +25,11 @@
 #include <iostream>
 
 namespace sigc {
-// HOLY F*CKING CRAP? O.o
 SIGC_FUNCTORS_DEDUCE_RESULT_TYPE_WITH_DECLTYPE
 }
 
 WidgetChat::WidgetChat(Tox::FriendNr nr)
-    : Glib::ObjectBase("WidgetChat"), m_nr(nr), m_autoscroll(false) {
-
+    : Glib::ObjectBase("WidgetChat"), m_nr(nr), m_autoscroll(true) {
   m_output.set_editable(false);
   m_scrolled.add(m_vbox);
   m_vbox.set_spacing(5);
@@ -56,62 +54,48 @@ WidgetChat::WidgetChat(Tox::FriendNr nr)
       Tox::instance().send_message(get_friend_nr(),
                                    m_input.get_buffer()->get_text());
 
-      // scroll down
-      auto adj = m_scrolled.get_vadjustment();
-      adj->set_value(adj->get_upper() - adj->get_page_size());
-
       // add to chat
       add_line(0, false, m_input.get_buffer()->get_text());
 
       // clear chat input
       m_input.get_buffer()->set_text("");
-    }
-    catch (...) {
+    } catch (...) {
       // not online ?
     }
   });
 
-  m_input.signal_key_press_event()
-      .connect([this](GdkEventKey* event) {
-                 if (event->keyval == GDK_KEY_Return &&
-                     !(event->state & GDK_SHIFT_MASK)) {
-                   std::string text = m_input.get_buffer()->get_text();
-                   if (text.size() > 0) {
-                     // text.resize(text.size()-1);
-                     m_input.get_buffer()->set_text(text);
-                     m_btn_send.clicked();
-                     return true;
-                   }
-                 }
-                 return false;
-               },
-               false);
+  m_input.signal_key_press_event().connect(
+      [this](GdkEventKey* event) {
+        if (event->keyval == GDK_KEY_Return &&
+            !(event->state & GDK_SHIFT_MASK)) {
+          std::string text = m_input.get_buffer()->get_text();
+          if (text.size() > 0) {
+            // text.resize(text.size()-1);
+            m_input.get_buffer()->set_text(text);
+            m_btn_send.clicked();
+            return true;
+          }
+        }
+        return false;
+      },
+      false);
 
   m_vbox.set_name("WidgetChat");
   m_vbox.property_margin() = 10;  // wont work via css
 
-  // auto scroll:
-  m_vbox.signal_size_allocate()
-      .connect_notify([this](Gtk::Allocation&) {
-                        // check if we are at lowest position
-                        auto adj = m_scrolled.get_vadjustment();
-                        // very stupid ... can't directly check before resize ?
-                        m_autoscroll = true;  //(adj->get_upper() -
-                                              //adj->get_page_size()) ==
-                                              //adj->get_value();
-                      },
-                      false);
+  m_scrolled.get_vadjustment()->signal_value_changed().connect_notify([this]() {
+    // check if lowest position
+    auto adj = m_scrolled.get_vadjustment();
+    m_autoscroll = adj->get_upper() - adj->get_page_size() == adj->get_value();
+  });
 
-  m_vbox.signal_size_allocate().connect_notify(
-      [this](Gtk::Allocation&) {
-        // only scroll down when we were at lowest position before the
-        // size_allocate
-        if (m_autoscroll) {
-          auto adj = m_scrolled.get_vadjustment();
-          adj->set_value(adj->get_upper() - adj->get_page_size());
-        }
-      },
-      true);
+  m_vbox.signal_size_allocate().connect_notify([this](Gtk::Allocation&) {
+    // auto scroll:
+    if (m_autoscroll) {
+      auto adj = m_scrolled.get_vadjustment();
+      adj->set_value(adj->get_upper() - adj->get_page_size());
+    }
+  });
 
   // load log
   auto log = Tox::instance().get_log(nr);
@@ -124,13 +108,20 @@ WidgetChat::WidgetChat(Tox::FriendNr nr)
   }
 }
 
-WidgetChat::~WidgetChat() {}
+WidgetChat::~WidgetChat() {
+}
 
-void WidgetChat::focus() { m_input.grab_focus(); }
+void WidgetChat::focus() {
+  m_input.grab_focus();
+}
 
-Tox::FriendNr WidgetChat::get_friend_nr() const { return m_nr; }
+Tox::FriendNr WidgetChat::get_friend_nr() const {
+  return m_nr;
+}
 
-void WidgetChat::add_line(Glib::ustring text) { m_output.add_line(text); }
+void WidgetChat::add_line(Glib::ustring text) {
+  m_output.add_line(text);
+}
 
 void WidgetChat::add_line(unsigned long long timestamp,
                           bool left_side,
@@ -191,9 +182,6 @@ void WidgetChat::add_line(unsigned long long timestamp,
     new_line->add_line(timestamp, message);
     new_line->show_all();
     m_vbox.pack_start(*new_line, false, false);
-    // scroll down
-    auto adj = m_scrolled.get_vadjustment();
-    adj->set_value(adj->get_upper() - adj->get_page_size());
   } else {
     // TODO add a WidgetChatLineMe ..
     // add new action line
