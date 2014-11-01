@@ -104,6 +104,7 @@ set(SOURCES
     Dialog/FirstStartAssistant.cpp
     Dialog/DialogChat.cpp
     Dialog/DialogContact.cpp
+    Dialog/DialogSettings.cpp
     Widget/WidgetNotification.cpp
     Dialog/Debug/DialogCss.cpp
     Tox/Tox.cpp)
