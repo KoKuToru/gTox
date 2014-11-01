@@ -21,13 +21,14 @@
 #define POPOVERADDCONTACT_H
 
 #include <gtkmm.h>
-class PopoverAddContact: public Gtk::Popover {
-    private:
-        Gtk::Entry m_addr;
-        Gtk::TextView m_msg;
-    public:
-        PopoverAddContact(const Gtk::Widget& relative_to);
-        ~PopoverAddContact();
+class PopoverAddContact : public Gtk::Popover {
+ private:
+  Gtk::Entry m_addr;
+  Gtk::TextView m_msg;
+
+ public:
+  PopoverAddContact(const Gtk::Widget& relative_to);
+  ~PopoverAddContact();
 };
 
 #endif

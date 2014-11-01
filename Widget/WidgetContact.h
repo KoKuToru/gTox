@@ -24,19 +24,20 @@
 
 #include "WidgetContactListItem.h"
 
-class WidgetContact: public Gtk::ScrolledWindow {
-    private:
-        Gtk::ListBox m_list;
+class WidgetContact : public Gtk::ScrolledWindow {
+ private:
+  Gtk::ListBox m_list;
 
-        bool on_button_press(GdkEventButton* event);
-    public:
-        WidgetContact();
-        ~WidgetContact();
+  bool on_button_press(GdkEventButton* event);
 
-        void load_list();
-        void add_contact(Tox::FriendNr nr);
-        void refresh_contact(Tox::FriendNr nr);
-        void delete_contact(Tox::FriendNr nr);
+ public:
+  WidgetContact();
+  ~WidgetContact();
+
+  void load_list();
+  void add_contact(Tox::FriendNr nr);
+  void refresh_contact(Tox::FriendNr nr);
+  void delete_contact(Tox::FriendNr nr);
 };
 
 #endif

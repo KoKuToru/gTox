@@ -24,19 +24,20 @@
 #include "Tox/Tox.h"
 
 class WidgetChat;
-class WidgetChatEntry: public Gtk::Box{
-    private:
-        Gtk::ScrolledWindow m_ScrolledWindow;
-        Gtk::TextView m_text_view;
-        Glib::RefPtr<Gtk::TextBuffer> m_TextBuffer;
-    public:
-        void set_editable(bool b);
-        void focus();
+class WidgetChatEntry : public Gtk::Box {
+ private:
+  Gtk::ScrolledWindow m_ScrolledWindow;
+  Gtk::TextView m_text_view;
+  Glib::RefPtr<Gtk::TextBuffer> m_TextBuffer;
 
-        WidgetChatEntry();
-        ~WidgetChatEntry();
+ public:
+  void set_editable(bool b);
+  void focus();
 
-        void add_line(const Glib::ustring& text);
+  WidgetChatEntry();
+  ~WidgetChatEntry();
+
+  void add_line(const Glib::ustring& text);
 };
 
 #endif

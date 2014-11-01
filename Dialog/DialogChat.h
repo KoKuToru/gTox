@@ -24,23 +24,23 @@
 #include "Tox/Tox.h"
 #include "Widget/WidgetChat.h"
 
-//Single chat window
-class DialogChat: public Gtk::Window {
-    private:
-        Gtk::HeaderBar m_header;
-        Gtk::Box m_headerbar_btn_left;
-        Gtk::Image m_icon_attach;
-        Gtk::Button m_btn_xxtach;
+// Single chat window
+class DialogChat : public Gtk::Window {
+ private:
+  Gtk::HeaderBar m_header;
+  Gtk::Box m_headerbar_btn_left;
+  Gtk::Image m_icon_attach;
+  Gtk::Button m_btn_xxtach;
 
-        WidgetChat m_chat;
+  WidgetChat m_chat;
 
-    public:
-        DialogChat(Tox::FriendNr nr);
-        ~DialogChat();
+ public:
+  DialogChat(Tox::FriendNr nr);
+  ~DialogChat();
 
-        void show();
+  void show();
 
-        WidgetChat& get_chat();
+  WidgetChat& get_chat();
 };
 
 #endif

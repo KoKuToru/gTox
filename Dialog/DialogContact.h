@@ -31,71 +31,71 @@
 
 #include "DialogChat.h"
 
-//contact list with pinned chat
-class DialogContact: public Gtk::Window {
-    private:
-        static DialogContact* m_instance;
+// contact list with pinned chat
+class DialogContact : public Gtk::Window {
+ private:
+  static DialogContact* m_instance;
 
-        Gtk::Paned     m_header_paned;
-        Gtk::HeaderBar m_headerbar_chat;
-        Gtk::HeaderBar m_headerbar_contact;
+  Gtk::Paned m_header_paned;
+  Gtk::HeaderBar m_headerbar_chat;
+  Gtk::HeaderBar m_headerbar_contact;
 
-        Gtk::Paned     m_paned;
+  Gtk::Paned m_paned;
 
-        Gtk::Image     m_icon_attach;
-        Gtk::Image     m_icon_detach;
-        Gtk::Image     m_icon_settings;
-        Gtk::Image     m_icon_status;
-        Gtk::Image     m_icon_add;
+  Gtk::Image m_icon_attach;
+  Gtk::Image m_icon_detach;
+  Gtk::Image m_icon_settings;
+  Gtk::Image m_icon_status;
+  Gtk::Image m_icon_add;
 
-        Gtk::Button    m_btn_xxtach;
-        Gtk::Button    m_btn_status;
-        Gtk::Button    m_btn_settings;
-        Gtk::Button    m_btn_add;
-        Gtk::Button    m_btn_xchat;
+  Gtk::Button m_btn_xxtach;
+  Gtk::Button m_btn_status;
+  Gtk::Button m_btn_settings;
+  Gtk::Button m_btn_add;
+  Gtk::Button m_btn_xchat;
 
-        Gtk::Box       m_headerbar_chat_box_left;
-        Gtk::Box       m_headerbar_contact_box_left;
-        Gtk::Box       m_headerbar_contact_box_right;
+  Gtk::Box m_headerbar_chat_box_left;
+  Gtk::Box m_headerbar_contact_box_left;
+  Gtk::Box m_headerbar_contact_box_right;
 
-        Gtk::Stack     m_chat;
+  Gtk::Stack m_chat;
 
-        Gtk::VBox      m_vbox;
+  Gtk::VBox m_vbox;
 
-        WidgetContact m_contact;
-        WidgetNotification m_notification;
+  WidgetContact m_contact;
+  WidgetNotification m_notification;
 
-        std::vector<std::shared_ptr<DialogChat>> m_chat_dialog;
+  std::vector<std::shared_ptr<DialogChat> > m_chat_dialog;
 
-        sigc::connection m_update_interval;
+  sigc::connection m_update_interval;
 
-        std::string m_config_path;
+  std::string m_config_path;
 
-        PopoverStatus   m_popover_status;
-        PopoverSettings m_popover_settings;
-        PopoverAddContact m_popover_add;
+  PopoverStatus m_popover_status;
+  PopoverSettings m_popover_settings;
+  PopoverAddContact m_popover_add;
 
-        DialogContact(const std::string& config_path);
+  DialogContact(const std::string& config_path);
 
-    public:
-        ~DialogContact();
-        static void init(const std::string& config_path);
-        static DialogContact& instance();
-        static void destroy();
+ public:
+  ~DialogContact();
+  static void init(const std::string& config_path);
+  static DialogContact& instance();
+  static void destroy();
 
-        void activate_chat(Tox::FriendNr nr);
-        void set_status(Tox::EUSERSTATUS status_code);
-        void exit();
-        void add_contact(Tox::FriendNr nr);
-        void change_name(Glib::ustring name, Glib::ustring msg);
-        void delete_friend(Tox::FriendNr nr);
+  void activate_chat(Tox::FriendNr nr);
+  void set_status(Tox::EUSERSTATUS status_code);
+  void exit();
+  void add_contact(Tox::FriendNr nr);
+  void change_name(Glib::ustring name, Glib::ustring msg);
+  void delete_friend(Tox::FriendNr nr);
 
-        void attach_chat(Tox::FriendNr nr);
-    protected:
-        void detach_chat();
-        bool update();
-        WidgetChat* get_chat(Tox::FriendNr nr, DialogChat*& dialog);
+  void attach_chat(Tox::FriendNr nr);
 
+ protected:
+  void detach_chat();
+  bool update();
+  WidgetChat* get_chat(Tox::FriendNr nr, DialogChat*& dialog);
 };
 
 #endif
