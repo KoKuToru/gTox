@@ -63,6 +63,11 @@ PopoverAddContact::PopoverAddContact(const Gtk::Widget& relative_to)
       std::cout << "ERROR2" << std::endl;
       return;
     }
+
+    if (m_msg.get_buffer()->get_text(true).size() == 0) {
+      m_msg.get_buffer()->set_text("I am using gTox. Add me");
+    }
+
     try {
       Tox::FriendAddr adr;
       auto adr_c = Tox::from_hex(m_addr.get_text());
