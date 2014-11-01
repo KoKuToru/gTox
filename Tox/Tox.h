@@ -191,6 +191,6 @@ class Tox {
         static void callback_read_receipt(Tox *, FriendNr nr, unsigned data, void *);
         static void callback_connection_status(Tox *, FriendNr nr, unsigned char data, void *);
 
-        void inject_event(const SEvent& ev);
+        void inject_event(SEvent ev);
 };
 #endif

@@ -296,6 +296,11 @@ void Tox::del_friend(Tox::FriendNr nr) {
 }
 
 Tox::ReceiptNr Tox::send_message(Tox::FriendNr nr, const Glib::ustring& message) {
+    if (message.find("/me ") == 0) {
+        //return send_action(nr, message.substr(Glib::ustring("/me ").size()));
+        return send_action(nr, message);
+    }
+
     std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
         throw Exception(UNITIALIZED);
@@ -525,11 +530,26 @@ void Tox::send_typing(FriendNr nr, bool is_typing) {
     }
 }
 
-void Tox::inject_event(const SEvent& ev) {
+void Tox::inject_event(SEvent ev) {
     std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
         throw Exception(UNITIALIZED);
     }
+
+    if (ev.event == FRIENDMESSAGE) {
+        //check if message includes "/me"
+        if (ev.friend_message.data.find("/me ") == 0) {
+            ev.event = FRIENDACTION;
+            ev.friend_action.nr = ev.friend_message.nr;
+            ev.friend_action.data = ev.friend_message.data;
+        }
+    } else if (ev.event == FRIENDACTION) {
+        //check if message already includes "/me"
+        if (ev.friend_action.data.find("/me ") != 0) {
+            ev.friend_action.data = "/me " + ev.friend_action.data;
+        }
+    }
+
     events.push_back(ev);
 
     if (m_db) {
