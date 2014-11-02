@@ -24,16 +24,16 @@
 #include "Dialog/DialogSettings.h"
 
 class PopoverSettings : public Gtk::Popover {
- private:
-  Gtk::Entry m_name;
-  Gtk::Entry m_msg;
-  DialogSettings m_settings;
+    private:
+    Gtk::Entry m_name;
+    Gtk::Entry m_msg;
+    DialogSettings m_settings;
 
- public:
-  PopoverSettings(const Gtk::Widget& relative_to);
-  ~PopoverSettings();
+    public:
+    PopoverSettings(const Gtk::Widget& relative_to);
+    ~PopoverSettings();
 
-  void set_visible(bool visible = true);
+    void set_visible(bool visible = true);
 };
 
 #endif
