@@ -35,6 +35,8 @@ This project will download and compile `toxcore`.
 Make sure you have all dependencies.
 
 ```bash
+git clone -b unstable https://github.com/KoKuToru/gTox.git
+cd gTox
 mkdir build
 cd build
 cmake ..
