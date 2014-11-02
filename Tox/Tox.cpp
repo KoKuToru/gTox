@@ -24,7 +24,7 @@
 #include "Generated/database.h"
 
 std::recursive_mutex Tox::m_mtx;
-Tox *Tox::m_instance = nullptr;
+Tox* Tox::m_instance = nullptr;
 
 Tox::Tox() : m_tox(nullptr) {
 }

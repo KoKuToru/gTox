@@ -104,14 +104,17 @@ DialogContact::DialogContact(const std::string& config_path)
     m_header_paned.pack1(m_headerbar_chat, true, false);
     m_header_paned.pack2(m_headerbar_contact, false, false);
 
-    m_btn_status.signal_clicked().connect(
-        [this]() { m_popover_status.set_visible(true); });
+    m_btn_status.signal_clicked().connect([this]() {
+        m_popover_status.set_visible(true);
+    });
 
-    m_btn_settings.signal_clicked().connect(
-        [this]() { m_popover_settings.set_visible(true); });
+    m_btn_settings.signal_clicked().connect([this]() {
+        m_popover_settings.set_visible(true);
+    });
 
-    m_btn_add.signal_clicked().connect(
-        [this]() { m_popover_add.set_visible(true); });
+    m_btn_add.signal_clicked().connect([this]() {
+        m_popover_add.set_visible(true);
+    });
 
     m_btn_xchat.signal_clicked().connect([this]() {
         auto child = m_chat.get_visible_child();
