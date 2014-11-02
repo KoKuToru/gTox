@@ -29,9 +29,9 @@ class DialogSettings : public Gtk::Window {
     DialogSettings();
     ~DialogSettings();
 
-  Gtk::Stack m_stack;
+    Gtk::Stack m_stack;
 
-  void show();
+    void show();
 };
 
 #endif
