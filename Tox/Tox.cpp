@@ -150,39 +150,12 @@ void Tox::init(const Glib::ustring& statefile) {
         }
     }
 
-    unsigned char pub_key[] = {0x00,
-                               0x95,
-                               0xFC,
-                               0x11,
-                               0xA6,
-                               0x24,
-                               0xEE,
-                               0xF1,
-                               0xEE,
-                               0xD3,
-                               0x8B,
-                               0x54,
-                               0xA4,
-                               0xBE,
-                               0x3E,
-                               0x7F,
-                               0xF3,
-                               0x52,
-                               0x7D,
-                               0x36,
-                               0x7D,
-                               0xC0,
-                               0xAC,
-                               0xD1,
-                               0x0A,
-                               0xC8,
-                               0x32,
-                               0x9C,
-                               0x99,
-                               0x31,
-                               0x95,
-                               0x13};
-    if (!tox_bootstrap_from_address(m_tox, "urotukok.net", 33445, pub_key)) {
+    auto pub = from_hex(
+        "0095FC11A624EEF1"
+        "EED38B54A4BE3E7F"
+        "F3527D367DC0ACD1"
+        "0AC8329C99319513");
+    if (!tox_bootstrap_from_address(m_tox, "urotukok.net", 33445, pub.data())) {
         throw Exception(BOOTERROR);
     }
 }
