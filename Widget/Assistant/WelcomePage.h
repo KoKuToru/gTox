@@ -24,12 +24,12 @@
 #include <gtkmm.h>
 
 class WelcomePage : public Gtk::Box {
- private:
-  Gtk::Label test;
+    private:
+    Gtk::Label test;
 
- public:
-  WelcomePage();
-  ~WelcomePage();
+    public:
+    WelcomePage();
+    ~WelcomePage();
 };
 
 #endif

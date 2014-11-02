@@ -28,29 +28,29 @@
 #include "Widget/Assistant/NewAccountWidget.h"
 
 class FirstStartAssistant : public Gtk::Assistant {
- private:
-  WelcomePage welcome;
-  AccountWidget account;
-  NewAccountWidget create;
-  Gtk::Box import;
-  Gtk::Box finish;
+    private:
+    WelcomePage welcome;
+    AccountWidget account;
+    NewAccountWidget create;
+    Gtk::Box import;
+    Gtk::Box finish;
 
-  Glib::ustring path;
+    Glib::ustring path;
 
-  bool aborted;
+    bool aborted;
 
-  int getPage(Gtk::Widget& widget);
+    int getPage(Gtk::Widget& widget);
 
-  int on_next(int page);
-  void on_cancel();
-  void on_close();
+    int on_next(int page);
+    void on_cancel();
+    void on_close();
 
- public:
-  FirstStartAssistant(Glib::ustring path);
-  ~FirstStartAssistant();
+    public:
+    FirstStartAssistant(Glib::ustring path);
+    ~FirstStartAssistant();
 
-  bool isAborted() { return aborted; }
-  Glib::ustring getPath() { return path; }
+    bool isAborted() { return aborted; }
+    Glib::ustring getPath() { return path; }
 };
 
 #endif

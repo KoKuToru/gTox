@@ -27,31 +27,31 @@
 
 // Content of DialogChat
 class WidgetChat : public Gtk::VPaned {
- private:
-  Gtk::TextView m_input;
-  WidgetChatEntry m_output;
+    private:
+    Gtk::TextView m_input;
+    WidgetChatEntry m_output;
 
-  Gtk::HBox m_hbox;
-  Gtk::Button m_btn_send;
+    Gtk::HBox m_hbox;
+    Gtk::Button m_btn_send;
 
-  Tox::FriendNr m_nr;
+    Tox::FriendNr m_nr;
 
-  Gtk::ScrolledWindow m_scrolled;
-  WidgetChatLayout m_vbox;
+    Gtk::ScrolledWindow m_scrolled;
+    WidgetChatLayout m_vbox;
 
-  bool m_autoscroll;
+    bool m_autoscroll;
 
- public:
-  WidgetChat(Tox::FriendNr nr);
-  ~WidgetChat();
+    public:
+    WidgetChat(Tox::FriendNr nr);
+    ~WidgetChat();
 
-  Tox::FriendNr get_friend_nr() const;
-  void focus();
-  void add_line(Glib::ustring text);
+    Tox::FriendNr get_friend_nr() const;
+    void focus();
+    void add_line(Glib::ustring text);
 
-  void add_line(unsigned long long timestamp,
-                bool left_side,
-                const Glib::ustring& message);
+    void add_line(unsigned long long timestamp,
+                  bool left_side,
+                  const Glib::ustring& message);
 };
 
 #endif

@@ -21,43 +21,43 @@
 #include "Generated/theme.h"
 
 DialogCss::DialogCss() {
-  this->set_border_width(1);
-  this->set_default_geometry(256, 256);
-  this->set_position(Gtk::WindowPosition::WIN_POS_NONE);
+    this->set_border_width(1);
+    this->set_default_geometry(256, 256);
+    this->set_position(Gtk::WindowPosition::WIN_POS_NONE);
 
-  // Setup titlebar
-  m_header.set_title("CSS Debug");
-  // m_header.set_subtitle("with DemoUser");
-  m_header.set_show_close_button();
+    // Setup titlebar
+    m_header.set_title("CSS Debug");
+    // m_header.set_subtitle("with DemoUser");
+    m_header.set_show_close_button();
 
-  this->set_titlebar(m_header);
+    this->set_titlebar(m_header);
 
-  m_text.get_buffer()->set_text(THEME::main);
-  m_text.get_buffer()->signal_changed().connect([this]() {
-    try {
-      auto css = Gtk::CssProvider::create();
-      if (css->load_from_data(m_text.get_buffer()->get_text())) {
-        auto screen = Gdk::Screen::get_default();
-        auto ctx = get_style_context();
-        if (m_last) {
-          ctx->remove_provider_for_screen(screen, m_last);
+    m_text.get_buffer()->set_text(THEME::main);
+    m_text.get_buffer()->signal_changed().connect([this]() {
+        try {
+            auto css = Gtk::CssProvider::create();
+            if (css->load_from_data(m_text.get_buffer()->get_text())) {
+                auto screen = Gdk::Screen::get_default();
+                auto ctx = get_style_context();
+                if (m_last) {
+                    ctx->remove_provider_for_screen(screen, m_last);
+                }
+                ctx->add_provider_for_screen(
+                    screen, css, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+                m_last = css;
+                m_header.set_subtitle("SUCCESS");
+            } else {
+                m_header.set_subtitle("ERROR");
+            }
         }
-        ctx->add_provider_for_screen(
-            screen, css, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
-        m_last = css;
-        m_header.set_subtitle("SUCCESS");
-      } else {
-        m_header.set_subtitle("ERROR");
-      }
-    }
-    catch (...) {
-      m_header.set_subtitle("ERROR");
-    }
-  });
+        catch (...) {
+            m_header.set_subtitle("ERROR");
+        }
+    });
 
-  auto scroll = Gtk::manage(new Gtk::ScrolledWindow());
-  scroll->add(m_text);
-  add(*scroll);
+    auto scroll = Gtk::manage(new Gtk::ScrolledWindow());
+    scroll->add(m_text);
+    add(*scroll);
 }
 
 DialogCss::~DialogCss() {}
