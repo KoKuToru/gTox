@@ -66,9 +66,9 @@ FirstStartAssistant::FirstStartAssistant(Glib::ustring path)
 FirstStartAssistant::~FirstStartAssistant() {
 }
 
-int FirstStartAssistant::getPage(Gtk::Widget& widget) {
+int FirstStartAssistant::getPage(Gtk::Widget &widget) {
     for (int i = 0; i < get_n_pages(); ++i)
-        if (get_nth_page(i) == (Gtk::Widget*)&widget)
+        if (get_nth_page(i) == (Gtk::Widget *)&widget)
             return i;
     return -1;
 }

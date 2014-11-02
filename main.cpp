@@ -56,7 +56,7 @@ void print_copyright() {
         << std::endl;
 }
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
     if (Glib::file_test("./Locale", Glib::FILE_TEST_IS_DIR)) {
         bindtextdomain("gTox", "./Locale");
     }
@@ -83,7 +83,7 @@ int main(int argc, char* argv[]) {
     accounts.resize(std::distance(
         accounts.begin(),
         std::remove_if(
-            accounts.begin(), accounts.end(), [](const std::string& name) {
+            accounts.begin(), accounts.end(), [](const std::string &name) {
                 const std::string state_ext = ".state";
                 return !(name.size() > state_ext.size()
                          && name.substr(name.size() - state_ext.size(),

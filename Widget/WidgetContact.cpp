@@ -26,8 +26,8 @@ WidgetContact::WidgetContact() : Glib::ObjectBase("WidgetContact") {
     this->add(m_list);  //, true, true);
 
     m_list.set_activate_on_single_click(false);
-    m_list.signal_row_activated().connect([this](Gtk::ListBoxRow* it) {
-        WidgetContactListItem* item = dynamic_cast<WidgetContactListItem*>(it);
+    m_list.signal_row_activated().connect([this](Gtk::ListBoxRow *it) {
+        WidgetContactListItem *item = dynamic_cast<WidgetContactListItem *>(it);
         DialogContact::instance().activate_chat(item->get_friend_nr());
     });
     m_list.signal_button_press_event().connect(
@@ -44,27 +44,27 @@ void WidgetContact::load_list() {
 }
 
 void WidgetContact::add_contact(Tox::FriendNr nr) {
-    Gtk::Widget* w = Gtk::manage(new WidgetContactListItem(this, nr));
+    Gtk::Widget *w = Gtk::manage(new WidgetContactListItem(this, nr));
     m_list.add(*w);
     w->show_all();
 }
 
 void WidgetContact::refresh_contact(Tox::FriendNr nr) {
-    for (Gtk::Widget* it : m_list.get_children()) {
-        WidgetContactListItem* item = dynamic_cast<WidgetContactListItem*>(it);
+    for (Gtk::Widget *it : m_list.get_children()) {
+        WidgetContactListItem *item = dynamic_cast<WidgetContactListItem *>(it);
         if (item->get_friend_nr() == nr) {
             item->refresh();
         }
     }
 }
 
-bool WidgetContact::on_button_press(GdkEventButton* event) {
+bool WidgetContact::on_button_press(GdkEventButton *event) {
     // check for right click
     if (event->button != 3) {
         return false;
     }
-    WidgetContactListItem* item
-        = dynamic_cast<WidgetContactListItem*>(m_list.get_row_at_y(event->y));
+    WidgetContactListItem *item
+        = dynamic_cast<WidgetContactListItem *>(m_list.get_row_at_y(event->y));
     if (item == nullptr) {
         return false;
     }
@@ -76,8 +76,8 @@ bool WidgetContact::on_button_press(GdkEventButton* event) {
 }
 
 void WidgetContact::delete_contact(Tox::FriendNr nr) {
-    for (Gtk::Widget* it : m_list.get_children()) {
-        WidgetContactListItem* item = dynamic_cast<WidgetContactListItem*>(it);
+    for (Gtk::Widget *it : m_list.get_children()) {
+        WidgetContactListItem *item = dynamic_cast<WidgetContactListItem *>(it);
         if (item->get_friend_nr() == nr) {
             m_list.remove(*item);
             // free memory

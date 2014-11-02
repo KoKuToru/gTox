@@ -23,7 +23,7 @@
 #include "Dialog/DialogContact.h"
 #include "Generated/icon.h"
 
-WidgetContactListItem::WidgetContactListItem(WidgetContact* contact,
+WidgetContactListItem::WidgetContactListItem(WidgetContact *contact,
                                              Tox::FriendNr nr)
     : Glib::ObjectBase("WidgetContactListItem"),
       m_contact(contact),

@@ -34,7 +34,7 @@ class AccountWidget : public Gtk::Box {
     AccountWidget();
     ~AccountWidget();
 
-    Gtk::RadioButton& getRbImport() {
+    Gtk::RadioButton &getRbImport() {
         return rbImport;
     }
 };

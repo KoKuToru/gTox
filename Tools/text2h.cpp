@@ -43,7 +43,7 @@ std::string remove_ext(std::string input) {
     return input.substr(0, input.find_last_of('.'));
 }
 
-int main(int argc, const char* argv[]) {
+int main(int argc, const char *argv[]) {
     if (argc < 4) {
         std::cout << "Usage: " << argv[0]
                   << " <namespace> <output> <input1> <input2> <inputN>"
