@@ -39,7 +39,7 @@ class FirstStartAssistant : public Gtk::Assistant {
 
   bool aborted;
 
-  int getPage(Gtk::Widget& widget);
+  int getPage(Gtk::Widget &widget);
 
   int on_next(int page);
   void on_cancel();

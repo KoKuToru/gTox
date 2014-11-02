@@ -51,7 +51,7 @@ class WidgetChat : public Gtk::VPaned {
 
   void add_line(unsigned long long timestamp,
                 bool left_side,
-                const Glib::ustring& message);
+                const Glib::ustring &message);
 };
 
 #endif

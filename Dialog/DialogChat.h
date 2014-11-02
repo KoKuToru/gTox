@@ -40,7 +40,7 @@ class DialogChat : public Gtk::Window {
 
   void show();
 
-  WidgetChat& get_chat();
+  WidgetChat &get_chat();
 };
 
 #endif

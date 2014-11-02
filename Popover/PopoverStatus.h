@@ -23,12 +23,12 @@
 #include <gtkmm.h>
 class PopoverStatus : public Gtk::Popover {
  private:
-  Gtk::ListBoxRow& create_item(Glib::RefPtr<Gdk::Pixbuf> icon,
+  Gtk::ListBoxRow &create_item(Glib::RefPtr<Gdk::Pixbuf> icon,
                                Glib::ustring text);
   Gtk::ListBox m_listbox;
 
  public:
-  PopoverStatus(const Gtk::Widget& relative_to);
+  PopoverStatus(const Gtk::Widget &relative_to);
   ~PopoverStatus();
 
   void set_visible(bool visible = true);
