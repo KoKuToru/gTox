@@ -154,11 +154,12 @@ void Tox::init(const Glib::ustring& statefile) {
         }
     }
 
-    SQLite::Statement stmt(*m_db, "SELECT active, ip, port, pub_key FROM bootstrap");
+    SQLite::Statement stmt(*m_db,
+                           "SELECT active, ip, port, pub_key FROM bootstrap");
     bool connected = false;
-    while(stmt.executeStep()){
+    while (stmt.executeStep()) {
         int active = stmt.getColumn(0).getInt();
-        if(active == 0)
+        if (active == 0)
             continue;
 
         const char* ip = stmt.getColumn(1).getText("");
@@ -168,11 +169,13 @@ void Tox::init(const Glib::ustring& statefile) {
         auto pub = from_hex(pub_key);
         connected |= tox_bootstrap_from_address(m_tox, ip, port, pub.data());
     }
-    //Fallback ..
-    auto pub = from_hex("F5A1A38EFB6BD3C2C8AF8B10D85F0F89E931704D349F1D0720C3C4059AF2440A");
-    connected |= tox_bootstrap_from_address(m_tox, "46.38.239.179", 33445, pub.data());
+    // Fallback ..
+    auto pub = from_hex(
+        "F5A1A38EFB6BD3C2C8AF8B10D85F0F89E931704D349F1D0720C3C4059AF2440A");
+    connected |= tox_bootstrap_from_address(
+        m_tox, "46.38.239.179", 33445, pub.data());
 
-    if(!connected)
+    if (!connected)
         throw Exception(BOOTERROR);
 }
 
