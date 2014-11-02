@@ -64,10 +64,6 @@ PopoverAddContact::PopoverAddContact(const Gtk::Widget& relative_to)
             return;
         }
 
-        if (m_msg.get_buffer()->get_text(true).size() == 0) {
-            m_msg.get_buffer()->set_text("I am using gTox. Add me");
-        }
-
         try {
             Tox::FriendAddr adr;
             auto adr_c = Tox::from_hex(m_addr.get_text());
@@ -75,9 +71,9 @@ PopoverAddContact::PopoverAddContact(const Gtk::Widget& relative_to)
             DialogContact::instance().add_contact(Tox::instance().add_friend(
                 adr, m_msg.get_buffer()->get_text()));
 
+            set_visible(false);
             m_addr.set_text("");
             m_msg.get_buffer()->set_text("");
-            set_visible(false);
         } catch (...) {
             // TODO: Error handling
             std::cout << "ERROR" << std::endl;
@@ -86,4 +82,13 @@ PopoverAddContact::PopoverAddContact(const Gtk::Widget& relative_to)
 }
 
 PopoverAddContact::~PopoverAddContact() {
+}
+
+void PopoverAddContact::set_visible(bool v) {
+    if (v) {
+        if (m_msg.get_buffer()->get_text().size() == 0) {
+            m_msg.get_buffer()->set_text("I am using gTox. Add me");
+        }
+    }
+    Gtk::Popover::set_visible(v);
 }

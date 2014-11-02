@@ -29,6 +29,8 @@ class PopoverAddContact : public Gtk::Popover {
   public:
     PopoverAddContact(const Gtk::Widget& relative_to);
     ~PopoverAddContact();
+
+    void set_visible(bool v);
 };
 
 #endif
