@@ -24,10 +24,10 @@
 #include <gtkmm.h>
 
 class DialogSettings : public Gtk::Window {
-private:
-public:
-  DialogSettings();
-  ~DialogSettings();
+    private:
+    public:
+    DialogSettings();
+    ~DialogSettings();
 
   Gtk::Stack m_stack;
 

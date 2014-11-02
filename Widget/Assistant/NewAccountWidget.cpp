@@ -22,10 +22,10 @@
 #include <glibmm/i18n.h>
 
 NewAccountWidget::NewAccountWidget() : labelName(_("Displayname : ")) {
-  add(gridLayout);
+    add(gridLayout);
 
-  gridLayout.add(labelName);
-  gridLayout.add(entryName);
+    gridLayout.add(labelName);
+    gridLayout.add(entryName);
 }
 
 NewAccountWidget::~NewAccountWidget() {}

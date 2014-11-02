@@ -23,34 +23,34 @@
 #include "Debug/DialogCss.h"
 
 DialogSettings::DialogSettings() {
-  this->set_default_geometry(600, 600);
-  this->set_position(Gtk::WindowPosition::WIN_POS_CENTER);
+    this->set_default_geometry(600, 600);
+    this->set_position(Gtk::WindowPosition::WIN_POS_CENTER);
 
-  auto hbox = Gtk::manage(new Gtk::HBox());
-  auto sidebar = Gtk::manage(new Gtk::Box());
-  auto seperator = Gtk::manage(new Gtk::VSeparator());
-  auto box = Gtk::manage(new Gtk::Box());
-  auto listbox = Gtk::manage(new Gtk::ListBox());
-  auto scroller_1 = Gtk::manage(new Gtk::ScrolledWindow());
-  auto scroller_2 = Gtk::manage(new Gtk::ScrolledWindow());
+    auto hbox = Gtk::manage(new Gtk::HBox());
+    auto sidebar = Gtk::manage(new Gtk::Box());
+    auto seperator = Gtk::manage(new Gtk::VSeparator());
+    auto box = Gtk::manage(new Gtk::Box());
+    auto listbox = Gtk::manage(new Gtk::ListBox());
+    auto scroller_1 = Gtk::manage(new Gtk::ScrolledWindow());
+    auto scroller_2 = Gtk::manage(new Gtk::ScrolledWindow());
 
-  add(*hbox);
-  hbox->add(*sidebar);
-  hbox->add(*seperator);
-  hbox->add(*box);
-  box->add(m_stack);
-  sidebar->add(*scroller_1);
-  scroller_1->add(*listbox);
-  box->add(*scroller_2);
+    add(*hbox);
+    hbox->add(*sidebar);
+    hbox->add(*seperator);
+    hbox->add(*box);
+    box->add(m_stack);
+    sidebar->add(*scroller_1);
+    scroller_1->add(*listbox);
+    box->add(*scroller_2);
 
-  scroller_2->add(*Gtk::manage(new Gtk::Label("Test")));
+    scroller_2->add(*Gtk::manage(new Gtk::Label("Test")));
 
-  scroller_1->set_hexpand(false);
-  seperator->set_hexpand(false);
-  scroller_1->set_halign(Gtk::ALIGN_START);
-  seperator->set_halign(Gtk::ALIGN_START);
+    scroller_1->set_hexpand(false);
+    seperator->set_hexpand(false);
+    scroller_1->set_halign(Gtk::ALIGN_START);
+    seperator->set_halign(Gtk::ALIGN_START);
 
-  listbox->add(*Gtk::manage(new Gtk::Label("Test")));
+    listbox->add(*Gtk::manage(new Gtk::Label("Test")));
 }
 
 DialogSettings::~DialogSettings() {}

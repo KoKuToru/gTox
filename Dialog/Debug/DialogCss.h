@@ -24,19 +24,19 @@
 
 // Single chat window
 class DialogCss : public Gtk::Window {
-private:
-  Gtk::HeaderBar m_header;
-  Gtk::Box m_headerbar_btn_left;
+    private:
+    Gtk::HeaderBar m_header;
+    Gtk::Box m_headerbar_btn_left;
 
-  Gtk::TextView m_text;
+    Gtk::TextView m_text;
 
-  Glib::RefPtr<Gtk::CssProvider> m_last;
+    Glib::RefPtr<Gtk::CssProvider> m_last;
 
-public:
-  DialogCss();
-  ~DialogCss();
+    public:
+    DialogCss();
+    ~DialogCss();
 
-  void show();
+    void show();
 };
 
 #endif

@@ -25,44 +25,44 @@
 
 PopoverContextContact::PopoverContextContact(Tox::FriendNr friendNr)
     : friendNr(friendNr) {
-  m_listbox.add(create_item(ICON::load_icon(ICON::remove), _("Remove")));
-  m_listbox.show_all();
-  add(m_listbox);
+    m_listbox.add(create_item(ICON::load_icon(ICON::remove), _("Remove")));
+    m_listbox.show_all();
+    add(m_listbox);
 
-  // signal handling
-  m_listbox.signal_row_activated().connect([this](Gtk::ListBoxRow *row) {
-    switch (row->get_index()) {
-    case 0:
-      DialogContact::instance().delete_friend(this->friendNr);
-      break;
-    }
-    set_visible(false);
-  });
+    // signal handling
+    m_listbox.signal_row_activated().connect([this](Gtk::ListBoxRow* row) {
+        switch (row->get_index()) {
+            case 0:
+                DialogContact::instance().delete_friend(this->friendNr);
+                break;
+        }
+        set_visible(false);
+    });
 }
 
-Gtk::ListBoxRow &
-PopoverContextContact::create_item(Glib::RefPtr<Gdk::Pixbuf> icon,
-                                   Glib::ustring text) {
-  auto row = Gtk::manage(new Gtk::ListBoxRow());
-  auto hbox = Gtk::manage(new Gtk::HBox());
-  auto label = Gtk::manage(new Gtk::Label(text));
-  auto img = Gtk::manage(new Gtk::Image(icon));
-  hbox->set_homogeneous(false);
-  img->set_valign(Gtk::Align::ALIGN_CENTER);
-  label->set_valign(Gtk::Align::ALIGN_CENTER);
-  img->set_margin_top(5);
-  img->set_margin_bottom(5);
-  img->set_margin_left(5);
-  img->set_margin_right(5);
-  label->set_margin_top(5);
-  label->set_margin_bottom(5);
-  label->set_margin_left(5);
-  label->set_margin_right(5);
-  hbox->pack_start(*img, false, false);
-  hbox->pack_start(*label, false, true);
-  row->add(*hbox);
-  row->set_name("PopoverContextContactListItem");
-  return *row;
+Gtk::ListBoxRow& PopoverContextContact::create_item(
+    Glib::RefPtr<Gdk::Pixbuf> icon,
+    Glib::ustring text) {
+    auto row = Gtk::manage(new Gtk::ListBoxRow());
+    auto hbox = Gtk::manage(new Gtk::HBox());
+    auto label = Gtk::manage(new Gtk::Label(text));
+    auto img = Gtk::manage(new Gtk::Image(icon));
+    hbox->set_homogeneous(false);
+    img->set_valign(Gtk::Align::ALIGN_CENTER);
+    label->set_valign(Gtk::Align::ALIGN_CENTER);
+    img->set_margin_top(5);
+    img->set_margin_bottom(5);
+    img->set_margin_left(5);
+    img->set_margin_right(5);
+    label->set_margin_top(5);
+    label->set_margin_bottom(5);
+    label->set_margin_left(5);
+    label->set_margin_right(5);
+    hbox->pack_start(*img, false, false);
+    hbox->pack_start(*label, false, true);
+    row->add(*hbox);
+    row->set_name("PopoverContextContactListItem");
+    return *row;
 }
 
 PopoverContextContact::~PopoverContextContact() {}
