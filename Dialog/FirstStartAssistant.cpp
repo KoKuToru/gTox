@@ -84,12 +84,9 @@ int FirstStartAssistant::on_next(int page) {
 }
 
 void FirstStartAssistant::on_cancel() {
-  int status =
-      Gtk::MessageDialog(_("Do you really want to guit the assistant?"),
-                         true,
-                         Gtk::MESSAGE_QUESTION,
-                         Gtk::BUTTONS_YES_NO,
-                         true).run();
+  int status = Gtk::MessageDialog(
+                   _("Do you really want to guit the assistant?"), true,
+                   Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO, true).run();
 
   if (status == Gtk::RESPONSE_YES) {
     aborted = true;

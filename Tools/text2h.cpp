@@ -88,7 +88,7 @@ int main(int argc, const char *argv[]) {
     std::string line;
     while (std::getline(input, line)) {
       source << line
-             << std::endl;  // not 100% correct last line might have no newline
+             << std::endl; // not 100% correct last line might have no newline
     }
 
     source << ")rawstring\";" << std::endl << std::endl;

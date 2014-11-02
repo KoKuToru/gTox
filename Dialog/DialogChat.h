@@ -26,7 +26,7 @@
 
 // Single chat window
 class DialogChat : public Gtk::Window {
- private:
+private:
   Gtk::HeaderBar m_header;
   Gtk::Box m_headerbar_btn_left;
   Gtk::Image m_icon_attach;
@@ -34,7 +34,7 @@ class DialogChat : public Gtk::Window {
 
   WidgetChat m_chat;
 
- public:
+public:
   DialogChat(Tox::FriendNr nr);
   ~DialogChat();
 

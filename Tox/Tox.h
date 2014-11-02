@@ -32,7 +32,7 @@
  * @brief Wraps the toxcore but also add features with a sqlitedb
  */
 class Tox {
- private:
+private:
   static std::recursive_mutex m_mtx;
   static Tox *m_instance;
   Tox();
@@ -40,7 +40,7 @@ class Tox {
   Tox *m_tox;
   std::shared_ptr<SQLite::Database> m_db;
 
- public:
+public:
   typedef int FriendNr;
   typedef int ReceiptNr;
   typedef std::array<unsigned char, TOX_FRIEND_ADDRESS_SIZE> FriendAddr;
@@ -109,10 +109,7 @@ class Tox {
     SFriendInt readreceipt;
   };
 
-  enum ELogType {
-    LOGMSG = 1,
-    LOGACTION = 2
-  };
+  enum ELogType { LOGMSG = 1, LOGACTION = 2 };
 
   struct SLog {
     ELogType type;
@@ -176,46 +173,30 @@ class Tox {
 
   std::vector<SLog> get_log(FriendNr nr, int offset = 0, int limit = 100);
 
- protected:
+protected:
   std::deque<SEvent> events;
 
-  static void callback_friend_request(Tox *,
-                                      const unsigned char *addr,
+  static void callback_friend_request(Tox *, const unsigned char *addr,
                                       const unsigned char *data,
-                                      unsigned short len,
-                                      void *);
-  static void callback_friend_message(Tox *,
-                                      FriendNr nr,
+                                      unsigned short len, void *);
+  static void callback_friend_message(Tox *, FriendNr nr,
                                       const unsigned char *data,
-                                      unsigned short len,
-                                      void *);
-  static void callback_friend_action(Tox *,
-                                     FriendNr nr,
+                                      unsigned short len, void *);
+  static void callback_friend_action(Tox *, FriendNr nr,
                                      const unsigned char *data,
-                                     unsigned short len,
-                                     void *);
-  static void callback_name_change(Tox *,
-                                   FriendNr nr,
+                                     unsigned short len, void *);
+  static void callback_name_change(Tox *, FriendNr nr,
                                    const unsigned char *data,
-                                   unsigned short len,
-                                   void *);
-  static void callback_status_message(Tox *,
-                                      FriendNr nr,
+                                   unsigned short len, void *);
+  static void callback_status_message(Tox *, FriendNr nr,
                                       const unsigned char *data,
-                                      unsigned short len,
-                                      void *);
-  static void callback_user_status(Tox *,
-                                   FriendNr nr,
-                                   unsigned char data,
+                                      unsigned short len, void *);
+  static void callback_user_status(Tox *, FriendNr nr, unsigned char data,
                                    void *);
-  static void callback_typing_change(Tox *,
-                                     FriendNr nr,
-                                     unsigned char data,
+  static void callback_typing_change(Tox *, FriendNr nr, unsigned char data,
                                      void *);
   static void callback_read_receipt(Tox *, FriendNr nr, unsigned data, void *);
-  static void callback_connection_status(Tox *,
-                                         FriendNr nr,
-                                         unsigned char data,
+  static void callback_connection_status(Tox *, FriendNr nr, unsigned char data,
                                          void *);
 
   void inject_event(SEvent ev);

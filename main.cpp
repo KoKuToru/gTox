@@ -82,14 +82,13 @@ int main(int argc, char *argv[]) {
   Glib::Dir dir(config_path);
   std::vector<std::string> accounts(dir.begin(), dir.end());
   accounts.resize(std::distance(
-      accounts.begin(),
-      std::remove_if(
-          accounts.begin(), accounts.end(), [](const std::string &name) {
-            const std::string state_ext = ".state";
-            return !(name.size() > state_ext.size() &&
-                     name.substr(name.size() - state_ext.size(),
-                                 state_ext.size()) == state_ext);
-          })));
+      accounts.begin(), std::remove_if(accounts.begin(), accounts.end(),
+                                       [](const std::string &name) {
+                          const std::string state_ext = ".state";
+                          return !(name.size() > state_ext.size() &&
+                                   name.substr(name.size() - state_ext.size(),
+                                               state_ext.size()) == state_ext);
+                        })));
 
   if (accounts.empty()) {
     // start new account assistant

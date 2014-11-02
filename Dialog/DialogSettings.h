@@ -24,8 +24,8 @@
 #include <gtkmm.h>
 
 class DialogSettings : public Gtk::Window {
- private:
- public:
+private:
+public:
   DialogSettings();
   ~DialogSettings();
 

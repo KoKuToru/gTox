@@ -25,7 +25,7 @@
 
 class WidgetContact;
 class WidgetContactListItem : public Gtk::ListBoxRow {
- private:
+private:
   Gtk::Image m_avatar;
   Gtk::Label m_name;
   Gtk::Label m_status_msg;
@@ -37,7 +37,7 @@ class WidgetContactListItem : public Gtk::ListBoxRow {
 
   Tox::FriendNr m_friend_nr;
 
- public:
+public:
   WidgetContactListItem(WidgetContact *contact, Tox::FriendNr nr);
   ~WidgetContactListItem();
 

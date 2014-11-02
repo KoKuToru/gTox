@@ -82,7 +82,7 @@ WidgetChat::WidgetChat(Tox::FriendNr nr)
                false);
 
   m_vbox.set_name("WidgetChat");
-  m_vbox.property_margin() = 10;  // wont work via css
+  m_vbox.property_margin() = 10; // wont work via css
 
   m_scrolled.get_vadjustment()->signal_value_changed().connect_notify([this]() {
     // check if lowest position
@@ -117,20 +117,16 @@ Tox::FriendNr WidgetChat::get_friend_nr() const { return m_nr; }
 
 void WidgetChat::add_line(Glib::ustring text) { m_output.add_line(text); }
 
-void WidgetChat::add_line(unsigned long long timestamp,
-                          bool left_side,
+void WidgetChat::add_line(unsigned long long timestamp, bool left_side,
                           const Glib::ustring &message) {
   // check if time i set, if not we will give it actual time
   if (timestamp == 0) {
     timestamp = Glib::DateTime::create_now_utc().to_unix();
   }
   auto new_time = Glib::DateTime::create_now_utc(timestamp);
-  new_time = Glib::DateTime::create_utc(new_time.get_year(),
-                                        new_time.get_month(),
-                                        new_time.get_day_of_month(),
-                                        0,
-                                        0,
-                                        0);
+  new_time =
+      Glib::DateTime::create_utc(new_time.get_year(), new_time.get_month(),
+                                 new_time.get_day_of_month(), 0, 0, 0);
   decltype(new_time) last_time = Glib::DateTime::create_now_utc(0);
 
   bool action = message.find("/me ") == 0;
@@ -141,12 +137,9 @@ void WidgetChat::add_line(unsigned long long timestamp,
     WidgetChatLine *item = dynamic_cast<WidgetChatLine *>(childs.back());
     if (item != nullptr) {
       last_time = Glib::DateTime::create_now_utc(item->last_timestamp());
-      last_time = Glib::DateTime::create_utc(last_time.get_year(),
-                                             last_time.get_month(),
-                                             last_time.get_day_of_month(),
-                                             0,
-                                             0,
-                                             0);
+      last_time = Glib::DateTime::create_utc(
+          last_time.get_year(), last_time.get_month(),
+          last_time.get_day_of_month(), 0, 0, 0);
       // check if blob is on same side
       if (!action && item->get_side() == left_side) {
         // check if it's same day month year

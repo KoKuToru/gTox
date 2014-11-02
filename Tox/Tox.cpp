@@ -73,8 +73,8 @@ void Tox::init(const Glib::ustring &statefile) {
   tox_callback_user_status(m_tox, Tox::callback_user_status, nullptr);
   tox_callback_typing_change(m_tox, Tox::callback_typing_change, nullptr);
   tox_callback_read_receipt(m_tox, Tox::callback_read_receipt, nullptr);
-  tox_callback_connection_status(
-      m_tox, Tox::callback_connection_status, nullptr);
+  tox_callback_connection_status(m_tox, Tox::callback_connection_status,
+                                 nullptr);
 
   m_db.reset();
   // load state
@@ -92,13 +92,13 @@ void Tox::init(const Glib::ustring &statefile) {
 
       while (version != 2 /*current version*/)
         switch (version) {
-          case 1:
-            m_db->exec(DATABASE::version_2);
-            version = 2;
-            break;
-          default:
-            throw Exception(UNKNOWDBVERSION);
-            break;
+        case 1:
+          m_db->exec(DATABASE::version_2);
+          version = 2;
+          break;
+        default:
+          throw Exception(UNKNOWDBVERSION);
+          break;
         }
 
       // increase runid by 1
@@ -108,10 +108,9 @@ void Tox::init(const Glib::ustring &statefile) {
       try {
         SQLite::Statement storeq(*m_db, "DELETE FROM toxcore WHERE id < ?1");
         storeq.bind(
-            1,
-            m_db->execAndGet(
-                      "SELECT max(id), date(savetime) FROM toxcore GROUP BY "
-                      "date(savetime) ORDER BY id DESC LIMIT 7,1").getInt());
+            1, m_db->execAndGet(
+                         "SELECT max(id), date(savetime) FROM toxcore GROUP BY "
+                         "date(savetime) ORDER BY id DESC LIMIT 7,1").getInt());
         storeq.exec();
       }
       catch (...) {
@@ -144,14 +143,14 @@ void Tox::init(const Glib::ustring &statefile) {
     }
   }
 
-  unsigned char pub_key[] = {0xA0, 0x91, 0x62, 0xD6, 0x86, 0x18, 0xE7, 0x42,
-                             0xFF, 0xBC, 0xA1, 0xC2, 0xC7, 0x03, 0x85, 0xE6,
-                             0x67, 0x96, 0x04, 0xB2, 0xD8, 0x0E, 0xA6, 0xE8,
-                             0x4A, 0xD0, 0x99, 0x6A, 0x1A, 0xC8, 0xA0, 0x74};
-  if (!tox_bootstrap_from_address(
-           m_tox, "23.226.230.47", 33445, pub_key)) {  // connect to a bootstrap
-                                                       // to get into the
-                                                       // network
+  unsigned char pub_key[] = { 0xA0, 0x91, 0x62, 0xD6, 0x86, 0x18, 0xE7, 0x42,
+                              0xFF, 0xBC, 0xA1, 0xC2, 0xC7, 0x03, 0x85, 0xE6,
+                              0x67, 0x96, 0x04, 0xB2, 0xD8, 0x0E, 0xA6, 0xE8,
+                              0x4A, 0xD0, 0x99, 0x6A, 0x1A, 0xC8, 0xA0, 0x74 };
+  if (!tox_bootstrap_from_address(m_tox, "23.226.230.47", 33445,
+                                  pub_key)) { // connect to a bootstrap
+                                              // to get into the
+                                              // network
     throw Exception(BOOTERROR);
   }
 }
@@ -250,35 +249,33 @@ Tox::FriendNr Tox::add_friend(Tox::FriendAddr addr,
   if (m_tox == nullptr) {
     throw Exception(UNITIALIZED);
   }
-  FriendNr res =
-      tox_add_friend(m_tox,
-                     addr.data(),
-                     reinterpret_cast<const unsigned char *>(message.data()),
-                     message.bytes());
+  FriendNr res = tox_add_friend(
+      m_tox, addr.data(),
+      reinterpret_cast<const unsigned char *>(message.data()), message.bytes());
   switch (res) {
-    case TOX_FAERR_TOOLONG:
-      throw Exception(MSGTOOLONG);
-      break;
-    case TOX_FAERR_NOMESSAGE:
-      throw Exception(MSGEMPTY);
-      break;
-    case TOX_FAERR_OWNKEY:
-      throw Exception(CANTADDYOURSELF);
-      break;
-    case TOX_FAERR_ALREADYSENT:
-      throw Exception(ALREADYSENT);
-      break;
-    case TOX_FAERR_UNKNOWN:
-      throw Exception(FAILED);
-      break;
-    case TOX_FAERR_BADCHECKSUM:
-      throw Exception(BADCHECKSUM);
-      break;
-    case TOX_FAERR_SETNEWNOSPAM:
-      throw Exception(NOSPAM);
-      break;
-    default:
-      break;
+  case TOX_FAERR_TOOLONG:
+    throw Exception(MSGTOOLONG);
+    break;
+  case TOX_FAERR_NOMESSAGE:
+    throw Exception(MSGEMPTY);
+    break;
+  case TOX_FAERR_OWNKEY:
+    throw Exception(CANTADDYOURSELF);
+    break;
+  case TOX_FAERR_ALREADYSENT:
+    throw Exception(ALREADYSENT);
+    break;
+  case TOX_FAERR_UNKNOWN:
+    throw Exception(FAILED);
+    break;
+  case TOX_FAERR_BADCHECKSUM:
+    throw Exception(BADCHECKSUM);
+    break;
+  case TOX_FAERR_SETNEWNOSPAM:
+    throw Exception(NOSPAM);
+    break;
+  default:
+    break;
   }
   return res;
 }
@@ -328,11 +325,9 @@ Tox::ReceiptNr Tox::send_message(Tox::FriendNr nr,
   if (m_tox == nullptr) {
     throw Exception(UNITIALIZED);
   }
-  Tox::ReceiptNr res =
-      tox_send_message(m_tox,
-                       nr,
-                       reinterpret_cast<const unsigned char *>(message.data()),
-                       message.bytes());
+  Tox::ReceiptNr res = tox_send_message(
+      m_tox, nr, reinterpret_cast<const unsigned char *>(message.data()),
+      message.bytes());
   if (res == 0) {
     throw Exception(FAILED);
   }
@@ -359,11 +354,9 @@ Tox::ReceiptNr Tox::send_action(Tox::FriendNr nr, const Glib::ustring &action) {
   if (m_tox == nullptr) {
     throw Exception(UNITIALIZED);
   }
-  Tox::ReceiptNr res =
-      tox_send_action(m_tox,
-                      nr,
-                      reinterpret_cast<const unsigned char *>(action.data()),
-                      action.bytes());
+  Tox::ReceiptNr res = tox_send_action(
+      m_tox, nr, reinterpret_cast<const unsigned char *>(action.data()),
+      action.bytes());
   if (res == 0) {
     throw Exception(FAILED);
   }
@@ -390,8 +383,7 @@ void Tox::set_name(const Glib::ustring &name) {
   if (m_tox == nullptr) {
     throw Exception(UNITIALIZED);
   }
-  if (tox_set_name(m_tox,
-                   reinterpret_cast<const unsigned char *>(name.data()),
+  if (tox_set_name(m_tox, reinterpret_cast<const unsigned char *>(name.data()),
                    name.bytes()) != 0) {
     throw Exception(FAILED);
   }
@@ -451,8 +443,8 @@ Glib::ustring Tox::get_status_message() {
     throw Exception(FAILED);
   }
   std::string name(size, 0);
-  size = tox_get_self_status_message(
-      m_tox, (unsigned char *)name.data(), name.size());
+  size = tox_get_self_status_message(m_tox, (unsigned char *)name.data(),
+                                     name.size());
   if (size < 0) {
     throw Exception(FAILED);
   }
@@ -470,8 +462,8 @@ Glib::ustring Tox::get_status_message(FriendNr nr) {
     throw Exception(FAILED);
   }
   std::string name(size, 0);
-  size = tox_get_status_message(
-      m_tox, nr, (unsigned char *)name.data(), name.size());
+  size = tox_get_status_message(m_tox, nr, (unsigned char *)name.data(),
+                                name.size());
   if (size < 0) {
     throw Exception(FAILED);
   }
@@ -485,8 +477,7 @@ void Tox::set_status_message(Glib::ustring msg) {
     throw Exception(UNITIALIZED);
   }
   if (tox_set_status_message(
-          m_tox,
-          reinterpret_cast<const unsigned char *>(msg.data()),
+          m_tox, reinterpret_cast<const unsigned char *>(msg.data()),
           msg.bytes()) != 0) {
     throw Exception(FAILED);
   }
@@ -546,7 +537,7 @@ void Tox::set_status(Tox::EUSERSTATUS value) {
     throw Exception(UNITIALIZED);
   }
   if (value == Tox::OFFLINE)
-    value = Tox::AWAY;  // we can't set status to offline
+    value = Tox::AWAY; // we can't set status to offline
   if (tox_set_user_status(m_tox, value) != 0) {
     throw Exception(FAILED);
   }
@@ -602,8 +593,8 @@ void Tox::inject_event(SEvent ev) {
                                 "UPDATE log SET recvtime=CURRENT_TIMESTAMP "
                                 "WHERE friendaddr=?1 AND receipt=?2");
 
-      updateq.bind(
-          1, get_address(ev.readreceipt.nr).data(), TOX_CLIENT_ID_SIZE);
+      updateq.bind(1, get_address(ev.readreceipt.nr).data(),
+                   TOX_CLIENT_ID_SIZE);
       updateq.bind(2, ev.readreceipt.data);
 
       updateq.exec();
@@ -613,11 +604,11 @@ void Tox::inject_event(SEvent ev) {
                                "message) VALUES (?1, CURRENT_TIMESTAMP, ?2, "
                                "?3)");
 
-      storeq.bind(
-          1, get_address(ev.friend_message.nr).data(), TOX_CLIENT_ID_SIZE);
+      storeq.bind(1, get_address(ev.friend_message.nr).data(),
+                  TOX_CLIENT_ID_SIZE);
       storeq.bind(2, ELogType::LOGMSG);
-      storeq.bind(
-          3, ev.friend_message.data.data(), ev.friend_message.data.bytes());
+      storeq.bind(3, ev.friend_message.data.data(),
+                  ev.friend_message.data.bytes());
 
       storeq.exec();
     } else if (ev.event == FRIENDACTION) {
@@ -626,11 +617,11 @@ void Tox::inject_event(SEvent ev) {
                                "message) VALUES (?1, CURRENT_TIMESTAMP, ?2, "
                                "?3)");
 
-      storeq.bind(
-          1, get_address(ev.friend_action.nr).data(), TOX_CLIENT_ID_SIZE);
+      storeq.bind(1, get_address(ev.friend_action.nr).data(),
+                  TOX_CLIENT_ID_SIZE);
       storeq.bind(2, ELogType::LOGACTION);
-      storeq.bind(
-          3, ev.friend_action.data.data(), ev.friend_action.data.bytes());
+      storeq.bind(3, ev.friend_action.data.data(),
+                  ev.friend_action.data.bytes());
 
       storeq.exec();
     }
@@ -673,26 +664,20 @@ std::vector<Tox::SLog> Tox::get_log(Tox::FriendNr nr, int offset, int limit) {
   return result;
 }
 
-void Tox::callback_friend_request(Tox *,
-                                  const unsigned char *addr,
-                                  const unsigned char *data,
-                                  unsigned short len,
+void Tox::callback_friend_request(Tox *, const unsigned char *addr,
+                                  const unsigned char *data, unsigned short len,
                                   void *) {
   Tox::SEvent tmp;
   tmp.event = EEventType::FRIENDREQUEST;
-  std::copy(addr,
-            addr + tmp.friend_request.addr.size(),
+  std::copy(addr, addr + tmp.friend_request.addr.size(),
             tmp.friend_request.addr.begin());
   tmp.friend_request.message =
-      Glib::ustring(std::string((const char *)data, len));  // no shortcut ?
+      Glib::ustring(std::string((const char *)data, len)); // no shortcut ?
   Tox::instance().inject_event(tmp);
 }
 
-void Tox::callback_friend_message(Tox *,
-                                  FriendNr nr,
-                                  const unsigned char *data,
-                                  unsigned short len,
-                                  void *) {
+void Tox::callback_friend_message(Tox *, FriendNr nr, const unsigned char *data,
+                                  unsigned short len, void *) {
   Tox::SEvent tmp;
   tmp.event = EEventType::FRIENDMESSAGE;
   tmp.friend_message.nr = nr;
@@ -700,11 +685,8 @@ void Tox::callback_friend_message(Tox *,
   Tox::instance().inject_event(tmp);
 }
 
-void Tox::callback_friend_action(Tox *,
-                                 FriendNr nr,
-                                 const unsigned char *data,
-                                 unsigned short len,
-                                 void *) {
+void Tox::callback_friend_action(Tox *, FriendNr nr, const unsigned char *data,
+                                 unsigned short len, void *) {
   Tox::SEvent tmp;
   tmp.event = EEventType::FRIENDACTION;
   tmp.friend_action.nr = nr;
@@ -712,11 +694,8 @@ void Tox::callback_friend_action(Tox *,
   Tox::instance().inject_event(tmp);
 }
 
-void Tox::callback_name_change(Tox *,
-                               FriendNr nr,
-                               const unsigned char *data,
-                               unsigned short len,
-                               void *) {
+void Tox::callback_name_change(Tox *, FriendNr nr, const unsigned char *data,
+                               unsigned short len, void *) {
   Tox::SEvent tmp;
   tmp.event = EEventType::NAMECHANGE;
   tmp.name_change.nr = nr;
@@ -724,11 +703,8 @@ void Tox::callback_name_change(Tox *,
   Tox::instance().inject_event(tmp);
 }
 
-void Tox::callback_status_message(Tox *,
-                                  FriendNr nr,
-                                  const unsigned char *data,
-                                  unsigned short len,
-                                  void *) {
+void Tox::callback_status_message(Tox *, FriendNr nr, const unsigned char *data,
+                                  unsigned short len, void *) {
   Tox::SEvent tmp;
   tmp.event = EEventType::STATUSMESSAGE;
   tmp.status_message.nr = nr;
@@ -744,9 +720,7 @@ void Tox::callback_user_status(Tox *, FriendNr nr, unsigned char data, void *) {
   Tox::instance().inject_event(tmp);
 }
 
-void Tox::callback_typing_change(Tox *,
-                                 FriendNr nr,
-                                 unsigned char data,
+void Tox::callback_typing_change(Tox *, FriendNr nr, unsigned char data,
                                  void *) {
   Tox::SEvent tmp;
   tmp.event = EEventType::TYPINGCHANGE;
@@ -763,9 +737,7 @@ void Tox::callback_read_receipt(Tox *, FriendNr nr, unsigned data, void *) {
   Tox::instance().inject_event(tmp);
 }
 
-void Tox::callback_connection_status(Tox *m,
-                                     FriendNr nr,
-                                     unsigned char data,
+void Tox::callback_connection_status(Tox *m, FriendNr nr, unsigned char data,
                                      void *) {
   Tox::SEvent tmp;
   tmp.event = EEventType::USERSTATUS;
@@ -805,7 +777,7 @@ std::vector<unsigned char> Tox::from_hex(std::string data) {
   std::vector<unsigned char> tmp;
   tmp.reserve(tmp.size() / 2);
   for (size_t i = 0; i < data.size(); i += 2) {
-    tmp.push_back(std::stoi(data.substr(i, 2), 0, 16));  // pretty stupid
+    tmp.push_back(std::stoi(data.substr(i, 2), 0, 16)); // pretty stupid
   }
   return tmp;
 }

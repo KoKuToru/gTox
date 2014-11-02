@@ -24,13 +24,13 @@
 #include <gtkmm.h>
 
 class AccountWidget : public Gtk::Box {
- private:
+private:
   Gtk::Label importText;
   Gtk::Grid gridLayout;
   Gtk::VBox radioBtnBox;
   Gtk::RadioButton rbNew, rbImport;
 
- public:
+public:
   AccountWidget();
   ~AccountWidget();
 

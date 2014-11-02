@@ -36,18 +36,18 @@ PopoverStatus::PopoverStatus(const Gtk::Widget &relative_to)
   // signal handling
   m_listbox.signal_row_activated().connect([this](Gtk::ListBoxRow *row) {
     switch (row->get_index()) {
-      case 0:
-        DialogContact::instance().set_status(Tox::NONE);
-        break;
-      case 1:
-        DialogContact::instance().set_status(Tox::BUSY);
-        break;
-      case 2:
-        DialogContact::instance().set_status(Tox::AWAY);
-        break;
-      case 3:
-        DialogContact::instance().exit();
-        break;
+    case 0:
+      DialogContact::instance().set_status(Tox::NONE);
+      break;
+    case 1:
+      DialogContact::instance().set_status(Tox::BUSY);
+      break;
+    case 2:
+      DialogContact::instance().set_status(Tox::AWAY);
+      break;
+    case 3:
+      DialogContact::instance().exit();
+      break;
     }
     set_visible(false);
   });
@@ -89,17 +89,17 @@ void PopoverStatus::set_visible(bool visible) {
 
   int select = 3;
   switch (Tox::instance().get_status()) {
-    case Tox::NONE:
-      select = 0;
-      break;
-    case Tox::BUSY:
-      select = 1;
-      break;
-    case Tox::AWAY:
-      select = 2;
-      break;
-    default:
-      break;
+  case Tox::NONE:
+    select = 0;
+    break;
+  case Tox::BUSY:
+    select = 1;
+    break;
+  case Tox::AWAY:
+    select = 2;
+    break;
+  default:
+    break;
   }
   m_listbox.select_row(*m_listbox.get_row_at_index(select));
 }

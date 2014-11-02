@@ -23,7 +23,7 @@
 #include <gtkmm.h>
 
 class WidgetChatLabel : public Gtk::DrawingArea {
- private:
+private:
   Glib::RefPtr<Pango::Layout> m_text;
   Cairo::RefPtr<Cairo::Region> m_clip;
 
@@ -32,7 +32,7 @@ class WidgetChatLabel : public Gtk::DrawingArea {
 
   void force_redraw();
 
- public:
+public:
   WidgetChatLabel();
   ~WidgetChatLabel();
 
@@ -42,7 +42,7 @@ class WidgetChatLabel : public Gtk::DrawingArea {
   void on_selection(int from_x, int from_y, int to_x, int to_y);
   Glib::ustring get_selection();
 
- protected:
+protected:
   virtual bool on_draw(const Cairo::RefPtr<Cairo::Context> &cr);
 
   virtual Gtk::SizeRequestMode get_request_mode_vfunc() const;

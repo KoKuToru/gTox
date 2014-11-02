@@ -34,10 +34,8 @@ DialogContact::DialogContact(const std::string &config_path)
       m_icon_detach(ICON::load_icon(ICON::chat_detach)),
       m_icon_settings(ICON::load_icon(ICON::settings)),
       m_icon_status(ICON::load_icon(ICON::status_offline)),
-      m_icon_add(ICON::load_icon(ICON::plus)),
-      m_config_path(config_path),
-      m_popover_status(m_btn_status),
-      m_popover_settings(m_btn_settings),
+      m_icon_add(ICON::load_icon(ICON::plus)), m_config_path(config_path),
+      m_popover_status(m_btn_status), m_popover_settings(m_btn_settings),
       m_popover_add(m_btn_add) {
   auto css = Gtk::CssProvider::create();
   if (!css->load_from_data(THEME::main)) {
@@ -45,8 +43,8 @@ DialogContact::DialogContact(const std::string &config_path)
   } else {
     auto screen = Gdk::Screen::get_default();
     auto ctx = get_style_context();
-    ctx->add_provider_for_screen(
-        screen, css, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+    ctx->add_provider_for_screen(screen, css,
+                                 GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
   }
 
   this->set_icon(ICON::load_icon(ICON::icon_128));
@@ -153,13 +151,10 @@ DialogContact::DialogContact(const std::string &config_path)
   this->add(m_paned);
 
   // Connect properties C++ version ?
-  g_object_bind_property(
-      m_header_paned.gobj(),
-      "position",
-      m_paned.gobj(),
-      "position",
-      GBindingFlags(G_BINDING_DEFAULT | G_BINDING_BIDIRECTIONAL |
-                    G_BINDING_SYNC_CREATE));
+  g_object_bind_property(m_header_paned.gobj(), "position", m_paned.gobj(),
+                         "position", GBindingFlags(G_BINDING_DEFAULT |
+                                                   G_BINDING_BIDIRECTIONAL |
+                                                   G_BINDING_SYNC_CREATE));
 
   // events
   m_btn_xxtach.signal_clicked().connect(
@@ -190,10 +185,10 @@ DialogContact::DialogContact(const std::string &config_path)
 
   m_btn_status.set_sensitive(false);
 
-  m_notification.add_notification(
-      _("PreAlpha Software"), _("Not ready yet"), "Okay", []() {
-        // nothing
-      });
+  m_notification.add_notification(_("PreAlpha Software"), _("Not ready yet"),
+                                  "Okay", []() {
+    // nothing
+  });
 }
 
 DialogContact::~DialogContact() {
@@ -237,8 +232,7 @@ void DialogContact::attach_chat(Tox::FriendNr nr) {
 
   m_chat_dialog.resize(std::distance(
       m_chat_dialog.begin(),
-      std::remove_if(m_chat_dialog.begin(),
-                     m_chat_dialog.end(),
+      std::remove_if(m_chat_dialog.begin(), m_chat_dialog.end(),
                      [dialog](const std::shared_ptr<DialogChat> &o) {
         return o.get() == dialog;
       })));
@@ -255,72 +249,69 @@ bool DialogContact::update() {
   bool save = false;
   while (Tox::instance().update(ev)) {
     switch (ev.event) {
-      case Tox::EEventType::FRIENDACTION:  // not that important Tox adds "/me"
-        std::cout << "FRIENDACTION !" << ev.friend_action.nr << " -> "
-                  << ev.friend_action.data << std::endl;
-        {
-          DialogChat *chat;
-          WidgetChat *item =
-              get_chat(ev.friend_action.nr,
-                       chat);  // automatically creates chat if not exits
-          item->add_line(0, true, ev.friend_action.data);  // add line, when
-                                                           // automatically
-                                                           // created chat ->
-                                                           // last line 2 times
-                                                           // !
-        }
-        break;
-      case Tox::EEventType::FRIENDMESSAGE:
-        std::cout << "FRIENDMESSAGE !" << ev.friend_message.nr << " -> "
-                  << ev.friend_message.data << std::endl;
-        {
-          DialogChat *chat;
-          WidgetChat *item = get_chat(ev.friend_message.nr, chat);
-          item->add_line(0, true, ev.friend_message.data);
-        }
-        break;
-      case Tox::EEventType::FRIENDREQUEST:
-        std::cout << "FRIENDREQUEST ! " << ev.friend_request.message
-                  << std::endl;
-        m_notification.add_notification(
-            "Friend request [" +
-                Tox::to_hex(ev.friend_request.addr.data(), 32) + "]",
-            ev.friend_request.message,
-            "Accept",
-            [this, ev]() {
-              add_contact(
-                  Tox::instance().add_friend_norequest(ev.friend_request.addr));
-              Tox::instance().save(m_config_path);
-            });
-        break;
-      case Tox::EEventType::NAMECHANGE:
-        std::cout << "NAMECHANGE !" << ev.name_change.nr << " -> "
-                  << ev.name_change.data << std::endl;
-        m_contact.refresh_contact(ev.name_change.nr);
-        save = true;
-        break;
-      case Tox::EEventType::READRECEIPT:
-        std::cout << "READRECEIPT !" << ev.readreceipt.nr << " -> "
-                  << ev.readreceipt.data << std::endl;
-        break;
-      case Tox::EEventType::STATUSMESSAGE:
-        std::cout << "STATUSMESSAGE !" << ev.status_message.nr << " -> "
-                  << ev.status_message.data << std::endl;
-        m_contact.refresh_contact(ev.status_message.nr);
-        save = true;
-        // TODO UPDATE CHAT
-        break;
-      case Tox::EEventType::TYPINGCHANGE:
-        std::cout << "TYPINGCHANGE !" << ev.typing_change.nr << " -> "
-                  << ev.typing_change.data << std::endl;
-        break;
-      case Tox::EEventType::USERSTATUS:
-        std::cout << "USERSTATUS !" << ev.user_status.nr << " -> "
-                  << ev.user_status.data << std::endl;
-        m_contact.refresh_contact(ev.user_status.nr);
-        save = true;
-        // TODO UPDATE CHAT
-        break;
+    case Tox::EEventType::FRIENDACTION: // not that important Tox adds "/me"
+      std::cout << "FRIENDACTION !" << ev.friend_action.nr << " -> "
+                << ev.friend_action.data << std::endl;
+      {
+        DialogChat *chat;
+        WidgetChat *item =
+            get_chat(ev.friend_action.nr,
+                     chat); // automatically creates chat if not exits
+        item->add_line(0, true, ev.friend_action.data); // add line, when
+                                                        // automatically
+                                                        // created chat ->
+                                                        // last line 2 times
+                                                        // !
+      }
+      break;
+    case Tox::EEventType::FRIENDMESSAGE:
+      std::cout << "FRIENDMESSAGE !" << ev.friend_message.nr << " -> "
+                << ev.friend_message.data << std::endl;
+      {
+        DialogChat *chat;
+        WidgetChat *item = get_chat(ev.friend_message.nr, chat);
+        item->add_line(0, true, ev.friend_message.data);
+      }
+      break;
+    case Tox::EEventType::FRIENDREQUEST:
+      std::cout << "FRIENDREQUEST ! " << ev.friend_request.message << std::endl;
+      m_notification.add_notification(
+          "Friend request [" + Tox::to_hex(ev.friend_request.addr.data(), 32) +
+              "]",
+          ev.friend_request.message, "Accept", [this, ev]() {
+            add_contact(
+                Tox::instance().add_friend_norequest(ev.friend_request.addr));
+            Tox::instance().save(m_config_path);
+          });
+      break;
+    case Tox::EEventType::NAMECHANGE:
+      std::cout << "NAMECHANGE !" << ev.name_change.nr << " -> "
+                << ev.name_change.data << std::endl;
+      m_contact.refresh_contact(ev.name_change.nr);
+      save = true;
+      break;
+    case Tox::EEventType::READRECEIPT:
+      std::cout << "READRECEIPT !" << ev.readreceipt.nr << " -> "
+                << ev.readreceipt.data << std::endl;
+      break;
+    case Tox::EEventType::STATUSMESSAGE:
+      std::cout << "STATUSMESSAGE !" << ev.status_message.nr << " -> "
+                << ev.status_message.data << std::endl;
+      m_contact.refresh_contact(ev.status_message.nr);
+      save = true;
+      // TODO UPDATE CHAT
+      break;
+    case Tox::EEventType::TYPINGCHANGE:
+      std::cout << "TYPINGCHANGE !" << ev.typing_change.nr << " -> "
+                << ev.typing_change.data << std::endl;
+      break;
+    case Tox::EEventType::USERSTATUS:
+      std::cout << "USERSTATUS !" << ev.user_status.nr << " -> "
+                << ev.user_status.data << std::endl;
+      m_contact.refresh_contact(ev.user_status.nr);
+      save = true;
+      // TODO UPDATE CHAT
+      break;
     }
   }
   if (save) {
@@ -413,17 +404,17 @@ void DialogContact::set_status(Tox::EUSERSTATUS status_code) {
   Tox::instance().set_status(status_code);
   // TODO: implement a get_status_icon function
   switch (status_code) {
-    case Tox::NONE:
-      m_icon_status.property_pixbuf() = ICON::load_icon(ICON::status_online);
-      break;
-    case Tox::BUSY:
-      m_icon_status.property_pixbuf() = ICON::load_icon(ICON::status_busy);
-      break;
-    case Tox::AWAY:
-      m_icon_status.property_pixbuf() = ICON::load_icon(ICON::status_away);
-      break;
-    default:
-      break;
+  case Tox::NONE:
+    m_icon_status.property_pixbuf() = ICON::load_icon(ICON::status_online);
+    break;
+  case Tox::BUSY:
+    m_icon_status.property_pixbuf() = ICON::load_icon(ICON::status_busy);
+    break;
+  case Tox::AWAY:
+    m_icon_status.property_pixbuf() = ICON::load_icon(ICON::status_away);
+    break;
+  default:
+    break;
   }
   Tox::instance().save(m_config_path);
 }

@@ -33,7 +33,7 @@
 
 // contact list with pinned chat
 class DialogContact : public Gtk::Window {
- private:
+private:
   static DialogContact *m_instance;
 
   Gtk::Paned m_header_paned;
@@ -77,7 +77,7 @@ class DialogContact : public Gtk::Window {
 
   DialogContact(const std::string &config_path);
 
- public:
+public:
   ~DialogContact();
   static void init(const std::string &config_path);
   static DialogContact &instance();
@@ -92,7 +92,7 @@ class DialogContact : public Gtk::Window {
 
   void attach_chat(Tox::FriendNr nr);
 
- protected:
+protected:
   void detach_chat();
   bool update();
   WidgetChat *get_chat(Tox::FriendNr nr, DialogChat *&dialog);

@@ -127,8 +127,8 @@ void WidgetChatLayout::update_children(GdkEventMotion *event,
   }
 }
 
-Glib::ustring WidgetChatLayout::get_children_selection(
-    std::vector<Gtk::Widget *> children) {
+Glib::ustring
+WidgetChatLayout::get_children_selection(std::vector<Gtk::Widget *> children) {
   Glib::ustring res;
   Glib::ustring tmp;
   for (auto c : children) {

@@ -28,7 +28,7 @@
 #include "Widget/Assistant/NewAccountWidget.h"
 
 class FirstStartAssistant : public Gtk::Assistant {
- private:
+private:
   WelcomePage welcome;
   AccountWidget account;
   NewAccountWidget create;
@@ -45,7 +45,7 @@ class FirstStartAssistant : public Gtk::Assistant {
   void on_cancel();
   void on_close();
 
- public:
+public:
   FirstStartAssistant(Glib::ustring path);
   ~FirstStartAssistant();
 

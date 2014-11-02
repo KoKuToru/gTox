@@ -54,8 +54,8 @@ bool WidgetChatLabel::on_draw(const Cairo::RefPtr<Cairo::Context> &cr) {
   auto padding = stylecontext->get_padding();
 
   // Render the background
-  stylecontext->render_background(
-      cr, 0, 0, get_allocated_width(), get_allocated_height());
+  stylecontext->render_background(cr, 0, 0, get_allocated_width(),
+                                  get_allocated_height());
 
   // Translate rendering by the padding
   cr->save();
@@ -67,7 +67,7 @@ bool WidgetChatLabel::on_draw(const Cairo::RefPtr<Cairo::Context> &cr) {
     cr->save();
     cr->clip();
 
-    cr->set_source_rgba(0.5, 0.5, 0.5, 0.5);  // get color from settings ?
+    cr->set_source_rgba(0.5, 0.5, 0.5, 0.5); // get color from settings ?
     cr->rectangle(0, 0, get_allocated_width(), get_allocated_height());
     cr->fill();
 
@@ -154,10 +154,8 @@ void WidgetChatLabel::get_preferred_width_vfunc(int &minimum_width,
   natural_width += padding.get_left() + padding.get_right();
 }
 
-void WidgetChatLabel::get_preferred_height_for_width_vfunc(int width,
-                                                           int &minimum_height,
-                                                           int &natural_height)
-    const {
+void WidgetChatLabel::get_preferred_height_for_width_vfunc(
+    int width, int &minimum_height, int &natural_height) const {
   Glib::RefPtr<Gtk::StyleContext> stylecontext = get_style_context();
   auto padding = stylecontext->get_padding();
 
@@ -224,27 +222,25 @@ void WidgetChatLabel::on_selection(int from_x, int from_y, int to_x, int to_y) {
 
   // get the selection
   int trailing;
-  m_text->xy_to_index(from_x * Pango::SCALE,
-                      from_y * Pango::SCALE,
-                      selection_index_from,
-                      trailing);
+  m_text->xy_to_index(from_x * Pango::SCALE, from_y * Pango::SCALE,
+                      selection_index_from, trailing);
   if (trailing) {
     selection_index_from += 1;
   }
-  m_text->xy_to_index(
-      to_x * Pango::SCALE, to_y * Pango::SCALE, selection_index_to, trailing);
+  m_text->xy_to_index(to_x * Pango::SCALE, to_y * Pango::SCALE,
+                      selection_index_to, trailing);
   if (trailing) {
     selection_index_to += 1;
   }
 
   // get the selected region
-  gint reg[] = {std::min(selection_index_from, selection_index_to),
-                std::max(selection_index_from, selection_index_to)};
+  gint reg[] = { std::min(selection_index_from, selection_index_to),
+                 std::max(selection_index_from, selection_index_to) };
   selection_index_from = reg[0];
   selection_index_to = reg[1];
   m_clip = Cairo::RefPtr<Cairo::Region>(
       new Cairo::Region(gdk_pango_layout_get_clip_region(
-          m_text->gobj(), 0, 0, reg, 1)));  // cpp-version ?
+          m_text->gobj(), 0, 0, reg, 1))); // cpp-version ?
   force_redraw();
 }
 

@@ -24,12 +24,12 @@
 #include <gtkmm.h>
 
 class NewAccountWidget : public Gtk::Box {
- private:
+private:
   Gtk::Grid gridLayout;
   Gtk::Label labelName;
   Gtk::Entry entryName;
 
- public:
+public:
   NewAccountWidget();
   ~NewAccountWidget();
 
