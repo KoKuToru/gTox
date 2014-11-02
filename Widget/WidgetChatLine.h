@@ -25,27 +25,27 @@
 class WidgetChatLabel;
 
 class WidgetChatLine : public Gtk::Box {
- private:
+private:
   bool m_side;
 
   int m_row_count;
   struct {
-    WidgetChatLabel* msg;
-    Gtk::Label* time;
+    WidgetChatLabel *msg;
+    Gtk::Label *time;
     unsigned long long timestamp;
   } m_last_row;
 
   Gtk::Grid m_grid;
   Gtk::Image m_avatar;
 
-  void on_size_allocate(Gtk::Allocation& allocation);
+  void on_size_allocate(Gtk::Allocation &allocation);
 
- public:
+public:
   WidgetChatLine(bool side);
   ~WidgetChatLine();
 
   bool get_side();
-  void add_line(unsigned long long timestamp, const Glib::ustring& message);
+  void add_line(unsigned long long timestamp, const Glib::ustring &message);
 
   unsigned long long last_timestamp();
 };

@@ -43,7 +43,7 @@ std::string remove_ext(std::string input) {
   return input.substr(0, input.find_last_of('.'));
 }
 
-int main(int argc, const char* argv[]) {
+int main(int argc, const char *argv[]) {
   if (argc < 4) {
     std::cout << "Usage: " << argv[0]
               << " <namespace> <output> <input1> <input2> <inputN>"
@@ -88,7 +88,7 @@ int main(int argc, const char* argv[]) {
     std::string line;
     while (std::getline(input, line)) {
       source << line
-             << std::endl;  // not 100% correct last line might have no newline
+             << std::endl; // not 100% correct last line might have no newline
     }
 
     source << ")rawstring\";" << std::endl << std::endl;

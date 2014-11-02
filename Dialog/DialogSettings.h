@@ -23,15 +23,15 @@
 
 #include <gtkmm.h>
 
-class DialogSettings: public Gtk::Window {
-  private:
-  public:
-    DialogSettings();
-    ~DialogSettings();
+class DialogSettings : public Gtk::Window {
+private:
+public:
+  DialogSettings();
+  ~DialogSettings();
 
-    Gtk::Stack m_stack;
+  Gtk::Stack m_stack;
 
-    void show();
+  void show();
 };
 
 #endif
