@@ -35,20 +35,15 @@ DialogSettings::DialogSettings() {
     auto scroller_2 = Gtk::manage(new Gtk::ScrolledWindow());
 
     add(*hbox);
-    hbox->add(*sidebar);
-    hbox->add(*seperator);
+    hbox->pack_start(*sidebar, false, false);
+    hbox->pack_start(*seperator, false, false);
     hbox->add(*box);
-    box->add(m_stack);
     sidebar->add(*scroller_1);
     scroller_1->add(*listbox);
-    box->add(*scroller_2);
+    box->pack_start(*scroller_2, true, true);
+    scroller_2->add(m_stack);
 
-    scroller_2->add(*Gtk::manage(new Gtk::Label("Test")));
-
-    scroller_1->set_hexpand(false);
-    seperator->set_hexpand(false);
-    scroller_1->set_halign(Gtk::ALIGN_START);
-    seperator->set_halign(Gtk::ALIGN_START);
+    m_stack.add(*Gtk::manage(new Gtk::Label("Test")), "");
 
     listbox->add(*Gtk::manage(new Gtk::Label("Test")));
 }
