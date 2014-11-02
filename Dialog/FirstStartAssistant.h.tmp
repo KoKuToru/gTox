@@ -16,28 +16,41 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>
-**/
-#ifndef WIDGETCHATBOX_H
-#define WIDGETCHATBOX_H
+ **/
+
+#ifndef FIRSTSTARTASSISTANT_H
+#define FIRSTSTARTASSISTANT_H
 
 #include <gtkmm.h>
-#include "Tox/Tox.h"
 
-class WidgetChat;
-class WidgetChatEntry : public Gtk::Box {
-  private:
-    Gtk::ScrolledWindow m_ScrolledWindow;
-    Gtk::TextView m_text_view;
-    Glib::RefPtr<Gtk::TextBuffer> m_TextBuffer;
+#include "Widget/Assistant/AccountWidget.h"
+#include "Widget/Assistant/WelcomePage.h"
+#include "Widget/Assistant/NewAccountWidget.h"
 
-  public:
-    void set_editable(bool b);
-    void focus();
+class FirstStartAssistant : public Gtk::Assistant {
+ private:
+  WelcomePage welcome;
+  AccountWidget account;
+  NewAccountWidget create;
+  Gtk::Box import;
+  Gtk::Box finish;
 
-    WidgetChatEntry();
-    ~WidgetChatEntry();
+  Glib::ustring path;
 
-    void add_line(const Glib::ustring& text);
+  bool aborted;
+
+  int getPage(Gtk::Widget& widget);
+
+  int on_next(int page);
+  void on_cancel();
+  void on_close();
+
+ public:
+  FirstStartAssistant(Glib::ustring path);
+  ~FirstStartAssistant();
+
+  bool isAborted() { return aborted; }
+  Glib::ustring getPath() { return path; }
 };
 
 #endif

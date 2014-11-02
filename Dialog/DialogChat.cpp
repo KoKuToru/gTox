@@ -23,33 +23,38 @@
 
 DialogChat::DialogChat(Tox::FriendNr nr)
     : m_icon_attach(ICON::load_icon(ICON::chat_attach)), m_chat(nr) {
-  this->set_border_width(1);
-  this->set_default_geometry(256, 256);
-  this->set_position(Gtk::WindowPosition::WIN_POS_NONE);
+    this->set_border_width(1);
+    this->set_default_geometry(256, 256);
+    this->set_position(Gtk::WindowPosition::WIN_POS_NONE);
 
-  // Setup titlebar
-  m_header.set_title(Tox::instance().get_name_or_address(nr));
-  m_header.set_subtitle(Tox::instance().get_status_message(nr));
-  m_header.set_show_close_button();
+    // Setup titlebar
+    m_header.set_title(Tox::instance().get_name_or_address(nr));
+    m_header.set_subtitle(Tox::instance().get_status_message(nr));
+    m_header.set_show_close_button();
 
-  m_btn_xxtach.set_image(m_icon_attach);
+    m_btn_xxtach.set_image(m_icon_attach);
 
-  m_headerbar_btn_left.get_style_context()->add_class("linked");
-  m_headerbar_btn_left.add(m_btn_xxtach);
-  m_header.pack_start(m_headerbar_btn_left);
+    m_headerbar_btn_left.get_style_context()->add_class("linked");
+    m_headerbar_btn_left.add(m_btn_xxtach);
+    m_header.pack_start(m_headerbar_btn_left);
 
-  this->set_titlebar(m_header);
+    this->set_titlebar(m_header);
 
-  // Setup content
-  add(m_chat);
+    // Setup content
+    add(m_chat);
 
-  m_btn_xxtach.signal_clicked().connect([this]() {
-    DialogContact::instance().attach_chat(m_chat.get_friend_nr());
-  });
+    m_btn_xxtach.signal_clicked().connect([this]() {
+        DialogContact::instance().attach_chat(m_chat.get_friend_nr());
+    });
 }
 
-DialogChat::~DialogChat() {}
+DialogChat::~DialogChat() {
+}
 
-void DialogChat::show() { show_all(); }
+void DialogChat::show() {
+    show_all();
+}
 
-WidgetChat& DialogChat::get_chat() { return m_chat; }
+WidgetChat& DialogChat::get_chat() {
+    return m_chat;
+}
