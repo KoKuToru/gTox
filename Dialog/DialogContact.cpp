@@ -350,7 +350,7 @@ WidgetChat* DialogContact::get_chat(Tox::FriendNr nr, DialogChat*& dialog) {
     }
     auto item = Gtk::manage(new WidgetChat(nr));
     item->show_all();
-    // item->hide();
+
     m_chat.add(*item, Tox::to_hex(Tox::instance().get_address(nr).data(), TOX_CLIENT_ID_SIZE));
     return item;
 }
@@ -365,6 +365,7 @@ void DialogContact::activate_chat(Tox::FriendNr nr) {
         return;
     }
 
+    // 2. resize window
     property_gravity() = Gdk::GRAVITY_NORTH_EAST;
     if (!m_headerbar_chat.is_visible()) {
         resize(600 + get_width(), get_height());
@@ -372,17 +373,14 @@ void DialogContact::activate_chat(Tox::FriendNr nr) {
     m_headerbar_chat.show();
     m_chat.show();
 
-    // 2. hide all chats
-    /*for(Gtk::Widget* w : m_chat.get_children()) {
-        w->hide();
-    }*/
     // 3. make the actual chat visible
-    // item->show_all();
     m_chat.set_transition_type(Gtk::STACK_TRANSITION_TYPE_CROSSFADE);
     m_chat.set_visible_child(*item);
+
     // 4. update headerbard
     m_headerbar_chat.set_title(Tox::instance().get_name_or_address(nr));
     m_headerbar_chat.set_subtitle(Tox::instance().get_status_message(nr));
+
     // 6. change focus to inputfiled
     item->focus();
 }
