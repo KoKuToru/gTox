@@ -255,8 +255,8 @@ bool DialogContact::update() {
     bool save = false;
     while (Tox::instance().update(ev)) {
         switch (ev.event) {
-            case Tox::EEventType::FRIENDACTION
-                :  // not that important Tox adds "/me"
+            case Tox::EEventType::FRIENDACTION:  // not that important Tox adds
+                                                 // "/me"
                 std::cout << "FRIENDACTION !" << ev.friend_action.nr << " -> "
                           << ev.friend_action.data << std::endl;
                 {
