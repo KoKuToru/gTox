@@ -23,7 +23,7 @@
 
 #include <gtkmm.h>
 
-class DialogSettings: public Gtk::Window {
+class DialogSettings : public Gtk::Window {
   private:
   public:
     DialogSettings();

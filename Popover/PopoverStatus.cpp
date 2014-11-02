@@ -24,82 +24,85 @@
 
 PopoverStatus::PopoverStatus(const Gtk::Widget& relative_to)
     : Gtk::Popover(relative_to) {
-  // add_label("Settings");
+    // add_label("Settings");
 
-  m_listbox.add(create_item(ICON::load_icon(ICON::status_online), _("Online")));
-  m_listbox.add(create_item(ICON::load_icon(ICON::status_busy), _("Busy")));
-  m_listbox.add(create_item(ICON::load_icon(ICON::status_away), _("Away")));
-  m_listbox.add(create_item(ICON::load_icon(ICON::status_offline), _("Exit")));
-  m_listbox.show_all();
-  add(m_listbox);
+    m_listbox.add(
+        create_item(ICON::load_icon(ICON::status_online), _("Online")));
+    m_listbox.add(create_item(ICON::load_icon(ICON::status_busy), _("Busy")));
+    m_listbox.add(create_item(ICON::load_icon(ICON::status_away), _("Away")));
+    m_listbox.add(
+        create_item(ICON::load_icon(ICON::status_offline), _("Exit")));
+    m_listbox.show_all();
+    add(m_listbox);
 
-  // signal handling
-  m_listbox.signal_row_activated().connect([this](Gtk::ListBoxRow* row) {
-    switch (row->get_index()) {
-      case 0:
-        DialogContact::instance().set_status(Tox::NONE);
-        break;
-      case 1:
-        DialogContact::instance().set_status(Tox::BUSY);
-        break;
-      case 2:
-        DialogContact::instance().set_status(Tox::AWAY);
-        break;
-      case 3:
-        DialogContact::instance().exit();
-        break;
-    }
-    set_visible(false);
-  });
+    // signal handling
+    m_listbox.signal_row_activated().connect([this](Gtk::ListBoxRow* row) {
+        switch (row->get_index()) {
+            case 0:
+                DialogContact::instance().set_status(Tox::NONE);
+                break;
+            case 1:
+                DialogContact::instance().set_status(Tox::BUSY);
+                break;
+            case 2:
+                DialogContact::instance().set_status(Tox::AWAY);
+                break;
+            case 3:
+                DialogContact::instance().exit();
+                break;
+        }
+        set_visible(false);
+    });
 }
 
-PopoverStatus::~PopoverStatus() {}
+PopoverStatus::~PopoverStatus() {
+}
 
 Gtk::ListBoxRow& PopoverStatus::create_item(Glib::RefPtr<Gdk::Pixbuf> icon,
                                             Glib::ustring text) {
-  auto row = Gtk::manage(new Gtk::ListBoxRow());
-  auto hbox = Gtk::manage(new Gtk::HBox());
-  auto label = Gtk::manage(new Gtk::Label(text));
-  auto img = Gtk::manage(new Gtk::Image(icon));
-  hbox->set_homogeneous(false);
-  img->set_valign(Gtk::Align::ALIGN_CENTER);
-  label->set_valign(Gtk::Align::ALIGN_CENTER);
-  img->set_margin_top(5);
-  img->set_margin_bottom(5);
-  img->set_margin_left(5);
-  img->set_margin_right(5);
-  label->set_margin_top(5);
-  label->set_margin_bottom(5);
-  label->set_margin_left(5);
-  label->set_margin_right(5);
-  hbox->pack_start(*img, false, false);
-  hbox->pack_start(*label, false, true);
-  row->add(*hbox);
-  row->set_name("PopoverStatusListItem");
-  return *row;
+    auto row = Gtk::manage(new Gtk::ListBoxRow());
+    auto hbox = Gtk::manage(new Gtk::HBox());
+    auto label = Gtk::manage(new Gtk::Label(text));
+    auto img = Gtk::manage(new Gtk::Image(icon));
+    hbox->set_homogeneous(false);
+    img->set_valign(Gtk::Align::ALIGN_CENTER);
+    label->set_valign(Gtk::Align::ALIGN_CENTER);
+    img->set_margin_top(5);
+    img->set_margin_bottom(5);
+    img->set_margin_left(5);
+    img->set_margin_right(5);
+    label->set_margin_top(5);
+    label->set_margin_bottom(5);
+    label->set_margin_left(5);
+    label->set_margin_right(5);
+    hbox->pack_start(*img, false, false);
+    hbox->pack_start(*label, false, true);
+    row->add(*hbox);
+    row->set_name("PopoverStatusListItem");
+    return *row;
 }
 
 void PopoverStatus::set_visible(bool visible) {
-  Gtk::Popover::set_visible(visible);
+    Gtk::Popover::set_visible(visible);
 
-  // update selection
-  if (!visible) {
-    return;
-  }
+    // update selection
+    if (!visible) {
+        return;
+    }
 
-  int select = 3;
-  switch (Tox::instance().get_status()) {
-    case Tox::NONE:
-      select = 0;
-      break;
-    case Tox::BUSY:
-      select = 1;
-      break;
-    case Tox::AWAY:
-      select = 2;
-      break;
-    default:
-      break;
-  }
-  m_listbox.select_row(*m_listbox.get_row_at_index(select));
+    int select = 3;
+    switch (Tox::instance().get_status()) {
+        case Tox::NONE:
+            select = 0;
+            break;
+        case Tox::BUSY:
+            select = 1;
+            break;
+        case Tox::AWAY:
+            select = 2;
+            break;
+        default:
+            break;
+    }
+    m_listbox.select_row(*m_listbox.get_row_at_index(select));
 }
