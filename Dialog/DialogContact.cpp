@@ -27,15 +27,17 @@
 #include <iostream>
 #include <glibmm/i18n.h>
 
-DialogContact *DialogContact::m_instance = nullptr;
+DialogContact* DialogContact::m_instance = nullptr;
 
-DialogContact::DialogContact(const std::string &config_path)
+DialogContact::DialogContact(const std::string& config_path)
     : m_icon_attach(ICON::load_icon(ICON::chat_attach)),
       m_icon_detach(ICON::load_icon(ICON::chat_detach)),
       m_icon_settings(ICON::load_icon(ICON::settings)),
       m_icon_status(ICON::load_icon(ICON::status_offline)),
-      m_icon_add(ICON::load_icon(ICON::plus)), m_config_path(config_path),
-      m_popover_status(m_btn_status), m_popover_settings(m_btn_settings),
+      m_icon_add(ICON::load_icon(ICON::plus)),
+      m_config_path(config_path),
+      m_popover_status(m_btn_status),
+      m_popover_settings(m_btn_settings),
       m_popover_add(m_btn_add) {
     auto css = Gtk::CssProvider::create();
     if (!css->load_from_data(THEME::main)) {
@@ -102,17 +104,14 @@ DialogContact::DialogContact(const std::string &config_path)
     m_header_paned.pack1(m_headerbar_chat, true, false);
     m_header_paned.pack2(m_headerbar_contact, false, false);
 
-    m_btn_status.signal_clicked().connect([this]() {
-        m_popover_status.set_visible(true);
-    });
+    m_btn_status.signal_clicked().connect(
+        [this]() { m_popover_status.set_visible(true); });
 
-    m_btn_settings.signal_clicked().connect([this]() {
-        m_popover_settings.set_visible(true);
-    });
+    m_btn_settings.signal_clicked().connect(
+        [this]() { m_popover_settings.set_visible(true); });
 
-    m_btn_add.signal_clicked().connect([this]() {
-        m_popover_add.set_visible(true);
-    });
+    m_btn_add.signal_clicked().connect(
+        [this]() { m_popover_add.set_visible(true); });
 
     m_btn_xchat.signal_clicked().connect([this]() {
         auto child = m_chat.get_visible_child();
@@ -253,8 +252,8 @@ bool DialogContact::update() {
     bool save = false;
     while (Tox::instance().update(ev)) {
         switch (ev.event) {
-            case Tox::EEventType::FRIENDACTION
-                :  // not that important Tox adds "/me"
+            case Tox::EEventType::FRIENDACTION:  // not that important Tox adds
+                                                 // "/me"
                 std::cout << "FRIENDACTION !" << ev.friend_action.nr << " -> "
                           << ev.friend_action.data << std::endl;
                 {
