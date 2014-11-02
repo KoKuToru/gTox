@@ -1,7 +1,6 @@
 ---
 Language:        Cpp
-# BasedOnStyle:  Chromium
-AccessModifierOffset: -1
+AccessModifierOffset: 0
 ConstructorInitializerIndentWidth: 4
 AlignEscapedNewlinesLeft: true
 AlignTrailingComments: true
@@ -9,7 +8,7 @@ AllowAllParametersOfDeclarationOnNextLine: false
 AllowShortBlocksOnASingleLine: false
 AllowShortIfStatementsOnASingleLine: false
 AllowShortLoopsOnASingleLine: false
-AllowShortFunctionsOnASingleLine: Inline
+AllowShortFunctionsOnASingleLine: None
 AlwaysBreakTemplateDeclarations: true
 AlwaysBreakBeforeMultilineStrings: true
 BreakBeforeBinaryOperators: false
@@ -37,9 +36,9 @@ PenaltyReturnTypeOnItsOwnLine: 200
 PointerAlignment: Left
 SpacesBeforeTrailingComments: 2
 Cpp11BracedListStyle: true
-Standard:        Cpp03
-IndentWidth:     2
-TabWidth:        8
+Standard:        Cpp11
+IndentWidth:     4
+TabWidth:        4
 UseTab:          Never
 BreakBeforeBraces: Attach
 SpacesInParentheses: false
