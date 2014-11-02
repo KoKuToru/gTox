@@ -40,19 +40,19 @@ WidgetChatLayout::~WidgetChatLayout() {}
 
 void WidgetChatLayout::set_spacing(int space) { m_vbox.set_spacing(space); }
 
-void WidgetChatLayout::pack_start(Gtk::Widget& w, bool a, bool b) {
+void WidgetChatLayout::pack_start(Gtk::Widget &w, bool a, bool b) {
   m_vbox.pack_start(w, a, b);
 }
 
-std::vector<Gtk::Widget*> WidgetChatLayout::get_children() {
+std::vector<Gtk::Widget *> WidgetChatLayout::get_children() {
   return m_vbox.get_children();
 }
 
-std::vector<const Gtk::Widget*> WidgetChatLayout::get_children() const {
+std::vector<const Gtk::Widget *> WidgetChatLayout::get_children() const {
   return m_vbox.get_children();
 }
 
-bool WidgetChatLayout::on_button_press_event(GdkEventButton* event) {
+bool WidgetChatLayout::on_button_press_event(GdkEventButton *event) {
   if (event->button != 1) {
     return false;
   }
@@ -71,7 +71,7 @@ bool WidgetChatLayout::on_button_press_event(GdkEventButton* event) {
   return true;
 }
 
-bool WidgetChatLayout::on_button_release_event(GdkEventButton* event) {
+bool WidgetChatLayout::on_button_release_event(GdkEventButton *event) {
   if (event->button != 1) {
     return false;
   }
@@ -80,7 +80,7 @@ bool WidgetChatLayout::on_button_release_event(GdkEventButton* event) {
   return true;
 }
 
-bool WidgetChatLayout::on_motion_notify_event(GdkEventMotion* event) {
+bool WidgetChatLayout::on_motion_notify_event(GdkEventMotion *event) {
   if (from_x < 0 && from_y < 0) {
     return false;
   }
@@ -89,17 +89,17 @@ bool WidgetChatLayout::on_motion_notify_event(GdkEventMotion* event) {
   return true;
 }
 
-void WidgetChatLayout::update_children(GdkEventMotion* event,
-                                       std::vector<Gtk::Widget*> children) {
+void WidgetChatLayout::update_children(GdkEventMotion *event,
+                                       std::vector<Gtk::Widget *> children) {
   for (auto c : children) {
     // check if it's a container
-    auto c_container = dynamic_cast<Gtk::Container*>(c);
+    auto c_container = dynamic_cast<Gtk::Container *>(c);
     if (c_container) {
       update_children(event, c_container->get_children());
       continue;
     }
     // check if it's WidgetChatMessage
-    auto c_message = dynamic_cast<WidgetChatLabel*>(c);
+    auto c_message = dynamic_cast<WidgetChatLabel *>(c);
     if (!c_message) {
       //
       continue;
@@ -127,20 +127,20 @@ void WidgetChatLayout::update_children(GdkEventMotion* event,
   }
 }
 
-Glib::ustring WidgetChatLayout::get_children_selection(
-    std::vector<Gtk::Widget*> children) {
+Glib::ustring
+WidgetChatLayout::get_children_selection(std::vector<Gtk::Widget *> children) {
   Glib::ustring res;
   Glib::ustring tmp;
   for (auto c : children) {
     tmp.clear();
 
     // check if it's a container
-    auto c_container = dynamic_cast<Gtk::Container*>(c);
+    auto c_container = dynamic_cast<Gtk::Container *>(c);
     if (c_container) {
       tmp = get_children_selection(c_container->get_children());
     }
     // check if it's WidgetChatMessage
-    auto c_message = dynamic_cast<WidgetChatLabel*>(c);
+    auto c_message = dynamic_cast<WidgetChatLabel *>(c);
     if (c_message) {
       tmp = c_message->get_selection();
     }
@@ -156,7 +156,7 @@ Glib::ustring WidgetChatLayout::get_children_selection(
   return res;
 }
 
-bool WidgetChatLayout::on_key_press_event(GdkEventKey* event) {
+bool WidgetChatLayout::on_key_press_event(GdkEventKey *event) {
   if (!(event->state & GDK_CONTROL_MASK)) {
     return false;
   }
