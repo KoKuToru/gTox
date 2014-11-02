@@ -25,7 +25,7 @@
 WidgetChatLabel::WidgetChatLabel()
     : Glib::ObjectBase("WidgetChatLabel"), m_clip(nullptr) {
     // add default name because
-    // styling with "gtkmm_CustomObject_WudgetChatMessage" is not nice
+    // styling with "gtkmm_CustomObject_WidgetChatMessage" is not nice
     get_style_context()->add_class("chatmsg");
 }
 
