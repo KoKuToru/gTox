@@ -60,7 +60,10 @@ PopoverSettings::PopoverSettings(const Gtk::Widget& relative_to)
                                               m_msg.get_text());
     });
 
-    btn_settings->signal_clicked().connect([this]() { m_settings.show(); });
+    btn_settings->signal_clicked().connect([this]() {
+    	hide();
+    	m_settings.show();
+    });
 }
 
 PopoverSettings::~PopoverSettings() {
