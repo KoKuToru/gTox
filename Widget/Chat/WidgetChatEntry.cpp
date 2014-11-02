@@ -34,6 +34,6 @@ WidgetChatEntry::~WidgetChatEntry() {}
 
 void WidgetChatEntry::focus() { m_text_view.grab_focus(); }
 
-void WidgetChatEntry::add_line(const Glib::ustring& text) {
+void WidgetChatEntry::add_line(const Glib::ustring &text) {
   m_text_view.get_buffer()->insert(m_text_view.get_buffer()->end(), text);
 }

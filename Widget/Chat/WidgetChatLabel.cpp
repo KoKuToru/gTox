@@ -31,7 +31,7 @@ WidgetChatLabel::WidgetChatLabel()
 
 WidgetChatLabel::~WidgetChatLabel() {}
 
-bool WidgetChatLabel::is_shape(PangoLayoutRun* run) {
+bool WidgetChatLabel::is_shape(PangoLayoutRun *run) {
   if (!run) {
     return false;
   }
@@ -39,7 +39,7 @@ bool WidgetChatLabel::is_shape(PangoLayoutRun* run) {
   auto attr = run->item->analysis.extra_attrs;
 
   while (attr) {
-    if (((PangoAttribute*)attr->data)->klass->type == PANGO_ATTR_SHAPE) {
+    if (((PangoAttribute *)attr->data)->klass->type == PANGO_ATTR_SHAPE) {
       return true;
     }
 
@@ -49,7 +49,7 @@ bool WidgetChatLabel::is_shape(PangoLayoutRun* run) {
   return false;
 }
 
-bool WidgetChatLabel::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
+bool WidgetChatLabel::on_draw(const Cairo::RefPtr<Cairo::Context> &cr) {
   Glib::RefPtr<Gtk::StyleContext> stylecontext = get_style_context();
   auto padding = stylecontext->get_padding();
 
@@ -109,7 +109,7 @@ bool WidgetChatLabel::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
   return true;
 }
 
-void WidgetChatLabel::set_text(const Glib::ustring& text) {
+void WidgetChatLabel::set_text(const Glib::ustring &text) {
   m_text = create_pango_layout(text);
   m_text->set_wrap(Pango::WRAP_WORD_CHAR);
 
@@ -140,8 +140,8 @@ Gtk::SizeRequestMode WidgetChatLabel::get_request_mode_vfunc() const {
   return Gtk::SIZE_REQUEST_HEIGHT_FOR_WIDTH;
 }
 
-void WidgetChatLabel::get_preferred_width_vfunc(int& minimum_width,
-                                                int& natural_width) const {
+void WidgetChatLabel::get_preferred_width_vfunc(int &minimum_width,
+                                                int &natural_width) const {
   Glib::RefPtr<Gtk::StyleContext> stylecontext = get_style_context();
   auto padding = stylecontext->get_padding();
 
@@ -155,8 +155,8 @@ void WidgetChatLabel::get_preferred_width_vfunc(int& minimum_width,
 }
 
 void WidgetChatLabel::get_preferred_height_for_width_vfunc(int width,
-                                                           int& minimum_height,
-                                                           int& natural_height)
+                                                           int &minimum_height,
+                                                           int &natural_height)
     const {
   Glib::RefPtr<Gtk::StyleContext> stylecontext = get_style_context();
   auto padding = stylecontext->get_padding();
@@ -170,8 +170,8 @@ void WidgetChatLabel::get_preferred_height_for_width_vfunc(int width,
   natural_height += padding.get_top() + padding.get_bottom();
 }
 
-void WidgetChatLabel::get_preferred_height_vfunc(int& minimum_height,
-                                                 int& natural_height) const {
+void WidgetChatLabel::get_preferred_height_vfunc(int &minimum_height,
+                                                 int &natural_height) const {
   Glib::RefPtr<Gtk::StyleContext> stylecontext = get_style_context();
   auto padding = stylecontext->get_padding();
 

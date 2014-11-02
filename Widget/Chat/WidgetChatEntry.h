@@ -37,7 +37,7 @@ class WidgetChatEntry : public Gtk::Box {
   WidgetChatEntry();
   ~WidgetChatEntry();
 
-  void add_line(const Glib::ustring& text);
+  void add_line(const Glib::ustring &text);
 };
 
 #endif

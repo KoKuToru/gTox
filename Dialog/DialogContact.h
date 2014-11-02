@@ -34,7 +34,7 @@
 // contact list with pinned chat
 class DialogContact : public Gtk::Window {
  private:
-  static DialogContact* m_instance;
+  static DialogContact *m_instance;
 
   Gtk::Paned m_header_paned;
   Gtk::HeaderBar m_headerbar_chat;
@@ -75,12 +75,12 @@ class DialogContact : public Gtk::Window {
   PopoverSettings m_popover_settings;
   PopoverAddContact m_popover_add;
 
-  DialogContact(const std::string& config_path);
+  DialogContact(const std::string &config_path);
 
  public:
   ~DialogContact();
-  static void init(const std::string& config_path);
-  static DialogContact& instance();
+  static void init(const std::string &config_path);
+  static DialogContact &instance();
   static void destroy();
 
   void activate_chat(Tox::FriendNr nr);
@@ -95,7 +95,7 @@ class DialogContact : public Gtk::Window {
  protected:
   void detach_chat();
   bool update();
-  WidgetChat* get_chat(Tox::FriendNr nr, DialogChat*& dialog);
+  WidgetChat *get_chat(Tox::FriendNr nr, DialogChat *&dialog);
 };
 
 #endif

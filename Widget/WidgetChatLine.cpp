@@ -70,7 +70,7 @@ WidgetChatLine::~WidgetChatLine() {}
 bool WidgetChatLine::get_side() { return m_side; }
 
 void WidgetChatLine::add_line(unsigned long long timestamp,
-                              const Glib::ustring& message) {
+                              const Glib::ustring &message) {
   // TODO display timestmap
   (void)timestamp;
 
@@ -133,7 +133,7 @@ void WidgetChatLine::add_line(unsigned long long timestamp,
   m_grid.show_all();
 }
 
-void WidgetChatLine::on_size_allocate(Gtk::Allocation& allocation) {
+void WidgetChatLine::on_size_allocate(Gtk::Allocation &allocation) {
   int h = allocation.get_height() - 5 /*5px radius*/;
   auto ic = ICON::load_icon(ICON::avatar);
   if (h < ic->get_height()) {

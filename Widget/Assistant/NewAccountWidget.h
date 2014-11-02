@@ -33,7 +33,7 @@ class NewAccountWidget : public Gtk::Box {
   NewAccountWidget();
   ~NewAccountWidget();
 
-  Gtk::Entry& getEntryName() { return entryName; }
+  Gtk::Entry &getEntryName() { return entryName; }
 };
 
 #endif /* WIDGET_ASSISTANT_NEWACCOUNTWIDGET_H_ */

@@ -27,9 +27,9 @@
 #include <iostream>
 #include <glibmm/i18n.h>
 
-DialogContact* DialogContact::m_instance = nullptr;
+DialogContact *DialogContact::m_instance = nullptr;
 
-DialogContact::DialogContact(const std::string& config_path)
+DialogContact::DialogContact(const std::string &config_path)
     : m_icon_attach(ICON::load_icon(ICON::chat_attach)),
       m_icon_detach(ICON::load_icon(ICON::chat_detach)),
       m_icon_settings(ICON::load_icon(ICON::settings)),
@@ -134,7 +134,7 @@ DialogContact::DialogContact(const std::string& config_path)
       m_headerbar_chat.hide();
       m_chat.hide();
     } else {
-      WidgetChat* item = dynamic_cast<WidgetChat*>(child);
+      WidgetChat *item = dynamic_cast<WidgetChat *>(child);
       m_headerbar_chat.set_title(
           Tox::instance().get_name_or_address(item->get_friend_nr()));
       m_headerbar_chat.set_subtitle(
@@ -206,7 +206,7 @@ void DialogContact::detach_chat() {
   if (!child) {
     return;
   }
-  WidgetChat* item = dynamic_cast<WidgetChat*>(child);
+  WidgetChat *item = dynamic_cast<WidgetChat *>(child);
   if (!item) {
     return;
   }
@@ -228,8 +228,8 @@ void DialogContact::detach_chat() {
 }
 
 void DialogContact::attach_chat(Tox::FriendNr nr) {
-  DialogChat* dialog = nullptr;
-  WidgetChat* item = get_chat(nr, dialog);
+  DialogChat *dialog = nullptr;
+  WidgetChat *item = get_chat(nr, dialog);
 
   if (!item || !dialog) {
     return;
@@ -239,7 +239,7 @@ void DialogContact::attach_chat(Tox::FriendNr nr) {
       m_chat_dialog.begin(),
       std::remove_if(m_chat_dialog.begin(),
                      m_chat_dialog.end(),
-                     [dialog](const std::shared_ptr<DialogChat>& o) {
+                     [dialog](const std::shared_ptr<DialogChat> &o) {
         return o.get() == dialog;
       })));
 
@@ -259,8 +259,8 @@ bool DialogContact::update() {
         std::cout << "FRIENDACTION !" << ev.friend_action.nr << " -> "
                   << ev.friend_action.data << std::endl;
         {
-          DialogChat* chat;
-          WidgetChat* item =
+          DialogChat *chat;
+          WidgetChat *item =
               get_chat(ev.friend_action.nr,
                        chat);  // automatically creates chat if not exits
           item->add_line(0, true, ev.friend_action.data);  // add line, when
@@ -274,8 +274,8 @@ bool DialogContact::update() {
         std::cout << "FRIENDMESSAGE !" << ev.friend_message.nr << " -> "
                   << ev.friend_message.data << std::endl;
         {
-          DialogChat* chat;
-          WidgetChat* item = get_chat(ev.friend_message.nr, chat);
+          DialogChat *chat;
+          WidgetChat *item = get_chat(ev.friend_message.nr, chat);
           item->add_line(0, true, ev.friend_message.data);
         }
         break;
@@ -334,16 +334,16 @@ void DialogContact::add_contact(Tox::FriendNr nr) {
   Tox::instance().save(m_config_path);
 }
 
-WidgetChat* DialogContact::get_chat(Tox::FriendNr nr, DialogChat*& dialog) {
+WidgetChat *DialogContact::get_chat(Tox::FriendNr nr, DialogChat *&dialog) {
   dialog = nullptr;
-  for (Gtk::Widget* it : m_chat.get_children()) {
-    WidgetChat* item = dynamic_cast<WidgetChat*>(it);
+  for (Gtk::Widget *it : m_chat.get_children()) {
+    WidgetChat *item = dynamic_cast<WidgetChat *>(it);
     if (item->get_friend_nr() == nr) {
       return item;
     }
   }
   for (auto c : m_chat_dialog) {
-    WidgetChat* item = &(c->get_chat());
+    WidgetChat *item = &(c->get_chat());
     if (item->get_friend_nr() == nr) {
       dialog = c.get();
       return item;
@@ -358,8 +358,8 @@ WidgetChat* DialogContact::get_chat(Tox::FriendNr nr, DialogChat*& dialog) {
 
 void DialogContact::activate_chat(Tox::FriendNr nr) {
   // 1. Search if contact has already a open chat
-  DialogChat* dialog = nullptr;
-  WidgetChat* item = get_chat(nr, dialog);
+  DialogChat *dialog = nullptr;
+  WidgetChat *item = get_chat(nr, dialog);
 
   if (dialog) {
     dialog->present();
@@ -388,14 +388,14 @@ void DialogContact::activate_chat(Tox::FriendNr nr) {
   item->focus();
 }
 
-DialogContact& DialogContact::instance() {
+DialogContact &DialogContact::instance() {
   if (m_instance == nullptr) {
     throw "Error";
   }
   return *m_instance;
 }
 
-void DialogContact::init(const std::string& config_path) {
+void DialogContact::init(const std::string &config_path) {
   if (m_instance != nullptr) {
     destroy();
   }
