@@ -23,7 +23,10 @@
 #include <iostream>
 
 WidgetChatLabel::WidgetChatLabel()
-    : Glib::ObjectBase("WidgetChatLabel"), m_clip(nullptr) {
+    : Glib::ObjectBase("WidgetChatLabel"),
+      m_clip(nullptr),
+      selection_index_from(0),
+      selection_index_to(0) {
     // add default name because
     // styling with "gtkmm_CustomObject_WidgetChatMessage" is not nice
     get_style_context()->add_class("chatmsg");
@@ -204,6 +207,8 @@ Glib::ustring WidgetChatLabel::get_text() {
 void WidgetChatLabel::on_selection(int from_x, int from_y, int to_x, int to_y) {
     if (from_x == to_x && from_y == to_y) {
         if (m_clip) {
+            selection_index_from = 0;
+            selection_index_to = 0;
             m_clip.clear();
             force_redraw();
         }
