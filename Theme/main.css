@@ -132,3 +132,6 @@ GtkPopover {
     padding: 2px;
 }
 
+GtkListBox.settings GtkListBoxRow {
+    padding: 10px;
+}

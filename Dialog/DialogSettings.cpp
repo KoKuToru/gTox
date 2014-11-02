@@ -23,8 +23,9 @@
 #include "Debug/DialogCss.h"
 
 DialogSettings::DialogSettings() {
-    this->set_default_geometry(600, 600);
-    this->set_position(Gtk::WindowPosition::WIN_POS_CENTER);
+    set_title(_("gTox Settings"));
+    set_default_geometry(800, 600);
+    set_position(Gtk::WindowPosition::WIN_POS_CENTER);
 
     auto hbox = Gtk::manage(new Gtk::HBox());
     auto sidebar = Gtk::manage(new Gtk::Box());
@@ -45,7 +46,15 @@ DialogSettings::DialogSettings() {
 
     m_stack.add(*Gtk::manage(new Gtk::Label("Test")), "");
 
-    listbox->add(*Gtk::manage(new Gtk::Label("Test")));
+    listbox->get_style_context()->add_class("settings");
+
+    listbox->add(*Gtk::manage(new Gtk::Label("AAAAAAAAAAAAAAA", 0, 0.5)));
+    listbox->add(*Gtk::manage(new Gtk::Label("Test2", 0, 0.5)));
+    listbox->add(*Gtk::manage(new Gtk::Label("Test3", 0, 0.5)));
+
+    // only scroll vertically
+    scroller_1->set_policy(Gtk::POLICY_NEVER, Gtk::POLICY_AUTOMATIC);
+    scroller_2->set_policy(Gtk::POLICY_NEVER, Gtk::POLICY_AUTOMATIC);
 }
 
 DialogSettings::~DialogSettings() {
