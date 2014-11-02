@@ -25,19 +25,19 @@
 
 class WidgetChat;
 class WidgetChatEntry : public Gtk::Box {
- private:
+private:
   Gtk::ScrolledWindow m_ScrolledWindow;
   Gtk::TextView m_text_view;
   Glib::RefPtr<Gtk::TextBuffer> m_TextBuffer;
 
- public:
+public:
   void set_editable(bool b);
   void focus();
 
   WidgetChatEntry();
   ~WidgetChatEntry();
 
-  void add_line(const Glib::ustring& text);
+  void add_line(const Glib::ustring &text);
 };
 
 #endif

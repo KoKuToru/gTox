@@ -70,28 +70,22 @@ WidgetChatLine::~WidgetChatLine() {}
 bool WidgetChatLine::get_side() { return m_side; }
 
 void WidgetChatLine::add_line(unsigned long long timestamp,
-                              const Glib::ustring& message) {
+                              const Glib::ustring &message) {
   // TODO display timestmap
   (void)timestamp;
 
   auto msg_time = Glib::DateTime::create_now_utc(timestamp);
   // remove seconds
-  msg_time = Glib::DateTime::create_utc(msg_time.get_year(),
-                                        msg_time.get_month(),
-                                        msg_time.get_day_of_month(),
-                                        msg_time.get_hour(),
-                                        msg_time.get_minute(),
-                                        0);
+  msg_time = Glib::DateTime::create_utc(
+      msg_time.get_year(), msg_time.get_month(), msg_time.get_day_of_month(),
+      msg_time.get_hour(), msg_time.get_minute(), 0);
 
   if (m_last_row.msg != nullptr) {
     auto old_time = Glib::DateTime::create_now_utc(m_last_row.timestamp);
     // remove seconds
-    old_time = Glib::DateTime::create_utc(old_time.get_year(),
-                                          old_time.get_month(),
-                                          old_time.get_day_of_month(),
-                                          old_time.get_hour(),
-                                          old_time.get_minute(),
-                                          0);
+    old_time = Glib::DateTime::create_utc(
+        old_time.get_year(), old_time.get_month(), old_time.get_day_of_month(),
+        old_time.get_hour(), old_time.get_minute(), 0);
     // check
     if (msg_time.compare(old_time) == 0) {
       // add text
@@ -133,7 +127,7 @@ void WidgetChatLine::add_line(unsigned long long timestamp,
   m_grid.show_all();
 }
 
-void WidgetChatLine::on_size_allocate(Gtk::Allocation& allocation) {
+void WidgetChatLine::on_size_allocate(Gtk::Allocation &allocation) {
   int h = allocation.get_height() - 5 /*5px radius*/;
   auto ic = ICON::load_icon(ICON::avatar);
   if (h < ic->get_height()) {

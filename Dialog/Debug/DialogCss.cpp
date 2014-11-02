@@ -42,8 +42,8 @@ DialogCss::DialogCss() {
         if (m_last) {
           ctx->remove_provider_for_screen(screen, m_last);
         }
-        ctx->add_provider_for_screen(
-            screen, css, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+        ctx->add_provider_for_screen(screen, css,
+                                     GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
         m_last = css;
         m_header.set_subtitle("SUCCESS");
       } else {
