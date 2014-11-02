@@ -34,7 +34,8 @@ WidgetContact::WidgetContact() : Glib::ObjectBase("WidgetContact") {
         sigc::mem_fun(this, &WidgetContact::on_button_press));
 }
 
-WidgetContact::~WidgetContact() {}
+WidgetContact::~WidgetContact() {
+}
 
 void WidgetContact::load_list() {
     for (auto fr : Tox::instance().get_friendlist()) {
@@ -62,13 +63,13 @@ bool WidgetContact::on_button_press(GdkEventButton* event) {
     if (event->button != 3) {
         return false;
     }
-    WidgetContactListItem* item =
-        dynamic_cast<WidgetContactListItem*>(m_list.get_row_at_y(event->y));
+    WidgetContactListItem* item
+        = dynamic_cast<WidgetContactListItem*>(m_list.get_row_at_y(event->y));
     if (item == nullptr) {
         return false;
     }
-    auto popover =
-        Gtk::manage(new PopoverContextContact(item->get_friend_nr()));
+    auto popover
+        = Gtk::manage(new PopoverContextContact(item->get_friend_nr()));
     popover->set_relative_to(*item);
     popover->set_visible(true);
     return true;

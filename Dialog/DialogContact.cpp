@@ -156,8 +156,8 @@ DialogContact::DialogContact(const std::string &config_path)
         "position",
         m_paned.gobj(),
         "position",
-        GBindingFlags(G_BINDING_DEFAULT | G_BINDING_BIDIRECTIONAL |
-                      G_BINDING_SYNC_CREATE));
+        GBindingFlags(G_BINDING_DEFAULT | G_BINDING_BIDIRECTIONAL
+                      | G_BINDING_SYNC_CREATE));
 
     // events
     m_btn_xxtach.signal_clicked().connect(
@@ -283,8 +283,8 @@ bool DialogContact::update() {
                 std::cout << "FRIENDREQUEST ! " << ev.friend_request.message
                           << std::endl;
                 m_notification.add_notification(
-                    "Friend request [" +
-                        Tox::to_hex(ev.friend_request.addr.data(), 32) + "]",
+                    "Friend request ["
+                    + Tox::to_hex(ev.friend_request.addr.data(), 32) + "]",
                     ev.friend_request.message,
                     "Accept",
                     [this, ev]() {
@@ -414,16 +414,16 @@ void DialogContact::set_status(Tox::EUSERSTATUS status_code) {
     // TODO: implement a get_status_icon function
     switch (status_code) {
         case Tox::NONE:
-            m_icon_status.property_pixbuf() =
-                ICON::load_icon(ICON::status_online);
+            m_icon_status.property_pixbuf()
+                = ICON::load_icon(ICON::status_online);
             break;
         case Tox::BUSY:
-            m_icon_status.property_pixbuf() =
-                ICON::load_icon(ICON::status_busy);
+            m_icon_status.property_pixbuf()
+                = ICON::load_icon(ICON::status_busy);
             break;
         case Tox::AWAY:
-            m_icon_status.property_pixbuf() =
-                ICON::load_icon(ICON::status_away);
+            m_icon_status.property_pixbuf()
+                = ICON::load_icon(ICON::status_away);
             break;
         default:
             break;

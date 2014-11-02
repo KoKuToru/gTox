@@ -39,4 +39,5 @@ AccountWidget::AccountWidget()
     gridLayout.attach(radioBtnBox, 0, 1, 1, 1);
 }
 
-AccountWidget::~AccountWidget() {}
+AccountWidget::~AccountWidget() {
+}

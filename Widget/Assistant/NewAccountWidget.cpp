@@ -28,4 +28,5 @@ NewAccountWidget::NewAccountWidget() : labelName(_("Displayname : ")) {
     gridLayout.add(entryName);
 }
 
-NewAccountWidget::~NewAccountWidget() {}
+NewAccountWidget::~NewAccountWidget() {
+}

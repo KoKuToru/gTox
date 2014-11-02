@@ -60,6 +60,9 @@ DialogCss::DialogCss() {
     add(*scroll);
 }
 
-DialogCss::~DialogCss() {}
+DialogCss::~DialogCss() {
+}
 
-void DialogCss::show() { this->show_all(); }
+void DialogCss::show() {
+    this->show_all();
+}

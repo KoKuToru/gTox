@@ -25,12 +25,12 @@
 #include "WidgetContactListItem.h"
 
 class WidgetContact : public Gtk::ScrolledWindow {
-    private:
+  private:
     Gtk::ListBox m_list;
 
     bool on_button_press(GdkEventButton* event);
 
-    public:
+  public:
     WidgetContact();
     ~WidgetContact();
 

@@ -36,9 +36,12 @@ WidgetChatLayout::WidgetChatLayout() : Glib::ObjectBase("WidgetChatLayout") {
     set_can_focus(true);
 }
 
-WidgetChatLayout::~WidgetChatLayout() {}
+WidgetChatLayout::~WidgetChatLayout() {
+}
 
-void WidgetChatLayout::set_spacing(int space) { m_vbox.set_spacing(space); }
+void WidgetChatLayout::set_spacing(int space) {
+    m_vbox.set_spacing(space);
+}
 
 void WidgetChatLayout::pack_start(Gtk::Widget& w, bool a, bool b) {
     m_vbox.pack_start(w, a, b);
@@ -109,8 +112,8 @@ void WidgetChatLayout::update_children(GdkEventMotion* event,
         int to_x = event->x;
         int to_y = event->y;
         if (translate_coordinates(
-                *c_message, from_x, from_y, w_from_x, w_from_y) &&
-            translate_coordinates(*c_message, to_x, to_y, w_to_x, w_to_y)) {
+                *c_message, from_x, from_y, w_from_x, w_from_y)
+            && translate_coordinates(*c_message, to_x, to_y, w_to_x, w_to_y)) {
 
             // fix order
             if (w_to_y < w_from_y) {

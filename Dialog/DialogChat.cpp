@@ -48,8 +48,13 @@ DialogChat::DialogChat(Tox::FriendNr nr)
     });
 }
 
-DialogChat::~DialogChat() {}
+DialogChat::~DialogChat() {
+}
 
-void DialogChat::show() { show_all(); }
+void DialogChat::show() {
+    show_all();
+}
 
-WidgetChat &DialogChat::get_chat() { return m_chat; }
+WidgetChat& DialogChat::get_chat() {
+    return m_chat;
+}

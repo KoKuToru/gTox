@@ -32,7 +32,7 @@
  * @brief Wraps the toxcore but also add features with a sqlitedb
  */
 class Tox {
-    private:
+  private:
     static std::recursive_mutex m_mtx;
     static Tox* m_instance;
     Tox();
@@ -40,7 +40,7 @@ class Tox {
     Tox* m_tox;
     std::shared_ptr<SQLite::Database> m_db;
 
-    public:
+  public:
     typedef int FriendNr;
     typedef int ReceiptNr;
     typedef std::array<unsigned char, TOX_FRIEND_ADDRESS_SIZE> FriendAddr;
@@ -62,7 +62,8 @@ class Tox {
 
     struct Exception {
         const EError code;
-        Exception(const EError code) : code(code) {}
+        Exception(const EError code) : code(code) {
+        }
     };
 
     enum EEventType {
@@ -132,7 +133,9 @@ class Tox {
     static void destroy();
 
     void init(const Glib::ustring& statefile);
-    void init() { init(""); }
+    void init() {
+        init("");
+    }
 
     void save(const Glib::ustring& statefile);
 
@@ -173,7 +176,7 @@ class Tox {
 
     std::vector<SLog> get_log(FriendNr nr, int offset = 0, int limit = 100);
 
-    protected:
+  protected:
     std::deque<SEvent> events;
 
     static void callback_friend_request(Tox*,

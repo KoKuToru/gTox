@@ -65,9 +65,12 @@ WidgetChatLine::WidgetChatLine(bool left_side)
     m_grid.property_margin() = 5;
 }
 
-WidgetChatLine::~WidgetChatLine() {}
+WidgetChatLine::~WidgetChatLine() {
+}
 
-bool WidgetChatLine::get_side() { return m_side; }
+bool WidgetChatLine::get_side() {
+    return m_side;
+}
 
 void WidgetChatLine::add_line(unsigned long long timestamp,
                               const Glib::ustring& message) {
@@ -139,9 +142,9 @@ void WidgetChatLine::on_size_allocate(Gtk::Allocation& allocation) {
     if (h < ic->get_height()) {
         m_avatar.set_size_request(64, h);
         m_avatar.clear();
-        m_avatar.property_pixbuf() =
-            ICON::load_icon(ICON::avatar)
-                ->scale_simple(h, h, Gdk::INTERP_BILINEAR);
+        m_avatar.property_pixbuf()
+            = ICON::load_icon(ICON::avatar)
+                  ->scale_simple(h, h, Gdk::INTERP_BILINEAR);
         // force allocation (is this a bug ? why do I need to do this =?
         Gtk::Allocation al = m_avatar.get_allocation();
         al.set_y(al.get_height() - h);

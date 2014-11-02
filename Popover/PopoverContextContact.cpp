@@ -65,4 +65,5 @@ Gtk::ListBoxRow& PopoverContextContact::create_item(
     return *row;
 }
 
-PopoverContextContact::~PopoverContextContact() {}
+PopoverContextContact::~PopoverContextContact() {
+}

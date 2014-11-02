@@ -25,7 +25,7 @@
 class WidgetChatLabel;
 
 class WidgetChatLine : public Gtk::Box {
-    private:
+  private:
     bool m_side;
 
     int m_row_count;
@@ -40,7 +40,7 @@ class WidgetChatLine : public Gtk::Box {
 
     void on_size_allocate(Gtk::Allocation& allocation);
 
-    public:
+  public:
     WidgetChatLine(bool side);
     ~WidgetChatLine();
 

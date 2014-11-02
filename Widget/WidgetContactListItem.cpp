@@ -64,9 +64,12 @@ WidgetContactListItem::WidgetContactListItem(WidgetContact *contact,
     this->add(m_layout);
 }
 
-WidgetContactListItem::~WidgetContactListItem() {}
+WidgetContactListItem::~WidgetContactListItem() {
+}
 
-Tox::FriendNr WidgetContactListItem::get_friend_nr() { return m_friend_nr; }
+Tox::FriendNr WidgetContactListItem::get_friend_nr() {
+    return m_friend_nr;
+}
 
 void WidgetContactListItem::refresh() {
     try {

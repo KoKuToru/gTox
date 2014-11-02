@@ -29,7 +29,8 @@ WidgetChatLabel::WidgetChatLabel()
     get_style_context()->add_class("chatmsg");
 }
 
-WidgetChatLabel::~WidgetChatLabel() {}
+WidgetChatLabel::~WidgetChatLabel() {
+}
 
 bool WidgetChatLabel::is_shape(PangoLayoutRun* run) {
     if (!run) {
@@ -76,8 +77,8 @@ bool WidgetChatLabel::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
 
     // draw the text
     m_text->set_width(
-        Pango::SCALE *
-        (get_allocated_width() - (padding.get_left() + padding.get_right())));
+        Pango::SCALE
+        * (get_allocated_width() - (padding.get_left() + padding.get_right())));
     stylecontext->render_layout(cr, 0, 0, m_text);
 
     // draw emojis
@@ -161,8 +162,8 @@ void WidgetChatLabel::get_preferred_height_for_width_vfunc(
     Glib::RefPtr<Gtk::StyleContext> stylecontext = get_style_context();
     auto padding = stylecontext->get_padding();
 
-    m_text->set_width(Pango::SCALE *
-                      (width - (padding.get_left() + padding.get_right())));
+    m_text->set_width(Pango::SCALE
+                      * (width - (padding.get_left() + padding.get_right())));
     m_text->get_pixel_size(width, minimum_height);
     natural_height = minimum_height;
 
@@ -176,8 +177,8 @@ void WidgetChatLabel::get_preferred_height_vfunc(int& minimum_height,
     auto padding = stylecontext->get_padding();
 
     m_text->set_width(
-        Pango::SCALE *
-        (get_allocated_width() - (padding.get_left() + padding.get_right())));
+        Pango::SCALE
+        * (get_allocated_width() - (padding.get_left() + padding.get_right())));
     int width;
     m_text->get_pixel_size(width, natural_height);
     minimum_height = 0;
@@ -186,7 +187,9 @@ void WidgetChatLabel::get_preferred_height_vfunc(int& minimum_height,
     natural_height += padding.get_top() + padding.get_bottom();
 }
 
-Glib::ustring WidgetChatLabel::get_text() { return m_text->get_text(); }
+Glib::ustring WidgetChatLabel::get_text() {
+    return m_text->get_text();
+}
 
 void WidgetChatLabel::on_selection(int from_x, int from_y, int to_x, int to_y) {
     if (from_x == to_x && from_y == to_y) {
@@ -201,8 +204,8 @@ void WidgetChatLabel::on_selection(int from_x, int from_y, int to_x, int to_y) {
     auto padding = stylecontext->get_padding();
 
     m_text->set_width(
-        Pango::SCALE *
-        (get_allocated_width() - (padding.get_left() + padding.get_right())));
+        Pango::SCALE
+        * (get_allocated_width() - (padding.get_left() + padding.get_right())));
 
     // fix coordiantes because of padding
     from_x -= padding.get_left();

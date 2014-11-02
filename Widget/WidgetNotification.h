@@ -22,7 +22,7 @@
 
 #include <gtkmm.h>
 class WidgetNotification : public Gtk::Frame {
-    private:
+  private:
     Gtk::Label m_title;
     Gtk::Label m_message;
 
@@ -40,7 +40,7 @@ class WidgetNotification : public Gtk::Frame {
 
     std::function<void(void)> m_callback;
 
-    public:
+  public:
     WidgetNotification();
     ~WidgetNotification();
 
@@ -49,7 +49,7 @@ class WidgetNotification : public Gtk::Frame {
                           Glib::ustring button = "",
                           std::function<void(void)> callback = []() {});
 
-    protected:
+  protected:
     void on_button_clicked();
 };
 

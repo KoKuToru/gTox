@@ -63,7 +63,8 @@ PopoverSettings::PopoverSettings(const Gtk::Widget &relative_to)
     btn_settings->signal_clicked().connect([this]() { m_settings.show(); });
 }
 
-PopoverSettings::~PopoverSettings() {}
+PopoverSettings::~PopoverSettings() {
+}
 
 void PopoverSettings::set_visible(bool visible) {
     Gtk::Popover::set_visible(visible);

@@ -23,7 +23,7 @@
 #include <gtkmm.h>
 
 class WidgetChatLayout : public Gtk::EventBox {
-    private:
+  private:
     Gtk::VBox m_vbox;
     int from_x;
     int from_y;
@@ -32,7 +32,7 @@ class WidgetChatLayout : public Gtk::EventBox {
                          std::vector<Gtk::Widget*> children);
     Glib::ustring get_children_selection(std::vector<Gtk::Widget*> children);
 
-    public:
+  public:
     WidgetChatLayout();
     ~WidgetChatLayout();
 
@@ -42,7 +42,7 @@ class WidgetChatLayout : public Gtk::EventBox {
     std::vector<Gtk::Widget*> get_children();
     std::vector<const Gtk::Widget*> get_children() const;
 
-    protected:
+  protected:
     virtual bool on_button_press_event(GdkEventButton* event);
     virtual bool on_button_release_event(GdkEventButton* event);
     virtual bool on_motion_notify_event(GdkEventMotion* event);

@@ -86,4 +86,5 @@ PopoverAddContact::PopoverAddContact(const Gtk::Widget &relative_to)
     });
 }
 
-PopoverAddContact::~PopoverAddContact() {}
+PopoverAddContact::~PopoverAddContact() {
+}

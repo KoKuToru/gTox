@@ -28,11 +28,16 @@ WidgetChatEntry::WidgetChatEntry() : Glib::ObjectBase("WidgetChatEntry") {
     pack_start(m_ScrolledWindow);
 }
 
-void WidgetChatEntry::set_editable(bool b) { m_text_view.set_editable(b); }
+void WidgetChatEntry::set_editable(bool b) {
+    m_text_view.set_editable(b);
+}
 
-WidgetChatEntry::~WidgetChatEntry() {}
+WidgetChatEntry::~WidgetChatEntry() {
+}
 
-void WidgetChatEntry::focus() { m_text_view.grab_focus(); }
+void WidgetChatEntry::focus() {
+    m_text_view.grab_focus();
+}
 
 void WidgetChatEntry::add_line(const Glib::ustring& text) {
     m_text_view.get_buffer()->insert(m_text_view.get_buffer()->end(), text);

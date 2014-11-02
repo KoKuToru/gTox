@@ -27,7 +27,7 @@
 
 // Content of DialogChat
 class WidgetChat : public Gtk::VPaned {
-    private:
+  private:
     Gtk::TextView m_input;
     WidgetChatEntry m_output;
 
@@ -41,7 +41,7 @@ class WidgetChat : public Gtk::VPaned {
 
     bool m_autoscroll;
 
-    public:
+  public:
     WidgetChat(Tox::FriendNr nr);
     ~WidgetChat();
 

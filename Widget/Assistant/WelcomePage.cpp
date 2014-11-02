@@ -28,4 +28,5 @@ WelcomePage::WelcomePage()
     pack_start(test);
 }
 
-WelcomePage::~WelcomePage() {}
+WelcomePage::~WelcomePage() {
+}

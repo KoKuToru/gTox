@@ -67,8 +67,8 @@ WidgetChat::WidgetChat(Tox::FriendNr nr)
 
     m_input.signal_key_press_event()
         .connect([this](GdkEventKey* event) {
-                     if (event->keyval == GDK_KEY_Return &&
-                         !(event->state & GDK_SHIFT_MASK)) {
+                     if (event->keyval == GDK_KEY_Return
+                         && !(event->state & GDK_SHIFT_MASK)) {
                          std::string text = m_input.get_buffer()->get_text();
                          if (text.size() > 0) {
                              // text.resize(text.size()-1);
@@ -88,8 +88,8 @@ WidgetChat::WidgetChat(Tox::FriendNr nr)
         [this]() {
             // check if lowest position
             auto adj = m_scrolled.get_vadjustment();
-            m_autoscroll =
-                adj->get_upper() - adj->get_page_size() == adj->get_value();
+            m_autoscroll = adj->get_upper() - adj->get_page_size()
+                           == adj->get_value();
         });
 
     m_vbox.signal_size_allocate().connect_notify([this](Gtk::Allocation&) {
@@ -111,13 +111,20 @@ WidgetChat::WidgetChat(Tox::FriendNr nr)
     }
 }
 
-WidgetChat::~WidgetChat() {}
+WidgetChat::~WidgetChat() {
+}
 
-void WidgetChat::focus() { m_input.grab_focus(); }
+void WidgetChat::focus() {
+    m_input.grab_focus();
+}
 
-Tox::FriendNr WidgetChat::get_friend_nr() const { return m_nr; }
+Tox::FriendNr WidgetChat::get_friend_nr() const {
+    return m_nr;
+}
 
-void WidgetChat::add_line(Glib::ustring text) { m_output.add_line(text); }
+void WidgetChat::add_line(Glib::ustring text) {
+    m_output.add_line(text);
+}
 
 void WidgetChat::add_line(unsigned long long timestamp,
                           bool left_side,

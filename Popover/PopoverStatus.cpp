@@ -55,7 +55,8 @@ PopoverStatus::PopoverStatus(const Gtk::Widget &relative_to)
     });
 }
 
-PopoverStatus::~PopoverStatus() {}
+PopoverStatus::~PopoverStatus() {
+}
 
 Gtk::ListBoxRow &PopoverStatus::create_item(Glib::RefPtr<Gdk::Pixbuf> icon,
                                             Glib::ustring text) {

@@ -56,7 +56,8 @@ WidgetNotification::WidgetNotification()
     add(*grid);
 }
 
-WidgetNotification::~WidgetNotification() {}
+WidgetNotification::~WidgetNotification() {
+}
 
 void WidgetNotification::add_notification(Glib::ustring titel,
                                           Glib::ustring message,
