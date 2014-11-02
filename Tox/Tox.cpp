@@ -93,11 +93,15 @@ void Tox::init(const Glib::ustring& statefile) {
                             "SELECT value FROM config WHERE name='version'")
                       .getInt();
 
-            while (version != 2 /*current version*/)
+            while (version != 3 /*current version*/)
                 switch (version) {
                     case 1:
                         m_db->exec(DATABASE::version_2);
                         version = 2;
+                        break;
+                    case 2:
+                        m_db->exec(DATABASE::version_3);
+                        version = 3;
                         break;
                     default:
                         throw Exception(UNKNOWDBVERSION);
@@ -150,14 +154,26 @@ void Tox::init(const Glib::ustring& statefile) {
         }
     }
 
-    auto pub = from_hex(
-        "0095FC11A624EEF1"
-        "EED38B54A4BE3E7F"
-        "F3527D367DC0ACD1"
-        "0AC8329C99319513");
-    if (!tox_bootstrap_from_address(m_tox, "urotukok.net", 33445, pub.data())) {
-        throw Exception(BOOTERROR);
+    SQLite::Statement stmt(*m_db, "SELECT active, ip, port, pub_key FROM bootstrap");
+    bool connected = false;
+    while(stmt.executeStep()){
+        int active = stmt.getColumn(0).getInt();
+        if(active == 0)
+            continue;
+
+        const char* ip = stmt.getColumn(1).getText("");
+        int port = stmt.getColumn(2).getInt();
+        const char* pub_key = stmt.getColumn(3).getText("");
+
+        auto pub = from_hex(pub_key);
+        connected |= tox_bootstrap_from_address(m_tox, ip, port, pub.data());
     }
+    //Fallback ..
+    auto pub = from_hex("F5A1A38EFB6BD3C2C8AF8B10D85F0F89E931704D349F1D0720C3C4059AF2440A");
+    connected |= tox_bootstrap_from_address(m_tox, "46.38.239.179", 33445, pub.data());
+
+    if(!connected)
+        throw Exception(BOOTERROR);
 }
 
 void Tox::save(const Glib::ustring& statefile) {
