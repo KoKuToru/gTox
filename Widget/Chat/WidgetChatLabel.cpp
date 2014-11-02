@@ -27,6 +27,16 @@ WidgetChatLabel::WidgetChatLabel()
     // add default name because
     // styling with "gtkmm_CustomObject_WidgetChatMessage" is not nice
     get_style_context()->add_class("chatmsg");
+
+    signal_size_allocate().connect_notify([this](Gtk::Allocation&) {
+        // update hightlight
+        gint reg[] = {std::min(selection_index_from, selection_index_to),
+                      std::max(selection_index_from, selection_index_to)};
+        m_clip = Cairo::RefPtr<Cairo::Region>(
+            new Cairo::Region(gdk_pango_layout_get_clip_region(
+                m_text->gobj(), 0, 0, reg, 1)));  // cpp-version ?
+        force_redraw();
+    });
 }
 
 WidgetChatLabel::~WidgetChatLabel() {
