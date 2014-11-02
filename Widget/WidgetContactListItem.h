@@ -33,12 +33,12 @@ class WidgetContactListItem : public Gtk::ListBoxRow {
 
     Gtk::Grid m_layout;
 
-    WidgetContact *m_contact;
+    WidgetContact* m_contact;
 
     Tox::FriendNr m_friend_nr;
 
   public:
-    WidgetContactListItem(WidgetContact *contact, Tox::FriendNr nr);
+    WidgetContactListItem(WidgetContact* contact, Tox::FriendNr nr);
     ~WidgetContactListItem();
 
     Tox::FriendNr get_friend_nr();

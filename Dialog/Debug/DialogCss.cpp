@@ -49,8 +49,7 @@ DialogCss::DialogCss() {
             } else {
                 m_header.set_subtitle("ERROR");
             }
-        }
-        catch (...) {
+        } catch (...) {
             m_header.set_subtitle("ERROR");
         }
     });

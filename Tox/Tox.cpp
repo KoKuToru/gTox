@@ -24,7 +24,7 @@
 #include "Generated/database.h"
 
 std::recursive_mutex Tox::m_mtx;
-Tox *Tox::m_instance = nullptr;
+Tox* Tox::m_instance = nullptr;
 
 Tox::Tox() : m_tox(nullptr) {
 }
@@ -37,7 +37,7 @@ Tox::~Tox() {
     }
 }
 
-Tox &Tox::instance() {
+Tox& Tox::instance() {
     std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_instance == nullptr) {
         m_instance = new Tox;
@@ -53,7 +53,7 @@ void Tox::destroy() {
     }
 }
 
-void Tox::init(const Glib::ustring &statefile) {
+void Tox::init(const Glib::ustring& statefile) {
     std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox != nullptr) {
         tox_kill(m_tox);
@@ -120,15 +120,14 @@ void Tox::init(const Glib::ustring &statefile) {
                               "date(savetime) ORDER BY id DESC LIMIT 7,1")
                         .getInt());
                 storeq.exec();
-            }
-            catch (...) {
+            } catch (...) {
                 // nothing to remove
             }
 
             // take the last saved state
             auto col = m_db->execAndGet(
                 "SELECT state FROM toxcore ORDER BY id DESC LIMIT 1");
-            const void *state = col.getBlob();
+            const void* state = col.getBlob();
             size_t state_size = col.getBytes();
 
             std::ifstream oi(statefile);
@@ -136,14 +135,13 @@ void Tox::init(const Glib::ustring &statefile) {
                 throw Exception(FILEERROR);
             }
 
-            if (tox_load(m_tox, (const unsigned char *)state, state_size)
+            if (tox_load(m_tox, (const unsigned char*)state, state_size)
                 == -1) {
                 throw Exception(LOADERROR);
             }
 
             m_db->exec("RELEASE SAVEPOINT try_load");
-        }
-        catch (...) {
+        } catch (...) {
 
             // restore old state
             m_db->exec("ROLLBACK TO SAVEPOINT try_load");
@@ -152,10 +150,38 @@ void Tox::init(const Glib::ustring &statefile) {
         }
     }
 
-    unsigned char pub_key[]
-        = {0xA0, 0x91, 0x62, 0xD6, 0x86, 0x18, 0xE7, 0x42, 0xFF, 0xBC, 0xA1,
-           0xC2, 0xC7, 0x03, 0x85, 0xE6, 0x67, 0x96, 0x04, 0xB2, 0xD8, 0x0E,
-           0xA6, 0xE8, 0x4A, 0xD0, 0x99, 0x6A, 0x1A, 0xC8, 0xA0, 0x74};
+    unsigned char pub_key[] = {0xA0,
+                               0x91,
+                               0x62,
+                               0xD6,
+                               0x86,
+                               0x18,
+                               0xE7,
+                               0x42,
+                               0xFF,
+                               0xBC,
+                               0xA1,
+                               0xC2,
+                               0xC7,
+                               0x03,
+                               0x85,
+                               0xE6,
+                               0x67,
+                               0x96,
+                               0x04,
+                               0xB2,
+                               0xD8,
+                               0x0E,
+                               0xA6,
+                               0xE8,
+                               0x4A,
+                               0xD0,
+                               0x99,
+                               0x6A,
+                               0x1A,
+                               0xC8,
+                               0xA0,
+                               0x74};
     if (!tox_bootstrap_from_address(m_tox,
                                     "23.226.230.47",
                                     33445,
@@ -166,7 +192,7 @@ void Tox::init(const Glib::ustring &statefile) {
     }
 }
 
-void Tox::save(const Glib::ustring &statefile) {
+void Tox::save(const Glib::ustring& statefile) {
     std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
         throw Exception(UNITIALIZED);
@@ -183,7 +209,7 @@ void Tox::save(const Glib::ustring &statefile) {
     // store state
     int length = (int)tox_size(m_tox);
     std::vector<unsigned char> state(length);
-    tox_save(m_tox, (unsigned char *)state.data());
+    tox_save(m_tox, (unsigned char*)state.data());
 
     m_db->exec("BEGIN TRANSACTION");
     try {
@@ -204,8 +230,7 @@ void Tox::save(const Glib::ustring &statefile) {
 
         removq.exec();
         storeq.exec();
-    }
-    catch (...) {
+    } catch (...) {
         m_db->exec("ROLLBACK TRANSACTION");
         throw;
     }
@@ -221,7 +246,7 @@ int Tox::update_optimal_interval() {
     return tox_do_interval(m_tox);
 }
 
-bool Tox::update(Tox::SEvent &ev) {
+bool Tox::update(Tox::SEvent& ev) {
     std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
         throw Exception(UNITIALIZED);
@@ -256,16 +281,16 @@ Tox::FriendAddr Tox::get_address() {
 }
 
 Tox::FriendNr Tox::add_friend(Tox::FriendAddr addr,
-                              const Glib::ustring &message) {
+                              const Glib::ustring& message) {
     std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
         throw Exception(UNITIALIZED);
     }
-    FriendNr res = tox_add_friend(
-        m_tox,
-        addr.data(),
-        reinterpret_cast<const unsigned char *>(message.data()),
-        message.bytes());
+    FriendNr res
+        = tox_add_friend(m_tox,
+                         addr.data(),
+                         reinterpret_cast<const unsigned char*>(message.data()),
+                         message.bytes());
     switch (res) {
         case TOX_FAERR_TOOLONG:
             throw Exception(MSGTOOLONG);
@@ -329,7 +354,7 @@ void Tox::del_friend(Tox::FriendNr nr) {
 }
 
 Tox::ReceiptNr Tox::send_message(Tox::FriendNr nr,
-                                 const Glib::ustring &message) {
+                                 const Glib::ustring& message) {
     if (message.find("/me ") == 0) {
         // return send_action(nr, message.substr(Glib::ustring("/me ").size()));
         return send_action(nr, message);
@@ -342,7 +367,7 @@ Tox::ReceiptNr Tox::send_message(Tox::FriendNr nr,
     Tox::ReceiptNr res = tox_send_message(
         m_tox,
         nr,
-        reinterpret_cast<const unsigned char *>(message.data()),
+        reinterpret_cast<const unsigned char*>(message.data()),
         message.bytes());
     if (res == 0) {
         throw Exception(FAILED);
@@ -366,16 +391,16 @@ Tox::ReceiptNr Tox::send_message(Tox::FriendNr nr,
     return res;
 }
 
-Tox::ReceiptNr Tox::send_action(Tox::FriendNr nr, const Glib::ustring &action) {
+Tox::ReceiptNr Tox::send_action(Tox::FriendNr nr, const Glib::ustring& action) {
     std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
         throw Exception(UNITIALIZED);
     }
-    Tox::ReceiptNr res = tox_send_action(
-        m_tox,
-        nr,
-        reinterpret_cast<const unsigned char *>(action.data()),
-        action.bytes());
+    Tox::ReceiptNr res
+        = tox_send_action(m_tox,
+                          nr,
+                          reinterpret_cast<const unsigned char*>(action.data()),
+                          action.bytes());
     if (res == 0) {
         throw Exception(FAILED);
     }
@@ -398,13 +423,13 @@ Tox::ReceiptNr Tox::send_action(Tox::FriendNr nr, const Glib::ustring &action) {
     return res;
 }
 
-void Tox::set_name(const Glib::ustring &name) {
+void Tox::set_name(const Glib::ustring& name) {
     std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
         throw Exception(UNITIALIZED);
     }
     if (tox_set_name(m_tox,
-                     reinterpret_cast<const unsigned char *>(name.data()),
+                     reinterpret_cast<const unsigned char*>(name.data()),
                      name.bytes()) != 0) {
         throw Exception(FAILED);
     }
@@ -416,7 +441,7 @@ Glib::ustring Tox::get_name() {
         throw Exception(UNITIALIZED);
     }
     std::string name(/*MAX_NAME_LENGTH*/ 128, 0);
-    int size = tox_get_self_name(m_tox, (unsigned char *)(name.data()));
+    int size = tox_get_self_name(m_tox, (unsigned char*)(name.data()));
     if (size < 0) {
         throw Exception(FAILED);
     }
@@ -430,7 +455,7 @@ Glib::ustring Tox::get_name(Tox::FriendNr nr) {
         throw Exception(UNITIALIZED);
     }
     std::string name(/*MAX_NAME_LENGTH*/ 128, 0);
-    int size = tox_get_name(m_tox, nr, (unsigned char *)(name.data()));
+    int size = tox_get_name(m_tox, nr, (unsigned char*)(name.data()));
     if (size < 0) {
         throw Exception(FAILED);
     }
@@ -465,7 +490,7 @@ Glib::ustring Tox::get_status_message() {
     }
     std::string name(size, 0);
     size = tox_get_self_status_message(
-        m_tox, (unsigned char *)name.data(), name.size());
+        m_tox, (unsigned char*)name.data(), name.size());
     if (size < 0) {
         throw Exception(FAILED);
     }
@@ -484,7 +509,7 @@ Glib::ustring Tox::get_status_message(FriendNr nr) {
     }
     std::string name(size, 0);
     size = tox_get_status_message(
-        m_tox, nr, (unsigned char *)name.data(), name.size());
+        m_tox, nr, (unsigned char*)name.data(), name.size());
     if (size < 0) {
         throw Exception(FAILED);
     }
@@ -499,7 +524,7 @@ void Tox::set_status_message(Glib::ustring msg) {
     }
     if (tox_set_status_message(
             m_tox,
-            reinterpret_cast<const unsigned char *>(msg.data()),
+            reinterpret_cast<const unsigned char*>(msg.data()),
             msg.bytes()) != 0) {
         throw Exception(FAILED);
     }
@@ -680,7 +705,7 @@ std::vector<Tox::SLog> Tox::get_log(Tox::FriendNr nr, int offset, int limit) {
             n.recvtime = loadq.getColumn(1).getInt64();
             n.type = (ELogType)loadq.getColumn(2).getInt();
             auto data = loadq.getColumn(3);
-            auto data_ptr = (const char *)data.getBlob();
+            auto data_ptr = (const char*)data.getBlob();
             n.data = Glib::ustring(data_ptr, data_ptr + data.getBytes());
 
             result.push_back(n);
@@ -692,73 +717,72 @@ std::vector<Tox::SLog> Tox::get_log(Tox::FriendNr nr, int offset, int limit) {
     return result;
 }
 
-void Tox::callback_friend_request(Tox *,
-                                  const unsigned char *addr,
-                                  const unsigned char *data,
+void Tox::callback_friend_request(Tox*,
+                                  const unsigned char* addr,
+                                  const unsigned char* data,
                                   unsigned short len,
-                                  void *) {
+                                  void*) {
     Tox::SEvent tmp;
     tmp.event = EEventType::FRIENDREQUEST;
     std::copy(addr,
               addr + tmp.friend_request.addr.size(),
               tmp.friend_request.addr.begin());
     tmp.friend_request.message
-        = Glib::ustring(std::string((const char *)data, len));  // no shortcut ?
+        = Glib::ustring(std::string((const char*)data, len));  // no shortcut ?
     Tox::instance().inject_event(tmp);
 }
 
-void Tox::callback_friend_message(Tox *,
+void Tox::callback_friend_message(Tox*,
                                   FriendNr nr,
-                                  const unsigned char *data,
+                                  const unsigned char* data,
                                   unsigned short len,
-                                  void *) {
+                                  void*) {
     Tox::SEvent tmp;
     tmp.event = EEventType::FRIENDMESSAGE;
     tmp.friend_message.nr = nr;
     tmp.friend_message.data
-        = Glib::ustring(std::string((const char *)data, len));
+        = Glib::ustring(std::string((const char*)data, len));
     Tox::instance().inject_event(tmp);
 }
 
-void Tox::callback_friend_action(Tox *,
+void Tox::callback_friend_action(Tox*,
                                  FriendNr nr,
-                                 const unsigned char *data,
+                                 const unsigned char* data,
                                  unsigned short len,
-                                 void *) {
+                                 void*) {
     Tox::SEvent tmp;
     tmp.event = EEventType::FRIENDACTION;
     tmp.friend_action.nr = nr;
-    tmp.friend_action.data
-        = Glib::ustring(std::string((const char *)data, len));
+    tmp.friend_action.data = Glib::ustring(std::string((const char*)data, len));
     Tox::instance().inject_event(tmp);
 }
 
-void Tox::callback_name_change(Tox *,
+void Tox::callback_name_change(Tox*,
                                FriendNr nr,
-                               const unsigned char *data,
+                               const unsigned char* data,
                                unsigned short len,
-                               void *) {
+                               void*) {
     Tox::SEvent tmp;
     tmp.event = EEventType::NAMECHANGE;
     tmp.name_change.nr = nr;
-    tmp.name_change.data = Glib::ustring(std::string((const char *)data, len));
+    tmp.name_change.data = Glib::ustring(std::string((const char*)data, len));
     Tox::instance().inject_event(tmp);
 }
 
-void Tox::callback_status_message(Tox *,
+void Tox::callback_status_message(Tox*,
                                   FriendNr nr,
-                                  const unsigned char *data,
+                                  const unsigned char* data,
                                   unsigned short len,
-                                  void *) {
+                                  void*) {
     Tox::SEvent tmp;
     tmp.event = EEventType::STATUSMESSAGE;
     tmp.status_message.nr = nr;
     tmp.status_message.data
-        = Glib::ustring(std::string((const char *)data, len));
+        = Glib::ustring(std::string((const char*)data, len));
     Tox::instance().inject_event(tmp);
 }
 
-void Tox::callback_user_status(Tox *, FriendNr nr, unsigned char data, void *) {
+void Tox::callback_user_status(Tox*, FriendNr nr, unsigned char data, void*) {
     Tox::SEvent tmp;
     tmp.event = EEventType::USERSTATUS;
     tmp.user_status.nr = nr;
@@ -766,10 +790,7 @@ void Tox::callback_user_status(Tox *, FriendNr nr, unsigned char data, void *) {
     Tox::instance().inject_event(tmp);
 }
 
-void Tox::callback_typing_change(Tox *,
-                                 FriendNr nr,
-                                 unsigned char data,
-                                 void *) {
+void Tox::callback_typing_change(Tox*, FriendNr nr, unsigned char data, void*) {
     Tox::SEvent tmp;
     tmp.event = EEventType::TYPINGCHANGE;
     tmp.typing_change.nr = nr;
@@ -777,7 +798,7 @@ void Tox::callback_typing_change(Tox *,
     Tox::instance().inject_event(tmp);
 }
 
-void Tox::callback_read_receipt(Tox *, FriendNr nr, unsigned data, void *) {
+void Tox::callback_read_receipt(Tox*, FriendNr nr, unsigned data, void*) {
     Tox::SEvent tmp;
     tmp.event = EEventType::READRECEIPT;
     tmp.readreceipt.nr = nr;
@@ -785,10 +806,10 @@ void Tox::callback_read_receipt(Tox *, FriendNr nr, unsigned data, void *) {
     Tox::instance().inject_event(tmp);
 }
 
-void Tox::callback_connection_status(Tox *m,
+void Tox::callback_connection_status(Tox* m,
                                      FriendNr nr,
                                      unsigned char data,
-                                     void *) {
+                                     void*) {
     Tox::SEvent tmp;
     tmp.event = EEventType::USERSTATUS;
     tmp.user_status.nr = nr;
@@ -813,7 +834,7 @@ Tox::FriendAddr Tox::get_address(Tox::FriendNr nr) {
     return tmp;
 }
 
-Glib::ustring Tox::to_hex(const unsigned char *data, size_t len) {
+Glib::ustring Tox::to_hex(const unsigned char* data, size_t len) {
     std::string s;
     for (size_t i = 0; i < len; ++i) {
         static const char hex[] = "0123456789ABCDEF";

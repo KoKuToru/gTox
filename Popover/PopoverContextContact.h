@@ -30,7 +30,7 @@
 class PopoverContextContact : public Gtk::Popover {
   private:
     Gtk::ListBox m_listbox;
-    Gtk::ListBoxRow &create_item(Glib::RefPtr<Gdk::Pixbuf> icon,
+    Gtk::ListBoxRow& create_item(Glib::RefPtr<Gdk::Pixbuf> icon,
                                  Glib::ustring text);
 
     Tox::FriendNr friendNr;

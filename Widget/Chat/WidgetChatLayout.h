@@ -28,25 +28,25 @@ class WidgetChatLayout : public Gtk::EventBox {
     int from_x;
     int from_y;
 
-    void update_children(GdkEventMotion *event,
-                         std::vector<Gtk::Widget *> children);
-    Glib::ustring get_children_selection(std::vector<Gtk::Widget *> children);
+    void update_children(GdkEventMotion* event,
+                         std::vector<Gtk::Widget*> children);
+    Glib::ustring get_children_selection(std::vector<Gtk::Widget*> children);
 
   public:
     WidgetChatLayout();
     ~WidgetChatLayout();
 
     void set_spacing(int space);
-    void pack_start(Gtk::Widget &w, bool a, bool b);
+    void pack_start(Gtk::Widget& w, bool a, bool b);
 
-    std::vector<Gtk::Widget *> get_children();
-    std::vector<const Gtk::Widget *> get_children() const;
+    std::vector<Gtk::Widget*> get_children();
+    std::vector<const Gtk::Widget*> get_children() const;
 
   protected:
-    virtual bool on_button_press_event(GdkEventButton *event);
-    virtual bool on_button_release_event(GdkEventButton *event);
-    virtual bool on_motion_notify_event(GdkEventMotion *event);
-    virtual bool on_key_press_event(GdkEventKey *event);
+    virtual bool on_button_press_event(GdkEventButton* event);
+    virtual bool on_button_release_event(GdkEventButton* event);
+    virtual bool on_motion_notify_event(GdkEventMotion* event);
+    virtual bool on_key_press_event(GdkEventKey* event);
 };
 
 #endif

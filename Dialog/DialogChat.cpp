@@ -55,6 +55,6 @@ void DialogChat::show() {
     show_all();
 }
 
-WidgetChat &DialogChat::get_chat() {
+WidgetChat& DialogChat::get_chat() {
     return m_chat;
 }

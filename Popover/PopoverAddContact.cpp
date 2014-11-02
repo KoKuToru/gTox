@@ -24,7 +24,7 @@
 
 #include <iostream>
 
-PopoverAddContact::PopoverAddContact(const Gtk::Widget &relative_to)
+PopoverAddContact::PopoverAddContact(const Gtk::Widget& relative_to)
     : Gtk::Popover(relative_to) {
     auto grid = Gtk::manage(new Gtk::Grid());
     auto label1 = Gtk::manage(new Gtk::Label(_("Tox ID")));
@@ -78,8 +78,7 @@ PopoverAddContact::PopoverAddContact(const Gtk::Widget &relative_to)
             m_addr.set_text("");
             m_msg.get_buffer()->set_text("");
             set_visible(false);
-        }
-        catch (...) {
+        } catch (...) {
             // TODO: Error handling
             std::cout << "ERROR" << std::endl;
         }
