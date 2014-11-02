@@ -22,7 +22,7 @@
 #include "Dialog/DialogContact.h"
 #include <glibmm/i18n.h>
 
-PopoverStatus::PopoverStatus(const Gtk::Widget &relative_to)
+PopoverStatus::PopoverStatus(const Gtk::Widget& relative_to)
     : Gtk::Popover(relative_to) {
     // add_label("Settings");
 
@@ -58,7 +58,7 @@ PopoverStatus::PopoverStatus(const Gtk::Widget &relative_to)
 PopoverStatus::~PopoverStatus() {
 }
 
-Gtk::ListBoxRow &PopoverStatus::create_item(Glib::RefPtr<Gdk::Pixbuf> icon,
+Gtk::ListBoxRow& PopoverStatus::create_item(Glib::RefPtr<Gdk::Pixbuf> icon,
                                             Glib::ustring text) {
     auto row = Gtk::manage(new Gtk::ListBoxRow());
     auto hbox = Gtk::manage(new Gtk::HBox());

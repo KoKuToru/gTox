@@ -27,15 +27,17 @@
 #include <iostream>
 #include <glibmm/i18n.h>
 
-DialogContact *DialogContact::m_instance = nullptr;
+DialogContact* DialogContact::m_instance = nullptr;
 
-DialogContact::DialogContact(const std::string &config_path)
+DialogContact::DialogContact(const std::string& config_path)
     : m_icon_attach(ICON::load_icon(ICON::chat_attach)),
       m_icon_detach(ICON::load_icon(ICON::chat_detach)),
       m_icon_settings(ICON::load_icon(ICON::settings)),
       m_icon_status(ICON::load_icon(ICON::status_offline)),
-      m_icon_add(ICON::load_icon(ICON::plus)), m_config_path(config_path),
-      m_popover_status(m_btn_status), m_popover_settings(m_btn_settings),
+      m_icon_add(ICON::load_icon(ICON::plus)),
+      m_config_path(config_path),
+      m_popover_status(m_btn_status),
+      m_popover_settings(m_btn_settings),
       m_popover_add(m_btn_add) {
     auto css = Gtk::CssProvider::create();
     if (!css->load_from_data(THEME::main)) {
