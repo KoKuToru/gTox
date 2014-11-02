@@ -351,7 +351,7 @@ WidgetChat* DialogContact::get_chat(Tox::FriendNr nr, DialogChat*& dialog) {
     auto item = Gtk::manage(new WidgetChat(nr));
     item->show_all();
     // item->hide();
-    m_chat.add(*item /*, true, true*/);
+    m_chat.add(*item, "");
     return item;
 }
 
