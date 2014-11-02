@@ -66,7 +66,7 @@ WidgetChat::WidgetChat(Tox::FriendNr nr)
   });
 
   m_input.signal_key_press_event()
-      .connect([this](GdkEventKey* event) {
+      .connect([this](GdkEventKey *event) {
                  if (event->keyval == GDK_KEY_Return &&
                      !(event->state & GDK_SHIFT_MASK)) {
                    std::string text = m_input.get_buffer()->get_text();
@@ -82,7 +82,7 @@ WidgetChat::WidgetChat(Tox::FriendNr nr)
                false);
 
   m_vbox.set_name("WidgetChat");
-  m_vbox.property_margin() = 10;  // wont work via css
+  m_vbox.property_margin() = 10; // wont work via css
 
   m_scrolled.get_vadjustment()->signal_value_changed().connect_notify([this]() {
     // check if lowest position
@@ -90,7 +90,7 @@ WidgetChat::WidgetChat(Tox::FriendNr nr)
     m_autoscroll = adj->get_upper() - adj->get_page_size() == adj->get_value();
   });
 
-  m_vbox.signal_size_allocate().connect_notify([this](Gtk::Allocation&) {
+  m_vbox.signal_size_allocate().connect_notify([this](Gtk::Allocation &) {
     // auto scroll:
     if (m_autoscroll) {
       auto adj = m_scrolled.get_vadjustment();
@@ -117,36 +117,29 @@ Tox::FriendNr WidgetChat::get_friend_nr() const { return m_nr; }
 
 void WidgetChat::add_line(Glib::ustring text) { m_output.add_line(text); }
 
-void WidgetChat::add_line(unsigned long long timestamp,
-                          bool left_side,
-                          const Glib::ustring& message) {
+void WidgetChat::add_line(unsigned long long timestamp, bool left_side,
+                          const Glib::ustring &message) {
   // check if time i set, if not we will give it actual time
   if (timestamp == 0) {
     timestamp = Glib::DateTime::create_now_utc().to_unix();
   }
   auto new_time = Glib::DateTime::create_now_utc(timestamp);
-  new_time = Glib::DateTime::create_utc(new_time.get_year(),
-                                        new_time.get_month(),
-                                        new_time.get_day_of_month(),
-                                        0,
-                                        0,
-                                        0);
+  new_time =
+      Glib::DateTime::create_utc(new_time.get_year(), new_time.get_month(),
+                                 new_time.get_day_of_month(), 0, 0, 0);
   decltype(new_time) last_time = Glib::DateTime::create_now_utc(0);
 
   bool action = message.find("/me ") == 0;
 
   // check last message blob
-  std::vector<Gtk::Widget*> childs = m_vbox.get_children();
+  std::vector<Gtk::Widget *> childs = m_vbox.get_children();
   if (!childs.empty()) {
-    WidgetChatLine* item = dynamic_cast<WidgetChatLine*>(childs.back());
+    WidgetChatLine *item = dynamic_cast<WidgetChatLine *>(childs.back());
     if (item != nullptr) {
       last_time = Glib::DateTime::create_now_utc(item->last_timestamp());
-      last_time = Glib::DateTime::create_utc(last_time.get_year(),
-                                             last_time.get_month(),
-                                             last_time.get_day_of_month(),
-                                             0,
-                                             0,
-                                             0);
+      last_time = Glib::DateTime::create_utc(
+          last_time.get_year(), last_time.get_month(),
+          last_time.get_day_of_month(), 0, 0, 0);
       // check if blob is on same side
       if (!action && item->get_side() == left_side) {
         // check if it's same day month year

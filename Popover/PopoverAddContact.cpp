@@ -24,7 +24,7 @@
 
 #include <iostream>
 
-PopoverAddContact::PopoverAddContact(const Gtk::Widget& relative_to)
+PopoverAddContact::PopoverAddContact(const Gtk::Widget &relative_to)
     : Gtk::Popover(relative_to) {
   auto grid = Gtk::manage(new Gtk::Grid());
   auto label1 = Gtk::manage(new Gtk::Label(_("Tox ID")));
@@ -64,8 +64,8 @@ PopoverAddContact::PopoverAddContact(const Gtk::Widget& relative_to)
       return;
     }
 
-    if(m_msg.get_buffer()->get_text(true).size() == 0){
-    	m_msg.get_buffer()->set_text("I am using gTox. Add me");
+    if (m_msg.get_buffer()->get_text(true).size() == 0) {
+      m_msg.get_buffer()->set_text("I am using gTox. Add me");
     }
 
     try {

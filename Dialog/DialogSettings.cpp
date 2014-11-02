@@ -53,10 +53,6 @@ DialogSettings::DialogSettings() {
   listbox->add(*Gtk::manage(new Gtk::Label("Test")));
 }
 
-DialogSettings::~DialogSettings() {
+DialogSettings::~DialogSettings() {}
 
-}
-
-void DialogSettings::show() {
-  show_all();
-}
+void DialogSettings::show() { show_all(); }

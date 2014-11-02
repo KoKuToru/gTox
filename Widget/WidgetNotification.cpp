@@ -63,7 +63,7 @@ void WidgetNotification::add_notification(Glib::ustring titel,
                                           Glib::ustring button,
                                           std::function<void(void)> callback) {
   Notify::Notification("gTox", titel, message).show();
-  m_messages.push_back({titel, message, button, callback});
+  m_messages.push_back({ titel, message, button, callback });
 
   m_title.set_text(titel);
   m_message.set_text(message);
