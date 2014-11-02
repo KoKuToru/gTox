@@ -16,41 +16,41 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>
-**/
-#ifndef WIDGETCHAT_H
-#define WIDGETCHAT_H
+ **/
+
+#ifndef FIRSTSTARTASSISTANT_H
+#define FIRSTSTARTASSISTANT_H
 
 #include <gtkmm.h>
-#include "Chat/WidgetChatEntry.h"
-#include "Tox/Tox.h"
-#include "Chat/WidgetChatLayout.h"
 
-// Content of DialogChat
-class WidgetChat : public Gtk::VPaned {
-private:
-  Gtk::TextView m_input;
-  WidgetChatEntry m_output;
+#include "Widget/Assistant/AccountWidget.h"
+#include "Widget/Assistant/WelcomePage.h"
+#include "Widget/Assistant/NewAccountWidget.h"
 
-  Gtk::HBox m_hbox;
-  Gtk::Button m_btn_send;
+class FirstStartAssistant : public Gtk::Assistant {
+ private:
+  WelcomePage welcome;
+  AccountWidget account;
+  NewAccountWidget create;
+  Gtk::Box import;
+  Gtk::Box finish;
 
-  Tox::FriendNr m_nr;
+  Glib::ustring path;
 
-  Gtk::ScrolledWindow m_scrolled;
-  WidgetChatLayout m_vbox;
+  bool aborted;
 
-  bool m_autoscroll;
+  int getPage(Gtk::Widget& widget);
 
-public:
-  WidgetChat(Tox::FriendNr nr);
-  ~WidgetChat();
+  int on_next(int page);
+  void on_cancel();
+  void on_close();
 
-  Tox::FriendNr get_friend_nr() const;
-  void focus();
-  void add_line(Glib::ustring text);
+ public:
+  FirstStartAssistant(Glib::ustring path);
+  ~FirstStartAssistant();
 
-  void add_line(unsigned long long timestamp, bool left_side,
-                const Glib::ustring &message);
+  bool isAborted() { return aborted; }
+  Glib::ustring getPath() { return path; }
 };
 
 #endif

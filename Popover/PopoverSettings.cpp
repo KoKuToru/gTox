@@ -23,7 +23,7 @@
 #include "Dialog/Debug/DialogCss.h"
 #include <glibmm/i18n.h>
 
-PopoverSettings::PopoverSettings(const Gtk::Widget& relative_to)
+PopoverSettings::PopoverSettings(const Gtk::Widget &relative_to)
     : Gtk::Popover(relative_to) {
   auto grid = Gtk::manage(new Gtk::Grid());
   auto label1 = new Gtk::Label(_("Username"));
@@ -58,9 +58,7 @@ PopoverSettings::PopoverSettings(const Gtk::Widget& relative_to)
     DialogContact::instance().change_name(m_name.get_text(), m_msg.get_text());
   });
 
-  btn_settings->signal_clicked().connect([this]() {
-    m_settings.show();
-  });
+  btn_settings->signal_clicked().connect([this]() { m_settings.show(); });
 }
 
 PopoverSettings::~PopoverSettings() {}

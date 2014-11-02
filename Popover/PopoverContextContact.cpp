@@ -30,19 +30,19 @@ PopoverContextContact::PopoverContextContact(Tox::FriendNr friendNr)
   add(m_listbox);
 
   // signal handling
-  m_listbox.signal_row_activated().connect([this](Gtk::ListBoxRow* row) {
+  m_listbox.signal_row_activated().connect([this](Gtk::ListBoxRow *row) {
     switch (row->get_index()) {
-      case 0:
-        DialogContact::instance().delete_friend(this->friendNr);
-        break;
+    case 0:
+      DialogContact::instance().delete_friend(this->friendNr);
+      break;
     }
     set_visible(false);
   });
 }
 
-Gtk::ListBoxRow& PopoverContextContact::create_item(
-    Glib::RefPtr<Gdk::Pixbuf> icon,
-    Glib::ustring text) {
+Gtk::ListBoxRow &
+PopoverContextContact::create_item(Glib::RefPtr<Gdk::Pixbuf> icon,
+                                   Glib::ustring text) {
   auto row = Gtk::manage(new Gtk::ListBoxRow());
   auto hbox = Gtk::manage(new Gtk::HBox());
   auto label = Gtk::manage(new Gtk::Label(text));

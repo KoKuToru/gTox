@@ -24,7 +24,7 @@
 
 // Single chat window
 class DialogCss : public Gtk::Window {
- private:
+private:
   Gtk::HeaderBar m_header;
   Gtk::Box m_headerbar_btn_left;
 
@@ -32,7 +32,7 @@ class DialogCss : public Gtk::Window {
 
   Glib::RefPtr<Gtk::CssProvider> m_last;
 
- public:
+public:
   DialogCss();
   ~DialogCss();
 
