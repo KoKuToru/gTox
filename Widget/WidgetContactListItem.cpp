@@ -23,10 +23,9 @@
 #include "Dialog/DialogContact.h"
 #include "Generated/icon.h"
 
-WidgetContactListItem::WidgetContactListItem(WidgetContact* contact,
+WidgetContactListItem::WidgetContactListItem(WidgetContact *contact,
                                              Tox::FriendNr nr)
-    : Glib::ObjectBase("WidgetContactListItem"),
-      m_contact(contact),
+    : Glib::ObjectBase("WidgetContactListItem"), m_contact(contact),
       m_friend_nr(nr) {
   set_name("WidgetContactListItem");
 
@@ -42,8 +41,8 @@ WidgetContactListItem::WidgetContactListItem(WidgetContact* contact,
   m_status_msg.set_name("Status");
 
   m_avatar.set(ICON::load_icon(ICON::avatar)->scale_simple(
-      64, 64, Gdk::INTERP_BILINEAR));  // i would like to resize this depending
-                                       // on font-scale settings
+      64, 64, Gdk::INTERP_BILINEAR)); // i would like to resize this depending
+                                      // on font-scale settings
   m_avatar.set_name("Avatar");
 
   m_status_icon.set(ICON::load_icon(ICON::status_offline));
@@ -75,19 +74,19 @@ void WidgetContactListItem::refresh() {
     Glib::RefPtr<Gdk::Pixbuf> status;
 
     switch (Tox::instance().get_status(m_friend_nr)) {
-      case Tox::EUSERSTATUS::BUSY:
-        status = ICON::load_icon(ICON::status_busy);
-        break;
-      case Tox::EUSERSTATUS::INVALID:
-      case Tox::EUSERSTATUS::NONE:
-        status = ICON::load_icon(ICON::status_online);
-        break;
-      case Tox::EUSERSTATUS::AWAY:
-        status = ICON::load_icon(ICON::status_away);
-        break;
-      default:
-        status = ICON::load_icon(ICON::status_offline);
-        break;
+    case Tox::EUSERSTATUS::BUSY:
+      status = ICON::load_icon(ICON::status_busy);
+      break;
+    case Tox::EUSERSTATUS::INVALID:
+    case Tox::EUSERSTATUS::NONE:
+      status = ICON::load_icon(ICON::status_online);
+      break;
+    case Tox::EUSERSTATUS::AWAY:
+      status = ICON::load_icon(ICON::status_away);
+      break;
+    default:
+      status = ICON::load_icon(ICON::status_offline);
+      break;
     }
     m_status_icon.set(status);
   }
