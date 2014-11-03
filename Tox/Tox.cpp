@@ -31,7 +31,6 @@ Tox::Tox() : m_tox(nullptr) {
 
 Tox::~Tox() {
     if (m_tox != nullptr) {
-        // SAVE STATE ?
         tox_kill(m_tox);
         m_tox = nullptr;
     }
@@ -110,12 +109,15 @@ void Tox::init(const Glib::ustring& statefile) {
 
             // increase runid by 1
             m_db->exec(
-                "UPDATE config SET value = value + 1 WHERE name='runid'");
+                "UPDATE config"
+                " SET value = value + 1"
+                " WHERE name='runid'");
 
             // clean up toxcore
             try {
                 SQLite::Statement storeq(*m_db,
-                                         "DELETE FROM toxcore WHERE id < ?1");
+                                         "DELETE FROM toxcore"
+                                         " WHERE id < ?1");
                 storeq.bind(
                     1,
                     m_db->execAndGet(
@@ -130,17 +132,12 @@ void Tox::init(const Glib::ustring& statefile) {
 
             // take the last saved state
             auto col = m_db->execAndGet(
-                "SELECT state FROM toxcore ORDER BY id DESC LIMIT 1");
-            const void* state = col.getBlob();
+                "SELECT state FROM toxcore"
+                " ORDER BY id DESC LIMIT 1");
+            auto state = (const unsigned char*)col.getBlob();
             size_t state_size = col.getBytes();
 
-            std::ifstream oi(statefile);
-            if (!oi.is_open()) {
-                throw Exception(FILEERROR);
-            }
-
-            if (tox_load(m_tox, (const unsigned char*)state, state_size)
-                == -1) {
+            if (tox_load(m_tox, state, state_size) == -1) {
                 throw Exception(LOADERROR);
             }
 
@@ -155,7 +152,8 @@ void Tox::init(const Glib::ustring& statefile) {
     }
 
     SQLite::Statement stmt(*m_db,
-                           "SELECT active, ip, port, pub_key FROM bootstrap");
+                           "SELECT active, ip, port, pub_key"
+                           " FROM bootstrap");
     bool okay = false;
     while (stmt.executeStep()) {
         int active = stmt.getColumn(0).getInt();
@@ -168,22 +166,23 @@ void Tox::init(const Glib::ustring& statefile) {
         std::string pub_key = stmt.getColumn(3).getText("");
 
         if (pub_key.size() == 32) {
-          auto pub = from_hex(pub_key);
-          okay |= tox_bootstrap_from_address(m_tox,
-                                             ip.c_str(), port, pub.data());
+            auto pub = from_hex(pub_key);
+            okay |= tox_bootstrap_from_address(
+                m_tox, ip.c_str(), port, pub.data());
         }
     }
 
     if (!okay) {
-      // Fallback ..
-      auto pub = from_hex("0095FC11A624EEF1"
-                          "EED38B54A4BE3E7F"
-                          "F3527D367DC0ACD1"
-                          "0AC8329C99319513");
-      auto host = "urotukok.net";
-      if (!tox_bootstrap_from_address(m_tox, host, 33445, pub.data())) {
-        throw Exception(BOOTERROR);
-      }
+        // Fallback ..
+        auto pub = from_hex(
+            "0095FC11A624EEF1"
+            "EED38B54A4BE3E7F"
+            "F3527D367DC0ACD1"
+            "0AC8329C99319513");
+        auto host = "urotukok.net";
+        if (!tox_bootstrap_from_address(m_tox, host, 33445, pub.data())) {
+            throw Exception(BOOTERROR);
+        }
     }
 }
 
@@ -210,13 +209,13 @@ void Tox::save(const Glib::ustring& statefile) {
     try {
         SQLite::Statement removq(*m_db, "DELETE FROM toxcore WHERE runid=?1");
         SQLite::Statement storeq(*m_db,
-                                 "INSERT INTO toxcore(savetime, state, runid) "
-                                 "VALUES (CURRENT_TIMESTAMP, ?1, ?2)");
+                                 "INSERT INTO toxcore"
+                                 " (savetime, state, runid)"
+                                 " VALUES (CURRENT_TIMESTAMP, ?1, ?2)");
 
-        auto runid
-            = m_db->execAndGet(
-                        "SELECT value FROM config WHERE name='runid' LIMIT 1")
-                  .getInt();
+        auto runid = m_db->execAndGet(
+                               "SELECT value FROM config"
+                               " WHERE name='runid' LIMIT 1").getInt();
 
         removq.bind(1, runid);
 
@@ -351,7 +350,6 @@ void Tox::del_friend(Tox::FriendNr nr) {
 Tox::ReceiptNr Tox::send_message(Tox::FriendNr nr,
                                  const Glib::ustring& message) {
     if (message.find("/me ") == 0) {
-        // return send_action(nr, message.substr(Glib::ustring("/me ").size()));
         return send_action(nr, message);
     }
 
@@ -371,9 +369,8 @@ Tox::ReceiptNr Tox::send_message(Tox::FriendNr nr,
     if (m_db) {
         SQLite::Statement storeq(
             *m_db,
-            "INSERT INTO log(friendaddr, sendtime, type, "
-            "message, receipt) VALUES (?1, CURRENT_TIMESTAMP, "
-            "?2, ?3, ?4)");
+            "INSERT INTO log(friendaddr, sendtime, type, message, receipt)"
+            " VALUES (?1, CURRENT_TIMESTAMP, ?2, ?3, ?4)");
 
         storeq.bind(1, get_address(nr).data(), TOX_CLIENT_ID_SIZE);
         storeq.bind(2, ELogType::LOGMSG);
@@ -403,9 +400,8 @@ Tox::ReceiptNr Tox::send_action(Tox::FriendNr nr, const Glib::ustring& action) {
     if (m_db) {
         SQLite::Statement storeq(
             *m_db,
-            "INSERT INTO log(friendaddr, sendtime, type, "
-            "message, receipt) VALUES (?1, CURRENT_TIMESTAMP, "
-            "?2, ?3, ?4)");
+            "INSERT INTO log(friendaddr, sendtime, type, message, receipt)"
+            " VALUES (?1, CURRENT_TIMESTAMP, ?2, ?3, ?4)");
 
         storeq.bind(1, get_address(nr).data(), TOX_CLIENT_ID_SIZE);
         storeq.bind(2, ELogType::LOGACTION);
@@ -644,9 +640,8 @@ void Tox::inject_event(SEvent ev) {
         } else if (ev.event == FRIENDMESSAGE) {
             SQLite::Statement storeq(
                 *m_db,
-                "INSERT INTO log(friendaddr, recvtime, type, "
-                "message) VALUES (?1, CURRENT_TIMESTAMP, ?2, "
-                "?3)");
+                "INSERT INTO log(friendaddr, recvtime, type, message)"
+                " VALUES (?1, CURRENT_TIMESTAMP, ?2, ?3)");
 
             storeq.bind(1,
                         get_address(ev.friend_message.nr).data(),
@@ -660,9 +655,8 @@ void Tox::inject_event(SEvent ev) {
         } else if (ev.event == FRIENDACTION) {
             SQLite::Statement storeq(
                 *m_db,
-                "INSERT INTO log(friendaddr, recvtime, type, "
-                "message) VALUES (?1, CURRENT_TIMESTAMP, ?2, "
-                "?3)");
+                "INSERT INTO log(friendaddr, recvtime, type, message)"
+                " VALUES (?1, CURRENT_TIMESTAMP, ?2, ?3)");
 
             storeq.bind(
                 1, get_address(ev.friend_action.nr).data(), TOX_CLIENT_ID_SIZE);
@@ -686,9 +680,11 @@ std::vector<Tox::SLog> Tox::get_log(Tox::FriendNr nr, int offset, int limit) {
     if (m_db) {
         SQLite::Statement loadq(
             *m_db,
-            "SELECT strftime('%s', sendtime), strftime('%s', "
-            "recvtime), type, message FROM log WHERE "
-            "friendaddr = ?1 ORDER BY id DESC LIMIT ?2, ?3");
+            "SELECT"
+            " strftime('%s', sendtime),"
+            " strftime('%s', recvtime),"
+            " type, message FROM log"
+            " WHERE friendaddr = ?1 ORDER BY id DESC LIMIT ?2, ?3");
 
         loadq.bind(1, get_address(nr).data(), TOX_CLIENT_ID_SIZE);
         loadq.bind(2, offset);
