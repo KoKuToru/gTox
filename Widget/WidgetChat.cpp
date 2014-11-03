@@ -99,6 +99,14 @@ WidgetChat::WidgetChat(Tox::FriendNr nr)
         }
     });
 
+    // Disable scroll to focused child
+    auto viewport = dynamic_cast<Gtk::Viewport*>(m_scrolled.get_child());
+    if (viewport) {
+        auto dummy_adj = Gtk::Adjustment::create(0, 0, 0);
+        viewport->set_focus_hadjustment(dummy_adj);
+        viewport->set_focus_vadjustment(dummy_adj);
+    }
+
     // load log
     auto log = Tox::instance().get_log(nr);
     for (auto l : log) {
