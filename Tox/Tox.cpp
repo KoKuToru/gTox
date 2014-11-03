@@ -156,27 +156,35 @@ void Tox::init(const Glib::ustring& statefile) {
 
     SQLite::Statement stmt(*m_db,
                            "SELECT active, ip, port, pub_key FROM bootstrap");
-    bool connected = false;
+    bool okay = false;
     while (stmt.executeStep()) {
         int active = stmt.getColumn(0).getInt();
-        if (active == 0)
+        if (active == 0) {
             continue;
+        }
 
-        const char* ip = stmt.getColumn(1).getText("");
+        std::string ip = stmt.getColumn(1).getText("");
         int port = stmt.getColumn(2).getInt();
-        const char* pub_key = stmt.getColumn(3).getText("");
+        std::string pub_key = stmt.getColumn(3).getText("");
 
-        auto pub = from_hex(pub_key);
-        connected |= tox_bootstrap_from_address(m_tox, ip, port, pub.data());
+        if (pub_key.size() == 32) {
+          auto pub = from_hex(pub_key);
+          okay |= tox_bootstrap_from_address(m_tox,
+                                             ip.c_str(), port, pub.data());
+        }
     }
-    // Fallback ..
-    auto pub = from_hex(
-        "F5A1A38EFB6BD3C2C8AF8B10D85F0F89E931704D349F1D0720C3C4059AF2440A");
-    connected |= tox_bootstrap_from_address(
-        m_tox, "46.38.239.179", 33445, pub.data());
 
-    if (!connected)
+    if (!okay) {
+      // Fallback ..
+      auto pub = from_hex("0095FC11A624EEF1"
+                          "EED38B54A4BE3E7F"
+                          "F3527D367DC0ACD1"
+                          "0AC8329C99319513");
+      auto host = "urotukok.net";
+      if (!tox_bootstrap_from_address(m_tox, host, 33445, pub.data())) {
         throw Exception(BOOTERROR);
+      }
+    }
 }
 
 void Tox::save(const Glib::ustring& statefile) {
