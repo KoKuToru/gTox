@@ -50,12 +50,12 @@ PopoverSettings::PopoverSettings(const Gtk::Widget& relative_to)
     label1->set_valign(Gtk::ALIGN_BASELINE);
     label2->set_valign(Gtk::ALIGN_BASELINE);
 
-    m_name.signal_changed().connect([this]() {
+    m_name.signal_focus_out_event().connect_notify([this](GdkEventFocus*) {
         DialogContact::instance().change_name(m_name.get_text(),
                                               m_msg.get_text());
     });
 
-    m_msg.signal_changed().connect([this]() {
+    m_msg.signal_focus_out_event().connect_notify([this](GdkEventFocus*) {
         DialogContact::instance().change_name(m_name.get_text(),
                                               m_msg.get_text());
     });
