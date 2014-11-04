@@ -27,7 +27,8 @@ FirstStartAssistant::FirstStartAssistant(Glib::ustring path)
     set_default_size(800, 600);
 
     import.pack_start(*Gtk::manage(new Gtk::Label(_("NOT_IMPLEMENTED"))));
-    finish.pack_start(*Gtk::manage(new Gtk::Label(_("FRIST_START_ASSISTANT_FINISH_MSG"))));
+    finish.pack_start(
+        *Gtk::manage(new Gtk::Label(_("FRIST_START_ASSISTANT_FINISH_MSG"))));
 
     append_page(welcome);
     append_page(account);
@@ -84,12 +85,11 @@ int FirstStartAssistant::on_next(int page) {
 }
 
 void FirstStartAssistant::on_cancel() {
-    int status
-        = Gtk::MessageDialog(_("QUIT_ASSISTANT_QUESTION"),
-                             true,
-                             Gtk::MESSAGE_QUESTION,
-                             Gtk::BUTTONS_YES_NO,
-                             true).run();
+    int status = Gtk::MessageDialog(_("QUIT_ASSISTANT_QUESTION"),
+                                    true,
+                                    Gtk::MESSAGE_QUESTION,
+                                    Gtk::BUTTONS_YES_NO,
+                                    true).run();
 
     if (status == Gtk::RESPONSE_YES) {
         aborted = true;
