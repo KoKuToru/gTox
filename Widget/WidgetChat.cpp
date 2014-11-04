@@ -38,7 +38,7 @@ WidgetChat::WidgetChat(Tox::FriendNr nr)
     pack1(*frame, true, false);
     // pack2(input, false, true);
 
-    m_btn_send.set_label(_("Send"));
+    m_btn_send.set_label(_("SEND"));
 
     m_hbox.pack_start(m_input, true, true);
     m_hbox.pack_end(m_btn_send, false, false);
@@ -179,7 +179,7 @@ void WidgetChat::add_line(unsigned long long timestamp,
         // add a date message
         auto msg = Gtk::manage(new WidgetChatLabel() /*new Gtk::Label()*/);
         msg->set_text(Glib::DateTime::create_now_local(timestamp)
-                          .format(_("Date_format")));
+                          .format(_("DATE_FORMAT")));
         msg->set_name("ChatTime");
         msg->set_halign(Gtk::ALIGN_CENTER);
         msg->show_all();
