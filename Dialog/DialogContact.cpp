@@ -41,7 +41,7 @@ DialogContact::DialogContact(const std::string& config_path)
       m_popover_add(m_btn_add) {
     auto css = Gtk::CssProvider::create();
     if (!css->load_from_data(THEME::main)) {
-        std::cerr << _("Failed to load theme") << std::endl;
+        std::cerr << _("LOADING_THEME_FAILED") << std::endl;
     } else {
         auto screen = Gdk::Screen::get_default();
         auto ctx = get_style_context();
@@ -188,7 +188,7 @@ DialogContact::DialogContact(const std::string& config_path)
     m_btn_status.set_sensitive(false);
 
     m_notification.add_notification(
-        _("PreAlpha Software"), _("Not ready yet"), "Okay", []() {
+        _("PREALPHA_SOFTWARE"), _("NOT_READY_YET"), _("OKAY"), []() {
             // nothing
         });
 }

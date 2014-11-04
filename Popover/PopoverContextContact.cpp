@@ -25,7 +25,7 @@
 
 PopoverContextContact::PopoverContextContact(Tox::FriendNr friendNr)
     : friendNr(friendNr) {
-    m_listbox.add(create_item(ICON::load_icon(ICON::remove), _("Remove")));
+    m_listbox.add(create_item(ICON::load_icon(ICON::remove), _("REMOVE")));
     m_listbox.show_all();
     add(m_listbox);
 

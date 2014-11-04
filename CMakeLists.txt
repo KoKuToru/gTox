@@ -130,6 +130,7 @@ endif()
 
 SET(TRANSLATIONS
     de
+    en
 )
 
 foreach(_trans ${TRANSLATIONS})

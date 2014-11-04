@@ -22,9 +22,7 @@
 #include <glibmm/i18n.h>
 
 WelcomePage::WelcomePage()
-    : test(
-          _("Welcome to gTox\n\nThis is the first time you start "
-            "gTox.\n\nPlease take a moment and follow the instruction.")) {
+    : test(_("WELCOME_PAGE_MSG")) {
     pack_start(test);
 }
 

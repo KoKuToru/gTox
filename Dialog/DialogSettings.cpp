@@ -23,7 +23,7 @@
 #include "Debug/DialogCss.h"
 
 DialogSettings::DialogSettings() {
-    set_title(_("gTox Settings"));
+    set_title(_("SETTINGS_TITLE"));
     set_default_geometry(800, 600);
     set_position(Gtk::WindowPosition::WIN_POS_CENTER);
 

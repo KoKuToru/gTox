@@ -21,7 +21,7 @@
 #include "NewAccountWidget.h"
 #include <glibmm/i18n.h>
 
-NewAccountWidget::NewAccountWidget() : labelName(_("Displayname : ")) {
+NewAccountWidget::NewAccountWidget() : labelName(_("DISPLAYNAME")) {
     add(gridLayout);
 
     gridLayout.add(labelName);

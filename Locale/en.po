@@ -1,0 +1,126 @@
+#: Dialog/FirstStartAssistant.cpp:51
+msgid "ACCOUNT"
+msgstr "Account"
+
+#: Widget/Assistant/AccountWidget.cpp:27
+msgid "ACCOUNT_WIDGET_NEW_IMPORT_MSG"
+msgstr "Would you like to import an existing account or create a new one?"
+
+#: Popover/PopoverAddContact.cpp:32
+msgid "ADD"
+msgstr "Add"
+
+#: Popover/PopoverStatus.cpp:32
+msgid "AWAY"
+msgstr "Away"
+
+#: Popover/PopoverStatus.cpp:31
+msgid "BUSY"
+msgstr "Busy"
+
+#: Widget/Assistant/AccountWidget.cpp:28
+msgid "CREATE_NEW_ACCOUNT"
+msgstr "Create a new account"
+
+#: Widget/Assistant/NewAccountWidget.cpp:24
+msgid "DISPLAYNAME"
+msgstr "Displayname"
+
+#: Widget/WidgetChat.cpp:182
+msgid "Date_format"
+msgstr "%A, %e. %B %Y"
+
+#: Popover/PopoverStatus.cpp:34
+msgid "EXIT"
+msgstr "Exit"
+
+#: Dialog/FirstStartAssistant.cpp:54
+msgid "FINISH"
+msgstr "Finish"
+
+#: Dialog/FirstStartAssistant.cpp:30
+msgid "FRIST_START_ASSISTANT_FINISH_MSG"
+msgstr ""
+"You are done.\n"
+" Have fun using gTox!"
+
+#: Dialog/FirstStartAssistant.cpp:53
+msgid "IMPORT"
+msgstr "Import"
+
+#: Widget/Assistant/AccountWidget.cpp:29
+msgid "IMPORT_ACCOUNT"
+msgstr "Import an existing account"
+
+#: Dialog/DialogContact.cpp:44
+msgid "LOADING_THEME_FAILED"
+msgstr ""
+
+#: Popover/PopoverSettings.cpp:30 Popover/PopoverAddContact.cpp:31
+msgid "MESSAGE"
+msgstr "Message"
+
+#: Dialog/FirstStartAssistant.cpp:52
+msgid "NEW_ACCOUNT"
+msgstr "New account"
+
+#: Dialog/FirstStartAssistant.cpp:29
+msgid "NOT_IMPLEMENTED"
+msgstr "Not implemented yet"
+
+#: Dialog/DialogContact.cpp:191
+msgid "NOT_READY_YET"
+msgstr "Not ready yet"
+
+#: Dialog/DialogContact.cpp:191
+msgid "OKAY"
+msgstr "Okay"
+
+#: Popover/PopoverStatus.cpp:30
+msgid "ONLINE"
+msgstr "Online"
+
+#: Dialog/DialogContact.cpp:191
+msgid "PREALPHA_SOFTWARE"
+msgstr "Pre alpha software"
+
+#: Dialog/FirstStartAssistant.cpp:88
+msgid "QUIT_ASSISTANT_QUESTION"
+msgstr "Do you really want to guit the assistant?"
+
+#: Popover/PopoverContextContact.cpp:28
+msgid "REMOVE"
+msgstr "Remove"
+
+#: Popover/PopoverSettings.cpp:32
+msgid "SETTINGS"
+msgstr "Settings"
+
+#: Dialog/DialogSettings.cpp:26
+msgid "SETTINGS_TITLE"
+msgstr "gTox settings"
+
+#: Widget/WidgetChat.cpp:41
+msgid "Send"
+msgstr "Send"
+
+#: Popover/PopoverAddContact.cpp:30
+msgid "TOX_ID"
+msgstr "Tox ID"
+
+#: Popover/PopoverSettings.cpp:29
+msgid "USERNAME"
+msgstr "Username"
+
+#: Dialog/FirstStartAssistant.cpp:50
+msgid "WELCOME"
+msgstr "Welcome"
+
+#: Widget/Assistant/WelcomePage.cpp:25
+msgid "WELCOME_PAGE_MSG"
+msgstr ""
+"Welcome to gTox\n"
+"\n"
+"This is the first time you start gTox.\n"
+"\n"
+"Please take a moment and follow the instruction."
