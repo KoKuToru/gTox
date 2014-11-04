@@ -21,8 +21,7 @@
 #include "WelcomePage.h"
 #include <glibmm/i18n.h>
 
-WelcomePage::WelcomePage()
-    : test(_("WELCOME_PAGE_MSG")) {
+WelcomePage::WelcomePage() : test(_("WELCOME_PAGE_MSG")) {
     pack_start(test);
 }
 
