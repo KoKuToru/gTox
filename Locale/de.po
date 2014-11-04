@@ -1,117 +1,96 @@
-#: Dialog/FirstStartAssistant.cpp:52
-msgid "Account"
+msgid "ACCOUNT"
 msgstr "Konto"
 
-#: Popover/PopoverAddContact.cpp:31
-msgid "Add"
+msgid "ACCOUNT_WIDGET_NEW_IMPORT_MSG"
+msgstr "Möchten Sie ein exestierendes Konto importieren, oder ein neues Konto erstellen ?"
+
+msgid "ADD"
 msgstr "Hinzufügen"
 
-#: Popover/PopoverStatus.cpp:30
-msgid "Away"
+msgid "AWAY"
 msgstr "Abwesend"
 
-#: Popover/PopoverStatus.cpp:29
-msgid "Busy"
+msgid "BUSY"
 msgstr "Beschäftigt"
 
-#: Widget/Assistant/AccountWidget.cpp:28
-msgid "Create a new account"
+msgid "CREATE_NEW_ACCOUNT"
 msgstr "Erstelle eine neues Konto"
 
-#: Widget/Assistant/NewAccountWidget.cpp:25
-msgid "Displayname : "
-msgstr "Anzeigename:"
+msgid "DISPLAYNAME"
+msgstr "Anzeigename"
 
-#: Dialog/FirstStartAssistant.cpp:89
-msgid "Do you really want to guit the assistant?"
-msgstr "Möchten Sie den Assistenten wircklich beenden ?"
+msgid "DATE_FORMAT"
+msgstr "%A, %e. %B %Y"
 
-#: Popover/PopoverStatus.cpp:31
-msgid "Exit"
+msgid "EXIT"
 msgstr "Beenden"
 
-#: Dialog/DialogContact.cpp:45
-msgid "Failed to load theme"
-msgstr "Theme konnte nicht geladen werden"
-
-#: Dialog/FirstStartAssistant.cpp:55
-msgid "Finish"
+msgid "FINISH"
 msgstr "Fertig"
 
-#: Dialog/FirstStartAssistant.cpp:54
-msgid "Import"
+msgid "FRIST_START_ASSISTANT_FINISH_MSG"
+msgstr ""
+"Alles startklar.\n"
+" Viel spaß mit gTox!"
+
+msgid "IMPORT"
 msgstr "Importieren"
 
-#: Widget/Assistant/AccountWidget.cpp:29
-msgid "Import an existing account"
+msgid "IMPORT_ACCOUNT"
 msgstr "Ein bestehendes Konto importieren"
 
-#: Popover/PopoverSettings.cpp:29 Popover/PopoverAddContact.cpp:30
-msgid "Message"
+msgid "LOADING_THEME_FAILED"
+msgstr "Theme konnte nicht geladen werden"
+
+msgid "MESSAGE"
 msgstr "Nachricht"
 
-#: Dialog/FirstStartAssistant.cpp:53
-msgid "New account"
+msgid "NEW_ACCOUNT"
 msgstr "Neues Konto"
 
-#: Dialog/FirstStartAssistant.cpp:30
-msgid "Not implemented yet"
+msgid "NOT_IMPLEMENTED"
 msgstr "Noch nicht implementiert"
 
-#: Dialog/DialogContact.cpp:147
-msgid "Not ready yet"
+msgid "NOT_READY_YET"
 msgstr "Noch nicht fertig"
 
-#: Popover/PopoverStatus.cpp:28
-msgid "Online"
+msgid "OKAY"
+msgstr "Okay"
+
+msgid "ONLINE"
 msgstr "Online"
 
-#: Dialog/DialogContact.cpp:147
-msgid "PreAlpha Software"
-msgstr "PreAlpha Software"
+msgid "PREALPHA_SOFTWARE"
+msgstr "pre-alpha Software"
 
-#: Popover/PopoverContextContact.cpp:27
-msgid "Remove"
+msgid "QUIT_ASSISTANT_QUESTION"
+msgstr "Möchten Sie den Assistenten wircklich beenden ?"
+
+msgid "REMOVE"
 msgstr "Entfernen"
 
-#: Widget/WidgetChat.cpp:35
-msgid "Send"
+msgid "SETTINGS"
+msgstr "Einstellungen"
+
+msgid "SETTINGS_TITLE"
+msgstr "gTox - Einstellungen"
+
+msgid "SEND"
 msgstr "Senden"
 
-#: Popover/PopoverAddContact.cpp:29
-msgid "Tox ID"
+msgid "TOX_ID"
 msgstr "Tox ID"
 
-#: Popover/PopoverSettings.cpp:28
-msgid "Username"
+msgid "USERNAME"
 msgstr "Name"
 
-#: Dialog/FirstStartAssistant.cpp:51
-msgid "Welcome"
+msgid "WELCOME"
 msgstr "Willkommen"
 
-#: Widget/Assistant/WelcomePage.cpp:25
-msgid ""
-"Welcome to gTox\n"
-"\n"
-"This is the first time you start gTox.\n"
-"\n"
-"Please take a moment and follow the instruction."
+msgid "WELCOME_PAGE_MSG"
 msgstr ""
 "Wilkommen bei gTox\n"
 "\n"
 "Sie haben gTox das erste mal gestartet.\n"
 "\n"
 "Bitte nehmen Sie sich ein Moment Zeit, um Ihr Konto einzurichten."
-
-#: Widget/Assistant/AccountWidget.cpp:27
-msgid "Would you like to import an existing account or create a new one?"
-msgstr "Möchten Sie ein exestierendes Konto importieren, oder ein neues Konto erstellen ?"
-
-#: Dialog/FirstStartAssistant.cpp:31
-msgid ""
-"You are done.\n"
-" Have fun using gTox!"
-msgstr ""
-"Alles startklar.\n"
-" Viel spaß mit gTox!"
