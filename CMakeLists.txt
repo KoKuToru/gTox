@@ -148,7 +148,7 @@ endforeach()
 #Application icon
 find_program(RSVG_CONVERT_EXECUTEABLE rsvg-convert)
 if(NOT RSVG_CONVERT_EXECUTEABLE)
-    message(FATAL_ERROR "xgettext not found")
+    message(FATAL_ERROR "rsvg-convert not found")
 endif()
 
 SET(SIZES
