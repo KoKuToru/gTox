@@ -26,10 +26,10 @@
 PopoverSettings::PopoverSettings(const Gtk::Widget& relative_to)
     : Gtk::Popover(relative_to) {
     auto grid = Gtk::manage(new Gtk::Grid());
-    auto label1 = new Gtk::Label(_("Username"));
-    auto label2 = new Gtk::Label(_("Message"));
+    auto label1 = new Gtk::Label(_("USERNAME"));
+    auto label2 = new Gtk::Label(_("MESSAGE"));
     // auto btn_about = new Gtk::Button("About");
-    auto btn_settings = new Gtk::Button(_("Settings"));
+    auto btn_settings = new Gtk::Button(_("SETTINGS"));
     grid->set_column_homogeneous(false);
     grid->set_row_spacing(5);
     grid->set_column_spacing(10);

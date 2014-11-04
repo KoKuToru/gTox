@@ -125,6 +125,7 @@ install(PROGRAMS "${PROJECT_BINARY_DIR}/${PROJECT_NAME}"
 
 SET(TRANSLATIONS
     de
+    en
 )
 
 foreach(_trans ${TRANSLATIONS})

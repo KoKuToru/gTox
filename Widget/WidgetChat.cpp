@@ -179,7 +179,7 @@ void WidgetChat::add_line(unsigned long long timestamp,
         // add a date message
         auto msg = Gtk::manage(new WidgetChatLabel() /*new Gtk::Label()*/);
         msg->set_text(Glib::DateTime::create_now_local(timestamp)
-                          .format(_("%A, %e. %B %Y")));
+                          .format(_("Date_format")));
         msg->set_name("ChatTime");
         msg->set_halign(Gtk::ALIGN_CENTER);
         msg->show_all();

@@ -24,10 +24,9 @@
 #include <stdio.h>
 
 AccountWidget::AccountWidget()
-    : importText(_(
-          "Would you like to import an existing account or create a new one?")),
-      rbNew(_("Create a new account")),
-      rbImport(_("Import an existing account")) {
+    : importText(_("ACCOUNT_WIDGET_NEW_IMPORT_MSG")),
+      rbNew(_("CREATE_NEW_ACCOUNT")),
+      rbImport(_("IMPORT_ACCOUNT")) {
     add(gridLayout);
     gridLayout.add(importText);
 

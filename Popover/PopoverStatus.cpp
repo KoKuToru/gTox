@@ -27,11 +27,11 @@ PopoverStatus::PopoverStatus(const Gtk::Widget& relative_to)
     // add_label("Settings");
 
     m_listbox.add(
-        create_item(ICON::load_icon(ICON::status_online), _("Online")));
-    m_listbox.add(create_item(ICON::load_icon(ICON::status_busy), _("Busy")));
-    m_listbox.add(create_item(ICON::load_icon(ICON::status_away), _("Away")));
+        create_item(ICON::load_icon(ICON::status_online), _("ONLINE")));
+    m_listbox.add(create_item(ICON::load_icon(ICON::status_busy), _("BUSY")));
+    m_listbox.add(create_item(ICON::load_icon(ICON::status_away), _("AWAY")));
     m_listbox.add(
-        create_item(ICON::load_icon(ICON::status_offline), _("Exit")));
+        create_item(ICON::load_icon(ICON::status_offline), _("EXIT")));
     m_listbox.show_all();
     add(m_listbox);
 
