@@ -45,7 +45,7 @@ make
 
 Linux Dependencies
 -----------
-`gtkmm3`, `libnotifymm`, `librsvg`, `sqlite`
+`gtkmm3`, `libnotifymm`, `librsvg`, `sqlite`, `gettext`
 
 Screenshot
 ============
