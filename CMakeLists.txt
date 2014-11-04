@@ -123,6 +123,11 @@ install(PROGRAMS "${PROJECT_BINARY_DIR}/${PROJECT_NAME}"
         DESTINATION bin
         PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ WORLD_EXECUTE WORLD_READ)
 
+find_program(GETTEXT_MSGFMT_EXECUTABLE msgfmt)
+if(NOT GETTEXT_MSGFMT_EXECUTABLE)
+    message(FATAL_ERROR "msgfmt not found")
+endif()
+
 SET(TRANSLATIONS
     de
 )
@@ -133,7 +138,7 @@ add_custom_command(
    TARGET ${PROJECT_NAME}
    PRE_BUILD
    COMMAND mkdir -p Locale/${_trans}/LC_MESSAGES
-   COMMAND msgfmt "${CMAKE_CURRENT_SOURCE_DIR}/Locale/${_trans}.po" -o "${PROJECT_BINARY_DIR}/Locale/${_trans}/LC_MESSAGES/gTox.mo"
+   COMMAND ${GETTEXT_MSGFMT_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/Locale/${_trans}.po" -o "${PROJECT_BINARY_DIR}/Locale/${_trans}/LC_MESSAGES/gTox.mo"
    DEPENDS Locale/${_trans}.po)
    install(DIRECTORY "${PROJECT_BINARY_DIR}/Locale/${_trans}"
            DESTINATION share/locale
@@ -141,6 +146,11 @@ add_custom_command(
 endforeach()
 
 #Application icon
+find_program(RSVG_CONVERT_EXECUTEABLE rsvg-convert)
+if(NOT RSVG_CONVERT_EXECUTEABLE)
+    message(FATAL_ERROR "xgettext not found")
+endif()
+
 SET(SIZES
     14
     16
@@ -163,7 +173,7 @@ foreach(_size ${SIZES})
         TARGET ${PROJECT_NAME}
         COMMAND mkdir -p "${PROJECT_BINARY_DIR}/share/icons/hicolor/${_size}x${_size}/apps"
         #COMMAND convert -density 1024 Icons/icon.svg -resize "${_size}^" "${PROJECT_BINARY_DIR}/share/icons/hicolor/${_size}x${_size}/apps/gTox.png"
-        COMMAND rsvg-convert Icons/icon.svg -w ${_size} -h ${_size} -f png -o "${PROJECT_BINARY_DIR}/share/icons/hicolor/${_size}x${_size}/apps/gTox.png"
+        COMMAND ${RSVG_CONVERT_EXECUTEABLE} Icons/icon.svg -w ${_size} -h ${_size} -f png -o "${PROJECT_BINARY_DIR}/share/icons/hicolor/${_size}x${_size}/apps/gTox.png"
         PRE_BUILD
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
         DEPENDS Icons/icon.svg)
@@ -184,11 +194,16 @@ install(DIRECTORY "${PROJECT_BINARY_DIR}/share/icons/hicolor/scalable"
     DESTINATION share/icons/hicolor
     FILE_PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)
 
+find_program(GETTEXT_XGETTEXT_EXECUTEABLE xgettext)
+if(NOT GETTEXT_XGETTEXT_EXECUTEABLE)
+    message(FATAL_ERROR "xgettext not found")
+endif()
+
 add_custom_command(
    COMMENT "Generate pot file"
    TARGET ${PROJECT_NAME}
    PRE_BUILD
-   COMMAND xgettext -o "${CMAKE_CURRENT_SOURCE_DIR}/Locale/template.pot" --from-code=UTF-8 --c++ --omit-header -k_ -s ${SOURCES}
+   COMMAND ${GETTEXT_XGETTEXT_EXECUTEABLE} -o "${CMAKE_CURRENT_SOURCE_DIR}/Locale/template.pot" --from-code=UTF-8 --c++ --omit-header -k_ -s ${SOURCES}
    DEPENDS ${SOURCES}
    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
 
