@@ -124,8 +124,91 @@ bool WidgetChatLabel::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
 }
 
 void WidgetChatLabel::set_text(const Glib::ustring& text) {
-    m_text = create_pango_layout(text);
+    m_text = create_pango_layout("");
     m_text->set_wrap(Pango::WRAP_WORD_CHAR);
+
+    // format text;
+    bool b_open = false;
+    bool i_open = false;
+    bool u_open = false;
+    Glib::ustring markup_text;
+    Glib::ustring tmp;
+    auto begin = text.begin();
+    auto end = text.end();
+    for (; begin < end; begin++) {
+        tmp.clear();
+        if (*begin == gunichar(0x200B) || *begin == gunichar(0xFEFF)) {
+            // close tags
+            if (u_open) {
+                markup_text += "</u>";
+            }
+            if (i_open) {
+                markup_text += "</i>";
+            }
+            if (b_open) {
+                markup_text += "</b>";
+            }
+            // check tags
+            if (*begin == gunichar(0x200B)) {
+                for (begin++; begin != end; begin++) {
+                    if (*begin == gunichar(0xFEFF)) {
+                        break;
+                    }
+                    tmp += *begin;
+                }
+                if (tmp == "**") {
+                    b_open = true;
+                } else if (tmp == "*") {
+                    i_open = true;
+                } else if (tmp == "_") {
+                    u_open = true;
+                }
+
+            } else if (*begin == gunichar(0xFEFF)) {
+                for (begin++; begin != end; begin++) {
+                    if (*begin == gunichar(0x200B)) {
+                        break;
+                    }
+                    tmp += *begin;
+                }
+                if (tmp == "**") {
+                    b_open = false;
+                } else if (tmp == "*") {
+                    i_open = false;
+                } else if (tmp == "_") {
+                    u_open = false;
+                }
+            }
+            // open tags
+            if (b_open) {
+                markup_text += "<b>";
+            }
+            if (i_open) {
+                markup_text += "<i>";
+            }
+            if (u_open) {
+                markup_text += "<u>";
+            }
+        } else {
+            for (; *begin != gunichar(0x200B) && *begin != gunichar(0xFEFF)
+                   && begin < end;
+                 begin++) {
+                tmp += *begin;
+            }
+            markup_text += Glib::Markup::escape_text(tmp);
+            begin--;  // otherwise next loop 1 character skipped
+        }
+    }
+    if (b_open) {
+        markup_text += "</b>";
+    }
+    if (i_open) {
+        markup_text += "</i>";
+    }
+    if (u_open) {
+        markup_text += "</u>";
+    }
+    m_text->set_markup(markup_text);
 
     // add emojis
     /*auto attr_list = Pango::AttrList();
