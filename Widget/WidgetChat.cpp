@@ -125,41 +125,68 @@ WidgetChat::WidgetChat(Tox::FriendNr nr)
             auto begin = m_input.get_buffer()->begin();
             auto end = m_input.get_buffer()->end();
 
+            bool b_open = false;
+            bool i_open = false;
+            bool u_open = false;
+
             for (; begin != end; begin++) {
                 // open
                 if (begin.begins_tag(bold)) {
                     text += gunichar(0xFDD0);
                     text += "**";
                     text += gunichar(0xFDD1);
+                    b_open = true;
                 }
                 if (begin.begins_tag(italic)) {
                     text += gunichar(0xFDD0);
                     text += "*";
                     text += gunichar(0xFDD1);
+                    i_open = true;
                 }
                 if (begin.begins_tag(underline)) {
                     text += gunichar(0xFDD0);
                     text += "_";
                     text += gunichar(0xFDD1);
+                    u_open = true;
                 }
                 // close
-                if (begin.ends_tag(bold)) {
+                if (begin.ends_tag(underline)) {
                     text += gunichar(0xFDD1);
-                    text += "**";
+                    text += "_";
                     text += gunichar(0xFDD0);
+                    u_open = false;
                 }
                 if (begin.ends_tag(italic)) {
                     text += gunichar(0xFDD1);
                     text += "*";
                     text += gunichar(0xFDD0);
+                    i_open = false;
                 }
-                if (begin.ends_tag(underline)) {
+                if (begin.ends_tag(bold)) {
                     text += gunichar(0xFDD1);
-                    text += "_";
+                    text += "**";
                     text += gunichar(0xFDD0);
+                    b_open = false;
                 }
+
                 // add text
                 text += begin.get_char();
+            }
+
+            if (u_open) {
+                text += gunichar(0xFDD1);
+                text += "_";
+                text += gunichar(0xFDD0);
+            }
+            if (i_open) {
+                text += gunichar(0xFDD0);
+                text += "*";
+                text += gunichar(0xFDD1);
+            }
+            if (b_open) {
+                text += gunichar(0xFDD1);
+                text += "**";
+                text += gunichar(0xFDD0);
             }
 
             Tox::instance().send_message(get_friend_nr(), text);
