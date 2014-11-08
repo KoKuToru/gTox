@@ -64,16 +64,80 @@ WidgetChat::WidgetChat(Tox::FriendNr nr)
         }
     });
 
+    auto text_buffer = m_input.get_buffer();
+
+    auto bold = text_buffer->create_tag("bold");
+    auto italic = text_buffer->create_tag("italic");
+    auto underline = text_buffer->create_tag("underline");
+
+    bold->property_weight() = Pango::WEIGHT_BOLD;
+    italic->property_style() = Pango::STYLE_ITALIC;
+    underline->property_underline() = Pango::UNDERLINE_SINGLE;
+
     m_input.signal_key_press_event().connect(
-        [this](GdkEventKey* event) {
+        [this, text_buffer, bold, italic, underline](GdkEventKey* event) {
             if (event->keyval == GDK_KEY_Return
                 && !(event->state & GDK_SHIFT_MASK)) {
-                std::string text = m_input.get_buffer()->get_text();
-                if (text.size() > 0) {
-                    // text.resize(text.size()-1);
-                    m_input.get_buffer()->set_text(text);
+                if (text_buffer->begin() != text_buffer->end()) {
                     m_btn_send.clicked();
                     return true;
+                }
+            }
+            // text formating
+            Gtk::TextBuffer::iterator begin;
+            Gtk::TextBuffer::iterator end;
+            if (text_buffer->get_selection_bounds(begin, end) && begin != end
+                && event->state & GDK_CONTROL_MASK) {
+                auto mode = bold;
+                switch (event->keyval) {
+                    case 'b':
+                        // default
+                        break;
+                    case 'i':
+                        mode = italic;
+                        break;
+                    case 'u':
+                        mode = underline;
+                        break;
+                    default:
+                        return false;
+                }
+                // toggle text
+                while (begin < end) {
+                    if (begin.has_tag(mode)) {
+                        // remove
+                        int count = 1;
+                        auto tag_end = begin;
+                        do {
+                            tag_end.forward_to_tag_toggle(mode);
+                            //can the following even happen ?
+                            if (tag_end.begins_tag(mode)) {
+                                count += 1;
+                            }
+                            if (tag_end.ends_tag(mode)) {
+                                count -= 1;
+                            }
+                        } while (count != 0);
+                        if (tag_end > end) {
+                            tag_end = end;
+                        }
+                        text_buffer->remove_tag(mode, begin, tag_end);
+                        begin = tag_end;
+                    } else {
+                        // add
+                        auto tag_start = begin;
+                        do {
+                            if (!tag_start.forward_to_tag_toggle(mode)) {
+                                tag_start = end;
+                                break;
+                            }
+                        } while (!tag_start.begins_tag(mode));
+                        if (tag_start > end) {
+                            tag_start = end;
+                        }
+                        text_buffer->apply_tag(mode, begin, tag_start);
+                        begin = tag_start;
+                    }
                 }
             }
             return false;
