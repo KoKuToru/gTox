@@ -49,21 +49,6 @@ WidgetChat::WidgetChat(Tox::FriendNr nr)
     // set_position(400);
     m_hbox.set_size_request(-1, 80);
 
-    m_btn_send.signal_clicked().connect([this]() {
-        try {
-            Tox::instance().send_message(get_friend_nr(),
-                                         m_input.get_buffer()->get_text());
-
-            // add to chat
-            add_line(0, false, m_input.get_buffer()->get_text());
-
-            // clear chat input
-            m_input.get_buffer()->set_text("");
-        } catch (...) {
-            // not online ?
-        }
-    });
-
     auto text_buffer = m_input.get_buffer();
 
     auto bold = text_buffer->create_tag("bold");
@@ -106,18 +91,8 @@ WidgetChat::WidgetChat(Tox::FriendNr nr)
                 while (begin < end) {
                     if (begin.has_tag(mode)) {
                         // remove
-                        int count = 1;
                         auto tag_end = begin;
-                        do {
-                            tag_end.forward_to_tag_toggle(mode);
-                            //can the following even happen ?
-                            if (tag_end.begins_tag(mode)) {
-                                count += 1;
-                            }
-                            if (tag_end.ends_tag(mode)) {
-                                count -= 1;
-                            }
-                        } while (count != 0);
+                        tag_end.forward_to_tag_toggle(mode);
                         if (tag_end > end) {
                             tag_end = end;
                         }
@@ -143,6 +118,61 @@ WidgetChat::WidgetChat(Tox::FriendNr nr)
             return false;
         },
         false);
+
+    m_btn_send.signal_clicked().connect([this, bold, italic, underline]() {
+        try {
+            Glib::ustring text;
+            auto begin = m_input.get_buffer()->begin();
+            auto end = m_input.get_buffer()->end();
+
+            for (; begin != end; begin++) {
+                // open
+                if (begin.begins_tag(bold)) {
+                    text += gunichar(0x200B);
+                    text += "**";
+                    text += gunichar(0xFEFF);
+                }
+                if (begin.begins_tag(italic)) {
+                    text += gunichar(0x200B);
+                    text += "*";
+                    text += gunichar(0xFEFF);
+                }
+                if (begin.begins_tag(underline)) {
+                    text += gunichar(0x200B);
+                    text += "_";
+                    text += gunichar(0xFEFF);
+                }
+                // close
+                if (begin.ends_tag(bold)) {
+                    text += gunichar(0xFEFF);
+                    text += "**";
+                    text += gunichar(0x200B);
+                }
+                if (begin.ends_tag(italic)) {
+                    text += gunichar(0xFEFF);
+                    text += "*";
+                    text += gunichar(0x200B);
+                }
+                if (begin.ends_tag(underline)) {
+                    text += gunichar(0xFEFF);
+                    text += "_";
+                    text += gunichar(0x200B);
+                }
+                // add text
+                text += begin.get_char();
+            }
+
+            Tox::instance().send_message(get_friend_nr(), text);
+
+            // add to chat
+            add_line(0, false, text);
+
+            // clear chat input
+            m_input.get_buffer()->set_text("");
+        } catch (...) {
+            // not online ?
+        }
+    });
 
     m_vbox.set_name("WidgetChat");
     m_vbox.property_margin() = 10;  // wont work via css
