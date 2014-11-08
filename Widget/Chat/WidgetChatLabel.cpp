@@ -137,7 +137,7 @@ void WidgetChatLabel::set_text(const Glib::ustring& text) {
     auto end = text.end();
     for (; begin < end; begin++) {
         tmp.clear();
-        if (*begin == gunichar(0x200B) || *begin == gunichar(0xFEFF)) {
+        if (*begin == gunichar(0xFDD0) || *begin == gunichar(0xFDD1)) {
             // close tags
             if (u_open) {
                 markup_text += "</u>";
@@ -149,9 +149,9 @@ void WidgetChatLabel::set_text(const Glib::ustring& text) {
                 markup_text += "</b>";
             }
             // check tags
-            if (*begin == gunichar(0x200B)) {
+            if (*begin == gunichar(0xFDD0)) {
                 for (begin++; begin != end; begin++) {
-                    if (*begin == gunichar(0xFEFF)) {
+                    if (*begin == gunichar(0xFDD1)) {
                         break;
                     }
                     tmp += *begin;
@@ -164,9 +164,9 @@ void WidgetChatLabel::set_text(const Glib::ustring& text) {
                     u_open = true;
                 }
 
-            } else if (*begin == gunichar(0xFEFF)) {
+            } else if (*begin == gunichar(0xFDD1)) {
                 for (begin++; begin != end; begin++) {
-                    if (*begin == gunichar(0x200B)) {
+                    if (*begin == gunichar(0xFDD0)) {
                         break;
                     }
                     tmp += *begin;
@@ -190,7 +190,7 @@ void WidgetChatLabel::set_text(const Glib::ustring& text) {
                 markup_text += "<u>";
             }
         } else {
-            for (; *begin != gunichar(0x200B) && *begin != gunichar(0xFEFF)
+            for (; *begin != gunichar(0xFDD0) && *begin != gunichar(0xFDD1)
                    && begin < end;
                  begin++) {
                 tmp += *begin;

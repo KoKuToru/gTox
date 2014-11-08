@@ -128,35 +128,35 @@ WidgetChat::WidgetChat(Tox::FriendNr nr)
             for (; begin != end; begin++) {
                 // open
                 if (begin.begins_tag(bold)) {
-                    text += gunichar(0x200B);
+                    text += gunichar(0xFDD0);
                     text += "**";
-                    text += gunichar(0xFEFF);
+                    text += gunichar(0xFDD1);
                 }
                 if (begin.begins_tag(italic)) {
-                    text += gunichar(0x200B);
+                    text += gunichar(0xFDD0);
                     text += "*";
-                    text += gunichar(0xFEFF);
+                    text += gunichar(0xFDD1);
                 }
                 if (begin.begins_tag(underline)) {
-                    text += gunichar(0x200B);
+                    text += gunichar(0xFDD0);
                     text += "_";
-                    text += gunichar(0xFEFF);
+                    text += gunichar(0xFDD1);
                 }
                 // close
                 if (begin.ends_tag(bold)) {
-                    text += gunichar(0xFEFF);
+                    text += gunichar(0xFDD1);
                     text += "**";
-                    text += gunichar(0x200B);
+                    text += gunichar(0xFDD0);
                 }
                 if (begin.ends_tag(italic)) {
-                    text += gunichar(0xFEFF);
+                    text += gunichar(0xFDD1);
                     text += "*";
-                    text += gunichar(0x200B);
+                    text += gunichar(0xFDD0);
                 }
                 if (begin.ends_tag(underline)) {
-                    text += gunichar(0xFEFF);
+                    text += gunichar(0xFDD1);
                     text += "_";
-                    text += gunichar(0x200B);
+                    text += gunichar(0xFDD0);
                 }
                 // add text
                 text += begin.get_char();
