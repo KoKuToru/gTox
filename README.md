@@ -8,6 +8,7 @@ Features
 * Change name
 * Change status message
 * Change online status
+* Markup support bold(crtl+b), italic (crtl+i), underline (crtl+u)
 
 Not much, not ready for daily use ! Please wait for the first release.
 
