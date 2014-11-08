@@ -49,13 +49,123 @@ WidgetChat::WidgetChat(Tox::FriendNr nr)
     // set_position(400);
     m_hbox.set_size_request(-1, 80);
 
-    m_btn_send.signal_clicked().connect([this]() {
+    auto text_buffer = m_input.get_buffer();
+
+    auto bold = text_buffer->create_tag("bold");
+    auto italic = text_buffer->create_tag("italic");
+    auto underline = text_buffer->create_tag("underline");
+
+    bold->property_weight() = Pango::WEIGHT_BOLD;
+    italic->property_style() = Pango::STYLE_ITALIC;
+    underline->property_underline() = Pango::UNDERLINE_SINGLE;
+
+    m_input.signal_key_press_event().connect(
+        [this, text_buffer, bold, italic, underline](GdkEventKey* event) {
+            if (event->keyval == GDK_KEY_Return
+                && !(event->state & GDK_SHIFT_MASK)) {
+                if (text_buffer->begin() != text_buffer->end()) {
+                    m_btn_send.clicked();
+                    return true;
+                }
+            }
+            // text formating
+            Gtk::TextBuffer::iterator begin;
+            Gtk::TextBuffer::iterator end;
+            if (text_buffer->get_selection_bounds(begin, end) && begin != end
+                && event->state & GDK_CONTROL_MASK) {
+                auto mode = bold;
+                switch (event->keyval) {
+                    case 'b':
+                        // default
+                        break;
+                    case 'i':
+                        mode = italic;
+                        break;
+                    case 'u':
+                        mode = underline;
+                        break;
+                    default:
+                        return false;
+                }
+                // toggle text
+                while (begin < end) {
+                    if (begin.has_tag(mode)) {
+                        // remove
+                        auto tag_end = begin;
+                        tag_end.forward_to_tag_toggle(mode);
+                        if (tag_end > end) {
+                            tag_end = end;
+                        }
+                        text_buffer->remove_tag(mode, begin, tag_end);
+                        begin = tag_end;
+                    } else {
+                        // add
+                        auto tag_start = begin;
+                        do {
+                            if (!tag_start.forward_to_tag_toggle(mode)) {
+                                tag_start = end;
+                                break;
+                            }
+                        } while (!tag_start.begins_tag(mode));
+                        if (tag_start > end) {
+                            tag_start = end;
+                        }
+                        text_buffer->apply_tag(mode, begin, tag_start);
+                        begin = tag_start;
+                    }
+                }
+            }
+            return false;
+        },
+        false);
+
+    m_btn_send.signal_clicked().connect([this, bold, italic, underline]() {
         try {
-            Tox::instance().send_message(get_friend_nr(),
-                                         m_input.get_buffer()->get_text());
+            Glib::ustring text;
+            auto begin = m_input.get_buffer()->begin();
+            auto end = m_input.get_buffer()->end();
+
+            for (; begin != end; begin++) {
+                // open
+                if (begin.begins_tag(bold)) {
+                    text += gunichar(0x200B);
+                    text += "**";
+                    text += gunichar(0xFEFF);
+                }
+                if (begin.begins_tag(italic)) {
+                    text += gunichar(0x200B);
+                    text += "*";
+                    text += gunichar(0xFEFF);
+                }
+                if (begin.begins_tag(underline)) {
+                    text += gunichar(0x200B);
+                    text += "_";
+                    text += gunichar(0xFEFF);
+                }
+                // close
+                if (begin.ends_tag(bold)) {
+                    text += gunichar(0xFEFF);
+                    text += "**";
+                    text += gunichar(0x200B);
+                }
+                if (begin.ends_tag(italic)) {
+                    text += gunichar(0xFEFF);
+                    text += "*";
+                    text += gunichar(0x200B);
+                }
+                if (begin.ends_tag(underline)) {
+                    text += gunichar(0xFEFF);
+                    text += "_";
+                    text += gunichar(0x200B);
+                }
+                // add text
+                text += begin.get_char();
+            }
+
+            Tox::instance().send_message(get_friend_nr(), text);
 
             // add to chat
-            add_line(0, false, m_input.get_buffer()->get_text());
+            add_line(0, false, text);
 
             // clear chat input
             m_input.get_buffer()->set_text("");
@@ -63,22 +173,6 @@ WidgetChat::WidgetChat(Tox::FriendNr nr)
             // not online ?
         }
     });
-
-    m_input.signal_key_press_event().connect(
-        [this](GdkEventKey* event) {
-            if (event->keyval == GDK_KEY_Return
-                && !(event->state & GDK_SHIFT_MASK)) {
-                std::string text = m_input.get_buffer()->get_text();
-                if (text.size() > 0) {
-                    // text.resize(text.size()-1);
-                    m_input.get_buffer()->set_text(text);
-                    m_btn_send.clicked();
-                    return true;
-                }
-            }
-            return false;
-        },
-        false);
 
     m_vbox.set_name("WidgetChat");
     m_vbox.property_margin() = 10;  // wont work via css

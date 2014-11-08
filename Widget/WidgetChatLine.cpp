@@ -63,6 +63,8 @@ WidgetChatLine::WidgetChatLine(bool left_side)
     m_grid.set_column_spacing(10);
     m_grid.set_row_spacing(5);
     m_grid.property_margin() = 5;
+
+    m_grid.show_all();
 }
 
 WidgetChatLine::~WidgetChatLine() {
@@ -86,6 +88,8 @@ void WidgetChatLine::add_line(unsigned long long timestamp,
                                           msg_time.get_minute(),
                                           0);
 
+    bool display_time = true;
+
     if (m_last_row.msg != nullptr) {
         auto old_time = Glib::DateTime::create_now_utc(m_last_row.timestamp);
         // remove seconds
@@ -96,14 +100,7 @@ void WidgetChatLine::add_line(unsigned long long timestamp,
                                               old_time.get_minute(),
                                               0);
         // check
-        if (msg_time.compare(old_time) == 0) {
-            // add text
-            if (m_last_row.msg->get_text().bytes() != 0) {
-                m_last_row.msg->set_text(m_last_row.msg->get_text() + "\n");
-            }
-            m_last_row.msg->set_text(m_last_row.msg->get_text() + message);
-            return;
-        }
+        display_time = !(msg_time.compare(old_time) == 0);
     }
 
     // create a new row
@@ -133,7 +130,12 @@ void WidgetChatLine::add_line(unsigned long long timestamp,
 
     m_last_row.msg->set_halign(Gtk::ALIGN_START);
 
-    m_grid.show_all();
+    m_last_row.msg->show_all();
+    m_last_row.time->show_all();
+    m_last_row.time->set_no_show_all();
+    if (!display_time) {
+        m_last_row.time->hide();
+    }
 }
 
 void WidgetChatLine::on_size_allocate(Gtk::Allocation& allocation) {
