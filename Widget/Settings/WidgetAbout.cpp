@@ -19,6 +19,7 @@
 **/
 #include "WidgetAbout.h"
 #include "Generated/icon.h"
+#include <glibmm/i18n.h>
 
 WidgetAbout::WidgetAbout() : Glib::ObjectBase("WidgetAbout") {
     property_valign() = Gtk::ALIGN_CENTER;
@@ -26,29 +27,25 @@ WidgetAbout::WidgetAbout() : Glib::ObjectBase("WidgetAbout") {
     pack_start(*Gtk::manage(new Gtk::Image(ICON::load_icon(ICON::icon_128))));
     pack_start(*Gtk::manage([]() {
         auto tmp = new Gtk::Label;
-        tmp->set_markup("<b>gTox</b>");
+        tmp->set_markup(_("ABOUT_SOFTWARE_NAME"));
         return tmp;
     }()));
     pack_start(*Gtk::manage([]() {
         auto tmp = new Gtk::Label;
-        tmp->set_markup("<i>pre-alpha Version</i>");
+        tmp->set_markup(_("ABOUT_SOFTWARE_VERSION"));
         return tmp;
     }()));
     pack_start(*Gtk::manage([]() {
         auto tmp = new Gtk::Label;
         tmp->set_margin_top(10);
-        tmp->set_markup(
-            "<a "
-            "href=\"https://github.com/KoKuToru/gTox.git\">github.com/KoKuToru/"
-            "gTox.git</a>");
+        tmp->set_markup(_("ABOUT_SOFTWARE_HOMEPAGE"));
         return tmp;
     }()));
-    pack_start(
-        *Gtk::manage(new Gtk::Label("Copyright © 2014 - the gTox team")));
+    pack_start(*Gtk::manage(new Gtk::Label(_("ABOUT_SOFTWARE_COPYRIGHT"))));
     pack_start(*Gtk::manage([]() {
         auto tmp = new Gtk::Label;
         tmp->set_margin_top(10);
-        tmp->set_markup("<i>Dieses Programm kommt OHNE JEDWEDE GARANTIE.</i>");
+        tmp->set_markup(_("ABOUT_SOFTWARE_WARRANTY"));
         return tmp;
     }()));
 }

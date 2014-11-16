@@ -60,7 +60,7 @@ DialogSettings::DialogSettings() {
     listbox->add(*Gtk::manage(new Gtk::Label("Emojis", 0, 0.5)));
     listbox->add(*Gtk::manage(new Gtk::Label("Cache", 0, 0.5)));
     listbox->add(*Gtk::manage(new Gtk::Label("Network", 0, 0.5)));
-    listbox->add(*Gtk::manage(new Gtk::Label("About", 0, 0.5)));
+    listbox->add(*Gtk::manage(new Gtk::Label(_("SETTINGS_ABOUT"), 0, 0.5)));
 
     // only scroll vertically
     scroller_1->set_policy(Gtk::POLICY_NEVER, Gtk::POLICY_AUTOMATIC);
