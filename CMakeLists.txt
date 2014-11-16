@@ -103,6 +103,7 @@ set(SOURCES
     Widget/Chat/WidgetChatEntry.cpp
     Widget/Chat/WidgetChatLayout.cpp
     Widget/Settings/WidgetAbout.cpp
+    Widget/Settings/WidgetProfile.cpp
     Dialog/FirstStartAssistant.cpp
     Dialog/DialogChat.cpp
     Dialog/DialogContact.cpp

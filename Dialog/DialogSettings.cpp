@@ -22,6 +22,7 @@
 #include <glibmm/i18n.h>
 #include "Debug/DialogCss.h"
 #include "Widget/Settings/WidgetAbout.h"
+#include "Widget/Settings/WidgetProfile.h"
 
 DialogSettings::DialogSettings() {
     set_title(_("SETTINGS_TITLE"));
@@ -45,7 +46,7 @@ DialogSettings::DialogSettings() {
     box->pack_start(*scroller_2, true, true);
     scroller_2->add(m_stack);
 
-    m_stack.add(*Gtk::manage(new Gtk::Label("Profile Settings")), "profile");
+    m_stack.add(*Gtk::manage(new WidgetProfile), "profile");
     m_stack.add(*Gtk::manage(new Gtk::Label("Visual Settings")), "visual");
     m_stack.add(*Gtk::manage(new Gtk::Label("Emojis Settings, in future")),
                 "emojis");
