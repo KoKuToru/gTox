@@ -22,7 +22,29 @@
 #include <glibmm/i18n.h>
 
 WidgetProfile::WidgetProfile() : Glib::ObjectBase("WidgetProfile") {
+    property_valign() = Gtk::ALIGN_CENTER;
+    property_halign() = Gtk::ALIGN_CENTER;
 
+    auto grid = Gtk::manage(new Gtk::Grid);
+
+    grid->set_column_homogeneous(false);
+    grid->set_row_spacing(5);
+    grid->set_column_spacing(10);
+
+    grid->attach(*Gtk::manage(new Gtk::Label("Username", 0, 0.5)), 0, 0, 1, 1);
+    grid->attach(m_username, 1, 0, 1, 1);
+
+    grid->attach(*Gtk::manage(new Gtk::Label("Status", 0, 0.5)), 0, 1, 1, 1);
+    grid->attach(m_status, 1, 1, 1, 1);
+
+    grid->attach(*Gtk::manage(new Gtk::Label("Tox ID", 0, 0.5)), 0, 2, 1, 1);
+    auto tox_id = Gtk::manage(new Gtk::Label("AABBCCDDEEFFF...", 0, 0.5));
+    tox_id->set_selectable(true);
+    grid->attach(*tox_id, 1, 2, 1, 1);
+
+    pack_start(*grid, false, false);
+
+    show_all();
 }
 
 WidgetProfile::~WidgetProfile() {

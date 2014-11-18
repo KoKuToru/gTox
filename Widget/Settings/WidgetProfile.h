@@ -23,6 +23,9 @@
 #include <gtkmm.h>
 class WidgetProfile : public Gtk::VBox {
   private:
+    Gtk::Entry m_username;
+    Gtk::Entry m_status;
+
   public:
     WidgetProfile();
     ~WidgetProfile();
