@@ -108,7 +108,7 @@ msgid "ABOUT_SOFTWARE_COPYRIGHT"
 msgstr "Copyright © 2014 - the gTox team"
 
 msgid "ABOUT_SOFTWARE_WARRANTY"
-msgstr "<i>This software comes with NO WARRANTY</i>"
+msgstr "<i>This program comes with ABSOLUTELY NO WARRANTY</i>"
 
 msgid "SETTINGS_ABOUT"
 msgstr "About"
