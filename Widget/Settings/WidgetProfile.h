@@ -25,6 +25,7 @@ class WidgetProfile : public Gtk::VBox {
   private:
     Gtk::Entry m_username;
     Gtk::Entry m_status;
+    Gtk::Button m_avatar;
 
   public:
     WidgetProfile();
