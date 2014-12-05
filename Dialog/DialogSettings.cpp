@@ -23,6 +23,7 @@
 #include "Debug/DialogCss.h"
 #include "Widget/Settings/WidgetAbout.h"
 #include "Widget/Settings/WidgetProfile.h"
+#include "Widget/Settings/WidgetNetwork.h"
 
 DialogSettings::DialogSettings() {
     set_title(_("SETTINGS_TITLE"));
@@ -51,7 +52,7 @@ DialogSettings::DialogSettings() {
     m_stack.add(*Gtk::manage(new Gtk::Label("Emojis Settings, in future")),
                 "emojis");
     m_stack.add(*Gtk::manage(new Gtk::Label("Cache Settings")), "cache");
-    m_stack.add(*Gtk::manage(new Gtk::Label("Network Settings")), "network");
+    m_stack.add(*Gtk::manage(new WidgetNetwork), "network");
     m_stack.add(*Gtk::manage(new WidgetAbout), "about");
 
     listbox->get_style_context()->add_class("settings");
