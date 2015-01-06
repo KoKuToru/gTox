@@ -150,11 +150,10 @@ void Tox::init(const Glib::ustring& statefile) {
 
             throw;
         }
-    
 
         SQLite::Statement stmt(*m_db,
-                            "SELECT active, ip, port, pub_key"
-                            " FROM bootstrap");
+                               "SELECT active, ip, port, pub_key"
+                               " FROM bootstrap");
         while (stmt.executeStep()) {
             int active = stmt.getColumn(0).getInt();
             if (active == 0) {
@@ -172,7 +171,7 @@ void Tox::init(const Glib::ustring& statefile) {
             }
         }
     }
-    
+
     if (!okay) {
         // Fallback ..
         auto pub = from_hex(
