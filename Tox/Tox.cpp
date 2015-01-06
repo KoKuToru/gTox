@@ -61,7 +61,6 @@ void Tox::init(const Glib::ustring& statefile) {
     Tox_Options options;
     options.ipv6enabled = true;
     options.udp_disabled = false;
-    options.proxy_enabled = false;
     m_tox = tox_new(&options);
 
     // install callbacks
