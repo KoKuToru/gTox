@@ -61,7 +61,6 @@ void Tox::init(const Glib::ustring& statefile) {
     Tox_Options options;
     options.ipv6enabled = true;
     options.udp_disabled = false;
-    options.proxy_enabled = false;
     m_tox = tox_new(&options);
 
     // install callbacks
@@ -78,6 +77,7 @@ void Tox::init(const Glib::ustring& statefile) {
 
     m_db.reset();
     // load state
+    bool okay = false;
     if (statefile != "") {
         /* try to open the db */
         m_db = std::make_shared<SQLite::Database>(statefile,
@@ -149,26 +149,25 @@ void Tox::init(const Glib::ustring& statefile) {
 
             throw;
         }
-    }
 
-    SQLite::Statement stmt(*m_db,
-                           "SELECT active, ip, port, pub_key"
-                           " FROM bootstrap");
-    bool okay = false;
-    while (stmt.executeStep()) {
-        int active = stmt.getColumn(0).getInt();
-        if (active == 0) {
-            continue;
-        }
+        SQLite::Statement stmt(*m_db,
+                               "SELECT active, ip, port, pub_key"
+                               " FROM bootstrap");
+        while (stmt.executeStep()) {
+            int active = stmt.getColumn(0).getInt();
+            if (active == 0) {
+                continue;
+            }
 
-        std::string ip = stmt.getColumn(1).getText("");
-        int port = stmt.getColumn(2).getInt();
-        std::string pub_key = stmt.getColumn(3).getText("");
+            std::string ip = stmt.getColumn(1).getText("");
+            int port = stmt.getColumn(2).getInt();
+            std::string pub_key = stmt.getColumn(3).getText("");
 
-        if (pub_key.size() == 32) {
-            auto pub = from_hex(pub_key);
-            okay |= tox_bootstrap_from_address(
-                m_tox, ip.c_str(), port, pub.data());
+            if (pub_key.size() == 32) {
+                auto pub = from_hex(pub_key);
+                okay |= tox_bootstrap_from_address(
+                    m_tox, ip.c_str(), port, pub.data());
+            }
         }
     }
 
