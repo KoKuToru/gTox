@@ -20,6 +20,7 @@
 #include "WidgetProfile.h"
 #include "Generated/icon.h"
 #include <glibmm/i18n.h>
+#include "../../Tox/Tox.h"
 
 WidgetProfile::WidgetProfile() : Glib::ObjectBase("WidgetProfile") {
     property_valign() = Gtk::ALIGN_CENTER;
@@ -42,7 +43,7 @@ WidgetProfile::WidgetProfile() : Glib::ObjectBase("WidgetProfile") {
     grid->attach(m_status, 2, 1, 1, 1);
 
     grid->attach(*Gtk::manage(new Gtk::Label("Tox ID", 1, 0.5)), 1, 2, 1, 1);
-    auto tox_id = Gtk::manage(new Gtk::Label("AABBCCDDEEFFF...", 0, 0.5));
+    auto tox_id = Gtk::manage(new Gtk::Label(Tox::to_hex(Tox::instance().get_address().data(), 32), 0, 0.5));
     tox_id->set_selectable(true);
     grid->attach(*tox_id, 2, 2, 1, 1);
 
