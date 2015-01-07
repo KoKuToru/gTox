@@ -56,12 +56,37 @@ void print_copyright() {
         << std::endl;
 }
 
-int main(int argc, char* argv[]) {
+static const char* TRANSLATION_CHECK = "OKAY";
+
+bool try_setup_translation(const char* lng) {
+    setlocale(LC_ALL, lng);
+    bind_textdomain_codeset("gTox", "UTF-8");
+    textdomain("gTox");
+
+    static std::string original_locale = bindtextdomain("gTox", nullptr);
+
+    // use ./Locale if possible
     if (Glib::file_test("./Locale", Glib::FILE_TEST_IS_DIR)) {
         bindtextdomain("gTox", "./Locale");
     }
-    bind_textdomain_codeset("gTox", "UTF-8");
-    textdomain("gTox");
+    // try if default is loading
+    if (gettext(TRANSLATION_CHECK) == TRANSLATION_CHECK) {
+        // change to /usr/local/share/locale ..
+        bindtextdomain("gTox", "/usr/local/share/locale");
+        // try again
+        if (gettext(TRANSLATION_CHECK) == TRANSLATION_CHECK) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(int argc, char* argv[]) {
+    if (!try_setup_translation("") && !try_setup_translation("C")) {
+        std::cerr << " Couldn't locate locale" << std::endl;
+        return -1;
+    }
 
     print_copyright();
 
