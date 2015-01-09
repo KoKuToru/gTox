@@ -59,7 +59,19 @@ void print_copyright() {
 static const char* TRANSLATION_CHECK = "OKAY";
 
 bool try_setup_translation(const char* lng) {
-    setlocale(LC_ALL, lng);
+    // https://www.gnu.org/software/gettext/manual/html_node/gettext-grok.html
+
+    if (lng != nullptr) {
+        /* Change language.  */
+        setenv("LANGUAGE", lng, 1);
+
+        /* Make change known.  */
+        {
+            extern int _nl_msg_cat_cntr;
+            ++_nl_msg_cat_cntr;
+        }
+    }
+
     bind_textdomain_codeset("gTox", "UTF-8");
     textdomain("gTox");
 
@@ -75,6 +87,8 @@ bool try_setup_translation(const char* lng) {
         bindtextdomain("gTox", "/usr/local/share/locale");
         // try again
         if (gettext(TRANSLATION_CHECK) == TRANSLATION_CHECK) {
+            //back to original
+            bindtextdomain("gTox", original_locale.c_str());
             return false;
         }
     }
@@ -83,7 +97,9 @@ bool try_setup_translation(const char* lng) {
 }
 
 int main(int argc, char* argv[]) {
-    if (!try_setup_translation("") && !try_setup_translation("C")) {
+    Gtk::Main kit(argc, argv);
+
+    if (!try_setup_translation(nullptr) && !try_setup_translation("en")) {
         std::cerr << " Couldn't locate locale" << std::endl;
         return -1;
     }
@@ -92,7 +108,6 @@ int main(int argc, char* argv[]) {
 
     Notify::init("gTox");
 
-    Gtk::Main kit(argc, argv);
     Gtk::Settings::get_default()->property_gtk_application_prefer_dark_theme()
         = true;
     Glib::set_application_name("gTox");
