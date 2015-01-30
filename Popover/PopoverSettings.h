@@ -22,11 +22,11 @@
 
 #include <gtkmm.h>
 #include "Dialog/DialogSettings.h"
+#include "Widget/Settings/WidgetProfile.h"
 
 class PopoverSettings : public Gtk::Popover {
   private:
-    Gtk::Entry m_name;
-    Gtk::Entry m_msg;
+    WidgetProfile m_profile;
     DialogSettings m_settings;
 
   public:

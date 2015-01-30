@@ -30,6 +30,8 @@ class WidgetProfile : public Gtk::VBox {
   public:
     WidgetProfile();
     ~WidgetProfile();
+
+    void update();
 };
 
 #endif

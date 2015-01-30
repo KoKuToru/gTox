@@ -21,10 +21,11 @@
 #include "Generated/icon.h"
 #include <glibmm/i18n.h>
 #include "Tox/Tox.h"
+#include "Dialog/DialogContact.h"
 
 WidgetProfile::WidgetProfile() : Glib::ObjectBase("WidgetProfile") {
-    m_username.set_text(Tox::instance().get_name_or_address());
-    m_status.set_text(Tox::instance().get_status_message());
+    update();
+
     std::string hex = Tox::to_hex(Tox::instance().get_address().data(), Tox::instance().get_address().size());
     for(int i = 4; i > 0; --i) {
         hex.insert(2 * i * TOX_CLIENT_ID_SIZE / 4, 1, '\n');
@@ -43,10 +44,10 @@ WidgetProfile::WidgetProfile() : Glib::ObjectBase("WidgetProfile") {
         *Gtk::manage(new Gtk::Image(ICON::load_icon(ICON::avatar))));
     grid->attach(m_avatar, 0, 0, 1, 2);
 
-    grid->attach(*Gtk::manage(new Gtk::Label("Username", 1, 0.5)), 1, 0, 1, 1);
+    grid->attach(*Gtk::manage(new Gtk::Label(_("USERNAME"), 1, 0.5)), 1, 0, 1, 1);
     grid->attach(m_username, 2, 0, 1, 1);
 
-    grid->attach(*Gtk::manage(new Gtk::Label("Status", 1, 0.5)), 1, 1, 1, 1);
+    grid->attach(*Gtk::manage(new Gtk::Label(_("MESSAGE"), 1, 0.5)), 1, 1, 1, 1);
     grid->attach(m_status, 2, 1, 1, 1);
 
     grid->attach(*Gtk::manage(new Gtk::Label("Tox ID", 1, 0.5)), 1, 2, 1, 1);
@@ -58,7 +59,22 @@ WidgetProfile::WidgetProfile() : Glib::ObjectBase("WidgetProfile") {
     pack_start(*grid, false, false);
 
     show_all();
+
+    m_username.signal_focus_out_event().connect_notify([this](GdkEventFocus*) {
+        DialogContact::instance().change_name(m_username.get_text(),
+                                              m_status.get_text());
+    });
+
+    m_status.signal_focus_out_event().connect_notify([this](GdkEventFocus*) {
+        DialogContact::instance().change_name(m_username.get_text(),
+                                              m_status.get_text());
+    });
 }
 
 WidgetProfile::~WidgetProfile() {
+}
+
+void WidgetProfile::update() {
+    m_username.set_text(Tox::instance().get_name_or_address());
+    m_status.set_text(Tox::instance().get_status_message());
 }
