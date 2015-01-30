@@ -408,17 +408,19 @@ Tox::ReceiptNr Tox::send_message(Tox::FriendNr nr,
     }
 
     if (m_db) {
-        SQLite::Statement storeq(
-            *m_db,
-            "INSERT INTO log(friendaddr, sendtime, type, message, receipt)"
-            " VALUES (?1, CURRENT_TIMESTAMP, ?2, ?3, ?4)");
+        if (config_get("LOG_CHAT", "1") == "1") {
+            SQLite::Statement storeq(
+                *m_db,
+                "INSERT INTO log(friendaddr, sendtime, type, message, receipt)"
+                " VALUES (?1, CURRENT_TIMESTAMP, ?2, ?3, ?4)");
 
-        storeq.bind(1, get_address(nr).data(), TOX_CLIENT_ID_SIZE);
-        storeq.bind(2, ELogType::LOGMSG);
-        storeq.bind(3, message.data(), message.bytes());
-        storeq.bind(4, res);
+            storeq.bind(1, get_address(nr).data(), TOX_CLIENT_ID_SIZE);
+            storeq.bind(2, ELogType::LOGMSG);
+            storeq.bind(3, message.data(), message.bytes());
+            storeq.bind(4, res);
 
-        storeq.exec();
+            storeq.exec();
+        }
     }
 
     return res;
@@ -439,17 +441,19 @@ Tox::ReceiptNr Tox::send_action(Tox::FriendNr nr, const Glib::ustring& action) {
     }
 
     if (m_db) {
-        SQLite::Statement storeq(
-            *m_db,
-            "INSERT INTO log(friendaddr, sendtime, type, message, receipt)"
-            " VALUES (?1, CURRENT_TIMESTAMP, ?2, ?3, ?4)");
+        if (config_get("LOG_CHAT", "1") == "1") {
+            SQLite::Statement storeq(
+                *m_db,
+                "INSERT INTO log(friendaddr, sendtime, type, message, receipt)"
+                " VALUES (?1, CURRENT_TIMESTAMP, ?2, ?3, ?4)");
 
-        storeq.bind(1, get_address(nr).data(), TOX_CLIENT_ID_SIZE);
-        storeq.bind(2, ELogType::LOGACTION);
-        storeq.bind(3, action.data(), action.bytes());
-        storeq.bind(4, res);
+            storeq.bind(1, get_address(nr).data(), TOX_CLIENT_ID_SIZE);
+            storeq.bind(2, ELogType::LOGACTION);
+            storeq.bind(3, action.data(), action.bytes());
+            storeq.bind(4, res);
 
-        storeq.exec();
+            storeq.exec();
+        }
     }
 
     return res;
@@ -679,33 +683,39 @@ void Tox::inject_event(SEvent ev) {
 
             updateq.exec();
         } else if (ev.event == FRIENDMESSAGE) {
-            SQLite::Statement storeq(
-                *m_db,
-                "INSERT INTO log(friendaddr, recvtime, type, message)"
-                " VALUES (?1, CURRENT_TIMESTAMP, ?2, ?3)");
+            if (config_get("LOG_CHAT", "1") == "1") {
+                SQLite::Statement storeq(
+                    *m_db,
+                    "INSERT INTO log(friendaddr, recvtime, type, message)"
+                    " VALUES (?1, CURRENT_TIMESTAMP, ?2, ?3)");
 
-            storeq.bind(1,
-                        get_address(ev.friend_message.nr).data(),
-                        TOX_CLIENT_ID_SIZE);
-            storeq.bind(2, ELogType::LOGMSG);
-            storeq.bind(3,
-                        ev.friend_message.data.data(),
-                        ev.friend_message.data.bytes());
+                storeq.bind(1,
+                            get_address(ev.friend_message.nr).data(),
+                            TOX_CLIENT_ID_SIZE);
+                storeq.bind(2, ELogType::LOGMSG);
+                storeq.bind(3,
+                            ev.friend_message.data.data(),
+                            ev.friend_message.data.bytes());
 
-            storeq.exec();
+                storeq.exec();
+            }
         } else if (ev.event == FRIENDACTION) {
-            SQLite::Statement storeq(
-                *m_db,
-                "INSERT INTO log(friendaddr, recvtime, type, message)"
-                " VALUES (?1, CURRENT_TIMESTAMP, ?2, ?3)");
+            if (config_get("LOG_CHAT", "1") == "1") {
+                SQLite::Statement storeq(
+                    *m_db,
+                    "INSERT INTO log(friendaddr, recvtime, type, message)"
+                    " VALUES (?1, CURRENT_TIMESTAMP, ?2, ?3)");
 
-            storeq.bind(
-                1, get_address(ev.friend_action.nr).data(), TOX_CLIENT_ID_SIZE);
-            storeq.bind(2, ELogType::LOGACTION);
-            storeq.bind(
-                3, ev.friend_action.data.data(), ev.friend_action.data.bytes());
+                storeq.bind(1,
+                            get_address(ev.friend_action.nr).data(),
+                            TOX_CLIENT_ID_SIZE);
+                storeq.bind(2, ELogType::LOGACTION);
+                storeq.bind(3,
+                            ev.friend_action.data.data(),
+                            ev.friend_action.data.bytes());
 
-            storeq.exec();
+                storeq.exec();
+            }
         }
     }
 }
