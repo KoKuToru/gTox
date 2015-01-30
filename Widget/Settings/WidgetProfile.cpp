@@ -20,11 +20,15 @@
 #include "WidgetProfile.h"
 #include "Generated/icon.h"
 #include <glibmm/i18n.h>
-#include <Tox/Tox.h>
+#include "Tox/Tox.h"
 
 WidgetProfile::WidgetProfile() : Glib::ObjectBase("WidgetProfile") {
     m_username.set_text(Tox::instance().get_name_or_address());
     m_status.set_text(Tox::instance().get_status_message());
+    std::string hex = Tox::to_hex(Tox::instance().get_address().data(), Tox::instance().get_address().size());
+    for(int i = 4; i > 0; --i) {
+        hex.insert(2 * i * TOX_CLIENT_ID_SIZE / 4, 1, '\n');
+    }
 
     property_valign() = Gtk::ALIGN_CENTER;
     property_halign() = Gtk::ALIGN_CENTER;
@@ -46,8 +50,9 @@ WidgetProfile::WidgetProfile() : Glib::ObjectBase("WidgetProfile") {
     grid->attach(m_status, 2, 1, 1, 1);
 
     grid->attach(*Gtk::manage(new Gtk::Label("Tox ID", 1, 0.5)), 1, 2, 1, 1);
-    auto tox_id = Gtk::manage(new Gtk::Label("AABBCCDDEEFFF...", 0, 0.5));
+    auto tox_id = Gtk::manage(new Gtk::Label("", 0, 0.5));
     tox_id->set_selectable(true);
+    tox_id->set_markup("<span font_desc=\"mono\">"+hex+"</span>");
     grid->attach(*tox_id, 2, 2, 1, 1);
 
     pack_start(*grid, false, false);
