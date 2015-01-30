@@ -74,7 +74,8 @@ class Tox {
         ALREADYSENT,      //!< Invite already sent
         BADCHECKSUM,      //!< Public address wrong
         NOSPAM,           //!< Public address NO_SPAM changed
-        UNKNOWDBVERSION   //!< gTox save file unknow version
+        UNKNOWDBVERSION,  //!< gTox save file unknow version
+        DBNOTOPEN         //!< Database is not open
     };
 
     struct Exception {
@@ -189,9 +190,9 @@ class Tox {
      * @throws Tox::Exception
      * @throws SQLite::Exception
      *
-     * @param statefile Path to the save-file
+     * @param statefile Path to the save-file, only works when never saved before !
      */
-    void save(const Glib::ustring& statefile);
+    void save(const Glib::ustring& statefile = "");
 
     /**
      * @brief runs tox_kill if needed
@@ -468,7 +469,28 @@ class Tox {
      */
     std::vector<SLog> get_log(FriendNr nr, int offset = 0, int limit = 100);
 
-  protected:
+    /**
+     * @brief Gets a config parameter
+     *
+     * @throws Tox::Exception
+     *
+     * @param name of the paramter
+     * @param value the default value
+     *
+     * @return value of the config parameter
+     */
+    std::string config_get(const std::string& name, const std::string& value);
+    /**
+     * @brief Sets a config parameter
+     *
+     * @throws Tox::Exception
+     *
+     * @param name  of the paramter
+     * @param value of the config parameter
+     */
+    void config_set(const std::string& name, const std::string& value);
+
+    protected:
     std::deque<SEvent> events;
 
     static void callback_friend_request(Tox*,

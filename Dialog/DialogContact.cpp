@@ -289,7 +289,7 @@ bool DialogContact::update() {
                     [this, ev]() {
                         add_contact(Tox::instance().add_friend_norequest(
                             ev.friend_request.addr));
-                        Tox::instance().save(m_config_path);
+                        Tox::instance().save();
                     });
                 break;
             case Tox::EEventType::NAMECHANGE:
@@ -323,14 +323,14 @@ bool DialogContact::update() {
         }
     }
     if (save) {
-        Tox::instance().save(m_config_path);
+        Tox::instance().save();
     }
     return true;
 }
 
 void DialogContact::add_contact(Tox::FriendNr nr) {
     m_contact.add_contact(nr);
-    Tox::instance().save(m_config_path);
+    Tox::instance().save();
 }
 
 WidgetChat* DialogContact::get_chat(Tox::FriendNr nr, DialogChat*& dialog) {
@@ -428,11 +428,11 @@ void DialogContact::set_status(Tox::EUSERSTATUS status_code) {
         default:
             break;
     }
-    Tox::instance().save(m_config_path);
+    Tox::instance().save();
 }
 
 void DialogContact::exit() {
-    Tox::instance().save(m_config_path);
+    Tox::instance().save();
     // TODO: ask for confirmation
     Gtk::Main::quit();
 }
@@ -442,11 +442,11 @@ void DialogContact::change_name(Glib::ustring name, Glib::ustring msg) {
     Tox::instance().set_status_message(msg);
     m_headerbar_contact.set_title(Tox::instance().get_name_or_address());
     m_headerbar_contact.set_subtitle(Tox::instance().get_status_message());
-    Tox::instance().save(m_config_path);
+    Tox::instance().save();
 }
 
 void DialogContact::delete_friend(Tox::FriendNr nr) {
     m_contact.delete_contact(nr);
     Tox::instance().del_friend(nr);
-    Tox::instance().save(m_config_path);
+    Tox::instance().save();
 }
