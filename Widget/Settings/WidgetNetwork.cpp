@@ -23,9 +23,9 @@
 
 WidgetNetwork::WidgetNetwork()
     : Glib::ObjectBase("WidgetNetwork"),
-      m_ipv6("Try to use IPv6"),
-      m_udp("Use UDP"),
-      m_proxy("Use proxy") {
+      m_ipv6(),
+      m_udp(),
+      m_proxy() {
     property_valign() = Gtk::ALIGN_CENTER;
     property_halign() = Gtk::ALIGN_CENTER;
 
@@ -35,15 +35,19 @@ WidgetNetwork::WidgetNetwork()
     grid->set_row_spacing(5);
     grid->set_column_spacing(10);
 
-    grid->attach(m_ipv6, 0, 0, 2, 1);
-    grid->attach(m_udp, 0, 1, 2, 1);
-    grid->attach(m_proxy, 0, 2, 2, 1);
+    grid->attach(*Gtk::manage(new Gtk::Label("Try IPv6", 0.0, 0.5)), 0, 0, 2, 1);
+    grid->attach(*Gtk::manage(new Gtk::Label("UDP", 0.0, 0.5)), 0, 1, 2, 1);
+    grid->attach(*Gtk::manage(new Gtk::Label("Proxy", 0.0, 0.5)), 0, 2, 2, 1);
+
+    grid->attach(m_ipv6, 2, 0, 1, 1);
+    grid->attach(m_udp, 2, 1, 1, 1);
+    grid->attach(m_proxy, 2, 2, 1, 1);
 
     grid->attach(*Gtk::manage(new Gtk::Label("Host", 1, 0.5)), 0, 3, 1, 1);
-    grid->attach(m_proxy_host, 1, 3, 1, 1);
+    grid->attach(m_proxy_host, 1, 3, 2, 1);
 
     grid->attach(*Gtk::manage(new Gtk::Label("Port", 1, 0.5)), 0, 4, 1, 1);
-    grid->attach(m_proxy_port, 1, 4, 1, 1);
+    grid->attach(m_proxy_port, 1, 4, 2, 1);
 
     // TODO: Display Bootstraps
 

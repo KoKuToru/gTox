@@ -23,9 +23,9 @@
 #include <gtkmm.h>
 class WidgetNetwork : public Gtk::VBox {
   private:
-    Gtk::CheckButton m_ipv6;
-    Gtk::CheckButton m_udp;
-    Gtk::CheckButton m_proxy;
+    Gtk::Switch m_ipv6;
+    Gtk::Switch m_udp;
+    Gtk::Switch m_proxy;
     Gtk::Entry m_proxy_host;
     Gtk::Entry m_proxy_port;
 

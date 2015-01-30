@@ -20,8 +20,12 @@
 #include "WidgetProfile.h"
 #include "Generated/icon.h"
 #include <glibmm/i18n.h>
+#include <Tox/Tox.h>
 
 WidgetProfile::WidgetProfile() : Glib::ObjectBase("WidgetProfile") {
+    m_username.set_text(Tox::instance().get_name_or_address());
+    m_status.set_text(Tox::instance().get_status_message());
+
     property_valign() = Gtk::ALIGN_CENTER;
     property_halign() = Gtk::ALIGN_CENTER;
 

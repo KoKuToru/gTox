@@ -23,8 +23,8 @@
 #include <gtkmm.h>
 class WidgetCache : public Gtk::VBox {
   private:
-    Gtk::CheckButton m_log;
-    Gtk::CheckButton m_file;
+    Gtk::Switch m_log;
+    Gtk::Switch m_file;
     Gtk::Button m_clean_log;
     Gtk::Button m_clean_file;
 

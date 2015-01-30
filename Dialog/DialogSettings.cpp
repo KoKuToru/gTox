@@ -49,20 +49,20 @@ DialogSettings::DialogSettings() {
     scroller_2->add(m_stack);
 
     m_stack.add(*Gtk::manage(new WidgetProfile), "profile");
-    m_stack.add(*Gtk::manage(new Gtk::Label("Visual Settings")), "visual");
-    m_stack.add(*Gtk::manage(new Gtk::Label("Emojis Settings, in future")),
-                "emojis");
+    //m_stack.add(*Gtk::manage(new Gtk::Label("Visual Settings")), "visual");
+    /*m_stack.add(*Gtk::manage(new Gtk::Label("Emojis Settings, in future")),
+                "emojis");*/
     m_stack.add(*Gtk::manage(new WidgetCache), "cache");
-    m_stack.add(*Gtk::manage(new WidgetNetwork), "network");
+    //m_stack.add(*Gtk::manage(new WidgetNetwork), "network");
     m_stack.add(*Gtk::manage(new WidgetAbout), "about");
 
     listbox->get_style_context()->add_class("settings");
 
     listbox->add(*Gtk::manage(new Gtk::Label("Profile", 0, 0.5)));
-    listbox->add(*Gtk::manage(new Gtk::Label("Visual", 0, 0.5)));
-    listbox->add(*Gtk::manage(new Gtk::Label("Emojis", 0, 0.5)));
+    //listbox->add(*Gtk::manage(new Gtk::Label("Visual", 0, 0.5)));
+    //listbox->add(*Gtk::manage(new Gtk::Label("Emojis", 0, 0.5)));
     listbox->add(*Gtk::manage(new Gtk::Label("Cache", 0, 0.5)));
-    listbox->add(*Gtk::manage(new Gtk::Label("Network", 0, 0.5)));
+    //listbox->add(*Gtk::manage(new Gtk::Label("Network", 0, 0.5)));
     listbox->add(*Gtk::manage(new Gtk::Label(_("SETTINGS_ABOUT"), 0, 0.5)));
 
     // only scroll vertically
