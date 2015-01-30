@@ -28,7 +28,7 @@
 
 DialogSettings::DialogSettings() {
     set_title(_("SETTINGS_TITLE"));
-    set_default_geometry(800, 600);
+    set_default_geometry(600, 300);
     set_position(Gtk::WindowPosition::WIN_POS_CENTER);
 
     auto hbox = Gtk::manage(new Gtk::HBox());
