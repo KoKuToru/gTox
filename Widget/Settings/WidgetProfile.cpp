@@ -26,8 +26,9 @@
 WidgetProfile::WidgetProfile() : Glib::ObjectBase("WidgetProfile") {
     update();
 
-    std::string hex = Tox::to_hex(Tox::instance().get_address().data(), Tox::instance().get_address().size());
-    for(int i = 4; i > 0; --i) {
+    std::string hex = Tox::to_hex(Tox::instance().get_address().data(),
+                                  Tox::instance().get_address().size());
+    for (int i = 4; i > 0; --i) {
         hex.insert(2 * i * TOX_CLIENT_ID_SIZE / 4, 1, '\n');
     }
 
@@ -44,16 +45,18 @@ WidgetProfile::WidgetProfile() : Glib::ObjectBase("WidgetProfile") {
         *Gtk::manage(new Gtk::Image(ICON::load_icon(ICON::avatar))));
     grid->attach(m_avatar, 0, 0, 1, 2);
 
-    grid->attach(*Gtk::manage(new Gtk::Label(_("USERNAME"), 1, 0.5)), 1, 0, 1, 1);
+    grid->attach(
+        *Gtk::manage(new Gtk::Label(_("USERNAME"), 1, 0.5)), 1, 0, 1, 1);
     grid->attach(m_username, 2, 0, 1, 1);
 
-    grid->attach(*Gtk::manage(new Gtk::Label(_("MESSAGE"), 1, 0.5)), 1, 1, 1, 1);
+    grid->attach(
+        *Gtk::manage(new Gtk::Label(_("MESSAGE"), 1, 0.5)), 1, 1, 1, 1);
     grid->attach(m_status, 2, 1, 1, 1);
 
     grid->attach(*Gtk::manage(new Gtk::Label("Tox ID", 1, 0.5)), 1, 2, 1, 1);
     auto tox_id = Gtk::manage(new Gtk::Label("", 0, 0.5));
     tox_id->set_selectable(true);
-    tox_id->set_markup("<span font_desc=\"mono\">"+hex+"</span>");
+    tox_id->set_markup("<span font_desc=\"mono\">" + hex + "</span>");
     grid->attach(*tox_id, 2, 2, 1, 1);
 
     pack_start(*grid, false, false);

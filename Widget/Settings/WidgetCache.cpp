@@ -29,8 +29,8 @@ WidgetCache::WidgetCache()
       m_clean_log("Clean up logs"),
       m_clean_file("Clean up recieved files") {
 
-    m_log.set_active(Tox::instance().config_get("LOG_CHAT","1")=="1");
-    m_file.set_active(Tox::instance().config_get("LOG_FILE","1")=="1");
+    m_log.set_active(Tox::instance().config_get("LOG_CHAT", "1") == "1");
+    m_file.set_active(Tox::instance().config_get("LOG_FILE", "1") == "1");
 
     m_log.signal_state_set().connect_notify([](bool state) {
         Tox::instance().config_set("LOG_CHAT", std::to_string((int)state));
@@ -48,8 +48,10 @@ WidgetCache::WidgetCache()
     grid->set_row_spacing(5);
     grid->set_column_spacing(10);
 
-    grid->attach(*Gtk::manage(new Gtk::Label("Persist Chatlog", 0.0, 0.5)), 0, 0, 1, 1);
-    grid->attach(*Gtk::manage(new Gtk::Label("Persist File", 0.0, 0.5)), 0, 1, 1, 1);
+    grid->attach(
+        *Gtk::manage(new Gtk::Label("Persist Chatlog", 0.0, 0.5)), 0, 0, 1, 1);
+    grid->attach(
+        *Gtk::manage(new Gtk::Label("Persist File", 0.0, 0.5)), 0, 1, 1, 1);
     grid->attach(m_log, 1, 0, 1, 1);
     grid->attach(m_file, 1, 1, 1, 1);
     grid->attach(m_clean_log, 0, 2, 2, 1);

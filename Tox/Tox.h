@@ -190,7 +190,8 @@ class Tox {
      * @throws Tox::Exception
      * @throws SQLite::Exception
      *
-     * @param statefile Path to the save-file, only works when never saved before !
+     * @param statefile Path to the save-file, only works when never saved
+     *before !
      */
     void save(const Glib::ustring& statefile = "");
 
@@ -490,7 +491,7 @@ class Tox {
      */
     void config_set(const std::string& name, const std::string& value);
 
-    protected:
+  protected:
     std::deque<SEvent> events;
 
     static void callback_friend_request(Tox*,

@@ -87,7 +87,7 @@ bool try_setup_translation(const char* lng) {
         bindtextdomain("gTox", "/usr/local/share/locale");
         // try again
         if (gettext(TRANSLATION_CHECK) == TRANSLATION_CHECK) {
-            //back to original
+            // back to original
             bindtextdomain("gTox", original_locale.c_str());
             return false;
         }

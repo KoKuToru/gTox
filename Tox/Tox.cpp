@@ -52,7 +52,8 @@ void Tox::destroy() {
     }
 }
 
-std::string Tox::config_get(const std::string& name, const std::string& value="") {
+std::string Tox::config_get(const std::string& name,
+                            const std::string& value = "") {
     std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
         throw Exception(UNITIALIZED);
@@ -61,7 +62,8 @@ std::string Tox::config_get(const std::string& name, const std::string& value=""
         throw Exception(DBNOTOPEN);
     }
 
-    SQLite::Statement selectq(*m_db, "SELECT value FROM config WHERE name=?1 LIMIT 1");
+    SQLite::Statement selectq(*m_db,
+                              "SELECT value FROM config WHERE name=?1 LIMIT 1");
 
     selectq.bind(1, name.c_str());
 
@@ -82,14 +84,14 @@ void Tox::config_set(const std::string& name, const std::string& value) {
     }
 
     SQLite::Statement updateq(*m_db,
-                             "UPDATE config SET value=?2 WHERE name=?1");
+                              "UPDATE config SET value=?2 WHERE name=?1");
 
     updateq.bind(1, name.c_str());
     updateq.bind(2, value.c_str());
 
     if (updateq.exec() < 1) {
-        SQLite::Statement insertq(*m_db,
-                                 "INSERT INTO config(name, value) VALUES (?1, ?2)");
+        SQLite::Statement insertq(
+            *m_db, "INSERT INTO config(name, value) VALUES (?1, ?2)");
         insertq.bind(1, name.c_str());
         insertq.bind(2, value.c_str());
         insertq.exec();
@@ -134,18 +136,17 @@ void Tox::init(const Glib::ustring& statefile) {
             auto version_str = config_get("version", "1");
             int version = std::atoi(version_str.c_str());
 
-            std::string* upgrade_scripts[] = {
-                &DATABASE::version_2,
-                &DATABASE::version_3
-            };
+            std::string* upgrade_scripts[]
+                = {&DATABASE::version_2, &DATABASE::version_3};
 
             if (version < 1 || version > (int)sizeof(upgrade_scripts)) {
                 throw Exception(UNKNOWDBVERSION);
             }
 
-            int version_max = 1 + sizeof(upgrade_scripts) / sizeof(upgrade_scripts[0]);
+            int version_max
+                = 1 + sizeof(upgrade_scripts) / sizeof(upgrade_scripts[0]);
 
-            for(; version < version_max; ++version) {
+            for (; version < version_max; ++version) {
                 m_db->exec(*upgrade_scripts[version - 1]);
                 config_set("version", std::to_string(version + 1));
             }
@@ -187,9 +188,9 @@ void Tox::init(const Glib::ustring& statefile) {
             throw;
         }
 
-        //increase run id
+        // increase run id
         auto runid_str = config_get("runid", "0");
-        config_set("runid", std::to_string(std::atoi(runid_str.c_str())+1));
+        config_set("runid", std::to_string(std::atoi(runid_str.c_str()) + 1));
 
         SQLite::Statement stmt(*m_db,
                                "SELECT active, ip, port, pub_key"
