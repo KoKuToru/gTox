@@ -32,12 +32,16 @@ WidgetCache::WidgetCache()
     m_log.set_active(Tox::instance().config_get("LOG_CHAT", "1") == "1");
     m_file.set_active(Tox::instance().config_get("LOG_FILE", "1") == "1");
 
+#if (GTK_MAJOR_VERSION >= 3 && GTK_MINOR_VERSION >= 14)
     m_log.signal_state_set().connect_notify([](bool state) {
         Tox::instance().config_set("LOG_CHAT", std::to_string((int)state));
     });
     m_file.signal_state_set().connect_notify([](bool state) {
         Tox::instance().config_set("LOG_FILE", std::to_string((int)state));
     });
+#else
+#warning "Without GTK 3.14+ signal_state_set() on Gtk::Switches wont work"
+#endif
 
     property_valign() = Gtk::ALIGN_CENTER;
     property_halign() = Gtk::ALIGN_CENTER;
