@@ -21,10 +21,14 @@
 #include "DialogSettings.h"
 #include <glibmm/i18n.h>
 #include "Debug/DialogCss.h"
+#include "Widget/Settings/WidgetAbout.h"
+#include "Widget/Settings/WidgetProfile.h"
+#include "Widget/Settings/WidgetNetwork.h"
+#include "Widget/Settings/WidgetCache.h"
 
 DialogSettings::DialogSettings() {
     set_title(_("SETTINGS_TITLE"));
-    set_default_geometry(800, 600);
+    set_default_geometry(600, 300);
     set_position(Gtk::WindowPosition::WIN_POS_CENTER);
 
     auto hbox = Gtk::manage(new Gtk::HBox());
@@ -44,17 +48,30 @@ DialogSettings::DialogSettings() {
     box->pack_start(*scroller_2, true, true);
     scroller_2->add(m_stack);
 
-    m_stack.add(*Gtk::manage(new Gtk::Label("Test")), "");
+    m_stack.add(*Gtk::manage(new WidgetProfile), "profile");
+    // m_stack.add(*Gtk::manage(new Gtk::Label("Visual Settings")), "visual");
+    /*m_stack.add(*Gtk::manage(new Gtk::Label("Emojis Settings, in future")),
+                "emojis");*/
+    m_stack.add(*Gtk::manage(new WidgetCache), "cache");
+    // m_stack.add(*Gtk::manage(new WidgetNetwork), "network");
+    m_stack.add(*Gtk::manage(new WidgetAbout), "about");
 
     listbox->get_style_context()->add_class("settings");
 
-    listbox->add(*Gtk::manage(new Gtk::Label("AAAAAAAAAAAAAAA", 0, 0.5)));
-    listbox->add(*Gtk::manage(new Gtk::Label("Test2", 0, 0.5)));
-    listbox->add(*Gtk::manage(new Gtk::Label("Test3", 0, 0.5)));
+    listbox->add(*Gtk::manage(new Gtk::Label("Profile", 0, 0.5)));
+    // listbox->add(*Gtk::manage(new Gtk::Label("Visual", 0, 0.5)));
+    // listbox->add(*Gtk::manage(new Gtk::Label("Emojis", 0, 0.5)));
+    listbox->add(*Gtk::manage(new Gtk::Label("Cache", 0, 0.5)));
+    // listbox->add(*Gtk::manage(new Gtk::Label("Network", 0, 0.5)));
+    listbox->add(*Gtk::manage(new Gtk::Label(_("SETTINGS_ABOUT"), 0, 0.5)));
 
     // only scroll vertically
     scroller_1->set_policy(Gtk::POLICY_NEVER, Gtk::POLICY_AUTOMATIC);
     scroller_2->set_policy(Gtk::POLICY_NEVER, Gtk::POLICY_AUTOMATIC);
+
+    listbox->signal_row_activated().connect([this](Gtk::ListBoxRow* it) {
+        m_stack.set_visible_child(*m_stack.get_children().at(it->get_index()));
+    });
 }
 
 DialogSettings::~DialogSettings() {

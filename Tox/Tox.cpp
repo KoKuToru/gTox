@@ -52,6 +52,52 @@ void Tox::destroy() {
     }
 }
 
+std::string Tox::config_get(const std::string& name,
+                            const std::string& value = "") {
+    std::lock_guard<std::recursive_mutex> lg(m_mtx);
+    if (m_tox == nullptr) {
+        throw Exception(UNITIALIZED);
+    }
+    if (!m_db) {
+        throw Exception(DBNOTOPEN);
+    }
+
+    SQLite::Statement selectq(*m_db,
+                              "SELECT value FROM config WHERE name=?1 LIMIT 1");
+
+    selectq.bind(1, name.c_str());
+
+    if (selectq.executeStep()) {
+        return selectq.getColumn(0).getText(value.c_str());
+    }
+
+    return value;
+}
+
+void Tox::config_set(const std::string& name, const std::string& value) {
+    std::lock_guard<std::recursive_mutex> lg(m_mtx);
+    if (m_tox == nullptr) {
+        throw Exception(UNITIALIZED);
+    }
+    if (!m_db) {
+        throw Exception(DBNOTOPEN);
+    }
+
+    SQLite::Statement updateq(*m_db,
+                              "UPDATE config SET value=?2 WHERE name=?1");
+
+    updateq.bind(1, name.c_str());
+    updateq.bind(2, value.c_str());
+
+    if (updateq.exec() < 1) {
+        SQLite::Statement insertq(
+            *m_db, "INSERT INTO config(name, value) VALUES (?1, ?2)");
+        insertq.bind(1, name.c_str());
+        insertq.bind(2, value.c_str());
+        insertq.exec();
+    }
+}
+
 void Tox::init(const Glib::ustring& statefile) {
     std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox != nullptr) {
@@ -87,31 +133,23 @@ void Tox::init(const Glib::ustring& statefile) {
         try {
 
             // ceck version of the db
-            int version
-                = m_db->execAndGet(
-                            "SELECT value FROM config WHERE name='version'")
-                      .getInt();
+            auto version_str = config_get("version", "1");
+            int version = std::atoi(version_str.c_str());
 
-            while (version != 3 /*current version*/)
-                switch (version) {
-                    case 1:
-                        m_db->exec(DATABASE::version_2);
-                        version = 2;
-                        break;
-                    case 2:
-                        m_db->exec(DATABASE::version_3);
-                        version = 3;
-                        break;
-                    default:
-                        throw Exception(UNKNOWDBVERSION);
-                        break;
-                }
+            std::string* upgrade_scripts[]
+                = {&DATABASE::version_2, &DATABASE::version_3};
 
-            // increase runid by 1
-            m_db->exec(
-                "UPDATE config"
-                " SET value = value + 1"
-                " WHERE name='runid'");
+            if (version < 1 || version > (int)sizeof(upgrade_scripts)) {
+                throw Exception(UNKNOWDBVERSION);
+            }
+
+            int version_max
+                = 1 + sizeof(upgrade_scripts) / sizeof(upgrade_scripts[0]);
+
+            for (; version < version_max; ++version) {
+                m_db->exec(*upgrade_scripts[version - 1]);
+                config_set("version", std::to_string(version + 1));
+            }
 
             // clean up toxcore
             try {
@@ -149,6 +187,10 @@ void Tox::init(const Glib::ustring& statefile) {
 
             throw;
         }
+
+        // increase run id
+        auto runid_str = config_get("runid", "0");
+        config_set("runid", std::to_string(std::atoi(runid_str.c_str()) + 1));
 
         SQLite::Statement stmt(*m_db,
                                "SELECT active, ip, port, pub_key"
@@ -197,6 +239,7 @@ void Tox::save(const Glib::ustring& statefile) {
             statefile, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE);
         m_db->exec(DATABASE::version_1);
         m_db->exec(DATABASE::version_2);
+        m_db->exec(DATABASE::version_3);
     }
 
     // store state
@@ -212,9 +255,8 @@ void Tox::save(const Glib::ustring& statefile) {
                                  " (savetime, state, runid)"
                                  " VALUES (CURRENT_TIMESTAMP, ?1, ?2)");
 
-        auto runid = m_db->execAndGet(
-                               "SELECT value FROM config"
-                               " WHERE name='runid' LIMIT 1").getInt();
+        auto runid_str = config_get("runid", "0");
+        int runid = std::atoi(runid_str.c_str());
 
         removq.bind(1, runid);
 
@@ -366,17 +408,19 @@ Tox::ReceiptNr Tox::send_message(Tox::FriendNr nr,
     }
 
     if (m_db) {
-        SQLite::Statement storeq(
-            *m_db,
-            "INSERT INTO log(friendaddr, sendtime, type, message, receipt)"
-            " VALUES (?1, CURRENT_TIMESTAMP, ?2, ?3, ?4)");
+        if (config_get("LOG_CHAT", "1") == "1") {
+            SQLite::Statement storeq(
+                *m_db,
+                "INSERT INTO log(friendaddr, sendtime, type, message, receipt)"
+                " VALUES (?1, CURRENT_TIMESTAMP, ?2, ?3, ?4)");
 
-        storeq.bind(1, get_address(nr).data(), TOX_CLIENT_ID_SIZE);
-        storeq.bind(2, ELogType::LOGMSG);
-        storeq.bind(3, message.data(), message.bytes());
-        storeq.bind(4, res);
+            storeq.bind(1, get_address(nr).data(), TOX_CLIENT_ID_SIZE);
+            storeq.bind(2, ELogType::LOGMSG);
+            storeq.bind(3, message.data(), message.bytes());
+            storeq.bind(4, res);
 
-        storeq.exec();
+            storeq.exec();
+        }
     }
 
     return res;
@@ -397,17 +441,19 @@ Tox::ReceiptNr Tox::send_action(Tox::FriendNr nr, const Glib::ustring& action) {
     }
 
     if (m_db) {
-        SQLite::Statement storeq(
-            *m_db,
-            "INSERT INTO log(friendaddr, sendtime, type, message, receipt)"
-            " VALUES (?1, CURRENT_TIMESTAMP, ?2, ?3, ?4)");
+        if (config_get("LOG_CHAT", "1") == "1") {
+            SQLite::Statement storeq(
+                *m_db,
+                "INSERT INTO log(friendaddr, sendtime, type, message, receipt)"
+                " VALUES (?1, CURRENT_TIMESTAMP, ?2, ?3, ?4)");
 
-        storeq.bind(1, get_address(nr).data(), TOX_CLIENT_ID_SIZE);
-        storeq.bind(2, ELogType::LOGACTION);
-        storeq.bind(3, action.data(), action.bytes());
-        storeq.bind(4, res);
+            storeq.bind(1, get_address(nr).data(), TOX_CLIENT_ID_SIZE);
+            storeq.bind(2, ELogType::LOGACTION);
+            storeq.bind(3, action.data(), action.bytes());
+            storeq.bind(4, res);
 
-        storeq.exec();
+            storeq.exec();
+        }
     }
 
     return res;
@@ -637,33 +683,39 @@ void Tox::inject_event(SEvent ev) {
 
             updateq.exec();
         } else if (ev.event == FRIENDMESSAGE) {
-            SQLite::Statement storeq(
-                *m_db,
-                "INSERT INTO log(friendaddr, recvtime, type, message)"
-                " VALUES (?1, CURRENT_TIMESTAMP, ?2, ?3)");
+            if (config_get("LOG_CHAT", "1") == "1") {
+                SQLite::Statement storeq(
+                    *m_db,
+                    "INSERT INTO log(friendaddr, recvtime, type, message)"
+                    " VALUES (?1, CURRENT_TIMESTAMP, ?2, ?3)");
 
-            storeq.bind(1,
-                        get_address(ev.friend_message.nr).data(),
-                        TOX_CLIENT_ID_SIZE);
-            storeq.bind(2, ELogType::LOGMSG);
-            storeq.bind(3,
-                        ev.friend_message.data.data(),
-                        ev.friend_message.data.bytes());
+                storeq.bind(1,
+                            get_address(ev.friend_message.nr).data(),
+                            TOX_CLIENT_ID_SIZE);
+                storeq.bind(2, ELogType::LOGMSG);
+                storeq.bind(3,
+                            ev.friend_message.data.data(),
+                            ev.friend_message.data.bytes());
 
-            storeq.exec();
+                storeq.exec();
+            }
         } else if (ev.event == FRIENDACTION) {
-            SQLite::Statement storeq(
-                *m_db,
-                "INSERT INTO log(friendaddr, recvtime, type, message)"
-                " VALUES (?1, CURRENT_TIMESTAMP, ?2, ?3)");
+            if (config_get("LOG_CHAT", "1") == "1") {
+                SQLite::Statement storeq(
+                    *m_db,
+                    "INSERT INTO log(friendaddr, recvtime, type, message)"
+                    " VALUES (?1, CURRENT_TIMESTAMP, ?2, ?3)");
 
-            storeq.bind(
-                1, get_address(ev.friend_action.nr).data(), TOX_CLIENT_ID_SIZE);
-            storeq.bind(2, ELogType::LOGACTION);
-            storeq.bind(
-                3, ev.friend_action.data.data(), ev.friend_action.data.bytes());
+                storeq.bind(1,
+                            get_address(ev.friend_action.nr).data(),
+                            TOX_CLIENT_ID_SIZE);
+                storeq.bind(2, ELogType::LOGACTION);
+                storeq.bind(3,
+                            ev.friend_action.data.data(),
+                            ev.friend_action.data.bytes());
 
-            storeq.exec();
+                storeq.exec();
+            }
         }
     }
 }

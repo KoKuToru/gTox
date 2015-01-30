@@ -94,3 +94,21 @@ msgstr ""
 "This is the first time you start gTox.\n"
 "\n"
 "Please take a moment and follow the instruction."
+
+msgid "ABOUT_SOFTWARE_NAME"
+msgstr "<b>gTox</b>"
+
+msgid "ABOUT_SOFTWARE_VERSION"
+msgstr "<i>pre-alpha version</i>"
+
+msgid "ABOUT_SOFTWARE_HOMEPAGE"
+msgstr "<a href=\"https://github.com/KoKuToru/gTox.git\">github.com/KoKuToru/gTox.git</a>"
+
+msgid "ABOUT_SOFTWARE_COPYRIGHT"
+msgstr "Copyright © 2014 - the gTox team"
+
+msgid "ABOUT_SOFTWARE_WARRANTY"
+msgstr "<i>This program comes with ABSOLUTELY NO WARRANTY</i>"
+
+msgid "SETTINGS_ABOUT"
+msgstr "About"

@@ -17,23 +17,15 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 **/
-#ifndef WIDGETPOPOVERSETTINGS_H
-#define WIDGETPOPOVERSETTINGS_H
+#ifndef WIDGETABOUT_H
+#define WIDGETABOUT_H
 
 #include <gtkmm.h>
-#include "Dialog/DialogSettings.h"
-#include "Widget/Settings/WidgetProfile.h"
-
-class PopoverSettings : public Gtk::Popover {
+class WidgetAbout : public Gtk::VBox {
   private:
-    WidgetProfile m_profile;
-    DialogSettings m_settings;
-
   public:
-    PopoverSettings(const Gtk::Widget& relative_to);
-    ~PopoverSettings();
-
-    void set_visible(bool visible = true);
+    WidgetAbout();
+    ~WidgetAbout();
 };
 
 #endif
