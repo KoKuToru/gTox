@@ -112,6 +112,7 @@ set(SOURCES
     Dialog/DialogSettings.cpp
     Widget/WidgetNotification.cpp
     Dialog/Debug/DialogCss.cpp
+    Helper/ToxEventCallback.cpp
     Tox/Tox.cpp)
 
 add_executable(${PROJECT_NAME}
