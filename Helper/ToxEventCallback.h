@@ -23,6 +23,9 @@ class ToxEventCallback {
     static std::recursive_mutex m_mutex;
     static std::vector<EFunc*> m_callback_list;
     EFunc m_callback;
+
+    void install();
+    void uninstall();
 };
 
 #endif

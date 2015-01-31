@@ -8,11 +8,7 @@ ToxEventCallback::ToxEventCallback() {
 }
 
 ToxEventCallback::ToxEventCallback(const EFunc& func) : m_callback(func) {
-    if (m_callback) {
-        // add
-        std::lock_guard<std::recursive_mutex> lg(m_mutex);
-        m_callback_list.push_back(&m_callback);
-    }
+    install();
 }
 
 ToxEventCallback::ToxEventCallback(const ToxEventCallback& o)
@@ -24,28 +20,14 @@ void ToxEventCallback::operator=(const ToxEventCallback& o) {
 }
 
 ToxEventCallback::~ToxEventCallback() {
-    if (m_callback) {
-        // remove
-        std::lock_guard<std::recursive_mutex> lg(m_mutex);
-        m_callback_list.erase(std::find(
-            m_callback_list.begin(), m_callback_list.end(), &m_callback));
-    }
+    uninstall();
 }
 
 void ToxEventCallback::operator=(
     const std::function<void(const Tox::SEvent&)>& func) {
-    if (m_callback) {
-        // remove
-        std::lock_guard<std::recursive_mutex> lg(m_mutex);
-        m_callback_list.erase(std::find(
-            m_callback_list.begin(), m_callback_list.end(), &m_callback));
-    }
+    uninstall();
     m_callback = func;
-    if (m_callback) {
-        // add
-        std::lock_guard<std::recursive_mutex> lg(m_mutex);
-        m_callback_list.push_back(&m_callback);
-    }
+    install();
 }
 
 void ToxEventCallback::notify(const Tox::SEvent& data) {
@@ -61,5 +43,22 @@ void ToxEventCallback::notify(const Tox::SEvent& data) {
             // 4. call callback function
             (*func)(data);
         }
+    }
+}
+
+void ToxEventCallback::install() {
+    if (m_callback) {
+        // add
+        std::lock_guard<std::recursive_mutex> lg(m_mutex);
+        m_callback_list.push_back(&m_callback);
+    }
+}
+
+void ToxEventCallback::uninstall() {
+    if (m_callback) {
+        // remove
+        std::lock_guard<std::recursive_mutex> lg(m_mutex);
+        m_callback_list.erase(std::find(
+            m_callback_list.begin(), m_callback_list.end(), &m_callback));
     }
 }
