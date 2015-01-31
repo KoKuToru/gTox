@@ -78,6 +78,7 @@ class DialogContact : public Gtk::Window {
     DialogContact(const std::string& config_path);
 
     ToxEventCallback m_tox_callback;
+    ToxEventCallback m_tox_callback_chat;
 
   public:
     ~DialogContact();

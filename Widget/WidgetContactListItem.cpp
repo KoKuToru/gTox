@@ -33,16 +33,31 @@ WidgetContactListItem::WidgetContactListItem(WidgetContact* contact,
     m_name.set_text(Tox::instance().get_name_or_address(nr));
     m_status_msg.set_text(Tox::instance().get_status_message(nr));
 
-    m_tox_callback = [this](const Tox::SEvent& ev) {
+    m_tox_callback = [this, nr](const Tox::SEvent& ev) {
         switch(ev.event) {
             case Tox::EEventType::NAMECHANGE:
-                if (m_friend_nr == ev.name_change.nr) {
-                    m_name.set_text(Tox::instance().get_name_or_address(m_friend_nr));
+                if (nr == ev.name_change.nr) {
+                    refresh();
                 }
                 break;
             case Tox::EEventType::STATUSMESSAGE:
-                if (m_friend_nr == ev.name_change.nr) {
-                    m_status_msg.set_text(Tox::instance().get_status_message(m_friend_nr));
+                if (nr == ev.status_message.nr) {
+                    refresh();
+                }
+                break;
+            case Tox::EEventType::FRIENDACTION:
+                if (nr == ev.friend_action.nr) {
+                    //display somehow
+                }
+                break;
+            case Tox::EEventType::FRIENDMESSAGE:
+                if (nr == ev.friend_message.nr) {
+                    //display somehow
+                }
+                break;
+            case Tox::EEventType::USERSTATUS:
+                if (nr == ev.user_status.nr) {
+                    refresh();
                 }
                 break;
             default:

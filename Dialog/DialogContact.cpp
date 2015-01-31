@@ -167,8 +167,6 @@ DialogContact::DialogContact(const std::string& config_path)
     m_btn_xxtach.signal_clicked().connect(
         sigc::mem_fun(this, &DialogContact::detach_chat));
 
-    m_contact.load_list();
-
     m_update_interval = Glib::signal_timeout().connect(
         sigc::mem_fun(this, &DialogContact::update),
         Tox::instance().update_optimal_interval());
@@ -300,13 +298,6 @@ void DialogContact::tox_event_handling(const Tox::SEvent& ev) {
             std::cout << "TYPINGCHANGE !" << ev.typing_change.nr << " -> "
                       << ev.typing_change.data << std::endl;
             break;
-        case Tox::EEventType::USERSTATUS:
-            std::cout << "USERSTATUS !" << ev.user_status.nr << " -> "
-                      << ev.user_status.data << std::endl;
-            m_contact.refresh_contact(ev.user_status.nr);
-            save = true;
-            // TODO UPDATE CHAT
-            break;
         default:
             break;
     }
@@ -370,6 +361,22 @@ void DialogContact::activate_chat(Tox::FriendNr nr) {
     // 4. update headerbard
     m_headerbar_chat.set_title(Tox::instance().get_name_or_address(nr));
     m_headerbar_chat.set_subtitle(Tox::instance().get_status_message(nr));
+    m_tox_callback_chat = [this, nr](const Tox::SEvent& ev) {
+        switch (ev.event) {
+            case Tox::EEventType::NAMECHANGE:
+                if (ev.name_change.nr == nr) {
+                    m_headerbar_chat.set_title(Tox::instance().get_name_or_address(nr));
+                }
+                break;
+            case Tox::EEventType::STATUSMESSAGE:
+                if (ev.status_message.nr == nr) {
+                    m_headerbar_chat.set_subtitle(Tox::instance().get_status_message(nr));
+                }
+                break;
+            default:
+                break;
+        }
+    };
 
     // 6. change focus to inputfiled
     item->focus();

@@ -40,7 +40,7 @@ DialogChat::DialogChat(Tox::FriendNr nr)
                 }
                 break;
             case Tox::EEventType::STATUSMESSAGE:
-                if (nr == ev.name_change.nr) {
+                if (nr == ev.status_message.nr) {
                     m_header.set_subtitle(Tox::instance().get_status_message(nr));
                 }
                 break;
