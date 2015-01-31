@@ -56,7 +56,6 @@ class WidgetChat : public Gtk::VPaned {
 
     Tox::FriendNr get_friend_nr() const;
     void focus();
-
 };
 
 #endif

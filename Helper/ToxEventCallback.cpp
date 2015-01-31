@@ -5,18 +5,18 @@ std::vector<ToxEventCallback::EFunc*> ToxEventCallback::m_callback_list;
 std::recursive_mutex ToxEventCallback::m_mutex;
 
 ToxEventCallback::ToxEventCallback() {
-
 }
 
-ToxEventCallback::ToxEventCallback(const EFunc& func): m_callback(func) {
+ToxEventCallback::ToxEventCallback(const EFunc& func) : m_callback(func) {
     if (m_callback) {
-        //add
+        // add
         std::lock_guard<std::recursive_mutex> lg(m_mutex);
         m_callback_list.push_back(&m_callback);
     }
 }
 
-ToxEventCallback::ToxEventCallback(const ToxEventCallback& o): ToxEventCallback(o.m_callback) {
+ToxEventCallback::ToxEventCallback(const ToxEventCallback& o)
+    : ToxEventCallback(o.m_callback) {
 }
 
 void ToxEventCallback::operator=(const ToxEventCallback& o) {
@@ -25,30 +25,33 @@ void ToxEventCallback::operator=(const ToxEventCallback& o) {
 
 ToxEventCallback::~ToxEventCallback() {
     if (m_callback) {
-        //remove
+        // remove
         std::lock_guard<std::recursive_mutex> lg(m_mutex);
-        m_callback_list.erase(std::find(m_callback_list.begin(), m_callback_list.end(), &m_callback));
+        m_callback_list.erase(std::find(
+            m_callback_list.begin(), m_callback_list.end(), &m_callback));
     }
 }
 
-void ToxEventCallback::operator=(const std::function<void(const Tox::SEvent&)>& func) {
+void ToxEventCallback::operator=(
+    const std::function<void(const Tox::SEvent&)>& func) {
     if (m_callback) {
-        //remove
+        // remove
         std::lock_guard<std::recursive_mutex> lg(m_mutex);
-        m_callback_list.erase(std::find(m_callback_list.begin(), m_callback_list.end(), &m_callback));
+        m_callback_list.erase(std::find(
+            m_callback_list.begin(), m_callback_list.end(), &m_callback));
     }
     m_callback = func;
     if (m_callback) {
-        //add
+        // add
         std::lock_guard<std::recursive_mutex> lg(m_mutex);
         m_callback_list.push_back(&m_callback);
     }
 }
 
 void ToxEventCallback::notify(const Tox::SEvent& data) {
-    //call everyone
+    // call everyone
     std::lock_guard<std::recursive_mutex> lg(m_mutex);
-    for(EFunc* func : m_callback_list) {
+    for (EFunc* func : m_callback_list) {
         (*func)(data);
     }
 }

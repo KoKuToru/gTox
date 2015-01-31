@@ -40,9 +40,7 @@ DialogContact::DialogContact(const std::string& config_path)
       m_popover_settings(m_btn_settings),
       m_popover_add(m_btn_add) {
 
-    m_tox_callback = [this](const Tox::SEvent& ev) {
-        tox_event_handling(ev);
-    };
+    m_tox_callback = [this](const Tox::SEvent& ev) { tox_event_handling(ev); };
 
     auto css = Gtk::CssProvider::create();
     if (!css->load_from_data(THEME::main)) {
@@ -270,12 +268,10 @@ void DialogContact::tox_event_handling(const Tox::SEvent& ev) {
                 get_chat(ev.friend_action.nr, chat);
             }
             break;
-        case Tox::EEventType::FRIENDMESSAGE:
-            {
-                DialogChat* chat;
-                get_chat(ev.friend_message.nr, chat);
-            }
-            break;
+        case Tox::EEventType::FRIENDMESSAGE: {
+            DialogChat* chat;
+            get_chat(ev.friend_message.nr, chat);
+        } break;
         case Tox::EEventType::FRIENDREQUEST:
             std::cout << "FRIENDREQUEST ! " << ev.friend_request.message
                       << std::endl;
@@ -365,12 +361,14 @@ void DialogContact::activate_chat(Tox::FriendNr nr) {
         switch (ev.event) {
             case Tox::EEventType::NAMECHANGE:
                 if (ev.name_change.nr == nr) {
-                    m_headerbar_chat.set_title(Tox::instance().get_name_or_address(nr));
+                    m_headerbar_chat.set_title(
+                        Tox::instance().get_name_or_address(nr));
                 }
                 break;
             case Tox::EEventType::STATUSMESSAGE:
                 if (ev.status_message.nr == nr) {
-                    m_headerbar_chat.set_subtitle(Tox::instance().get_status_message(nr));
+                    m_headerbar_chat.set_subtitle(
+                        Tox::instance().get_status_message(nr));
                 }
                 break;
             default:

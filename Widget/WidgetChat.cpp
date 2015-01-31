@@ -239,7 +239,7 @@ WidgetChat::WidgetChat(Tox::FriendNr nr)
     }
 
     m_tox_callback = [this, nr](const Tox::SEvent& ev) {
-        switch(ev.event) {
+        switch (ev.event) {
             case Tox::EEventType::FRIENDACTION:
                 if (nr == ev.friend_action.nr) {
                     add_line(0, true, ev.friend_action.data);

@@ -34,7 +34,7 @@ WidgetContactListItem::WidgetContactListItem(WidgetContact* contact,
     m_status_msg.set_text(Tox::instance().get_status_message(nr));
 
     m_tox_callback = [this, nr](const Tox::SEvent& ev) {
-        switch(ev.event) {
+        switch (ev.event) {
             case Tox::EEventType::NAMECHANGE:
                 if (nr == ev.name_change.nr) {
                     refresh();
@@ -47,12 +47,12 @@ WidgetContactListItem::WidgetContactListItem(WidgetContact* contact,
                 break;
             case Tox::EEventType::FRIENDACTION:
                 if (nr == ev.friend_action.nr) {
-                    //display somehow
+                    // display somehow
                 }
                 break;
             case Tox::EEventType::FRIENDMESSAGE:
                 if (nr == ev.friend_message.nr) {
-                    //display somehow
+                    // display somehow
                 }
                 break;
             case Tox::EEventType::USERSTATUS:
