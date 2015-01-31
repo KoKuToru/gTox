@@ -320,6 +320,8 @@ void DialogContact::tox_event_handling(const Tox::SEvent& ev) {
             save = true;
             // TODO UPDATE CHAT
             break;
+        default:
+            break;
     }
     if (save) {
         Tox::instance().save();
