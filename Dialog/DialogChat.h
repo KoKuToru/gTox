@@ -23,6 +23,7 @@
 #include <gtkmm.h>
 #include "Tox/Tox.h"
 #include "Widget/WidgetChat.h"
+#include "Helper/ToxEventCallback.h"
 
 // Single chat window
 class DialogChat : public Gtk::Window {
@@ -33,6 +34,8 @@ class DialogChat : public Gtk::Window {
     Gtk::Button m_btn_xxtach;
 
     WidgetChat m_chat;
+
+    ToxEventCallback m_tox_callback;
 
   public:
     DialogChat(Tox::FriendNr nr);

@@ -237,6 +237,23 @@ WidgetChat::WidgetChat(Tox::FriendNr nr)
             add_line(l.recvtime, true, l.data);
         }
     }
+
+    m_tox_callback = [this, nr](const Tox::SEvent& ev) {
+        switch (ev.event) {
+            case Tox::EEventType::FRIENDACTION:
+                if (nr == ev.friend_action.nr) {
+                    add_line(0, true, ev.friend_action.data);
+                }
+                break;
+            case Tox::EEventType::FRIENDMESSAGE:
+                if (nr == ev.friend_message.nr) {
+                    add_line(0, true, ev.friend_message.data);
+                }
+                break;
+            default:
+                break;
+        }
+    };
 }
 
 WidgetChat::~WidgetChat() {

@@ -28,7 +28,7 @@
 #include "Popover/PopoverStatus.h"
 #include "Popover/PopoverSettings.h"
 #include "Popover/PopoverAddContact.h"
-
+#include "Helper/ToxEventCallback.h"
 #include "DialogChat.h"
 
 // contact list with pinned chat
@@ -77,6 +77,9 @@ class DialogContact : public Gtk::Window {
 
     DialogContact(const std::string& config_path);
 
+    ToxEventCallback m_tox_callback;
+    ToxEventCallback m_tox_callback_chat;
+
   public:
     ~DialogContact();
     static void init(const std::string& config_path);
@@ -95,6 +98,7 @@ class DialogContact : public Gtk::Window {
   protected:
     void detach_chat();
     bool update();
+    void tox_event_handling(const Tox::SEvent& event);
     WidgetChat* get_chat(Tox::FriendNr nr, DialogChat*& dialog);
 };
 
