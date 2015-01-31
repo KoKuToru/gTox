@@ -51,7 +51,15 @@ void ToxEventCallback::operator=(
 void ToxEventCallback::notify(const Tox::SEvent& data) {
     // call everyone
     std::lock_guard<std::recursive_mutex> lg(m_mutex);
-    for (EFunc* func : m_callback_list) {
-        (*func)(data);
+    // 1. make a copy
+    auto callback_cpy = m_callback_list;
+    // 2. iterate copy
+    for (auto func : callback_cpy) {
+        // 3. make sure it's still in the list
+        if (std::find(m_callback_list.begin(), m_callback_list.end(), func)
+            != m_callback_list.end()) {
+            // 4. call callback function
+            (*func)(data);
+        }
     }
 }
