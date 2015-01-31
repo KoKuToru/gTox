@@ -33,6 +33,23 @@ WidgetContactListItem::WidgetContactListItem(WidgetContact* contact,
     m_name.set_text(Tox::instance().get_name_or_address(nr));
     m_status_msg.set_text(Tox::instance().get_status_message(nr));
 
+    m_tox_callback = [this](const Tox::SEvent& ev) {
+        switch(ev.event) {
+            case Tox::EEventType::NAMECHANGE:
+                if (m_friend_nr == ev.name_change.nr) {
+                    m_name.set_text(Tox::instance().get_name_or_address(m_friend_nr));
+                }
+                break;
+            case Tox::EEventType::STATUSMESSAGE:
+                if (m_friend_nr == ev.name_change.nr) {
+                    m_status_msg.set_text(Tox::instance().get_status_message(m_friend_nr));
+                }
+                break;
+            default:
+                break;
+        }
+    };
+
     m_name.set_line_wrap(false);
     m_name.set_ellipsize(Pango::ELLIPSIZE_END);
     m_name.set_name("Name");

@@ -305,22 +305,9 @@ void DialogContact::tox_event_handling(const Tox::SEvent& ev) {
                     Tox::instance().save();
                 });
             break;
-        case Tox::EEventType::NAMECHANGE:
-            std::cout << "NAMECHANGE !" << ev.name_change.nr << " -> "
-                      << ev.name_change.data << std::endl;
-            m_contact.refresh_contact(ev.name_change.nr);
-            save = true;
-            break;
         case Tox::EEventType::READRECEIPT:
             std::cout << "READRECEIPT !" << ev.readreceipt.nr << " -> "
                       << ev.readreceipt.data << std::endl;
-            break;
-        case Tox::EEventType::STATUSMESSAGE:
-            std::cout << "STATUSMESSAGE !" << ev.status_message.nr << " -> "
-                      << ev.status_message.data << std::endl;
-            m_contact.refresh_contact(ev.status_message.nr);
-            save = true;
-            // TODO UPDATE CHAT
             break;
         case Tox::EEventType::TYPINGCHANGE:
             std::cout << "TYPINGCHANGE !" << ev.typing_change.nr << " -> "

@@ -22,6 +22,7 @@
 
 #include <gtkmm.h>
 #include "Tox/Tox.h"
+#include "Helper/ToxEventCallback.h"
 
 class WidgetContact;
 class WidgetContactListItem : public Gtk::ListBoxRow {
@@ -36,6 +37,8 @@ class WidgetContactListItem : public Gtk::ListBoxRow {
     WidgetContact* m_contact;
 
     Tox::FriendNr m_friend_nr;
+
+    ToxEventCallback m_tox_callback;
 
   public:
     WidgetContactListItem(WidgetContact* contact, Tox::FriendNr nr);
