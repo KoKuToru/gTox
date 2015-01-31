@@ -24,6 +24,7 @@
 #include "Chat/WidgetChatEntry.h"
 #include "Tox/Tox.h"
 #include "Chat/WidgetChatLayout.h"
+#include "Helper/ToxEventCallback.h"
 
 // Content of DialogChat
 class WidgetChat : public Gtk::VPaned {
@@ -41,17 +42,21 @@ class WidgetChat : public Gtk::VPaned {
 
     bool m_autoscroll;
 
+    ToxEventCallback m_tox_callback;
+
+    void add_line(Glib::ustring text);
+
+    void add_line(unsigned long long timestamp,
+                  bool left_side,
+                  const Glib::ustring& message);
+
   public:
     WidgetChat(Tox::FriendNr nr);
     ~WidgetChat();
 
     Tox::FriendNr get_friend_nr() const;
     void focus();
-    void add_line(Glib::ustring text);
 
-    void add_line(unsigned long long timestamp,
-                  bool left_side,
-                  const Glib::ustring& message);
 };
 
 #endif

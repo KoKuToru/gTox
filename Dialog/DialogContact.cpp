@@ -267,28 +267,15 @@ void DialogContact::tox_event_handling(const Tox::SEvent& ev) {
     switch (ev.event) {
         case Tox::EEventType::FRIENDACTION:  // not that important Tox adds
                                              // "/me"
-            std::cout << "FRIENDACTION !" << ev.friend_action.nr << " -> "
-                      << ev.friend_action.data << std::endl;
             {
                 DialogChat* chat;
-                WidgetChat* item = get_chat(
-                    ev.friend_action.nr,
-                    chat);  // automatically creates chat if not exits
-                item->add_line(
-                    0, true, ev.friend_action.data);  // add line, when
-                                                      // automatically
-                                                      // created chat ->
-                                                      // last line 2 times
-                                                      // !
+                get_chat(ev.friend_action.nr, chat);
             }
             break;
         case Tox::EEventType::FRIENDMESSAGE:
-            std::cout << "FRIENDMESSAGE !" << ev.friend_message.nr << " -> "
-                      << ev.friend_message.data << std::endl;
             {
                 DialogChat* chat;
-                WidgetChat* item = get_chat(ev.friend_message.nr, chat);
-                item->add_line(0, true, ev.friend_message.data);
+                get_chat(ev.friend_message.nr, chat);
             }
             break;
         case Tox::EEventType::FRIENDREQUEST:
