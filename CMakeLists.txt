@@ -79,6 +79,7 @@ set(ICONS
     Icons/plus.svg
     Icons/remove.svg
     Icons/clipboard.svg
+    Icons/status_message.svg
     Icons/status_away.svg)
 add_custom_command(
     OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/Generated/icon.cpp"

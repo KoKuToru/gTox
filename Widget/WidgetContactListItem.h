@@ -40,6 +40,10 @@ class WidgetContactListItem : public Gtk::ListBoxRow {
 
     ToxEventCallback m_tox_callback;
     void refresh();
+    Glib::RefPtr<Gdk::PixbufAnimation> generate_animation(
+        const Glib::RefPtr<Gdk::Pixbuf>& icon);
+
+    bool spin;
 
   public:
     WidgetContactListItem(WidgetContact* contact, Tox::FriendNr nr);

@@ -27,7 +27,8 @@ WidgetContactListItem::WidgetContactListItem(WidgetContact* contact,
                                              Tox::FriendNr nr)
     : Glib::ObjectBase("WidgetContactListItem"),
       m_contact(contact),
-      m_friend_nr(nr) {
+      m_friend_nr(nr),
+      spin(false) {
     set_name("WidgetContactListItem");
 
     m_name.set_text(Tox::instance().get_name_or_address(nr));
@@ -47,17 +48,31 @@ WidgetContactListItem::WidgetContactListItem(WidgetContact* contact,
                 break;
             case Tox::EEventType::FRIENDACTION:
                 if (nr == ev.friend_action.nr) {
-                    // display somehow
+                    if (!spin) {
+                        spin = true;
+                        refresh();
+                    }
                 }
                 break;
             case Tox::EEventType::FRIENDMESSAGE:
                 if (nr == ev.friend_message.nr) {
-                    // display somehow
+                    if (!spin) {
+                        spin = true;
+                        refresh();
+                    }
                 }
                 break;
             case Tox::EEventType::USERSTATUS:
                 if (nr == ev.user_status.nr) {
                     refresh();
+                }
+                break;
+            case Tox::EEventType::CUSTOM:
+                if (nr == ev.custom.nr && ev.custom.cmd == "ACTIVE_CHAT") {
+                    if (spin) {
+                        spin = false;
+                        refresh();
+                    }
                 }
                 break;
             default:
@@ -109,24 +124,69 @@ void WidgetContactListItem::refresh() {
         m_name.set_text(Tox::instance().get_name_or_address(m_friend_nr));
         m_status_msg.set_text(Tox::instance().get_status_message(m_friend_nr));
 
-        Glib::RefPtr<Gdk::Pixbuf> status;
+        const std::string* status = nullptr;
 
         switch (Tox::instance().get_status(m_friend_nr)) {
             case Tox::EUSERSTATUS::BUSY:
-                status = ICON::load_icon(ICON::status_busy);
+                status = &ICON::status_busy;
                 break;
             case Tox::EUSERSTATUS::INVALID:
             case Tox::EUSERSTATUS::NONE:
-                status = ICON::load_icon(ICON::status_online);
+                status = &ICON::status_online;
                 break;
             case Tox::EUSERSTATUS::AWAY:
-                status = ICON::load_icon(ICON::status_away);
+                status = &ICON::status_away;
                 break;
             default:
-                status = ICON::load_icon(ICON::status_offline);
+                status = &ICON::status_offline;
                 break;
         }
-        m_status_icon.set(status);
+
+        if (spin) {
+            m_status_icon.set(generate_animation(ICON::load_icon(*status)));
+        } else {
+            m_status_icon.set(ICON::load_icon(*status));
+        }
     } catch (...) {
     }
+}
+
+std::string replace(std::string str,
+                    const std::string& from,
+                    const std::string& to) {
+    size_t start_pos = str.find(from);
+    if (start_pos == std::string::npos)
+        return str;
+    str.replace(start_pos, from.length(), to);
+    return str;
+}
+#include <iostream>
+Glib::RefPtr<Gdk::PixbufAnimation> WidgetContactListItem::generate_animation(
+    const Glib::RefPtr<Gdk::Pixbuf>& icon) {
+    auto ani = gdk_pixbuf_simple_anim_new(24, 24, 30);
+    static std::string frames[36];
+    for (int ang = 0; ang < 36; ++ang) {
+        if (frames[ang].empty()) {
+            frames[ang] = replace(ICON::status_message,
+                                  "id=\"rotate_me\"",
+                                  "id=\"rotate_me\" transform=\"rotate("
+                                  + std::to_string(ang * 10) + " 12 12)\"");
+        }
+        auto front = ICON::load_icon(frames[ang]);
+        auto back = icon->copy();
+        front->composite(back,
+                         0,
+                         0,
+                         24,
+                         24,
+                         0,
+                         0,
+                         1,
+                         1,
+                         Gdk::InterpType::INTERP_NEAREST,
+                         255);
+        gdk_pixbuf_simple_anim_add_frame(ani, back->gobj());
+    }
+    gdk_pixbuf_simple_anim_set_loop(ani, true);
+    return Glib::wrap(GDK_PIXBUF_ANIMATION(ani));
 }

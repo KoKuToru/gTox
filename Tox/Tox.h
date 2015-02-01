@@ -92,7 +92,8 @@ class Tox {
         STATUSMESSAGE,
         USERSTATUS,
         TYPINGCHANGE,
-        READRECEIPT
+        READRECEIPT,
+        CUSTOM
     };
 
     struct SFriendRequest {
@@ -115,6 +116,12 @@ class Tox {
         bool data;
     };
 
+    struct SCustom {
+        FriendNr nr;
+        std::string cmd;
+        std::string data;
+    };
+
     struct SEvent {
         EEventType event;
         // not very optimal
@@ -126,6 +133,7 @@ class Tox {
         SFriendBool typing_change;
         SFriendInt user_status;
         SFriendInt readreceipt;
+        SCustom custom;
     };
 
     enum ELogType { LOGMSG = 1, LOGACTION = 2 };

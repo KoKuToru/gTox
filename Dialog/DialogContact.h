@@ -80,6 +80,8 @@ class DialogContact : public Gtk::Window {
     ToxEventCallback m_tox_callback;
     ToxEventCallback m_tox_callback_chat;
 
+    bool is_chat_open(Tox::FriendNr nr);
+
   public:
     ~DialogContact();
     static void init(const std::string& config_path);

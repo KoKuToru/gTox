@@ -265,12 +265,26 @@ void DialogContact::tox_event_handling(const Tox::SEvent& ev) {
                                              // "/me"
             {
                 DialogChat* chat;
-                get_chat(ev.friend_action.nr, chat);
+                WidgetChat* w = get_chat(ev.friend_action.nr, chat);
+                if (is_chat_open(ev.friend_action.nr)) {
+                    Tox::SEvent custom;
+                    custom.event = Tox::EEventType::CUSTOM;
+                    custom.custom.cmd = "ACTIVE_CHAT";
+                    custom.custom.nr = ev.friend_action.nr;
+                    ToxEventCallback::notify(custom);
+                }
             }
             break;
         case Tox::EEventType::FRIENDMESSAGE: {
             DialogChat* chat;
-            get_chat(ev.friend_message.nr, chat);
+            WidgetChat* w = get_chat(ev.friend_message.nr, chat);
+            if (is_chat_open(ev.friend_message.nr)) {
+                Tox::SEvent custom;
+                custom.event = Tox::EEventType::CUSTOM;
+                custom.custom.cmd = "ACTIVE_CHAT";
+                custom.custom.nr = ev.friend_message.nr;
+                ToxEventCallback::notify(custom);
+            }
         } break;
         case Tox::EEventType::FRIENDREQUEST:
             std::cout << "FRIENDREQUEST ! " << ev.friend_request.message
@@ -332,7 +346,33 @@ WidgetChat* DialogContact::get_chat(Tox::FriendNr nr, DialogChat*& dialog) {
     return item;
 }
 
+bool DialogContact::is_chat_open(Tox::FriendNr nr) {
+    for (Gtk::Widget* it : m_chat.get_children()) {
+        WidgetChat* item = dynamic_cast<WidgetChat*>(it);
+        if (item->get_friend_nr() == nr) {
+            if (m_headerbar_chat.is_visible()) {
+                return it == m_chat.get_visible_child();
+            } else {
+                return false;
+            }
+        }
+    }
+    for (auto c : m_chat_dialog) {
+        WidgetChat* item = &(c->get_chat());
+        if (item->get_friend_nr() == nr) {
+            return item->is_visible();
+        }
+    }
+    return false;
+}
+
 void DialogContact::activate_chat(Tox::FriendNr nr) {
+    Tox::SEvent custom;
+    custom.event = Tox::EEventType::CUSTOM;
+    custom.custom.cmd = "ACTIVE_CHAT";
+    custom.custom.nr = nr;
+    ToxEventCallback::notify(custom);
+
     // 1. Search if contact has already a open chat
     DialogChat* dialog = nullptr;
     WidgetChat* item = get_chat(nr, dialog);
