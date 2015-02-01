@@ -27,6 +27,8 @@ class WidgetProfile : public Gtk::VBox {
     Gtk::Entry m_status;
     Gtk::Button m_avatar;
 
+    Gtk::Image m_clipboard;
+
   public:
     WidgetProfile();
     ~WidgetProfile();

@@ -23,7 +23,9 @@
 #include "Tox/Tox.h"
 #include "Dialog/DialogContact.h"
 
-WidgetProfile::WidgetProfile() : Glib::ObjectBase("WidgetProfile") {
+WidgetProfile::WidgetProfile()
+    : Glib::ObjectBase("WidgetProfile"),
+      m_clipboard(ICON::load_icon(ICON::clipboard)) {
     update();
 
     std::string hex = Tox::to_hex(Tox::instance().get_address().data(),
@@ -53,11 +55,17 @@ WidgetProfile::WidgetProfile() : Glib::ObjectBase("WidgetProfile") {
         *Gtk::manage(new Gtk::Label(_("MESSAGE"), 1, 0.5)), 1, 1, 1, 1);
     grid->attach(m_status, 2, 1, 1, 1);
 
-    grid->attach(*Gtk::manage(new Gtk::Label("Tox ID", 1, 0.5)), 1, 2, 1, 1);
+    grid->attach(*Gtk::manage(new Gtk::Label(_("TOX_ID"), 1, 0)), 1, 2, 1, 1);
     auto tox_id = Gtk::manage(new Gtk::Label("", 0, 0.5));
     tox_id->set_selectable(true);
     tox_id->set_markup("<span font_desc=\"mono\">" + hex + "</span>");
-    grid->attach(*tox_id, 2, 2, 1, 1);
+    grid->attach(*tox_id, 2, 2, 1, 2);
+
+    auto cpy_btn = Gtk::manage(new Gtk::Button());
+    cpy_btn->set_image(m_clipboard);
+    cpy_btn->set_halign(Gtk::ALIGN_END);
+    cpy_btn->set_valign(Gtk::ALIGN_END);
+    grid->attach(*cpy_btn, 1, 3, 1, 1);
 
     pack_start(*grid, false, false);
 
@@ -71,6 +79,12 @@ WidgetProfile::WidgetProfile() : Glib::ObjectBase("WidgetProfile") {
     m_status.signal_focus_out_event().connect_notify([this](GdkEventFocus*) {
         DialogContact::instance().change_name(m_username.get_text(),
                                               m_status.get_text());
+    });
+
+    cpy_btn->signal_clicked().connect([this]() {
+        Gtk::Clipboard::get()->set_text(
+            Tox::to_hex(Tox::instance().get_address().data(),
+                        Tox::instance().get_address().size()));
     });
 }
 

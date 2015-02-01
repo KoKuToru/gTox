@@ -79,6 +79,20 @@ PopoverAddContact::PopoverAddContact(const Gtk::Widget& relative_to)
             std::cout << "ERROR" << std::endl;
         }
     });
+
+    m_addr.signal_changed().connect_notify(
+        [this]() {
+            Glib::ustring text;
+            for (auto letter : m_addr.get_text()) {
+                if ((letter >= '0' && letter <= '9')
+                    || (letter >= 'a' && letter <= 'f')
+                    || (letter >= 'A' && letter <= 'Z')) {
+                    text.append(1, letter);
+                }
+            }
+            m_addr.set_text(text);
+        },
+        true);
 }
 
 PopoverAddContact::~PopoverAddContact() {

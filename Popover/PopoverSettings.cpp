@@ -32,7 +32,8 @@ PopoverSettings::PopoverSettings(const Gtk::Widget& relative_to)
     grid->set_row_spacing(5);
     grid->set_column_spacing(10);
     grid->attach(m_profile, 0, 0, 1, 1);
-    grid->attach(*btn_settings, 0, 1, 1, 1);
+    grid->attach(*Gtk::manage(new Gtk::Separator()), 0, 1, 1, 1);
+    grid->attach(*btn_settings, 0, 2, 1, 1);
     grid->show_all();
     add(*grid);
 
