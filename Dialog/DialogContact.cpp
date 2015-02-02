@@ -266,7 +266,7 @@ void DialogContact::tox_event_handling(const Tox::SEvent& ev) {
                                              // "/me"
             {
                 DialogChat* chat;
-                WidgetChat* w = get_chat(ev.friend_action.nr, chat);
+                get_chat(ev.friend_action.nr, chat);
                 if (is_chat_open(ev.friend_action.nr)) {
                     Tox::SEvent custom;
                     custom.event = Tox::EEventType::CUSTOM;
@@ -279,7 +279,7 @@ void DialogContact::tox_event_handling(const Tox::SEvent& ev) {
             break;
         case Tox::EEventType::FRIENDMESSAGE: {
             DialogChat* chat;
-            WidgetChat* w = get_chat(ev.friend_message.nr, chat);
+            get_chat(ev.friend_message.nr, chat);
             if (is_chat_open(ev.friend_message.nr)) {
                 Tox::SEvent custom;
                 custom.event = Tox::EEventType::CUSTOM;
