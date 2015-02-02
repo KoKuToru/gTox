@@ -26,6 +26,7 @@
 #include "Generated/theme.h"
 #include <iostream>
 #include <glibmm/i18n.h>
+#include "Helper/Canberra.h"
 
 DialogContact* DialogContact::m_instance = nullptr;
 
@@ -273,6 +274,7 @@ void DialogContact::tox_event_handling(const Tox::SEvent& ev) {
                     custom.custom.nr = ev.friend_action.nr;
                     ToxEventCallback::notify(custom);
                 }
+                Canberra::play("message-new-instant");
             }
             break;
         case Tox::EEventType::FRIENDMESSAGE: {
@@ -285,6 +287,7 @@ void DialogContact::tox_event_handling(const Tox::SEvent& ev) {
                 custom.custom.nr = ev.friend_message.nr;
                 ToxEventCallback::notify(custom);
             }
+            Canberra::play("message-new-instant");
         } break;
         case Tox::EEventType::FRIENDREQUEST:
             std::cout << "FRIENDREQUEST ! " << ev.friend_request.message
