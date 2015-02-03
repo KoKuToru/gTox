@@ -31,6 +31,8 @@ WidgetCache::WidgetCache()
 
     m_log.set_active(Tox::instance().config_get("LOG_CHAT", "1") == "1");
     m_file.set_active(Tox::instance().config_get("LOG_FILE", "1") == "1");
+    m_log.set_halign(Gtk::Align::ALIGN_END);
+    m_file.set_halign(Gtk::Align::ALIGN_END);
 
 #if (GTK_MAJOR_VERSION >= 3 && GTK_MINOR_VERSION >= 14)
     m_log.signal_state_set().connect_notify([](bool state) {
@@ -57,7 +59,7 @@ WidgetCache::WidgetCache()
     grid->attach(
         *Gtk::manage(new Gtk::Label("Persist File", 0.0, 0.5)), 0, 1, 1, 1);
     grid->attach(m_log, 1, 0, 1, 1);
-    grid->attach(m_file, 1, 1, 1, 1);
+    //grid->attach(m_file, 1, 1, 1, 1);
     grid->attach(m_clean_log, 0, 2, 2, 1);
     grid->attach(m_clean_file, 0, 3, 2, 1);
 
