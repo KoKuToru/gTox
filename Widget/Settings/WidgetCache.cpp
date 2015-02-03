@@ -59,7 +59,7 @@ WidgetCache::WidgetCache()
     grid->attach(
         *Gtk::manage(new Gtk::Label("Persist File", 0.0, 0.5)), 0, 1, 1, 1);
     grid->attach(m_log, 1, 0, 1, 1);
-    //grid->attach(m_file, 1, 1, 1, 1);
+    // grid->attach(m_file, 1, 1, 1, 1);
     grid->attach(m_clean_log, 0, 2, 2, 1);
     grid->attach(m_clean_file, 0, 3, 2, 1);
 
