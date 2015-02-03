@@ -117,7 +117,8 @@ set(SOURCES
     Dialog/Debug/DialogCss.cpp
     Helper/Canberra.cpp
     Helper/ToxEventCallback.cpp
-    Tox/Tox.cpp)
+    Tox/Tox.cpp
+    Tox/ToxDatabase.cpp)
 
 add_executable(${PROJECT_NAME}
      ${SOURCES}
