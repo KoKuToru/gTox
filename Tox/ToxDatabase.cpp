@@ -37,11 +37,10 @@ void ToxDatabase::open(const std::string& path, bool init) {
     m_db->exec("SAVEPOINT try_load");
     try {
 
-        auto version_str = config_get("version", "1");
-        int version = std::atoi(version_str.c_str());
+        auto version = config_get("version", 0);
 
         std::string* upgrade_scripts[]
-            = {&DATABASE::version_2, &DATABASE::version_3};
+            = {&DATABASE::version_2, &DATABASE::version_3, &DATABASE::version_4};
 
         if (version < 1 || version > (int)sizeof(upgrade_scripts)) {
             throw "ERROR";
@@ -52,23 +51,11 @@ void ToxDatabase::open(const std::string& path, bool init) {
 
         for (; version < version_max; ++version) {
             m_db->exec(*upgrade_scripts[version - 1]);
-            config_set("version", std::to_string(version + 1));
+            config_set("version", version + 1);
         }
 
         // clean up toxcore
-        try {
-            SQLite::Statement storeq(*m_db,
-                                     "DELETE FROM toxcore"
-                                     " WHERE id < ?1");
-            storeq.bind(1,
-                        m_db->execAndGet(
-                                  "SELECT max(id), date(savetime) FROM toxcore"
-                                  " GROUP BY date(savetime)"
-                                  " ORDER BY id DESC LIMIT 7,1").getInt());
-            storeq.exec();
-        } catch (...) {
-            // nothing to remove
-        }
+        toxcore_state_cleanup();
 
         m_db->exec("RELEASE SAVEPOINT try_load");
     } catch (...) {
@@ -83,9 +70,6 @@ void ToxDatabase::open(const std::string& path, bool init) {
 }
 
 void ToxDatabase::close() {
-    if (!m_db) {
-        throw "ERROR";
-    }
     m_db.reset();
 }
 
@@ -93,6 +77,11 @@ void ToxDatabase::move(const std::string& path) {
     if (!m_db) {
         throw "ERROR";
     }
+
+    if (m_path == path) {
+        return;
+    }
+
     // just to be save close database
     m_db.reset();
     // try to move file
@@ -120,7 +109,7 @@ std::string ToxDatabase::config_get(const std::string& name,
     }
 
     auto selectq
-        = query("SELECT value FROM config WHERE name=?1 LIMIT 1", name);
+        = query("SELECT value FROM config WHERE cast(name as text)=cast(?1 as text) LIMIT 1", name);
 
     if (selectq->executeStep()) {
         return selectq->getColumn(0).getText(value.c_str());
@@ -135,7 +124,7 @@ void ToxDatabase::config_set(const std::string& name,
         throw "ERROR";
     }
 
-    if (query("UPDATE config SET value=?2 WHERE name=?1", name, value)->exec()
+    if (query("UPDATE config SET value=?2 WHERE cast(name as text)=cast(?1 as text)", name, value)->exec()
         < 1) {
         query("INSERT INTO config(name, value) VALUES (?1, ?2)", name, value)
             ->exec();
@@ -148,7 +137,7 @@ int ToxDatabase::config_get(const std::string& name, int value = 0) {
     }
 
     auto selectq
-        = query("SELECT value FROM config WHERE name=?1 LIMIT 1", name);
+        = query("SELECT value FROM config WHERE cast(name as text)=cast(?1 as text) LIMIT 1", name);
 
     if (selectq->executeStep()) {
         if (selectq->getColumn(0).isNull()) {
@@ -165,7 +154,7 @@ void ToxDatabase::config_set(const std::string& name, int value) {
         throw "ERROR";
     }
 
-    if (query("UPDATE config SET value=?2 WHERE name=?1", name, value)->exec()
+    if (query("UPDATE config SET value=?2 WHERE cast(name as text)=cast(?1 as text)", name, value)->exec()
         < 1) {
         query("INSERT INTO config(name, value) VALUES (?1, ?2)", name, value)
             ->exec();
@@ -226,4 +215,67 @@ void ToxDatabase::toxcore_state_add(const std::vector<unsigned char>& state) {
             config_get("runid", 0),
             state)->exec();
     }
+}
+
+std::vector<ToxBootstrapEntity> ToxDatabase::toxcore_bootstrap_get(bool active_only) {
+    std::vector<ToxBootstrapEntity> res;
+    auto stmt = query("SELECT active, ip, port, pub_key"
+                      " FROM bootstrap"
+                      " WHERE ?1 != 0 OR active != 0", active_only);
+    while(stmt->executeStep()) {
+        res.push_back({stmt->getColumn(0).getInt() != 0,
+                       stmt->getColumn(1).getText(""),
+                       stmt->getColumn(2).getInt(),
+                       stmt->getColumn(3).getText("")});
+    }
+    return res;
+}
+
+void ToxDatabase::toxcore_log_add(ToxLogSendEntity entity) {
+    if (config_get("LOG_CHAT", 1)) {
+        query("INSERT INTO log(friendaddr, sendtime, type, message, receipt)"
+              " VALUES (?1, CURRENT_TIMESTAMP, ?2, ?3, ?4)",
+              entity.friendaddr,
+              entity.type,
+              entity.data,
+              entity.receipt)->exec();
+    } else {
+        //memory db ! todo !
+    }
+}
+
+void ToxDatabase::toxcore_log_add(ToxLogRecvEntity entity) {
+    if (config_get("LOG_CHAT", 1)) {
+        query("INSERT INTO log(friendaddr, recvtime, type, message)"
+              " VALUES (?1, CURRENT_TIMESTAMP, ?2, ?3)",
+              entity.friendaddr,
+              entity.type,
+              entity.data)->exec();
+    } else {
+        //memory db ! todo !
+    }
+}
+
+std::vector<ToxLogEntity> ToxDatabase::toxcore_log_get(std::string friendaddr, int offset, int limit) {
+    std::vector<ToxLogEntity> res;
+    auto stmt = query("SELECT"
+                      " strftime('%s', sendtime),"
+                      " strftime('%s', recvtime),"
+                      " type, message FROM log"
+                      " WHERE cast(friendaddr as text) = cast(?1 as text) ORDER BY id DESC LIMIT ?2, ?3",
+                      friendaddr,
+                      offset,
+                      limit);
+    while (stmt->executeStep()) {
+        ToxLogEntity tmp;
+        tmp.sendtime = stmt->getColumn(0).getInt64();
+        tmp.recvtime = stmt->getColumn(1).getInt64();
+        tmp.type = stmt->getColumn(2).getInt();
+        auto data = stmt->getColumn(3);
+        auto data_ptr = (const char*)data.getBlob();
+        tmp.data = std::string(data_ptr, data_ptr + data.getBytes());
+        res.push_back(tmp);
+    }
+    //memory db ! todo !
+    return res;
 }

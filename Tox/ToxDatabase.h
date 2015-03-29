@@ -26,11 +26,66 @@
 #include <glibmm/ustring.h>
 #include <vector>
 #include <array>
+
+class ToxBootstrapEntity {
+    public:
+        bool active;
+        std::string ip;
+        int port;
+        std::string pub_key;
+};
+
+class ToxLogBaseEntity {
+    public:
+        ToxLogBaseEntity() = default;
+        ToxLogBaseEntity(std::string friendaddr,
+                         int type,
+                         std::string data):
+            friendaddr(friendaddr),
+            type(type),
+            data(data) {}
+
+        std::string friendaddr;
+        int type;
+        std::string data;
+};
+
+class ToxLogRecvEntity:
+        virtual public ToxLogBaseEntity {
+    public:
+        using ToxLogBaseEntity::ToxLogBaseEntity;
+};
+
+class ToxLogSendEntity:
+        virtual public ToxLogBaseEntity {
+    public:
+        ToxLogSendEntity() = default;
+        ToxLogSendEntity(std::string friendaddr,
+                         int type,
+                         std::string data,
+                         int receipt): ToxLogBaseEntity(friendaddr, type, data), receipt(receipt) {}
+        int receipt;
+};
+
+class ToxLogEntity:
+        public ToxLogRecvEntity,
+        public ToxLogSendEntity,
+        virtual public ToxLogBaseEntity {
+    public:
+        ToxLogEntity() = default;
+        unsigned long long recvtime;
+        unsigned long long sendtime;
+};
+
+
 class ToxDatabase {
   private:
     std::string m_path;
     std::shared_ptr<SQLite::Database> m_db;
 
+    void bind(SQLite::Statement& stmt, int i, const bool& value) {
+        stmt.bind(i, value);
+    }
     void bind(SQLite::Statement& stmt, int i, const int& value) {
         stmt.bind(i, value);
     }
@@ -119,7 +174,7 @@ class ToxDatabase {
     /**
      * @brief Gets a config parameter
      *
-     * @throws Tox::Exception
+     * @throws SQLite::Exception
      *
      * @param name of the paramter
      * @param value the default value
@@ -130,7 +185,7 @@ class ToxDatabase {
     /**
      * @brief Sets a config parameter
      *
-     * @throws Tox::Exception
+     * @throws SQLite::Exception
      *
      * @param name  of the paramter
      * @param value of the config parameter
@@ -160,25 +215,68 @@ class ToxDatabase {
 
     /**
      * @brief Removes old toxcore states
+     *
+     * @throws SQLite::Exception
+     *
      */
     void toxcore_state_cleanup();
     /**
      * @brief Get a toxcore state
+     *
+     * @throws SQLite::Exception
+     *
      * @param nth 0 = newest, n = oldest
      * @return toxcore state
      */
     std::vector<unsigned char> toxcore_state_get(int nth);
     /**
      * @brief Get the count of saved toxcore states
+     *
+     * @throws SQLite::Exception
+     *
      * @return how many nth toxcore states
      */
     int toxcore_state_max_nth();
     /**
      * @brief Add a new toxcore state, will overwrite the old one if the same
+     *
+     * @throws SQLite::Exception
+     *
      * session
      * @param state toxcore state
      */
     void toxcore_state_add(const std::vector<unsigned char>& state);
+
+    /**
+     * @brief Gets the bootstrap settings
+     *
+     * @throws SQLite::Exception
+     *
+     * @param active_only
+     * @return list of bootstraps
+     */
+    std::vector<ToxBootstrapEntity> toxcore_bootstrap_get(bool active_only = true);
+    /**
+     * @brief Adds a new log line
+     *
+     * @throws SQLite::Exception
+     *
+     * @param entity
+     */
+    void toxcore_log_add(ToxLogSendEntity entity);
+    void toxcore_log_add(ToxLogRecvEntity entity);
+    /**
+     * @brief Get chat log
+     *
+     * @throws SQLite::Exception
+     *
+     * @param nr ID of friend
+     * @param offset
+     * @param limit
+     *
+     * @return Chat log
+     */
+    std::vector<ToxLogEntity> toxcore_log_get(std::string friendaddr, int offset, int limit);
 };
 
 #endif
