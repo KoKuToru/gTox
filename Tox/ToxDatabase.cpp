@@ -67,6 +67,10 @@ void ToxDatabase::open(const std::string& path, bool init) {
 
     // increase runid
     config_set("rundid", config_get("runid", 0) + 1);
+
+    //attach in memory database
+    m_db->exec("ATTACH DATABASE ':memory:' AS mem");
+    m_db->exec("CREATE TABLE mem.log AS SELECT * FROM log WHERE 0");
 }
 
 void ToxDatabase::close() {
@@ -232,28 +236,24 @@ std::vector<ToxBootstrapEntity> ToxDatabase::toxcore_bootstrap_get(bool active_o
 }
 
 void ToxDatabase::toxcore_log_add(ToxLogSendEntity entity) {
-    if (config_get("LOG_CHAT", 1)) {
-        query("INSERT INTO log(friendaddr, sendtime, type, message, receipt)"
-              " VALUES (?1, CURRENT_TIMESTAMP, ?2, ?3, ?4)",
-              entity.friendaddr,
-              entity.type,
-              entity.data,
-              entity.receipt)->exec();
-    } else {
-        //memory db ! todo !
-    }
+    std::string table = config_get("LOG_CHAT", 1) ? "log" : "mem.log";
+
+    query("INSERT INTO " + table + "(friendaddr, sendtime, type, message, receipt)"
+                                   " VALUES (?1, CURRENT_TIMESTAMP, ?2, ?3, ?4)",
+          entity.friendaddr,
+          entity.type,
+          entity.data,
+          entity.receipt)->exec();
 }
 
 void ToxDatabase::toxcore_log_add(ToxLogRecvEntity entity) {
-    if (config_get("LOG_CHAT", 1)) {
-        query("INSERT INTO log(friendaddr, recvtime, type, message)"
-              " VALUES (?1, CURRENT_TIMESTAMP, ?2, ?3)",
-              entity.friendaddr,
-              entity.type,
-              entity.data)->exec();
-    } else {
-        //memory db ! todo !
-    }
+    std::string table = config_get("LOG_CHAT", 1) ? "log" : "mem.log";
+
+    query("INSERT INTO " + table + "(friendaddr, recvtime, type, message)"
+          " VALUES (?1, CURRENT_TIMESTAMP, ?2, ?3)",
+          entity.friendaddr,
+          entity.type,
+          entity.data)->exec();
 }
 
 std::vector<ToxLogEntity> ToxDatabase::toxcore_log_get(std::string friendaddr, int offset, int limit) {
@@ -261,8 +261,10 @@ std::vector<ToxLogEntity> ToxDatabase::toxcore_log_get(std::string friendaddr, i
     auto stmt = query("SELECT"
                       " strftime('%s', sendtime),"
                       " strftime('%s', recvtime),"
-                      " type, message FROM log"
-                      " WHERE cast(friendaddr as text) = cast(?1 as text) ORDER BY id DESC LIMIT ?2, ?3",
+                      " type, message"
+                      " FROM (SELECT * FROM log UNION ALL SELECT * FROM mem.log)"
+                      " WHERE cast(friendaddr as text) = cast(?1 as text)"
+                      " ORDER BY ifNull(sendtime, recvtime), id DESC LIMIT ?2, ?3",
                       friendaddr,
                       offset,
                       limit);
