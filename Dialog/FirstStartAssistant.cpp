@@ -25,6 +25,7 @@
 FirstStartAssistant::FirstStartAssistant(Glib::ustring path)
     : path(path), aborted(false) {
     set_default_size(800, 600);
+    set_position(Gtk::WindowPosition::WIN_POS_CENTER_ALWAYS);
 
     import.pack_start(*Gtk::manage(new Gtk::Label(_("NOT_IMPLEMENTED"))));
     finish.pack_start(
