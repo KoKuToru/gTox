@@ -69,7 +69,7 @@ void ToxDatabase::open(const std::string& path, bool init) {
     }
 
     // increase runid
-    config_set("rundid", config_get("runid", 0) + 1);
+    config_set("runid", config_get("runid", 0) + 1);
 
     //attach in memory database
     m_db->exec("ATTACH DATABASE ':memory:' AS mem");
@@ -218,7 +218,7 @@ void ToxDatabase::toxcore_state_add(const std::vector<unsigned char>& state) {
             state)->exec() < 1) {
         query(
             "INSERT INTO toxcore(savetime, state, runid)"
-            " VALUES (CURRENT_TIMESTAMP, ?2, ?1",
+            " VALUES (CURRENT_TIMESTAMP, ?2, ?1)",
             config_get("runid", 0),
             state)->exec();
     }
