@@ -510,19 +510,10 @@ void Tox::inject_event(SEvent ev) {
 
     events.push_back(ev);
 
-
     if (ev.event == READRECEIPT) {
-        /*
-        SQLite::Statement updateq(
-                    *m_db,
-                    "UPDATE log SET recvtime=CURRENT_TIMESTAMP "
-                    "WHERE friendaddr=?1 AND receipt=?2");
-
-        updateq.bind(
-                    1, get_address(ev.readreceipt.nr).data(), TOX_CLIENT_ID_SIZE);
-        updateq.bind(2, ev.readreceipt.data);
-
-        updateq.exec();*/
+        auto addr = get_address(ev.readreceipt.nr);
+        m_db.toxcore_log_set_received(to_hex(addr.data(), addr.size()),
+                                      ev.readreceipt.data);
     } else if (ev.event == FRIENDMESSAGE) {
         auto addr = get_address(ev.friend_message.nr);
         m_db.toxcore_log_add(ToxLogRecvEntity(to_hex(addr.data(), addr.size()),

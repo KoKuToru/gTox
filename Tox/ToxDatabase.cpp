@@ -256,6 +256,15 @@ void ToxDatabase::toxcore_log_add(ToxLogRecvEntity entity) {
           entity.data)->exec();
 }
 
+void ToxDatabase::toxcore_log_set_received(std::string friendaddr, int receipt_id) {
+    for(std::string table : {"log", "mem.log"}) {
+        query("UPDATE " + table + " SET recvtime=CURRENT_TIMESTAMP"
+              " WHERE friendaddr=?1 AND receipt=?2",
+              friendaddr,
+              receipt_id);
+    }
+}
+
 std::vector<ToxLogEntity> ToxDatabase::toxcore_log_get(std::string friendaddr, int offset, int limit) {
     std::vector<ToxLogEntity> res;
     auto stmt = query("SELECT"
