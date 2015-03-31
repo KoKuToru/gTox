@@ -112,3 +112,12 @@ msgstr "<i>This program comes with ABSOLUTELY NO WARRANTY</i>"
 
 msgid "SETTINGS_ABOUT"
 msgstr "About"
+
+msgid "ERROR_REPORT_TEXT_INTRO"
+msgstr "gTox can't continue.\nThe following problem occured:\n<i><b>"
+
+msgid "ERROR_REPORT_TEXT_OUTRO"
+msgstr "</b></i>\n\nPlease make sure that you are using the newest gTox version.\nIf you do use the newest, please report the error to us."
+
+msgid "ERROR_REPORT_BTN"
+msgstr "Report"
