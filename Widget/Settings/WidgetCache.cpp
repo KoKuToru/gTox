@@ -29,17 +29,17 @@ WidgetCache::WidgetCache()
       m_clean_log("Clean up logs"),
       m_clean_file("Clean up recieved files") {
 
-    m_log.set_active(Tox::instance().config_get("LOG_CHAT", "1") == "1");
-    m_file.set_active(Tox::instance().config_get("LOG_FILE", "1") == "1");
+    m_log.set_active(Tox::instance().database().config_get("LOG_CHAT", 1));
+    m_file.set_active(Tox::instance().database().config_get("LOG_FILE", 1));
     m_log.set_halign(Gtk::Align::ALIGN_END);
     m_file.set_halign(Gtk::Align::ALIGN_END);
 
 #if (GTK_MAJOR_VERSION >= 3 && GTK_MINOR_VERSION >= 14)
     m_log.signal_state_set().connect_notify([](bool state) {
-        Tox::instance().config_set("LOG_CHAT", std::to_string((int)state));
+        Tox::instance().database().config_set("LOG_CHAT", state);
     });
     m_file.signal_state_set().connect_notify([](bool state) {
-        Tox::instance().config_set("LOG_FILE", std::to_string((int)state));
+        Tox::instance().database().config_set("LOG_FILE", state);
     });
 #else
 #warning "Without GTK 3.14+ signal_state_set() on Gtk::Switches wont work"
@@ -56,8 +56,8 @@ WidgetCache::WidgetCache()
 
     grid->attach(
         *Gtk::manage(new Gtk::Label("Persist Chatlog", 0.0, 0.5)), 0, 0, 1, 1);
-    grid->attach(
-        *Gtk::manage(new Gtk::Label("Persist File", 0.0, 0.5)), 0, 1, 1, 1);
+    /*grid->attach(
+        *Gtk::manage(new Gtk::Label("Persist File", 0.0, 0.5)), 0, 1, 1, 1);*/
     grid->attach(m_log, 1, 0, 1, 1);
     // grid->attach(m_file, 1, 1, 1, 1);
     grid->attach(m_clean_log, 0, 2, 2, 1);

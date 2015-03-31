@@ -60,7 +60,9 @@ add_custom_command(
 set(DATABASE
     Database/version_1.sql
     Database/version_2.sql
-    Database/version_3.sql)
+    Database/version_3.sql
+    Database/version_4.sql
+    Database/version_5.sql)
 add_custom_command(
     OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/Generated/database.cpp"
     COMMAND "${PROJECT_BINARY_DIR}/Tools/text2h" DATABASE Generated/database ${DATABASE}
@@ -117,7 +119,8 @@ set(SOURCES
     Dialog/Debug/DialogCss.cpp
     Helper/Canberra.cpp
     Helper/ToxEventCallback.cpp
-    Tox/Tox.cpp)
+    Tox/Tox.cpp
+    Tox/ToxDatabase.cpp)
 
 add_executable(${PROJECT_NAME}
      ${SOURCES}

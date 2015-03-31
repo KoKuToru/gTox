@@ -27,6 +27,7 @@
 #include <deque>
 #include <glibmm/ustring.h>
 #include "SQLiteCpp/Database.h"
+#include "ToxDatabase.h"
 
 /**
  * @brief Wraps the toxcore but also add features with a sqlitedb
@@ -55,7 +56,7 @@ class Tox {
     /**
      * @brief Database connection for the custom gTox save file
      */
-    std::shared_ptr<SQLite::Database> m_db;
+    ToxDatabase m_db;
 
   public:
     typedef int FriendNr;
@@ -163,6 +164,8 @@ class Tox {
      * @return tox instance
      */
     static Tox& instance();
+
+    ToxDatabase& database();
 
     /**
      * @brief Destorys the actual instance
@@ -477,27 +480,6 @@ class Tox {
      * @return Chat log
      */
     std::vector<SLog> get_log(FriendNr nr, int offset = 0, int limit = 100);
-
-    /**
-     * @brief Gets a config parameter
-     *
-     * @throws Tox::Exception
-     *
-     * @param name of the paramter
-     * @param value the default value
-     *
-     * @return value of the config parameter
-     */
-    std::string config_get(const std::string& name, const std::string& value);
-    /**
-     * @brief Sets a config parameter
-     *
-     * @throws Tox::Exception
-     *
-     * @param name  of the paramter
-     * @param value of the config parameter
-     */
-    void config_set(const std::string& name, const std::string& value);
 
   protected:
     std::deque<SEvent> events;
