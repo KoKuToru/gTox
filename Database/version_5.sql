@@ -1,1 +1,1 @@
-UPDATE log SET friendaddr = substr(friendaddr,0,64)
+UPDATE log SET friendaddr = substr(friendaddr,1,64)
