@@ -24,7 +24,8 @@
 
 FirstStartAssistant::FirstStartAssistant(Glib::ustring path)
     : path(path), aborted(false) {
-    set_default_size(800, 600);
+    property_resizable() = false;
+    set_size_request(800, 600);
     set_position(Gtk::WindowPosition::WIN_POS_CENTER_ALWAYS);
 
     import.pack_start(*Gtk::manage(new Gtk::Label(_("NOT_IMPLEMENTED"))));
@@ -102,11 +103,11 @@ void FirstStartAssistant::on_close() {
     if (!aborted) {
         Tox::instance().init();
         Tox::FriendAddr myAddr = Tox::instance().get_address();
-
         Glib::ustring sMyAddr = Tox::to_hex(myAddr.data(), 32);
         Tox::instance().set_name(create.getEntryName().get_text());
         Tox::instance().set_status_message("Powered by gTox");
         path = Glib::build_filename(path, sMyAddr + ".state");
+        Tox::instance().database().open(path, true);
         Tox::instance().save(path);
     }
     Gtk::Main::quit();
