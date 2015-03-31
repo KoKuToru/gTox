@@ -83,6 +83,36 @@ class Tox {
         const EError code;
         Exception(const EError code) : code(code) {
         }
+        std::string what() {
+            switch (code) {
+                case UNITIALIZED:
+                    return "Tox::init() never called";
+                case LOADERROR:
+                    return "tox_load() failed";
+                case BOOTERROR:
+                    return "tox_bootstrap_from_address() failed";
+                case FAILED:
+                    return "Something went wrong";
+                case MSGTOOLONG:
+                    return "Message is too long";
+                case MSGEMPTY:
+                    return "Message is empty";
+                case CANTADDYOURSELF:
+                    return "Not possible to add yourself as friend";
+                case ALREADYSENT:
+                    return "Invite already sent";
+                case BADCHECKSUM:
+                    return "Public address wrong";
+                case NOSPAM:
+                    return "Public address NO_SPAM changed";
+                case UNKNOWDBVERSION:
+                    return "gTox save file unknow version";
+                case DBNOTOPEN:
+                    return "Database is not open";
+                default:
+                    return "UNKNOW";
+            }
+        }
     };
 
     enum EEventType {

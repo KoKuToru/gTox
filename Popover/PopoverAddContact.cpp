@@ -20,6 +20,7 @@
 #include "PopoverAddContact.h"
 #include "Generated/icon.h"
 #include "Dialog/DialogContact.h"
+#include "Dialog/DialogError.h"
 #include <glibmm/i18n.h>
 
 #include <iostream>
@@ -59,8 +60,9 @@ PopoverAddContact::PopoverAddContact(const Gtk::Widget& relative_to)
     btn_add->signal_clicked().connect([this]() {
         std::cout << m_addr.get_text().length() << std::endl;
         if (m_addr.get_text().length() != 76) {
-            // TODO error message
-            std::cout << "ERROR2" << std::endl;
+            DialogError(false,
+                        _("ERROR_ADD_CONTACT_ADDR_WRONG_SIZE_TITLE"),
+                        _("ERROR_ADD_CONTACT_ADDR_WRONG_SIZE")).run();
             return;
         }
 
@@ -74,9 +76,41 @@ PopoverAddContact::PopoverAddContact(const Gtk::Widget& relative_to)
             set_visible(false);
             m_addr.set_text("");
             m_msg.get_buffer()->set_text("");
-        } catch (...) {
-            // TODO: Error handling
-            std::cout << "ERROR" << std::endl;
+        } catch (Tox::Exception &ex) {
+            switch(ex.code) {
+                case Tox::MSGTOOLONG:
+                    DialogError(false,
+                                _("ERROR_MSGTOOLONG_TITLE"),
+                                _("ERROR_MSGTOOLONG")).run();
+                    break;
+                case Tox::MSGEMPTY:
+                    DialogError(false,
+                                _("ERROR_MSGEMPTY_TITLE"),
+                                _("ERROR_MSGEMPTY")).run();
+                    break;
+                case Tox::CANTADDYOURSELF:
+                    DialogError(false,
+                                _("ERROR_CANTADDYOURSELF_TITLE"),
+                                _("ERROR_CANTADDYOURSELF")).run();
+                    break;
+                case Tox::ALREADYSENT:
+                    DialogError(false,
+                                _("ERROR_ALREADYSENT_TITLE"),
+                                _("ERROR_ALREADYSENT")).run();
+                    break;
+                case Tox::BADCHECKSUM:
+                    DialogError(false,
+                                _("ERROR_BADCHECKSUM_TITLE"),
+                                _("ERROR_BADCHECKSUM")).run();
+                    break;
+                case Tox::NOSPAM:
+                    DialogError(false,
+                                _("ERROR_NOSPAM_TITLE"),
+                                _("ERROR_NOSPAM")).run();
+                    break;
+                default:
+                    throw;
+            }
         }
     });
 

@@ -121,3 +121,46 @@ msgstr "</b></i>\n\nPlease make sure that you are using the newest gTox version.
 
 msgid "ERROR_REPORT_BTN"
 msgstr "Report"
+
+msgid "ERROR_ADD_CONTACT_ADDR_WRONG_SIZE_TITLE"
+msgstr "Wrong ID length"
+
+msgid "ERROR_ADD_CONTACT_ADDR_WRONG_SIZE"
+msgstr "A tox id must be 76 letters long"
+
+msgid "ERROR_MSGTOOLONG_TITLE"
+msgstr "Message too long"
+
+msgid "ERROR_MSGTOOLONG"
+msgstr "Message can't be that long"
+
+msgid "ERROR_MSGEMPTY_TITLE"
+msgstr "Message is empty"
+
+msgid "ERROR_MSGEMPTY"
+msgstr "Message is not allowed to be empty"
+
+msgid "ERROR_CANTADDYOURSELF_TITLE"
+msgstr "Can't add contact"
+
+msgid "ERROR_CANTADDYOURSELF"
+msgstr "It's not possible to add yourself to your contact list"
+
+msgid "ERROR_ALREADYSENT_TITLE"
+msgstr "Friend invite got already sent"
+
+msgid "ERROR_ALREADYSENT"
+msgstr "It's not possible to add this ID again"
+
+msgid "ERROR_BADCHECKSUM_TITLE"
+msgstr "Bad checksum"
+
+msgid "ERROR_BADCHECKSUM"
+msgstr "This ID is illformed"
+
+msgid "ERROR_NOSPAM_TITLE"
+msgstr "NoSpam value is wrong"
+
+msgid "ERROR_NOSPAM"
+msgstr "Please request a new ID from your friend"
+

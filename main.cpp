@@ -26,6 +26,7 @@
 #include <gtkmm.h>
 #include "Dialog/DialogContact.h"
 #include "Dialog/FirstStartAssistant.h"
+#include "Dialog/DialogError.h"
 #include <libnotifymm.h>
 #include <glibmm/i18n.h>
 
@@ -96,21 +97,41 @@ bool try_setup_translation(const char* lng) {
     return true;
 }
 
+void terminate_handler() {
+    std::exception_ptr exptr = std::current_exception();
+    try {
+        std::rethrow_exception(exptr);
+    } catch (SQLite::Exception &ex) {
+        DialogError(true, "Fatal Unexpected Sqlite Exception", ex.what()).run();
+    } catch (std::string &ex) {
+        DialogError(true, "Fatal Unexpected String Exception", ex).run();
+    } catch (Tox::Exception &ex) {
+        DialogError(true, "Fatal Unexpected Tox Exception", "Code: " + std::to_string(ex.code)).run();
+    } catch (std::exception &ex) {
+        DialogError(true, "Fatal Unexpected Exception", ex.what()).run();
+    } catch (...) {
+        DialogError(true, "Fatal Unexpected Exception", "unknow exception !").run();
+    }
+
+}
+
 int main(int argc, char* argv[]) {
+    std::set_terminate(terminate_handler);
+
     Gtk::Main kit(argc, argv);
 
+    Gtk::Settings::get_default()
+            ->property_gtk_application_prefer_dark_theme() = true;
+    Glib::set_application_name("gTox");
+
     if (!try_setup_translation(nullptr) && !try_setup_translation("en")) {
-        std::cerr << " Couldn't locate locale" << std::endl;
+        DialogError(false, "Fatal Error", "Couldn't find translation files").run();
         return -1;
     }
 
     print_copyright();
 
     Notify::init("gTox");
-
-    Gtk::Settings::get_default()->property_gtk_application_prefer_dark_theme()
-        = true;
-    Glib::set_application_name("gTox");
 
     std::string config_path
         = Glib::build_filename(Glib::get_user_config_dir(), "gTox");
