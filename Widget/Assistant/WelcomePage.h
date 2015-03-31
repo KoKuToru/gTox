@@ -23,7 +23,7 @@
 
 #include <gtkmm.h>
 
-class WelcomePage : public Gtk::Box {
+class WelcomePage : public Gtk::VBox {
   private:
     Gtk::Label test;
 

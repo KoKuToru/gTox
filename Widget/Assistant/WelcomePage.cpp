@@ -20,8 +20,12 @@
 
 #include "WelcomePage.h"
 #include <glibmm/i18n.h>
+#include "Generated/icon.h"
 
 WelcomePage::WelcomePage() : test(_("WELCOME_PAGE_MSG")) {
+    property_valign() = Gtk::ALIGN_CENTER;
+    property_halign() = Gtk::ALIGN_CENTER;
+    pack_start(*Gtk::manage(new Gtk::Image(ICON::load_icon(ICON::icon_128))));
     pack_start(test);
 }
 
