@@ -40,7 +40,10 @@ void ToxDatabase::open(const std::string& path, bool init) {
         auto version = config_get("version", 0);
 
         std::string* upgrade_scripts[]
-            = {&DATABASE::version_2, &DATABASE::version_3, &DATABASE::version_4};
+            = {&DATABASE::version_2,
+               &DATABASE::version_3,
+               &DATABASE::version_4,
+               &DATABASE::version_5};
 
         if (version < 1 || version > (int)sizeof(upgrade_scripts)) {
             throw "ERROR";
@@ -236,6 +239,7 @@ std::vector<ToxBootstrapEntity> ToxDatabase::toxcore_bootstrap_get(bool active_o
 }
 
 void ToxDatabase::toxcore_log_add(ToxLogSendEntity entity) {
+    entity.friendaddr.resize(64);
     std::string table = config_get("LOG_CHAT", 1) ? "log" : "mem.log";
 
     query("INSERT INTO " + table + "(friendaddr, sendtime, type, message, receipt)"
@@ -247,6 +251,7 @@ void ToxDatabase::toxcore_log_add(ToxLogSendEntity entity) {
 }
 
 void ToxDatabase::toxcore_log_add(ToxLogRecvEntity entity) {
+    entity.friendaddr.resize(64);
     std::string table = config_get("LOG_CHAT", 1) ? "log" : "mem.log";
 
     query("INSERT INTO " + table + "(friendaddr, recvtime, type, message)"
@@ -257,6 +262,7 @@ void ToxDatabase::toxcore_log_add(ToxLogRecvEntity entity) {
 }
 
 void ToxDatabase::toxcore_log_set_received(std::string friendaddr, int receipt_id) {
+    friendaddr.resize(64);
     for(std::string table : {"log", "mem.log"}) {
         query("UPDATE " + table + " SET recvtime=CURRENT_TIMESTAMP"
               " WHERE friendaddr=?1 AND receipt=?2",
@@ -266,6 +272,7 @@ void ToxDatabase::toxcore_log_set_received(std::string friendaddr, int receipt_i
 }
 
 std::vector<ToxLogEntity> ToxDatabase::toxcore_log_get(std::string friendaddr, int offset, int limit) {
+    friendaddr.resize(64);
     std::vector<ToxLogEntity> res;
     auto stmt = query("SELECT"
                       " strftime('%s', sendtime),"
