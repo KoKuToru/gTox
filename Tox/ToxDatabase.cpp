@@ -212,8 +212,9 @@ void ToxDatabase::toxcore_state_add(const std::vector<unsigned char>& state) {
 
     int runid = config_get("runid", 0);
     if (query(
-            "UPDATE toxcore(savetime, state, runid)"
-            " SET (CURRENT_TIMESTAMP, ?2, ?1) WHERE runid=?1",
+            "UPDATE toxcore"
+            " SET savetime = CURRENT_TIMESTAMP, state = ?2, runid = ?1"
+            " WHERE runid=?1",
             runid,
             state)->exec() < 1) {
         query(
