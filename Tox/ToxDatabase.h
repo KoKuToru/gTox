@@ -51,13 +51,13 @@ class ToxLogBaseEntity {
 };
 
 class ToxLogRecvEntity:
-        virtual public ToxLogBaseEntity {
+        public ToxLogBaseEntity {
     public:
         using ToxLogBaseEntity::ToxLogBaseEntity;
 };
 
 class ToxLogSendEntity:
-        virtual public ToxLogBaseEntity {
+        public ToxLogBaseEntity {
     public:
         ToxLogSendEntity() = default;
         ToxLogSendEntity(std::string friendaddr,
@@ -68,9 +68,7 @@ class ToxLogSendEntity:
 };
 
 class ToxLogEntity:
-        public ToxLogRecvEntity,
-        public ToxLogSendEntity,
-        virtual public ToxLogBaseEntity {
+        public ToxLogSendEntity {
     public:
         ToxLogEntity() = default;
         unsigned long long recvtime;
