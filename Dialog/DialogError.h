@@ -28,8 +28,7 @@
 // Single chat window
 class DialogError : public Gtk::MessageDialog {
   private:
-    bool m_fatal;
-    Gtk::HeaderBar m_header;
+    std::string get_stacktrace();
 
   public:
     DialogError(bool fatal, std::string title, std::string message);
