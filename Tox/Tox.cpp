@@ -70,13 +70,13 @@ void Tox::init(const Glib::ustring& statefile) {
     // install callbacks
     tox_callback_friend_request(m_tox, Tox::callback_friend_request, nullptr);
     tox_callback_friend_message(m_tox, Tox::callback_friend_message, nullptr);
-    tox_callback_friend_action(m_tox, Tox::callback_friend_action, nullptr);
-    tox_callback_name_change(m_tox, Tox::callback_name_change, nullptr);
-    tox_callback_status_message(m_tox, Tox::callback_status_message, nullptr);
-    tox_callback_user_status(m_tox, Tox::callback_user_status, nullptr);
-    tox_callback_typing_change(m_tox, Tox::callback_typing_change, nullptr);
-    tox_callback_read_receipt(m_tox, Tox::callback_read_receipt, nullptr);
-    tox_callback_connection_status(
+    //tox_callback_friend_action(m_tox, Tox::callback_friend_action, nullptr);
+    tox_callback_friend_name(m_tox, Tox::callback_name_change, nullptr);
+    tox_callback_friend_status_message(m_tox, Tox::callback_status_message, nullptr);
+    tox_callback_friend_status(m_tox, Tox::callback_user_status, nullptr);
+    tox_callback_friend_typing(m_tox, Tox::callback_typing_change, nullptr);
+    tox_callback_friend_read_receipt(m_tox, Tox::callback_read_receipt, nullptr);
+    tox_callback_friend_connection_status(
         m_tox, Tox::callback_connection_status, nullptr);
 
     m_db.close();
@@ -160,8 +160,8 @@ std::vector<Tox::FriendNr> Tox::get_friendlist() {
     if (m_tox == nullptr) {
         throw Exception(UNITIALIZED);
     }
-    std::vector<FriendNr> tmp(tox_count_friendlist(m_tox));
-    tmp.resize(tox_get_friendlist(m_tox, tmp.data(), tmp.size()));
+    std::vector<FriendNr> tmp(tox_self_get_friend_list_size(m_tox));
+    tmp.resize(tox_self_get_friend_list(m_tox, tmp.data(), tmp.size()));
     return tmp;
 }
 
@@ -171,7 +171,7 @@ Tox::FriendAddr Tox::get_address() {
         throw Exception(UNITIALIZED);
     }
     FriendAddr tmp;
-    tox_get_address(m_tox, tmp.data());
+    tox_self_get_address(m_tox, tmp.data());
     return tmp;
 }
 
