@@ -281,7 +281,7 @@ std::vector<ToxLogEntity> ToxDatabase::toxcore_log_get(std::string friendaddr, i
                       " type, message"
                       " FROM (SELECT * FROM log UNION ALL SELECT * FROM mem.log)"
                       " WHERE cast(friendaddr as text) = cast(?1 as text)"
-                      " ORDER BY ifNull(sendtime, recvtime), id DESC LIMIT ?2, ?3",
+                      " ORDER BY ifNull(sendtime, recvtime) DESC, id DESC LIMIT ?2, ?3",
                       friendaddr,
                       offset,
                       limit);
