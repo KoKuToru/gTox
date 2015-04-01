@@ -112,11 +112,12 @@ void terminate_handler() {
     } catch (...) {
         DialogError(true, "Fatal Unexpected Exception", "unknow exception !").run();
     }
-
+    abort();
 }
 
 int main(int argc, char* argv[]) {
     std::set_terminate(terminate_handler);
+    Glib::add_exception_handler(sigc::ptr_fun(&terminate_handler));
 
     Gtk::Main kit(argc, argv);
 
