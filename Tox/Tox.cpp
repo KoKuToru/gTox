@@ -63,8 +63,8 @@ void Tox::init(const Glib::ustring& statefile) {
         m_tox = nullptr;
     }
     Tox_Options options;
-    options.ipv6enabled = true;
-    options.udp_disabled = false;
+    options.ipv6_enabled = true;
+    options.udp_enabled = true;
     m_tox = tox_new(&options);
 
     // install callbacks

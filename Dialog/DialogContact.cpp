@@ -344,7 +344,7 @@ WidgetChat* DialogContact::get_chat(Tox::FriendNr nr, DialogChat*& dialog) {
 
     m_chat.add(*item,
                Tox::to_hex(Tox::instance().get_address(nr).data(),
-                           TOX_CLIENT_ID_SIZE));
+                           TOX_PUBLIC_KEY_SIZE));
 
     return item;
 }

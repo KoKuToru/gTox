@@ -61,7 +61,7 @@ class Tox {
   public:
     typedef int FriendNr;
     typedef int ReceiptNr;
-    typedef std::array<unsigned char, TOX_FRIEND_ADDRESS_SIZE> FriendAddr;
+    typedef std::array<unsigned char, TOX_ADDRESS_SIZE> FriendAddr;
 
     enum EError {
         UNITIALIZED,      //!< Tox::init() never called
@@ -180,10 +180,10 @@ class Tox {
 
     enum EUSERSTATUS {
         OFFLINE = -1,
-        NONE = TOX_USERSTATUS_NONE,
-        AWAY = TOX_USERSTATUS_AWAY,
-        BUSY = TOX_USERSTATUS_BUSY,
-        INVALID = TOX_USERSTATUS_INVALID
+        NONE = TOX_USER_STATUS::TOX_USER_STATUS_NONE,
+        AWAY = TOX_USER_STATUS::TOX_USER_STATUS_AWAY,
+        BUSY = TOX_USER_STATUS::TOX_USER_STATUS_BUSY,
+        //INVALID = TOX_USERSTATUS_INVALID
     };
 
     /**
