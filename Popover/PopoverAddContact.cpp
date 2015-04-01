@@ -59,7 +59,7 @@ PopoverAddContact::PopoverAddContact(const Gtk::Widget& relative_to)
 
     btn_add->signal_clicked().connect([this]() {
         std::cout << m_addr.get_text().length() << std::endl;
-        if (m_addr.get_text().length() != 76) {
+        if (m_addr.get_text().length() != TOX_ADDRESS_SIZE * 2) {
             DialogError(false,
                         _("ERROR_ADD_CONTACT_ADDR_WRONG_SIZE_TITLE"),
                         _("ERROR_ADD_CONTACT_ADDR_WRONG_SIZE")).run();
