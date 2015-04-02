@@ -309,7 +309,7 @@ void DialogContact::tox_event_handling(const Tox::SEvent& ev) {
             break;
         case Tox::EEventType::TYPINGCHANGE:
             std::cout << "TYPINGCHANGE !" << ev.typing_change.nr << " -> "
-                      << ev.typing_change.data << std::endl;
+                      << ev.typing_change.is_typing << std::endl;
             break;
         default:
             break;

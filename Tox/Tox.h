@@ -59,59 +59,13 @@ class Tox {
     ToxDatabase m_db;
 
   public:
-    typedef int FriendNr;
+    typedef uint32_t FriendNr;
     typedef int ReceiptNr;
     typedef std::array<unsigned char, TOX_ADDRESS_SIZE> FriendAddr;
 
-    enum EError {
-        UNITIALIZED,      //!< Tox::init() never called
-        LOADERROR,        //!< tox_load() failed
-        BOOTERROR,        //!< tox_bootstrap_from_address() failed
-        FILEERROR,        //!< unused
-        FAILED,           //!< something went wrong
-        MSGTOOLONG,       //!< Message is too long
-        MSGEMPTY,         //!< Message is empty
-        CANTADDYOURSELF,  //!< Not possible to add yourself as friend
-        ALREADYSENT,      //!< Invite already sent
-        BADCHECKSUM,      //!< Public address wrong
-        NOSPAM,           //!< Public address NO_SPAM changed
-        UNKNOWDBVERSION,  //!< gTox save file unknow version
-        DBNOTOPEN         //!< Database is not open
-    };
-
     struct Exception {
-        const EError code;
-        Exception(const EError code) : code(code) {
-        }
-        std::string what() {
-            switch (code) {
-                case UNITIALIZED:
-                    return "Tox::init() never called";
-                case LOADERROR:
-                    return "tox_load() failed";
-                case BOOTERROR:
-                    return "tox_bootstrap_from_address() failed";
-                case FAILED:
-                    return "Something went wrong";
-                case MSGTOOLONG:
-                    return "Message is too long";
-                case MSGEMPTY:
-                    return "Message is empty";
-                case CANTADDYOURSELF:
-                    return "Not possible to add yourself as friend";
-                case ALREADYSENT:
-                    return "Invite already sent";
-                case BADCHECKSUM:
-                    return "Public address wrong";
-                case NOSPAM:
-                    return "Public address NO_SPAM changed";
-                case UNKNOWDBVERSION:
-                    return "gTox save file unknow version";
-                case DBNOTOPEN:
-                    return "Database is not open";
-                default:
-                    return "UNKNOW";
-            }
+        const std::string code;
+        Exception(const std::string code) : code(code) {
         }
     };
 
@@ -139,12 +93,12 @@ class Tox {
 
     struct SFriendInt {
         FriendNr nr;
-        int data;
+        unsigned data;
     };
 
     struct SFriendBool {
         FriendNr nr;
-        bool data;
+        bool is_typing;
     };
 
     struct SCustom {
@@ -183,7 +137,10 @@ class Tox {
         NONE = TOX_USER_STATUS::TOX_USER_STATUS_NONE,
         AWAY = TOX_USER_STATUS::TOX_USER_STATUS_AWAY,
         BUSY = TOX_USER_STATUS::TOX_USER_STATUS_BUSY,
-        //INVALID = TOX_USERSTATUS_INVALID
+        TCP_ONLY = 0x1000,
+        TCP_ONLY_NONE = TOX_USER_STATUS::TOX_USER_STATUS_NONE | 0x1000,
+        TCP_ONLY_AWAY = TOX_USER_STATUS::TOX_USER_STATUS_AWAY | 0x1000,
+        TCP_ONLY_BUSY = TOX_USER_STATUS::TOX_USER_STATUS_BUSY | 0x1000,
     };
 
     /**
@@ -517,40 +474,41 @@ class Tox {
     static void callback_friend_request(Tox*,
                                         const unsigned char* addr,
                                         const unsigned char* data,
-                                        unsigned short len,
+                                        size_t len,
                                         void*);
     static void callback_friend_message(Tox*,
                                         FriendNr nr,
+                                        TOX_MESSAGE_TYPE type,
                                         const unsigned char* data,
-                                        unsigned short len,
+                                        size_t len,
                                         void*);
     static void callback_friend_action(Tox*,
                                        FriendNr nr,
                                        const unsigned char* data,
-                                       unsigned short len,
+                                       size_t len,
                                        void*);
     static void callback_name_change(Tox*,
                                      FriendNr nr,
                                      const unsigned char* data,
-                                     unsigned short len,
+                                     size_t len,
                                      void*);
     static void callback_status_message(Tox*,
                                         FriendNr nr,
                                         const unsigned char* data,
-                                        unsigned short len,
+                                        size_t len,
                                         void*);
     static void callback_user_status(Tox*,
                                      FriendNr nr,
-                                     unsigned char data,
+                                     TOX_USER_STATUS data,
                                      void*);
     static void callback_typing_change(Tox*,
                                        FriendNr nr,
-                                       unsigned char data,
+                                       bool data,
                                        void*);
     static void callback_read_receipt(Tox*, FriendNr nr, unsigned data, void*);
     static void callback_connection_status(Tox*,
                                            FriendNr nr,
-                                           unsigned char data,
+                                           TOX_CONNECTION data,
                                            void*);
 
     void inject_event(SEvent ev);

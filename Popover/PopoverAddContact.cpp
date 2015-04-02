@@ -77,7 +77,7 @@ PopoverAddContact::PopoverAddContact(const Gtk::Widget& relative_to)
             m_addr.set_text("");
             m_msg.get_buffer()->set_text("");
         } catch (Tox::Exception &ex) {
-            switch(ex.code) {
+            /*switch(ex.code) {
                 case Tox::MSGTOOLONG:
                     DialogError(false,
                                 _("ERROR_MSGTOOLONG_TITLE"),
@@ -110,7 +110,7 @@ PopoverAddContact::PopoverAddContact(const Gtk::Widget& relative_to)
                     break;
                 default:
                     throw;
-            }
+            }*/
         }
     });
 
