@@ -33,6 +33,8 @@ INSERT INTO toxcore(id, savetime, state, runid)
 SELECT id, savetime, state, 0
 FROM toxcore_tmp;
 
+DROP TABLE toxcore_tmp;
+
 --UPDATE CONFIG
 DELETE FROM config WHERE name = 'version';
 INSERT INTO config(name, value) VALUES('version', 2);
