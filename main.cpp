@@ -103,12 +103,12 @@ void terminate_handler() {
         std::rethrow_exception(exptr);
     } catch (SQLite::Exception &ex) {
         DialogError(true, "Fatal Unexpected Sqlite Exception", ex.what()).run();
-    } catch (std::string &ex) {
-        DialogError(true, "Fatal Unexpected String Exception", ex).run();
     } catch (Tox::Exception &ex) {
-        DialogError(true, "Fatal Unexpected Tox Exception", ex.what()).run();
+        DialogError(true, "Fatal Unexpected Tox Exception", gettext(ex.what())).run();
     } catch (std::exception &ex) {
         DialogError(true, "Fatal Unexpected Exception", ex.what()).run();
+    } catch (std::string &ex) {
+        DialogError(true, "Fatal Unexpected String Exception", ex).run();
     } catch (...) {
         DialogError(true, "Fatal Unexpected Exception", "unknow exception !").run();
     }

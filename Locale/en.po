@@ -128,39 +128,113 @@ msgstr "Wrong ID length"
 msgid "ERROR_ADD_CONTACT_ADDR_WRONG_SIZE"
 msgstr "A tox id must be 76 letters long"
 
-msgid "ERROR_MSGTOOLONG_TITLE"
-msgstr "Message too long"
+msgid "TOX_ERR_OPTIONS_NEW_MALLOC"
+msgstr "TOX_ERR_OPTIONS_NEW_MALLOC\nThe function failed to allocate enough memory for the options struct."
 
-msgid "ERROR_MSGTOOLONG"
-msgstr "Message can't be that long"
+msgid "TOX_ERR_NEW_NULL"
+msgstr "TOX_ERR_NEW_NULL"
 
-msgid "ERROR_MSGEMPTY_TITLE"
-msgstr "Message is empty"
+msgid "TOX_ERR_NEW_MALLOC"
+msgstr "TOX_ERR_NEW_MALLOC\nThe function was unable to allocate enough memory to store the internal structures for the Tox object"
 
-msgid "ERROR_MSGEMPTY"
-msgstr "Message is not allowed to be empty"
+msgid "TOX_ERR_NEW_PORT_ALLOC"
+msgstr "TOX_ERR_NEW_PORT_ALLOC\nThe function was unable to bind to a port. This may mean that all ports have already been bound, e.g. by other Tox instances, or it may mean a permission error. You may be able to gather more information from errno."
 
-msgid "ERROR_CANTADDYOURSELF_TITLE"
-msgstr "Can't add contact"
+msgid "TOX_ERR_NEW_PROXY_BAD_TYPE"
+msgstr "TOX_ERR_NEW_PROXY_BAD_TYPE\nproxy_type was invalid."
 
-msgid "ERROR_CANTADDYOURSELF"
-msgstr "It's not possible to add yourself to your contact list"
+msgid "TOX_ERR_NEW_PROXY_BAD_HOST"
+msgstr "TOX_ERR_NEW_PROXY_BAD_HOST\nproxy_type was valid but the proxy_host passed had an invalid format or was NULL."
 
-msgid "ERROR_ALREADYSENT_TITLE"
-msgstr "Friend invite got already sent"
+msgid "TOX_ERR_NEW_PROXY_BAD_PORT"
+msgstr "TOX_ERR_NEW_PROXY_BAD_PORT\nproxy_type was valid, but the proxy_port was invalid."
 
-msgid "ERROR_ALREADYSENT"
-msgstr "It's not possible to add this ID again"
+msgid "TOX_ERR_NEW_PROXY_NOT_FOUND"
+msgstr "TOX_ERR_NEW_PROXY_NOT_FOUND\nThe proxy host passed could not be resolved."
 
-msgid "ERROR_BADCHECKSUM_TITLE"
-msgstr "Bad checksum"
+msgid "TOX_ERR_NEW_LOAD_ENCRYPTED"
+msgstr "TOX_ERR_NEW_LOAD_ENCRYPTED\nThe byte array to be loaded contained an encrypted save."
 
-msgid "ERROR_BADCHECKSUM"
-msgstr "This ID is illformed"
+msgid "TOX_ERR_NEW_LOAD_BAD_FORMAT"
+msgstr "TOX_ERR_NEW_LOAD_BAD_FORMAT\nhe data format was invalid. This can happen when loading data that was saved by an older version of Tox, or when the data has been corrupted. When loading from badly formatted data, some data may have been loaded, and the rest is discarded. Passing an invalid length parameter also causes this error."
 
-msgid "ERROR_NOSPAM_TITLE"
-msgstr "NoSpam value is wrong"
+msgid "TOX_ERR_BOOTSTRAP_NULL"
+msgstr "TOX_ERR_BOOTSTRAP_NULL"
 
-msgid "ERROR_NOSPAM"
-msgstr "Please request a new ID from your friend"
+msgid "TOX_ERR_BOOTSTRAP_BAD_HOST"
+msgstr "TOX_ERR_BOOTSTRAP_BAD_HOST\nThe host could not be resolved to an IP address, or the IP address passed was invalid."
 
+msgid "TOX_ERR_BOOTSTRAP_BAD_PORT"
+msgstr "TOX_ERR_BOOTSTRAP_BAD_PORT\nThe port passed was invalid. The valid port range is (1, 65535)."
+
+msgid "TOX_ERR_SET_INFO_NULL"
+msgstr "TOX_ERR_SET_INFO_NULL"
+
+msgid "TOX_ERR_SET_INFO_TOO_LONG"
+msgstr "TOX_ERR_SET_INFO_TOO_LONG\nInformation length exceeded maximum permissible size."
+
+msgid "TOX_ERR_FRIEND_ADD_NULL"
+msgstr "TOX_ERR_FRIEND_ADD_NULL"
+
+msgid "TOX_ERR_FRIEND_ADD_TOO_LONG"
+msgstr "TOX_ERR_FRIEND_ADD_TOO_LONG\nThe length of the friend request message exceeded TOX_MAX_FRIEND_REQUEST_LENGTH."
+
+msgid "TOX_ERR_FRIEND_ADD_NO_MESSAGE"
+msgstr "TOX_ERR_FRIEND_ADD_NO_MESSAGE\nThe friend request message was empty. This, and the TOO_LONG code will never be returned from tox_friend_add_norequest."
+
+msgid "TOX_ERR_FRIEND_ADD_OWN_KEY"
+msgstr "TOX_ERR_FRIEND_ADD_OWN_KEY\nThe friend address belongs to the sending client."
+
+msgid "TOX_ERR_FRIEND_ADD_ALREADY_SENT"
+msgstr "TOX_ERR_FRIEND_ADD_ALREADY_SENT\nA friend request has already been sent, or the address belongs to a friend that is already on the friend list."
+
+msgid "TOX_ERR_FRIEND_ADD_BAD_CHECKSUM"
+msgstr "TOX_ERR_FRIEND_ADD_BAD_CHECKSUM\nThe friend address checksum failed."
+
+msgid "TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM"
+msgstr "TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM\nThe friend was already there, but the nospam value was different."
+
+msgid "TOX_ERR_FRIEND_ADD_MALLOC"
+msgstr "TOX_ERR_FRIEND_ADD_MALLOC\nA memory allocation failed when trying to increase the friend list size."
+
+msgid "TOX_ERR_FRIEND_DELETE_FRIEND_NOT_FOUND"
+msgstr "TOX_ERR_FRIEND_DELETE_FRIEND_NOT_FOUND\nThere was no friend with the given friend number. No friends were deleted."
+
+msgid "TOX_ERR_FRIEND_BY_PUBLIC_KEY_NULL"
+msgstr "TOX_ERR_FRIEND_BY_PUBLIC_KEY_NULL"
+
+msgid "TOX_ERR_FRIEND_BY_PUBLIC_KEY_NOT_FOUND"
+msgstr "TOX_ERR_FRIEND_BY_PUBLIC_KEY_NOT_FOUND\nNo friend with the given Public Key exists on the friend list."
+
+msgid "TOX_ERR_FRIEND_GET_PUBLIC_KEY_FRIEND_NOT_FOUND"
+msgstr "TOX_ERR_FRIEND_GET_PUBLIC_KEY_FRIEND_NOT_FOUND\nNo friend with the given number exists on the friend list."
+
+msgid "TOX_ERR_FRIEND_GET_LAST_ONLINE_FRIEND_NOT_FOUND"
+msgstr "TOX_ERR_FRIEND_GET_LAST_ONLINE_FRIEND_NOT_FOUND\nNo friend with the given number exists on the friend list."
+
+msgid "TOX_ERR_FRIEND_QUERY_NULL"
+msgstr "TOX_ERR_FRIEND_QUERY_NULL\nThe pointer parameter for storing the query result (name, message) was NULL. Unlike the `_self_` variants of these functions, which have no effect when a parameter is NULL, these functions return an error in that case."
+
+msgid "TOX_ERR_FRIEND_QUERY_FRIEND_NOT_FOUND"
+msgstr "TOX_ERR_FRIEND_QUERY_FRIEND_NOT_FOUND\nThe friend_number did not designate a valid friend."
+
+msgid "TOX_ERR_SET_TYPING_FRIEND_NOT_FOUND"
+msgstr "TOX_ERR_SET_TYPING_FRIEND_NOT_FOUND\nThe friend number did not designate a valid friend."
+
+msgid "TOX_ERR_FRIEND_SEND_MESSAGE_NULL"
+msgstr "TOX_ERR_FRIEND_SEND_MESSAGE_NULL"
+
+msgid "TOX_ERR_FRIEND_SEND_MESSAGE_FRIEND_NOT_FOUND"
+msgstr "TOX_ERR_FRIEND_SEND_MESSAGE_FRIEND_NOT_FOUND\nThe friend number did not designate a valid friend."
+
+msgid "TOX_ERR_FRIEND_SEND_MESSAGE_FRIEND_NOT_CONNECTED"
+msgstr "TOX_ERR_FRIEND_SEND_MESSAGE_FRIEND_NOT_CONNECTED\nThis client is currently not connected to the friend."
+
+msgid "TOX_ERR_FRIEND_SEND_MESSAGE_SENDQ"
+msgstr "TOX_ERR_FRIEND_SEND_MESSAGE_SENDQ\nAn allocation error occurred while increasing the send queue size."
+
+msgid "TOX_ERR_FRIEND_SEND_MESSAGE_TOO_LONG"
+msgstr "TOX_ERR_FRIEND_SEND_MESSAGE_TOO_LONG\nMessage length exceeded TOX_MAX_MESSAGE_LENGTH."
+
+msgid "TOX_ERR_FRIEND_SEND_MESSAGE_EMPTY"
+msgstr "TOX_ERR_FRIEND_SEND_MESSAGE_EMPTY\nAttempted to send a zero-length message."
