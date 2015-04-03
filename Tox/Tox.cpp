@@ -491,17 +491,17 @@ void Tox::set_status(Tox::EUSERSTATUS value) {
     tox_self_set_status(m_tox, (TOX_USER_STATUS)value);
 }
 
-unsigned long long Tox::get_last_online(Tox::FriendNr) {
+unsigned long long Tox::get_last_online(Tox::FriendNr nr) {
     std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
         throw std::runtime_error("TOX_UNITIALIZED");
     }
-    /*unsigned long long t = tox_get_last_online(m_tox, nr);
-    if (t == ~0ull) {
-        throw Exception(FAILED);
-    }*/
-    throw std::runtime_error("tox_get_last_online no alternative ?");
-    return 0;
+    TOX_ERR_FRIEND_GET_LAST_ONLINE error;
+    auto res = tox_friend_get_last_online(m_tox, nr, &error);
+    if (error != TOX_ERR_FRIEND_GET_LAST_ONLINE_OK) {
+        throw Exception(error);
+    }
+    return res;
 }
 
 void Tox::send_typing(FriendNr nr, bool is_typing) {

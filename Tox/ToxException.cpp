@@ -205,3 +205,16 @@ ToxException::ToxException(TOX_ERR_FRIEND_GET_PUBLIC_KEY error):
         throw std::runtime_error("TOX_ERR_SET_TYPING unknow error code " + std::to_string(error));
     }
 }
+
+ToxException::ToxException(TOX_ERR_FRIEND_GET_LAST_ONLINE error):
+    m_type(typeid(error)) {
+    static std::map<decltype(error), std::string> enum2str =
+    {{TOX_ERR_FRIEND_GET_LAST_ONLINE_FRIEND_NOT_FOUND, "TOX_ERR_FRIEND_GET_LAST_ONLINE_FRIEND_NOT_FOUND"}};
+    auto iter = enum2str.find(error);
+    if (iter != enum2str.end()) {
+        m_what = iter->second;
+        m_what_id = error;
+    } else {
+        throw std::runtime_error("TOX_ERR_FRIEND_GET_LAST_ONLINE unknow error code " + std::to_string(error));
+    }
+}
