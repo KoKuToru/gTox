@@ -456,13 +456,7 @@ Tox::EUSERSTATUS Tox::get_status() {
         return EUSERSTATUS::OFFLINE;
     }
 
-    auto status = (EUSERSTATUS)tox_self_get_status(m_tox);
-
-    if (con == TOX_CONNECTION_TCP) {
-        status = (EUSERSTATUS)(status | EUSERSTATUS::TCP_ONLY);
-    }
-
-    return status;
+    return (EUSERSTATUS)tox_self_get_status(m_tox);
 }
 
 Tox::EUSERSTATUS Tox::get_status(FriendNr nr) {
@@ -483,9 +477,6 @@ Tox::EUSERSTATUS Tox::get_status(FriendNr nr) {
     if (error != TOX_ERR_FRIEND_QUERY_OK) {
         throw Exception(error);
     }
-    if (con == TOX_CONNECTION_TCP) {
-        status = (EUSERSTATUS)(status | EUSERSTATUS::TCP_ONLY);
-    }
 
     return status;
 }
@@ -497,7 +488,7 @@ void Tox::set_status(Tox::EUSERSTATUS value) {
     }
     if (value == Tox::OFFLINE)
         value = Tox::AWAY;  // we can't set status to offline
-    tox_self_set_status(m_tox, (TOX_USER_STATUS)(value & ~EUSERSTATUS::TCP_ONLY));
+    tox_self_set_status(m_tox, (TOX_USER_STATUS)value);
 }
 
 unsigned long long Tox::get_last_online(Tox::FriendNr) {

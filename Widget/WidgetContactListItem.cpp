@@ -130,7 +130,6 @@ void WidgetContactListItem::refresh() {
             case Tox::EUSERSTATUS::BUSY:
                 status = &ICON::status_busy;
                 break;
-            //case Tox::EUSERSTATUS::INVALID:
             case Tox::EUSERSTATUS::NONE:
                 status = &ICON::status_online;
                 break;
