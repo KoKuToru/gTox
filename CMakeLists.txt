@@ -143,6 +143,11 @@ if(NOT GETTEXT_MSGFMT_EXECUTABLE)
     message(FATAL_ERROR "msgfmt not found")
 endif()
 
+find_program(GETTEXT_MSGMERGE_EXECUTABLE msgmerge)
+if(NOT GETTEXT_MSGMERGE_EXECUTABLE)
+    message(FATAL_ERROR "msgmerge not found")
+endif()
+
 SET(TRANSLATIONS
     de
     en
@@ -154,7 +159,8 @@ add_custom_command(
    TARGET ${PROJECT_NAME}
    PRE_BUILD
    COMMAND mkdir -p Locale/${_trans}/LC_MESSAGES
-   COMMAND ${GETTEXT_MSGFMT_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/Locale/${_trans}.po" -o "${PROJECT_BINARY_DIR}/Locale/${_trans}/LC_MESSAGES/gTox.mo"
+   COMMAND ${GETTEXT_MSGMERGE_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/Locale/${_trans}.po" "${CMAKE_CURRENT_SOURCE_DIR}/Locale/en.po" -o "${CMAKE_CURRENT_SOURCE_DIR}/Generated/${_trans}.po"
+   COMMAND ${GETTEXT_MSGFMT_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/Generated/${_trans}.po" -o "${PROJECT_BINARY_DIR}/Locale/${_trans}/LC_MESSAGES/gTox.mo"
    DEPENDS Locale/${_trans}.po)
    install(DIRECTORY "${PROJECT_BINARY_DIR}/Locale/${_trans}"
            DESTINATION share/locale
