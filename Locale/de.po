@@ -120,7 +120,7 @@ msgid "SETTINGS_ABOUT"
 msgstr "Über"
 
 msgid "ERROR_REPORT_TEXT_INTRO"
-msgstr "Leider kann gTox nicht weiter ausgeführt werden.\nFolgendes Problem ist aufgetreten:\n<i><b>"
+msgstr "Leider kann gTox nicht weiter ausgeführt werden.\nFolgendes Problem ist aufgetreten:\n\n<i><b>"
 
 msgid "ERROR_REPORT_TEXT_OUTRO"
 msgstr "</b></i>\n\nBitte stellen Sie sicher das Sie die neuste gTox Version benützen.\nSollten Sie die neusten gTox Version benützen, wären wir Ihnen sehr Dankbar wenn Sie uns diesen Fehler melden würden."
