@@ -28,7 +28,7 @@
 #include <glibmm/ustring.h>
 #include "SQLiteCpp/Database.h"
 #include "ToxDatabase.h"
-
+#include "ToxException.h"
 /**
  * @brief Wraps the toxcore but also add features with a sqlitedb
  */
@@ -63,11 +63,7 @@ class Tox {
     typedef int ReceiptNr;
     typedef std::array<unsigned char, TOX_ADDRESS_SIZE> FriendAddr;
 
-    struct Exception {
-        const std::string code;
-        Exception(const std::string code) : code(code) {
-        }
-    };
+    typedef ToxException Exception;
 
     enum EEventType {
         FRIENDREQUEST,

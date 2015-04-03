@@ -67,16 +67,8 @@ void Tox::init(const Glib::ustring& statefile) {
                                                 [](Tox_Options* p) {
                                                     tox_options_free(p);
                                                 });
-    switch(nerror) {
-        case TOX_ERR_OPTIONS_NEW_OK:
-            //all okay
-            break;
-        case TOX_ERR_OPTIONS_NEW_MALLOC:
-            throw Exception("TOX_ERR_OPTIONS_NEW_MALLOC");
-            break;
-        default:
-            throw std::runtime_error("tox_options_new unknow error code");
-            break;
+    if (nerror != TOX_ERR_OPTIONS_NEW_OK) {
+        throw Exception(nerror);
     }
 
     options->ipv6_enabled = true;
@@ -96,40 +88,8 @@ void Tox::init(const Glib::ustring& statefile) {
     TOX_ERR_NEW error;
     m_tox = tox_new(options.get(), state.data(), state.size(), &error);
 
-    switch(error) {
-        case TOX_ERR_NEW_OK:
-            //all okay
-            break;
-        case TOX_ERR_NEW_NULL:
-            throw Exception("TOX_ERR_NEW_NULL");
-            break;
-        case TOX_ERR_NEW_MALLOC:
-            throw Exception("TOX_ERR_NEW_MALLOC");
-            break;
-        case TOX_ERR_NEW_PORT_ALLOC:
-            throw Exception("TOX_ERR_NEW_PORT_ALLOC");
-            break;
-        case TOX_ERR_NEW_PROXY_BAD_TYPE:
-            throw Exception("TOX_ERR_NEW_PROXY_BAD_TYPE");
-            break;
-        case TOX_ERR_NEW_PROXY_BAD_HOST:
-            throw Exception("TOX_ERR_NEW_PROXY_BAD_HOST");
-            break;
-        case TOX_ERR_NEW_PROXY_BAD_PORT:
-            throw Exception("TOX_ERR_NEW_PROXY_BAD_PORT");
-            break;
-        case TOX_ERR_NEW_PROXY_NOT_FOUND:
-            throw Exception("TOX_ERR_NEW_PROXY_NOT_FOUND");
-            break;
-        case TOX_ERR_NEW_LOAD_ENCRYPTED:
-            throw Exception("TOX_ERR_NEW_LOAD_ENCRYPTED");
-            break;
-        case TOX_ERR_NEW_LOAD_BAD_FORMAT:
-            throw Exception("TOX_ERR_NEW_LOAD_BAD_FORMAT");
-            break;
-        default:
-            throw std::runtime_error("tox_new unknow error code");
-            break;
+    if (error != TOX_ERR_NEW_OK) {
+        throw Exception(error);
     }
 
     // install callbacks
@@ -164,7 +124,7 @@ void Tox::init(const Glib::ustring& statefile) {
         auto host = "urotukok.net";
         TOX_ERR_BOOTSTRAP error;
         if (!tox_bootstrap(m_tox, host, 33445, pub.data(), &error)) {
-            throw Exception("BOOTERROR");
+            throw Exception(error);
         }
     }
 }
@@ -239,37 +199,8 @@ Tox::FriendNr Tox::add_friend(Tox::FriendAddr addr,
                          reinterpret_cast<const unsigned char*>(message.data()),
                          message.bytes(),
                          &error);
-    switch (error) {
-        case TOX_ERR_FRIEND_ADD_OK:
-            //okay
-            break;
-        case TOX_ERR_FRIEND_ADD_NULL:
-            throw Exception("TOX_ERR_FRIEND_ADD_NULL");
-            break;
-        case TOX_ERR_FRIEND_ADD_TOO_LONG:
-            throw Exception("TOX_ERR_FRIEND_ADD_TOO_LONG");
-            break;
-        case TOX_ERR_FRIEND_ADD_NO_MESSAGE:
-            throw Exception("TOX_ERR_FRIEND_ADD_NO_MESSAGE");
-            break;
-        case TOX_ERR_FRIEND_ADD_OWN_KEY:
-            throw Exception("TOX_ERR_FRIEND_ADD_OWN_KEY");
-            break;
-        case TOX_ERR_FRIEND_ADD_ALREADY_SENT:
-            throw Exception("TOX_ERR_FRIEND_ADD_ALREADY_SENT");
-            break;
-        case TOX_ERR_FRIEND_ADD_BAD_CHECKSUM:
-            throw Exception("TOX_ERR_FRIEND_ADD_BAD_CHECKSUM");
-            break;
-        case TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM:
-            throw Exception("TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM");
-            break;
-        case TOX_ERR_FRIEND_ADD_MALLOC:
-            throw Exception("TOX_ERR_FRIEND_ADD_MALLOC");
-            break;
-        default:
-            throw std::runtime_error("tox_friend_add unknow error code");
-            break;
+    if (error != TOX_ERR_FRIEND_ADD_OK) {
+        throw Exception(error);
     }
     if (res == UINT32_MAX) {
         throw std::runtime_error("tox_friend_add unknow UINIT32_MAX error");
@@ -284,37 +215,8 @@ Tox::FriendNr Tox::add_friend_norequest(FriendAddr addr) {
     }
     TOX_ERR_FRIEND_ADD error;
     FriendNr res = tox_friend_add_norequest(m_tox, addr.data(), &error);
-    switch (error) {
-        case TOX_ERR_FRIEND_ADD_OK:
-            //okay
-            break;
-        case TOX_ERR_FRIEND_ADD_NULL:
-            throw Exception("TOX_ERR_FRIEND_ADD_NULL");
-            break;
-        case TOX_ERR_FRIEND_ADD_TOO_LONG:
-            throw Exception("TOX_ERR_FRIEND_ADD_TOO_LONG");
-            break;
-        case TOX_ERR_FRIEND_ADD_NO_MESSAGE:
-            throw Exception("TOX_ERR_FRIEND_ADD_NO_MESSAGE");
-            break;
-        case TOX_ERR_FRIEND_ADD_OWN_KEY:
-            throw Exception("TOX_ERR_FRIEND_ADD_OWN_KEY");
-            break;
-        case TOX_ERR_FRIEND_ADD_ALREADY_SENT:
-            throw Exception("TOX_ERR_FRIEND_ADD_ALREADY_SENT");
-            break;
-        case TOX_ERR_FRIEND_ADD_BAD_CHECKSUM:
-            throw Exception("TOX_ERR_FRIEND_ADD_BAD_CHECKSUM");
-            break;
-        case TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM:
-            throw Exception("TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM");
-            break;
-        case TOX_ERR_FRIEND_ADD_MALLOC:
-            throw Exception("TOX_ERR_FRIEND_ADD_MALLOC");
-            break;
-        default:
-            throw std::runtime_error("tox_friend_add_norequest unknow error code");
-            break;
+    if (error != TOX_ERR_FRIEND_ADD_OK) {
+        throw Exception(error);
     }
     if (res == UINT32_MAX) {
         throw std::runtime_error("tox_friend_add_norequest unknow UINIT32_MAX error");
@@ -329,21 +231,9 @@ Tox::FriendNr Tox::get_friend_number(Tox::FriendAddr addr) {
     }
     TOX_ERR_FRIEND_BY_PUBLIC_KEY error;
     FriendNr res = tox_friend_by_public_key(m_tox, addr.data(), &error);
-    switch (error) {
-        case TOX_ERR_FRIEND_BY_PUBLIC_KEY_OK:
-            //okay
-            break;
-        case TOX_ERR_FRIEND_BY_PUBLIC_KEY_NULL:
-            throw Exception("TOX_ERR_FRIEND_BY_PUBLIC_KEY_NULL");
-            break;
-        case TOX_ERR_FRIEND_BY_PUBLIC_KEY_NOT_FOUND:
-            throw Exception("TOX_ERR_FRIEND_BY_PUBLIC_KEY_NOT_FOUND");
-            break;
-        default:
-            throw std::runtime_error("tox_friend_by_public_key unknow error code");
-            break;
+    if (error != TOX_ERR_FRIEND_BY_PUBLIC_KEY_OK) {
+        throw Exception(error);
     }
-
     if (res == UINT32_MAX) {
         throw std::runtime_error("tox_friend_by_public_key unknow UINT32_MAX error");
     }
@@ -357,16 +247,8 @@ void Tox::del_friend(Tox::FriendNr nr) {
     }
     TOX_ERR_FRIEND_DELETE error;
     auto res = tox_friend_delete(m_tox, nr, &error);
-    switch(error) {
-        case TOX_ERR_FRIEND_DELETE_OK:
-            //okay
-            break;
-        case TOX_ERR_FRIEND_DELETE_FRIEND_NOT_FOUND:
-            throw Exception("TOX_ERR_FRIEND_DELETE_FRIEND_NOT_FOUND");
-            break;
-        default:
-            throw std::runtime_error("tox_friend_delete unknow error code");
-            break;
+    if (error != TOX_ERR_FRIEND_DELETE_OK) {
+        throw Exception(error);
     }
 
     if (!res) {
@@ -394,31 +276,8 @@ Tox::ReceiptNr Tox::send_message(Tox::FriendNr nr,
         message.bytes(),
         &error);
 
-    switch(error) {
-        case TOX_ERR_FRIEND_SEND_MESSAGE_OK:
-            //okay
-            break;
-        case TOX_ERR_FRIEND_SEND_MESSAGE_NULL:
-            throw Exception("TOX_ERR_FRIEND_SEND_MESSAGE_NULL");
-            break;
-        case TOX_ERR_FRIEND_SEND_MESSAGE_FRIEND_NOT_FOUND:
-            throw Exception("TOX_ERR_FRIEND_SEND_MESSAGE_FRIEND_NOT_FOUND");
-            break;
-        case TOX_ERR_FRIEND_SEND_MESSAGE_FRIEND_NOT_CONNECTED:
-            throw Exception("TOX_ERR_FRIEND_SEND_MESSAGE_FRIEND_NOT_CONNECTED");
-            break;
-        case TOX_ERR_FRIEND_SEND_MESSAGE_SENDQ:
-            throw Exception("TOX_ERR_FRIEND_SEND_MESSAGE_SENDQ");
-            break;
-        case TOX_ERR_FRIEND_SEND_MESSAGE_TOO_LONG:
-            throw Exception("TOX_ERR_FRIEND_SEND_MESSAGE_TOO_LONG");
-            break;
-        case TOX_ERR_FRIEND_SEND_MESSAGE_EMPTY:
-            throw Exception("TOX_ERR_FRIEND_SEND_MESSAGE_EMPTY");
-            break;
-        default:
-            throw std::runtime_error("tox_friend_send_message unknow error code");
-            break;
+    if (error != TOX_ERR_FRIEND_SEND_MESSAGE_OK) {
+        throw Exception(error);
     }
 
     auto addr = get_address(nr);
@@ -445,31 +304,8 @@ Tox::ReceiptNr Tox::send_action(Tox::FriendNr nr, const Glib::ustring& action) {
         action.bytes(),
         &error);
 
-    switch(error) {
-        case TOX_ERR_FRIEND_SEND_MESSAGE_OK:
-            //okay
-            break;
-        case TOX_ERR_FRIEND_SEND_MESSAGE_NULL:
-            throw Exception("TOX_ERR_FRIEND_SEND_MESSAGE_NULL");
-            break;
-        case TOX_ERR_FRIEND_SEND_MESSAGE_FRIEND_NOT_FOUND:
-            throw Exception("TOX_ERR_FRIEND_SEND_MESSAGE_FRIEND_NOT_FOUND");
-            break;
-        case TOX_ERR_FRIEND_SEND_MESSAGE_FRIEND_NOT_CONNECTED:
-            throw Exception("TOX_ERR_FRIEND_SEND_MESSAGE_FRIEND_NOT_CONNECTED");
-            break;
-        case TOX_ERR_FRIEND_SEND_MESSAGE_SENDQ:
-            throw Exception("TOX_ERR_FRIEND_SEND_MESSAGE_SENDQ");
-            break;
-        case TOX_ERR_FRIEND_SEND_MESSAGE_TOO_LONG:
-            throw Exception("TOX_ERR_FRIEND_SEND_MESSAGE_TOO_LONG");
-            break;
-        case TOX_ERR_FRIEND_SEND_MESSAGE_EMPTY:
-            throw Exception("TOX_ERR_FRIEND_SEND_MESSAGE_EMPTY");
-            break;
-        default:
-            throw std::runtime_error("tox_friend_send_message unknow error code");
-            break;
+    if (error != TOX_ERR_FRIEND_SEND_MESSAGE_OK) {
+        throw Exception(error);
     }
 
     auto addr = get_address(nr);
@@ -492,21 +328,9 @@ void Tox::set_name(const Glib::ustring& name) {
                                  name.bytes(),
                                  &error);
 
-    switch(error) {
-        case TOX_ERR_SET_INFO_OK:
-            //okay
-            break;
-        case TOX_ERR_SET_INFO_NULL:
-            throw Exception("TOX_ERR_SET_INFO_NULL");
-            break;
-        case TOX_ERR_SET_INFO_TOO_LONG:
-            throw Exception("TOX_ERR_SET_INFO_TOO_LONG");
-            break;
-        default:
-            throw std::runtime_error("tox_self_set_name unknow error code");
-            break;
+    if (error != TOX_ERR_SET_INFO_OK) {
+        throw Exception(error);
     }
-
     if (!res) {
         throw std::runtime_error("tox_self_set_name unknow FALSE error");
     }
@@ -530,21 +354,10 @@ Glib::ustring Tox::get_name(Tox::FriendNr nr) {
 
     TOX_ERR_FRIEND_QUERY error;
     auto size = tox_friend_get_name_size(m_tox, nr, &error);
-    switch (error) {
-        case TOX_ERR_FRIEND_QUERY_OK:
-            //okay
-            break;
-        case TOX_ERR_FRIEND_QUERY_NULL:
-            throw Exception("TOX_ERR_FRIEND_QUERY_NULL");
-            break;
-        case TOX_ERR_FRIEND_QUERY_FRIEND_NOT_FOUND:
-            throw Exception("TOX_ERR_FRIEND_QUERY_FRIEND_NOT_FOUND");
-            break;
-        default:
-            throw std::runtime_error("tox_friend_get_name_size unknow error code");
-            break;
-    }
 
+    if (error != TOX_ERR_FRIEND_QUERY_OK) {
+        throw Exception(error);
+    }
     if (size == SIZE_MAX) {
         throw std::runtime_error("tox_friend_get_name_size unknow SIZE_MAX error");
     }
@@ -552,21 +365,9 @@ Glib::ustring Tox::get_name(Tox::FriendNr nr) {
     std::string name(size, 0);
     auto res = tox_friend_get_name(m_tox, nr, (unsigned char*)(name.data()), &error);
 
-    switch (error) {
-        case TOX_ERR_FRIEND_QUERY_OK:
-            //okay
-            break;
-        case TOX_ERR_FRIEND_QUERY_NULL:
-            throw Exception("TOX_ERR_FRIEND_QUERY_NULL");
-            break;
-        case TOX_ERR_FRIEND_QUERY_FRIEND_NOT_FOUND:
-            throw Exception("TOX_ERR_FRIEND_QUERY_FRIEND_NOT_FOUND");
-            break;
-        default:
-            throw std::runtime_error("tox_friend_get_name unknow error code");
-            break;
+    if (error != TOX_ERR_FRIEND_QUERY_OK) {
+        throw Exception(error);
     }
-
     if (!res) {
         throw std::runtime_error("tox_friend_get_name unknow FALSE error");
     }
@@ -608,35 +409,13 @@ Glib::ustring Tox::get_status_message(FriendNr nr) {
     }
     TOX_ERR_FRIEND_QUERY error;
     auto size = tox_friend_get_status_message_size(m_tox, nr, &error);
-    switch (error) {
-        case TOX_ERR_FRIEND_QUERY_OK:
-            //okay
-            break;
-        case TOX_ERR_FRIEND_QUERY_NULL:
-            throw Exception("TOX_ERR_FRIEND_QUERY_NULL");
-            break;
-        case TOX_ERR_FRIEND_QUERY_FRIEND_NOT_FOUND:
-            throw Exception("TOX_ERR_FRIEND_QUERY_FRIEND_NOT_FOUND");
-            break;
-        default:
-            throw std::runtime_error("tox_friend_get_status_message_size unknow error code");
-            break;
+    if (error != TOX_ERR_FRIEND_QUERY_OK) {
+        throw Exception(error);
     }
     std::string name(size, 0);
     tox_friend_get_status_message(m_tox, nr, (unsigned char*)name.data(), &error);
-    switch (error) {
-        case TOX_ERR_FRIEND_QUERY_OK:
-            //okay
-            break;
-        case TOX_ERR_FRIEND_QUERY_NULL:
-            throw Exception("TOX_ERR_FRIEND_QUERY_NULL");
-            break;
-        case TOX_ERR_FRIEND_QUERY_FRIEND_NOT_FOUND:
-            throw Exception("TOX_ERR_FRIEND_QUERY_FRIEND_NOT_FOUND");
-            break;
-        default:
-            throw std::runtime_error("tox_friend_get_status_message unknow error code");
-            break;
+    if (error != TOX_ERR_FRIEND_QUERY_OK) {
+        throw Exception(error);
     }
     return name;
 }
@@ -651,21 +430,9 @@ void Tox::set_status_message(Glib::ustring msg) {
                                            reinterpret_cast<const unsigned char*>(msg.data()),
                                            msg.bytes(),
                                            &error);
-    switch (error) {
-        case TOX_ERR_SET_INFO_OK:
-            //okay
-            break;
-        case TOX_ERR_SET_INFO_NULL:
-            throw Exception("TOX_ERR_SET_INFO_NULL");
-            break;
-        case TOX_ERR_SET_INFO_TOO_LONG:
-            throw Exception("TOX_ERR_SET_INFO_TOO_LONG");
-            break;
-        default:
-            throw std::runtime_error("tox_self_set_status_message unknow error code");
-            break;
+    if (error != TOX_ERR_SET_INFO_OK) {
+        throw Exception(error);
     }
-
     if (!res) {
         throw std::runtime_error("tox_self_set_status_message unknow FALSE error");
     }
@@ -705,41 +472,17 @@ Tox::EUSERSTATUS Tox::get_status(FriendNr nr) {
     }
     TOX_ERR_FRIEND_QUERY error;
     auto con = tox_friend_get_connection_status(m_tox, nr, &error);
-    switch (error) {
-        case TOX_ERR_FRIEND_QUERY_OK:
-            //okay
-            break;
-        case TOX_ERR_FRIEND_QUERY_NULL:
-            throw Exception("TOX_ERR_FRIEND_QUERY_NULL");
-            break;
-        case TOX_ERR_FRIEND_QUERY_FRIEND_NOT_FOUND:
-            throw Exception("TOX_ERR_FRIEND_QUERY_FRIEND_NOT_FOUND");
-            break;
-        default:
-            throw std::runtime_error("tox_friend_get_connection_status unknow error code");
-            break;
+    if (error != TOX_ERR_FRIEND_QUERY_OK) {
+        throw Exception(error);
     }
-
     if (con == TOX_CONNECTION_NONE) {
         return EUSERSTATUS::OFFLINE;
     }
 
     auto status = (EUSERSTATUS)tox_friend_get_status(m_tox, nr, &error);
-    switch (error) {
-        case TOX_ERR_FRIEND_QUERY_OK:
-            //okay
-            break;
-        case TOX_ERR_FRIEND_QUERY_NULL:
-            throw Exception("TOX_ERR_FRIEND_QUERY_NULL");
-            break;
-        case TOX_ERR_FRIEND_QUERY_FRIEND_NOT_FOUND:
-            throw Exception("TOX_ERR_FRIEND_QUERY_FRIEND_NOT_FOUND");
-            break;
-        default:
-            throw std::runtime_error("tox_friend_get_connection_status unknow error code");
-            break;
+    if (error != TOX_ERR_FRIEND_QUERY_OK) {
+        throw Exception(error);
     }
-
     if (con == TOX_CONNECTION_TCP) {
         status = (EUSERSTATUS)(status | EUSERSTATUS::TCP_ONLY);
     }
@@ -777,15 +520,8 @@ void Tox::send_typing(FriendNr nr, bool is_typing) {
     }
     TOX_ERR_SET_TYPING error;
     auto res = tox_self_set_typing(m_tox, nr, is_typing, &error);
-    switch(error) {
-        case TOX_ERR_SET_TYPING_OK:
-            break;
-        case TOX_ERR_SET_TYPING_FRIEND_NOT_FOUND:
-            throw Exception("TOX_ERR_SET_TYPING_FRIEND_NOT_FOUND");
-            break;
-        default:
-            throw std::runtime_error("tox_self_set_typing unknow error code");
-            break;
+    if (error != TOX_ERR_SET_TYPING_OK) {
+        throw Exception(error);
     }
     if (!res) {
         throw std::runtime_error("tox_self_set_typing unknow FALSE error");
@@ -970,15 +706,8 @@ Tox::FriendAddr Tox::get_address(Tox::FriendNr nr) {
     FriendAddr tmp;
     TOX_ERR_FRIEND_GET_PUBLIC_KEY error;
     auto res = tox_friend_get_public_key(m_tox, nr, tmp.data(), &error);
-    switch (error) {
-        case TOX_ERR_FRIEND_GET_PUBLIC_KEY_OK:
-            break;
-        case TOX_ERR_FRIEND_GET_PUBLIC_KEY_FRIEND_NOT_FOUND:
-            throw Exception("TOX_ERR_FRIEND_GET_PUBLIC_KEY_FRIEND_NOT_FOUND");
-            break;
-        default:
-            throw std::runtime_error("tox_friend_get_public_key unknow error code");
-            break;
+    if (error != TOX_ERR_FRIEND_GET_PUBLIC_KEY_OK) {
+        throw Exception(error);
     }
     if (!res) {
         throw std::runtime_error("tox_friend_get_public_key unknow FALSE error");

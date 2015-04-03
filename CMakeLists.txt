@@ -122,7 +122,8 @@ set(SOURCES
     Helper/Canberra.cpp
     Helper/ToxEventCallback.cpp
     Tox/Tox.cpp
-    Tox/ToxDatabase.cpp)
+    Tox/ToxDatabase.cpp
+    Tox/ToxException.cpp)
 
 add_executable(${PROJECT_NAME}
      ${SOURCES}
