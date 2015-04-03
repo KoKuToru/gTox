@@ -133,3 +133,39 @@ msgstr "Falsche ID länge"
 
 msgid "ERROR_ADD_CONTACT_ADDR_WRONG_SIZE"
 msgstr "Eine ID muss 76 Zeichen lang sein"
+
+msgid "TOX_ERR_FRIEND_ADD_TOO_LONG_UI"
+msgstr "Die Nachricht ist länger als 1016 bytes."
+
+msgid "TOX_ERR_FRIEND_ADD_TOO_LONG_UI_TITLE"
+msgstr "Nachricht zulang"
+
+msgid "TOX_ERR_FRIEND_ADD_NO_MESSAGE_UI_TITLE"
+msgstr "Nachricht leer"
+
+msgid "TOX_ERR_FRIEND_ADD_NO_MESSAGE_UI"
+msgstr "Die Nachricht darf nicht leer sein."
+
+msgid "TOX_ERR_FRIEND_ADD_OWN_KEY_UI"
+msgstr "Die eingebene ID gehört dir."
+
+msgid "TOX_ERR_FRIEND_ADD_OWN_KEY_UI_TITLE"
+msgstr "Hinzufügen fehlgeschlagen"
+
+msgid "TOX_ERR_FRIEND_ADD_ALREADY_SENT_UI"
+msgstr "ID wurde bereits hinzugefügt."
+
+msgid "TOX_ERR_FRIEND_ADD_ALREADY_SENT_UI_TITLE"
+msgstr "Hinzufügen fehlgeschlagen"
+
+msgid "TOX_ERR_FRIEND_ADD_BAD_CHECKSUM_UI"
+msgstr "Die ID ist fehlerhaft."
+
+msgid "TOX_ERR_FRIEND_ADD_BAD_CHECKSUM_UI_TITLE"
+msgstr "ID Checksum fehlgeschlagen"
+
+msgid "TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM_UI"
+msgstr "ID wurde bereits hinzugefügt der NOSPAM-Wert war aber anders."
+
+msgid "TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM_UI_TITLE"
+msgstr "Hinzufügen fehlgeschlagen"

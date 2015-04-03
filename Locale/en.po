@@ -185,20 +185,56 @@ msgstr "TOX_ERR_FRIEND_ADD_NULL"
 msgid "TOX_ERR_FRIEND_ADD_TOO_LONG"
 msgstr "TOX_ERR_FRIEND_ADD_TOO_LONG\nThe length of the friend request message exceeded TOX_MAX_FRIEND_REQUEST_LENGTH."
 
+msgid "TOX_ERR_FRIEND_ADD_TOO_LONG_UI"
+msgstr "The length of the friend request message exceeded 1016 bytes."
+
+msgid "TOX_ERR_FRIEND_ADD_TOO_LONG_UI_TITLE"
+msgstr "Friend request failed"
+
 msgid "TOX_ERR_FRIEND_ADD_NO_MESSAGE"
 msgstr "TOX_ERR_FRIEND_ADD_NO_MESSAGE\nThe friend request message was empty. This, and the TOO_LONG code will never be returned from tox_friend_add_norequest."
+
+msgid "TOX_ERR_FRIEND_ADD_NO_MESSAGE_UI_TITLE"
+msgstr "Empty message"
+
+msgid "TOX_ERR_FRIEND_ADD_NO_MESSAGE_UI"
+msgstr "The friend request message is not allowed to be empty."
 
 msgid "TOX_ERR_FRIEND_ADD_OWN_KEY"
 msgstr "TOX_ERR_FRIEND_ADD_OWN_KEY\nThe friend address belongs to the sending client."
 
+msgid "TOX_ERR_FRIEND_ADD_OWN_KEY_UI"
+msgstr "The friend address belongs to you"
+
+msgid "TOX_ERR_FRIEND_ADD_OWN_KEY_UI_TITLE"
+msgstr "Friend request failed"
+
 msgid "TOX_ERR_FRIEND_ADD_ALREADY_SENT"
 msgstr "TOX_ERR_FRIEND_ADD_ALREADY_SENT\nA friend request has already been sent, or the address belongs to a friend that is already on the friend list."
+
+msgid "TOX_ERR_FRIEND_ADD_ALREADY_SENT_UI"
+msgstr "A friend request has already been sent, or the address belongs to a friend that is already on the friend list."
+
+msgid "TOX_ERR_FRIEND_ADD_ALREADY_SENT_UI_TITLE"
+msgstr "Friend request failed"
 
 msgid "TOX_ERR_FRIEND_ADD_BAD_CHECKSUM"
 msgstr "TOX_ERR_FRIEND_ADD_BAD_CHECKSUM\nThe friend address checksum failed."
 
+msgid "TOX_ERR_FRIEND_ADD_BAD_CHECKSUM_UI"
+msgstr "The friend address checksum failed."
+
+msgid "TOX_ERR_FRIEND_ADD_BAD_CHECKSUM_UI_TITLE"
+msgstr "Wrong checksum"
+
 msgid "TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM"
 msgstr "TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM\nThe friend was already there, but the nospam value was different."
+
+msgid "TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM_UI"
+msgstr "The friend was already there, but the nospam value was different."
+
+msgid "TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM_UI_TITLE"
+msgstr "Friend request failed"
 
 msgid "TOX_ERR_FRIEND_ADD_MALLOC"
 msgstr "TOX_ERR_FRIEND_ADD_MALLOC\nA memory allocation failed when trying to increase the friend list size."
