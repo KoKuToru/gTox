@@ -106,7 +106,7 @@ void terminate_handler() {
     } catch (std::string &ex) {
         DialogError(true, "Fatal Unexpected String Exception", ex).run();
     } catch (Tox::Exception &ex) {
-        DialogError(true, "Fatal Unexpected Tox Exception", "Code: " + ex.code).run();
+        DialogError(true, "Fatal Unexpected Tox Exception", ex.what()).run();
     } catch (std::exception &ex) {
         DialogError(true, "Fatal Unexpected Exception", ex.what()).run();
     } catch (...) {

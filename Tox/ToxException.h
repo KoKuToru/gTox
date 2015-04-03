@@ -43,9 +43,9 @@ class ToxException: public std::exception {
         ToxException(TOX_ERR_SET_TYPING error);
         ToxException(TOX_ERR_FRIEND_GET_PUBLIC_KEY error);
 
-        virtual const char* what() const;
-        virtual const std::type_index type() const;
-        virtual const int what_id() const;
+        virtual const char* what() const noexcept;
+        virtual std::type_index type() const noexcept;
+        virtual int what_id() const noexcept;
 };
 
 

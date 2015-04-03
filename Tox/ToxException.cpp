@@ -20,15 +20,15 @@
 #include "ToxException.h"
 #include <map>
 
-const char* ToxException::what() const {
+const char* ToxException::what() const noexcept {
     return m_what.c_str();
 }
 
-const int ToxException::what_id() const {
+int ToxException::what_id() const noexcept {
     return m_what_id;
 }
 
-const std::type_index ToxException::type() const {
+std::type_index ToxException::type() const noexcept{
     return m_type;
 }
 
