@@ -135,7 +135,7 @@ int main(int argc, char* argv[]) {
     Notify::init("gTox");
 
     std::string config_path
-        = Glib::build_filename(Glib::get_user_config_dir(), "gTox");
+        = Glib::build_filename(Glib::get_user_config_dir(), "tox");
     if (!Glib::file_test(config_path, Glib::FILE_TEST_IS_DIR)) {
         Gio::File::create_for_path(config_path)->make_directory();
     }
@@ -146,10 +146,16 @@ int main(int argc, char* argv[]) {
         accounts.begin(),
         std::remove_if(
             accounts.begin(), accounts.end(), [](const std::string& name) {
-                const std::string state_ext = ".state";
-                return !(name.size() > state_ext.size()
-                         && name.substr(name.size() - state_ext.size(),
+                std::string state_ext = ".gtox";
+                bool f_gtox = !(name.size() > state_ext.size()
+                                && name.substr(name.size() - state_ext.size(),
                                         state_ext.size()) == state_ext);
+                state_ext = ".tox";
+                bool f_tox = !(name.size() > state_ext.size()
+                               && name.substr(name.size() - state_ext.size(),
+                                        state_ext.size()) == state_ext);
+                bool f_old_tox = (name != "tox_save");
+                return f_gtox && f_tox && f_old_tox;
             })));
 
     if (accounts.empty()) {
@@ -165,8 +171,7 @@ int main(int argc, char* argv[]) {
     } else if (accounts.size() > 1) {
         // start user select
         // TODO
-        config_path = Glib::build_filename(config_path, accounts.front());
-        Tox::instance().init(config_path);
+        throw std::runtime_error("Multi profil support not implemented yet !");
     } else {
         config_path = Glib::build_filename(config_path, accounts.front());
         Tox::instance().init(config_path);
