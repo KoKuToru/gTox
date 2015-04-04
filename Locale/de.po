@@ -1,3 +1,9 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: ENCODING\n"
+
 msgid "ACCOUNT"
 msgstr "Konto"
 
@@ -114,7 +120,7 @@ msgid "SETTINGS_ABOUT"
 msgstr "Über"
 
 msgid "ERROR_REPORT_TEXT_INTRO"
-msgstr "Leider kann gTox nicht weiter ausgeführt werden.\nFolgendes Problem ist aufgetreten:\n<i><b>"
+msgstr "Leider kann gTox nicht weiter ausgeführt werden.\nFolgendes Problem ist aufgetreten:\n\n<i><b>"
 
 msgid "ERROR_REPORT_TEXT_OUTRO"
 msgstr "</b></i>\n\nBitte stellen Sie sicher das Sie die neuste gTox Version benützen.\nSollten Sie die neusten gTox Version benützen, wären wir Ihnen sehr Dankbar wenn Sie uns diesen Fehler melden würden."
@@ -128,39 +134,38 @@ msgstr "Falsche ID länge"
 msgid "ERROR_ADD_CONTACT_ADDR_WRONG_SIZE"
 msgstr "Eine ID muss 76 Zeichen lang sein"
 
-msgid "ERROR_MSGTOOLONG_TITLE"
+msgid "TOX_ERR_FRIEND_ADD_TOO_LONG_UI"
+msgstr "Die Nachricht ist länger als 1016 bytes."
+
+msgid "TOX_ERR_FRIEND_ADD_TOO_LONG_UI_TITLE"
 msgstr "Nachricht zulang"
 
-msgid "ERROR_MSGTOOLONG"
-msgstr "Die Nachricht kann nicht gesendet werden, da diese zulang ist"
+msgid "TOX_ERR_FRIEND_ADD_NO_MESSAGE_UI_TITLE"
+msgstr "Nachricht leer"
 
-msgid "ERROR_MSGEMPTY_TITLE"
-msgstr "Nachricht is leer"
+msgid "TOX_ERR_FRIEND_ADD_NO_MESSAGE_UI"
+msgstr "Die Nachricht darf nicht leer sein."
 
-msgid "ERROR_MSGEMPTY"
-msgstr "Die Nachricht kann nicht gesendet werden, da diese zukurz ist"
+msgid "TOX_ERR_FRIEND_ADD_OWN_KEY_UI"
+msgstr "Die eingebene ID gehört dir."
 
-msgid "ERROR_CANTADDYOURSELF_TITLE"
-msgstr "Kontakt hinzufügen nicht möglich"
+msgid "TOX_ERR_FRIEND_ADD_OWN_KEY_UI_TITLE"
+msgstr "Hinzufügen fehlgeschlagen"
 
-msgid "ERROR_CANTADDYOURSELF"
-msgstr "Es ist nicht möglich sich selber in die Kontaktliste hinzuzufügen"
+msgid "TOX_ERR_FRIEND_ADD_ALREADY_SENT_UI"
+msgstr "ID wurde bereits hinzugefügt."
 
-msgid "ERROR_ALREADYSENT_TITLE"
-msgstr "Kontakt hinzufügen nicht möglich"
+msgid "TOX_ERR_FRIEND_ADD_ALREADY_SENT_UI_TITLE"
+msgstr "Hinzufügen fehlgeschlagen"
 
-msgid "ERROR_ALREADYSENT"
-msgstr "Dieser Kontakt wurde schon hinzugefügt"
+msgid "TOX_ERR_FRIEND_ADD_BAD_CHECKSUM_UI"
+msgstr "Die ID ist fehlerhaft."
 
-msgid "ERROR_BADCHECKSUM_TITLE"
-msgstr "Checksumme falsch"
+msgid "TOX_ERR_FRIEND_ADD_BAD_CHECKSUM_UI_TITLE"
+msgstr "ID Checksum fehlgeschlagen"
 
-msgid "ERROR_BADCHECKSUM"
-msgstr "Die ID ist fehlerhaft"
+msgid "TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM_UI"
+msgstr "ID wurde bereits hinzugefügt der NOSPAM-Wert war aber anders."
 
-msgid "ERROR_NOSPAM_TITLE"
-msgstr "NoSpam Wert hat sich geändert"
-
-msgid "ERROR_NOSPAM"
-msgstr "Bitte fordern Sie eine neue ID von ihrem Kontakt"
-
+msgid "TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM_UI_TITLE"
+msgstr "Hinzufügen fehlgeschlagen"

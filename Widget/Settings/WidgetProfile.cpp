@@ -31,7 +31,7 @@ WidgetProfile::WidgetProfile()
     std::string hex = Tox::to_hex(Tox::instance().get_address().data(),
                                   Tox::instance().get_address().size());
     for (int i = 4; i > 0; --i) {
-        hex.insert(2 * i * TOX_CLIENT_ID_SIZE / 4, 1, '\n');
+        hex.insert(2 * i * TOX_PUBLIC_KEY_SIZE / 4, 1, '\n');
     }
 
     property_valign() = Gtk::ALIGN_CENTER;

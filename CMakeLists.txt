@@ -62,7 +62,8 @@ set(DATABASE
     Database/version_2.sql
     Database/version_3.sql
     Database/version_4.sql
-    Database/version_5.sql)
+    Database/version_5.sql
+    Database/version_6.sql)
 add_custom_command(
     OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/Generated/database.cpp"
     COMMAND "${PROJECT_BINARY_DIR}/Tools/text2h" DATABASE Generated/database ${DATABASE}
@@ -121,7 +122,8 @@ set(SOURCES
     Helper/Canberra.cpp
     Helper/ToxEventCallback.cpp
     Tox/Tox.cpp
-    Tox/ToxDatabase.cpp)
+    Tox/ToxDatabase.cpp
+    Tox/ToxException.cpp)
 
 add_executable(${PROJECT_NAME}
      ${SOURCES}
@@ -141,6 +143,11 @@ if(NOT GETTEXT_MSGFMT_EXECUTABLE)
     message(FATAL_ERROR "msgfmt not found")
 endif()
 
+find_program(GETTEXT_MSGMERGE_EXECUTABLE msgmerge)
+if(NOT GETTEXT_MSGMERGE_EXECUTABLE)
+    message(FATAL_ERROR "msgmerge not found")
+endif()
+
 SET(TRANSLATIONS
     de
     en
@@ -152,7 +159,8 @@ add_custom_command(
    TARGET ${PROJECT_NAME}
    PRE_BUILD
    COMMAND mkdir -p Locale/${_trans}/LC_MESSAGES
-   COMMAND ${GETTEXT_MSGFMT_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/Locale/${_trans}.po" -o "${PROJECT_BINARY_DIR}/Locale/${_trans}/LC_MESSAGES/gTox.mo"
+   COMMAND ${GETTEXT_MSGMERGE_EXECUTABLE} --no-fuzzy-matching "${CMAKE_CURRENT_SOURCE_DIR}/Locale/${_trans}.po" "${CMAKE_CURRENT_SOURCE_DIR}/Locale/en.po" -o "${CMAKE_CURRENT_SOURCE_DIR}/Generated/${_trans}.po"
+   COMMAND ${GETTEXT_MSGFMT_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/Generated/${_trans}.po" -o "${PROJECT_BINARY_DIR}/Locale/${_trans}/LC_MESSAGES/gTox.mo"
    DEPENDS Locale/${_trans}.po)
    install(DIRECTORY "${PROJECT_BINARY_DIR}/Locale/${_trans}"
            DESTINATION share/locale

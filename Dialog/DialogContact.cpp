@@ -309,7 +309,7 @@ void DialogContact::tox_event_handling(const Tox::SEvent& ev) {
             break;
         case Tox::EEventType::TYPINGCHANGE:
             std::cout << "TYPINGCHANGE !" << ev.typing_change.nr << " -> "
-                      << ev.typing_change.data << std::endl;
+                      << ev.typing_change.is_typing << std::endl;
             break;
         default:
             break;
@@ -344,7 +344,7 @@ WidgetChat* DialogContact::get_chat(Tox::FriendNr nr, DialogChat*& dialog) {
 
     m_chat.add(*item,
                Tox::to_hex(Tox::instance().get_address(nr).data(),
-                           TOX_CLIENT_ID_SIZE));
+                           TOX_PUBLIC_KEY_SIZE));
 
     return item;
 }

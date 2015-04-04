@@ -62,43 +62,54 @@ void Tox::init(const Glib::ustring& statefile) {
         tox_kill(m_tox);
         m_tox = nullptr;
     }
-    Tox_Options options;
-    options.ipv6enabled = true;
-    options.udp_disabled = false;
-    m_tox = tox_new(&options);
+    TOX_ERR_OPTIONS_NEW nerror;
+    auto options = std::shared_ptr<Tox_Options>(tox_options_new(&nerror),
+                                                [](Tox_Options* p) {
+                                                    tox_options_free(p);
+                                                });
+    if (nerror != TOX_ERR_OPTIONS_NEW_OK) {
+        throw Exception(nerror);
+    }
 
-    // install callbacks
-    tox_callback_friend_request(m_tox, Tox::callback_friend_request, nullptr);
-    tox_callback_friend_message(m_tox, Tox::callback_friend_message, nullptr);
-    tox_callback_friend_action(m_tox, Tox::callback_friend_action, nullptr);
-    tox_callback_name_change(m_tox, Tox::callback_name_change, nullptr);
-    tox_callback_status_message(m_tox, Tox::callback_status_message, nullptr);
-    tox_callback_user_status(m_tox, Tox::callback_user_status, nullptr);
-    tox_callback_typing_change(m_tox, Tox::callback_typing_change, nullptr);
-    tox_callback_read_receipt(m_tox, Tox::callback_read_receipt, nullptr);
-    tox_callback_connection_status(
-        m_tox, Tox::callback_connection_status, nullptr);
+    options->ipv6_enabled = true;
+    options->udp_enabled = true;
 
     m_db.close();
     // load state
+    std::vector<unsigned char> state;
     bool okay = false;
     if (statefile != "") {
         /* try to open the db */
         m_db.open(statefile);
 
         // take the last saved state
-        auto state = m_db.toxcore_state_get(0);
+        state = m_db.toxcore_state_get(0);
+    }
+    TOX_ERR_NEW error;
+    m_tox = tox_new(options.get(), state.data(), state.size(), &error);
 
-        if (tox_load(m_tox, state.data(), state.size()) == -1) {
-            throw Exception(LOADERROR);
-        }
+    if (error != TOX_ERR_NEW_OK) {
+        throw Exception(error);
+    }
 
+    // install callbacks
+    tox_callback_friend_request(m_tox, Tox::callback_friend_request, nullptr);
+    tox_callback_friend_message(m_tox, Tox::callback_friend_message, nullptr);
+    tox_callback_friend_name(m_tox, Tox::callback_name_change, nullptr);
+    tox_callback_friend_status_message(m_tox, Tox::callback_status_message, nullptr);
+    tox_callback_friend_status(m_tox, Tox::callback_user_status, nullptr);
+    tox_callback_friend_typing(m_tox, Tox::callback_typing_change, nullptr);
+    tox_callback_friend_read_receipt(m_tox, Tox::callback_read_receipt, nullptr);
+    tox_callback_friend_connection_status(m_tox, Tox::callback_connection_status, nullptr);
+
+    if (statefile != "") {
         for (auto boots : m_db.toxcore_bootstrap_get()) {
             if (boots.pub_key.size() == 32) {
                 auto pub = from_hex(boots.pub_key);
-                okay |= tox_bootstrap_from_address(m_tox,
-                                                   boots.ip.c_str(),
-                                                   boots.port, pub.data());
+                TOX_ERR_BOOTSTRAP error;
+                okay |= tox_bootstrap(m_tox,
+                                      boots.ip.c_str(),
+                                      boots.port, pub.data(), &error);
             }
         }
     }
@@ -111,8 +122,9 @@ void Tox::init(const Glib::ustring& statefile) {
             "F3527D367DC0ACD1"
             "0AC8329C99319513");
         auto host = "urotukok.net";
-        if (!tox_bootstrap_from_address(m_tox, host, 33445, pub.data())) {
-            throw Exception(BOOTERROR);
+        TOX_ERR_BOOTSTRAP error;
+        if (!tox_bootstrap(m_tox, host, 33445, pub.data(), &error)) {
+            throw Exception(error);
         }
     }
 }
@@ -120,12 +132,11 @@ void Tox::init(const Glib::ustring& statefile) {
 void Tox::save(const Glib::ustring& statefile) {
     std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
-        throw Exception(UNITIALIZED);
+        throw std::runtime_error("TOX_UNITIALIZED");
     }
 
-    int length = (int)tox_size(m_tox);
-    std::vector<unsigned char> state(length);
-    tox_save(m_tox, (unsigned char*)state.data());
+    std::vector<unsigned char> state(tox_get_savedata_size(m_tox));
+    tox_get_savedata(m_tox, (unsigned char*)state.data());
     m_db.toxcore_state_add(state);
 
     if (statefile != "") {
@@ -136,17 +147,17 @@ void Tox::save(const Glib::ustring& statefile) {
 int Tox::update_optimal_interval() {
     std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
-        throw Exception(UNITIALIZED);
+        throw std::runtime_error("TOX_UNITIALIZED");
     }
-    return tox_do_interval(m_tox);
+    return tox_iteration_interval(m_tox);
 }
 
 bool Tox::update(Tox::SEvent& ev) {
     std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
-        throw Exception(UNITIALIZED);
+        throw std::runtime_error("TOX_UNITIALIZED");
     }
-    tox_do(m_tox);
+    tox_iterate(m_tox);
     if (events.empty()) {
         return false;
     }
@@ -158,20 +169,20 @@ bool Tox::update(Tox::SEvent& ev) {
 std::vector<Tox::FriendNr> Tox::get_friendlist() {
     std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
-        throw Exception(UNITIALIZED);
+        throw std::runtime_error("TOX_UNITIALIZED");
     }
-    std::vector<FriendNr> tmp(tox_count_friendlist(m_tox));
-    tmp.resize(tox_get_friendlist(m_tox, tmp.data(), tmp.size()));
+    std::vector<FriendNr> tmp(tox_self_get_friend_list_size(m_tox));
+    tox_self_get_friend_list(m_tox, tmp.data());
     return tmp;
 }
 
 Tox::FriendAddr Tox::get_address() {
     std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
-        throw Exception(UNITIALIZED);
+        throw std::runtime_error("TOX_UNITIALIZED");
     }
     FriendAddr tmp;
-    tox_get_address(m_tox, tmp.data());
+    tox_self_get_address(m_tox, tmp.data());
     return tmp;
 }
 
@@ -179,37 +190,20 @@ Tox::FriendNr Tox::add_friend(Tox::FriendAddr addr,
                               const Glib::ustring& message) {
     std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
-        throw Exception(UNITIALIZED);
+        throw std::runtime_error("TOX_UNITIALIZED");
     }
+    TOX_ERR_FRIEND_ADD error;
     FriendNr res
-        = tox_add_friend(m_tox,
+        = tox_friend_add(m_tox,
                          addr.data(),
                          reinterpret_cast<const unsigned char*>(message.data()),
-                         message.bytes());
-    switch (res) {
-        case TOX_FAERR_TOOLONG:
-            throw Exception(MSGTOOLONG);
-            break;
-        case TOX_FAERR_NOMESSAGE:
-            throw Exception(MSGEMPTY);
-            break;
-        case TOX_FAERR_OWNKEY:
-            throw Exception(CANTADDYOURSELF);
-            break;
-        case TOX_FAERR_ALREADYSENT:
-            throw Exception(ALREADYSENT);
-            break;
-        case TOX_FAERR_UNKNOWN:
-            throw Exception(FAILED);
-            break;
-        case TOX_FAERR_BADCHECKSUM:
-            throw Exception(BADCHECKSUM);
-            break;
-        case TOX_FAERR_SETNEWNOSPAM:
-            throw Exception(NOSPAM);
-            break;
-        default:
-            break;
+                         message.bytes(),
+                         &error);
+    if (error != TOX_ERR_FRIEND_ADD_OK) {
+        throw Exception(error);
+    }
+    if (res == UINT32_MAX) {
+        throw std::runtime_error("tox_friend_add unknow UINIT32_MAX error");
     }
     return res;
 }
@@ -217,11 +211,15 @@ Tox::FriendNr Tox::add_friend(Tox::FriendAddr addr,
 Tox::FriendNr Tox::add_friend_norequest(FriendAddr addr) {
     std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
-        throw Exception(UNITIALIZED);
+        throw std::runtime_error("TOX_UNITIALIZED");
     }
-    FriendNr res = tox_add_friend_norequest(m_tox, addr.data());
-    if (res < 0) {
-        throw Exception(FAILED);
+    TOX_ERR_FRIEND_ADD error;
+    FriendNr res = tox_friend_add_norequest(m_tox, addr.data(), &error);
+    if (error != TOX_ERR_FRIEND_ADD_OK) {
+        throw Exception(error);
+    }
+    if (res == UINT32_MAX) {
+        throw std::runtime_error("tox_friend_add_norequest unknow UINIT32_MAX error");
     }
     return res;
 }
@@ -229,11 +227,15 @@ Tox::FriendNr Tox::add_friend_norequest(FriendAddr addr) {
 Tox::FriendNr Tox::get_friend_number(Tox::FriendAddr addr) {
     std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
-        throw Exception(UNITIALIZED);
+        throw std::runtime_error("TOX_UNITIALIZED");
     }
-    FriendNr res = tox_get_friend_number(m_tox, addr.data());
-    if (res < 0) {
-        throw Exception(FAILED);
+    TOX_ERR_FRIEND_BY_PUBLIC_KEY error;
+    FriendNr res = tox_friend_by_public_key(m_tox, addr.data(), &error);
+    if (error != TOX_ERR_FRIEND_BY_PUBLIC_KEY_OK) {
+        throw Exception(error);
+    }
+    if (res == UINT32_MAX) {
+        throw std::runtime_error("tox_friend_by_public_key unknow UINT32_MAX error");
     }
     return res;
 }
@@ -241,10 +243,16 @@ Tox::FriendNr Tox::get_friend_number(Tox::FriendAddr addr) {
 void Tox::del_friend(Tox::FriendNr nr) {
     std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
-        throw Exception(UNITIALIZED);
+        throw std::runtime_error("TOX_UNITIALIZED");
     }
-    if (tox_del_friend(m_tox, nr) != 0) {
-        throw Exception(FAILED);
+    TOX_ERR_FRIEND_DELETE error;
+    auto res = tox_friend_delete(m_tox, nr, &error);
+    if (error != TOX_ERR_FRIEND_DELETE_OK) {
+        throw Exception(error);
+    }
+
+    if (!res) {
+        throw std::runtime_error("tox_friend_delete unknow FALSE error");
     }
 }
 
@@ -256,15 +264,20 @@ Tox::ReceiptNr Tox::send_message(Tox::FriendNr nr,
 
     std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
-        throw Exception(UNITIALIZED);
+        throw std::runtime_error("TOX_UNITIALIZED");
     }
-    Tox::ReceiptNr res = tox_send_message(
+
+    TOX_ERR_FRIEND_SEND_MESSAGE error;
+    Tox::ReceiptNr res = tox_friend_send_message(
         m_tox,
         nr,
+        TOX_MESSAGE_TYPE::TOX_MESSAGE_TYPE_NORMAL,
         reinterpret_cast<const unsigned char*>(message.data()),
-        message.bytes());
-    if (res == 0) {
-        throw Exception(FAILED);
+        message.bytes(),
+        &error);
+
+    if (error != TOX_ERR_FRIEND_SEND_MESSAGE_OK) {
+        throw Exception(error);
     }
 
     auto addr = get_address(nr);
@@ -279,15 +292,20 @@ Tox::ReceiptNr Tox::send_message(Tox::FriendNr nr,
 Tox::ReceiptNr Tox::send_action(Tox::FriendNr nr, const Glib::ustring& action) {
     std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
-        throw Exception(UNITIALIZED);
+        throw std::runtime_error("TOX_UNITIALIZED");
     }
-    Tox::ReceiptNr res
-        = tox_send_action(m_tox,
-                          nr,
-                          reinterpret_cast<const unsigned char*>(action.data()),
-                          action.bytes());
-    if (res == 0) {
-        throw Exception(FAILED);
+
+    TOX_ERR_FRIEND_SEND_MESSAGE error;
+    Tox::ReceiptNr res = tox_friend_send_message(
+        m_tox,
+        nr,
+        TOX_MESSAGE_TYPE::TOX_MESSAGE_TYPE_ACTION,
+        reinterpret_cast<const unsigned char*>(action.data()),
+        action.bytes(),
+        &error);
+
+    if (error != TOX_ERR_FRIEND_SEND_MESSAGE_OK) {
+        throw Exception(error);
     }
 
     auto addr = get_address(nr);
@@ -302,40 +320,58 @@ Tox::ReceiptNr Tox::send_action(Tox::FriendNr nr, const Glib::ustring& action) {
 void Tox::set_name(const Glib::ustring& name) {
     std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
-        throw Exception(UNITIALIZED);
+        throw std::runtime_error("TOX_UNITIALIZED");
     }
-    if (tox_set_name(m_tox,
-                     reinterpret_cast<const unsigned char*>(name.data()),
-                     name.bytes()) != 0) {
-        throw Exception(FAILED);
+    TOX_ERR_SET_INFO error;
+    auto res = tox_self_set_name(m_tox,
+                                 reinterpret_cast<const unsigned char*>(name.data()),
+                                 name.bytes(),
+                                 &error);
+
+    if (error != TOX_ERR_SET_INFO_OK) {
+        throw Exception(error);
+    }
+    if (!res) {
+        throw std::runtime_error("tox_self_set_name unknow FALSE error");
     }
 }
 
 Glib::ustring Tox::get_name() {
     std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
-        throw Exception(UNITIALIZED);
+        throw std::runtime_error("TOX_UNITIALIZED");
     }
-    std::string name(/*MAX_NAME_LENGTH*/ 128, 0);
-    int size = tox_get_self_name(m_tox, (unsigned char*)(name.data()));
-    if (size < 0) {
-        throw Exception(FAILED);
-    }
-    name.resize(size);
+    std::string name(tox_self_get_name_size(m_tox), 0);
+    tox_self_get_name(m_tox, (unsigned char*)(name.data()));
     return name;
 }
 
 Glib::ustring Tox::get_name(Tox::FriendNr nr) {
     std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
-        throw Exception(UNITIALIZED);
+        throw std::runtime_error("TOX_UNITIALIZED");
     }
-    std::string name(/*MAX_NAME_LENGTH*/ 128, 0);
-    int size = tox_get_name(m_tox, nr, (unsigned char*)(name.data()));
-    if (size < 0) {
-        throw Exception(FAILED);
+
+    TOX_ERR_FRIEND_QUERY error;
+    auto size = tox_friend_get_name_size(m_tox, nr, &error);
+
+    if (error != TOX_ERR_FRIEND_QUERY_OK) {
+        throw Exception(error);
     }
-    name.resize(size);
+    if (size == SIZE_MAX) {
+        throw std::runtime_error("tox_friend_get_name_size unknow SIZE_MAX error");
+    }
+
+    std::string name(size, 0);
+    auto res = tox_friend_get_name(m_tox, nr, (unsigned char*)(name.data()), &error);
+
+    if (error != TOX_ERR_FRIEND_QUERY_OK) {
+        throw Exception(error);
+    }
+    if (!res) {
+        throw std::runtime_error("tox_friend_get_name unknow FALSE error");
+    }
+
     return name;
 }
 
@@ -358,140 +394,135 @@ Glib::ustring Tox::get_name_or_address(Tox::FriendNr nr) {
 Glib::ustring Tox::get_status_message() {
     std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
-        throw Exception(UNITIALIZED);
+        throw std::runtime_error("TOX_UNITIALIZED");
     }
-    int size = tox_get_self_status_message_size(m_tox);
-    if (size < 0) {
-        throw Exception(FAILED);
-    }
+    auto size = tox_self_get_status_message_size(m_tox);
     std::string name(size, 0);
-    size = tox_get_self_status_message(
-        m_tox, (unsigned char*)name.data(), name.size());
-    if (size < 0) {
-        throw Exception(FAILED);
-    }
-    name.resize(size);
+    tox_self_get_status_message(m_tox, (unsigned char*)name.data());
     return name;
 }
 
 Glib::ustring Tox::get_status_message(FriendNr nr) {
     std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
-        throw Exception(UNITIALIZED);
+        throw std::runtime_error("TOX_UNITIALIZED");
     }
-    int size = tox_get_status_message_size(m_tox, nr);
-    if (size < 0) {
-        throw Exception(FAILED);
+    TOX_ERR_FRIEND_QUERY error;
+    auto size = tox_friend_get_status_message_size(m_tox, nr, &error);
+    if (error != TOX_ERR_FRIEND_QUERY_OK) {
+        throw Exception(error);
     }
     std::string name(size, 0);
-    size = tox_get_status_message(
-        m_tox, nr, (unsigned char*)name.data(), name.size());
-    if (size < 0) {
-        throw Exception(FAILED);
+    tox_friend_get_status_message(m_tox, nr, (unsigned char*)name.data(), &error);
+    if (error != TOX_ERR_FRIEND_QUERY_OK) {
+        throw Exception(error);
     }
-    name.resize(size);
     return name;
 }
 
 void Tox::set_status_message(Glib::ustring msg) {
     std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
-        throw Exception(UNITIALIZED);
+        throw std::runtime_error("TOX_UNITIALIZED");
     }
-    if (tox_set_status_message(
-            m_tox,
-            reinterpret_cast<const unsigned char*>(msg.data()),
-            msg.bytes()) != 0) {
-        throw Exception(FAILED);
+    TOX_ERR_SET_INFO error;
+    auto res = tox_self_set_status_message(m_tox,
+                                           reinterpret_cast<const unsigned char*>(msg.data()),
+                                           msg.bytes(),
+                                           &error);
+    if (error != TOX_ERR_SET_INFO_OK) {
+        throw Exception(error);
+    }
+    if (!res) {
+        throw std::runtime_error("tox_self_set_status_message unknow FALSE error");
     }
 }
 
 bool Tox::is_connected() {
     std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
-        throw Exception(UNITIALIZED);
+        throw std::runtime_error("TOX_UNITIALIZED");
     }
-    int status = tox_isconnected(m_tox);
-    return status != 0;
+    return tox_self_get_connection_status(m_tox) != TOX_CONNECTION_NONE;
 }
 
 Tox::EUSERSTATUS Tox::get_status() {
     std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
-        throw Exception(UNITIALIZED);
+        throw std::runtime_error("TOX_UNITIALIZED");
     }
-    int status = tox_isconnected(m_tox);
-    if (status == 0) {
+    auto con = tox_self_get_connection_status(m_tox);
+    if (con == TOX_CONNECTION_NONE) {
         return EUSERSTATUS::OFFLINE;
     }
 
-    status = tox_get_self_user_status(m_tox);
-    if (status == EUSERSTATUS::INVALID) {
-        throw Exception(FAILED);
-    }
-
-    return (EUSERSTATUS)status;
+    return (EUSERSTATUS)tox_self_get_status(m_tox);
 }
 
 Tox::EUSERSTATUS Tox::get_status(FriendNr nr) {
     std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
-        throw Exception(UNITIALIZED);
+        throw std::runtime_error("TOX_UNITIALIZED");
     }
-    int status = tox_get_friend_connection_status(m_tox, nr);
-    if (status < 0) {
-        throw Exception(UNITIALIZED);
+    TOX_ERR_FRIEND_QUERY error;
+    auto con = tox_friend_get_connection_status(m_tox, nr, &error);
+    if (error != TOX_ERR_FRIEND_QUERY_OK) {
+        throw Exception(error);
     }
-    if (status == 0) {
+    if (con == TOX_CONNECTION_NONE) {
         return EUSERSTATUS::OFFLINE;
     }
 
-    status = tox_get_user_status(m_tox, nr);
-    if (status == EUSERSTATUS::INVALID) {
-        throw Exception(FAILED);
+    auto status = (EUSERSTATUS)tox_friend_get_status(m_tox, nr, &error);
+    if (error != TOX_ERR_FRIEND_QUERY_OK) {
+        throw Exception(error);
     }
 
-    return (EUSERSTATUS)status;
+    return status;
 }
 
 void Tox::set_status(Tox::EUSERSTATUS value) {
     std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
-        throw Exception(UNITIALIZED);
+        throw std::runtime_error("TOX_UNITIALIZED");
     }
     if (value == Tox::OFFLINE)
         value = Tox::AWAY;  // we can't set status to offline
-    if (tox_set_user_status(m_tox, value) != 0) {
-        throw Exception(FAILED);
-    }
+    tox_self_set_status(m_tox, (TOX_USER_STATUS)value);
 }
 
 unsigned long long Tox::get_last_online(Tox::FriendNr nr) {
     std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
-        throw Exception(UNITIALIZED);
+        throw std::runtime_error("TOX_UNITIALIZED");
     }
-    unsigned long long t = tox_get_last_online(m_tox, nr);
-    if (t == ~0ull) {
-        throw Exception(FAILED);
+    TOX_ERR_FRIEND_GET_LAST_ONLINE error;
+    auto res = tox_friend_get_last_online(m_tox, nr, &error);
+    if (error != TOX_ERR_FRIEND_GET_LAST_ONLINE_OK) {
+        throw Exception(error);
     }
-    return t;
+    return res;
 }
 
 void Tox::send_typing(FriendNr nr, bool is_typing) {
     std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
-        throw Exception(UNITIALIZED);
+        throw std::runtime_error("TOX_UNITIALIZED");
     }
-    if (tox_set_user_is_typing(m_tox, nr, is_typing) < 0) {
-        throw Exception(FAILED);
+    TOX_ERR_SET_TYPING error;
+    auto res = tox_self_set_typing(m_tox, nr, is_typing, &error);
+    if (error != TOX_ERR_SET_TYPING_OK) {
+        throw Exception(error);
+    }
+    if (!res) {
+        throw std::runtime_error("tox_self_set_typing unknow FALSE error");
     }
 }
 
 void Tox::inject_event(SEvent ev) {
     std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
-        throw Exception(UNITIALIZED);
+        throw std::runtime_error("TOX_UNITIALIZED");
     }
 
     if (ev.event == FRIENDMESSAGE) {
@@ -530,7 +561,7 @@ void Tox::inject_event(SEvent ev) {
 std::vector<Tox::SLog> Tox::get_log(Tox::FriendNr nr, int offset, int limit) {
     std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
-        throw Exception(UNITIALIZED);
+        throw std::runtime_error("TOX_UNITIALIZED");
     }
 
     std::vector<Tox::SLog> result;
@@ -556,7 +587,7 @@ std::vector<Tox::SLog> Tox::get_log(Tox::FriendNr nr, int offset, int limit) {
 void Tox::callback_friend_request(Tox*,
                                   const unsigned char* addr,
                                   const unsigned char* data,
-                                  unsigned short len,
+                                  size_t len,
                                   void*) {
     Tox::SEvent tmp;
     tmp.event = EEventType::FRIENDREQUEST;
@@ -570,9 +601,14 @@ void Tox::callback_friend_request(Tox*,
 
 void Tox::callback_friend_message(Tox*,
                                   FriendNr nr,
+                                  TOX_MESSAGE_TYPE type,
                                   const unsigned char* data,
-                                  unsigned short len,
+                                  size_t len,
                                   void*) {
+    if (type == TOX_MESSAGE_TYPE::TOX_MESSAGE_TYPE_ACTION) {
+        callback_friend_action(nullptr, nr, data, len, nullptr);
+        return;
+    }
     Tox::SEvent tmp;
     tmp.event = EEventType::FRIENDMESSAGE;
     tmp.friend_message.nr = nr;
@@ -584,7 +620,7 @@ void Tox::callback_friend_message(Tox*,
 void Tox::callback_friend_action(Tox*,
                                  FriendNr nr,
                                  const unsigned char* data,
-                                 unsigned short len,
+                                 size_t len,
                                  void*) {
     Tox::SEvent tmp;
     tmp.event = EEventType::FRIENDACTION;
@@ -596,7 +632,7 @@ void Tox::callback_friend_action(Tox*,
 void Tox::callback_name_change(Tox*,
                                FriendNr nr,
                                const unsigned char* data,
-                               unsigned short len,
+                               size_t len,
                                void*) {
     Tox::SEvent tmp;
     tmp.event = EEventType::NAMECHANGE;
@@ -608,7 +644,7 @@ void Tox::callback_name_change(Tox*,
 void Tox::callback_status_message(Tox*,
                                   FriendNr nr,
                                   const unsigned char* data,
-                                  unsigned short len,
+                                  size_t len,
                                   void*) {
     Tox::SEvent tmp;
     tmp.event = EEventType::STATUSMESSAGE;
@@ -618,19 +654,19 @@ void Tox::callback_status_message(Tox*,
     Tox::instance().inject_event(tmp);
 }
 
-void Tox::callback_user_status(Tox*, FriendNr nr, unsigned char data, void*) {
+void Tox::callback_user_status(Tox*, FriendNr nr, TOX_USER_STATUS, void*) {
     Tox::SEvent tmp;
     tmp.event = EEventType::USERSTATUS;
     tmp.user_status.nr = nr;
-    tmp.user_status.data = data;
+    tmp.user_status.data = Tox::instance().get_status(nr);
     Tox::instance().inject_event(tmp);
 }
 
-void Tox::callback_typing_change(Tox*, FriendNr nr, unsigned char data, void*) {
+void Tox::callback_typing_change(Tox*, FriendNr nr, bool data, void*) {
     Tox::SEvent tmp;
     tmp.event = EEventType::TYPINGCHANGE;
     tmp.typing_change.nr = nr;
-    tmp.typing_change.data = data;
+    tmp.typing_change.is_typing = data;
     Tox::instance().inject_event(tmp);
 }
 
@@ -642,31 +678,32 @@ void Tox::callback_read_receipt(Tox*, FriendNr nr, unsigned data, void*) {
     Tox::instance().inject_event(tmp);
 }
 
-void Tox::callback_connection_status(Tox* m,
+void Tox::callback_connection_status(Tox*,
                                      FriendNr nr,
-                                     unsigned char data,
+                                     TOX_CONNECTION,
                                      void*) {
     Tox::SEvent tmp;
     tmp.event = EEventType::USERSTATUS;
     tmp.user_status.nr = nr;
-    if (data == 0) {
-        tmp.user_status.data = EUSERSTATUS::OFFLINE;
-    } else {
-        // went online get user status
-        tmp.user_status.data = tox_get_user_status(m, nr);
-    }
+    tmp.user_status.data = Tox::instance().get_status(nr);
     Tox::instance().inject_event(tmp);
 }
 
 Tox::FriendAddr Tox::get_address(Tox::FriendNr nr) {
     std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
-        throw Exception(UNITIALIZED);
+        throw std::runtime_error("TOX_UNITIALIZED");
     }
     FriendAddr tmp;
-    if (tox_get_client_id(m_tox, nr, tmp.data()) != 0) {
-        throw Exception(FAILED);
+    TOX_ERR_FRIEND_GET_PUBLIC_KEY error;
+    auto res = tox_friend_get_public_key(m_tox, nr, tmp.data(), &error);
+    if (error != TOX_ERR_FRIEND_GET_PUBLIC_KEY_OK) {
+        throw Exception(error);
     }
+    if (!res) {
+        throw std::runtime_error("tox_friend_get_public_key unknow FALSE error");
+    }
+
     return tmp;
 }
 

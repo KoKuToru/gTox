@@ -59,7 +59,7 @@ PopoverAddContact::PopoverAddContact(const Gtk::Widget& relative_to)
 
     btn_add->signal_clicked().connect([this]() {
         std::cout << m_addr.get_text().length() << std::endl;
-        if (m_addr.get_text().length() != 76) {
+        if (m_addr.get_text().length() != TOX_ADDRESS_SIZE * 2) {
             DialogError(false,
                         _("ERROR_ADD_CONTACT_ADDR_WRONG_SIZE_TITLE"),
                         _("ERROR_ADD_CONTACT_ADDR_WRONG_SIZE")).run();
@@ -77,36 +77,23 @@ PopoverAddContact::PopoverAddContact(const Gtk::Widget& relative_to)
             m_addr.set_text("");
             m_msg.get_buffer()->set_text("");
         } catch (Tox::Exception &ex) {
-            switch(ex.code) {
-                case Tox::MSGTOOLONG:
+            if (ex.type() != typeid(TOX_ERR_FRIEND_ADD)) {
+                throw;
+            }
+            std::string title = ex.what();
+            title += std::string("_UI_TITLE");
+            std::string message = ex.what();
+            message += "_UI";
+            switch(ex.what_id()) {
+                case TOX_ERR_FRIEND_ADD_NO_MESSAGE:
+                case TOX_ERR_FRIEND_ADD_BAD_CHECKSUM:
+                case TOX_ERR_FRIEND_ADD_ALREADY_SENT:
+                case TOX_ERR_FRIEND_ADD_OWN_KEY:
+                case TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM:
+                case TOX_ERR_FRIEND_ADD_TOO_LONG:
                     DialogError(false,
-                                _("ERROR_MSGTOOLONG_TITLE"),
-                                _("ERROR_MSGTOOLONG")).run();
-                    break;
-                case Tox::MSGEMPTY:
-                    DialogError(false,
-                                _("ERROR_MSGEMPTY_TITLE"),
-                                _("ERROR_MSGEMPTY")).run();
-                    break;
-                case Tox::CANTADDYOURSELF:
-                    DialogError(false,
-                                _("ERROR_CANTADDYOURSELF_TITLE"),
-                                _("ERROR_CANTADDYOURSELF")).run();
-                    break;
-                case Tox::ALREADYSENT:
-                    DialogError(false,
-                                _("ERROR_ALREADYSENT_TITLE"),
-                                _("ERROR_ALREADYSENT")).run();
-                    break;
-                case Tox::BADCHECKSUM:
-                    DialogError(false,
-                                _("ERROR_BADCHECKSUM_TITLE"),
-                                _("ERROR_BADCHECKSUM")).run();
-                    break;
-                case Tox::NOSPAM:
-                    DialogError(false,
-                                _("ERROR_NOSPAM_TITLE"),
-                                _("ERROR_NOSPAM")).run();
+                                gettext(title.c_str()),
+                                gettext(message.c_str())).run();
                     break;
                 default:
                     throw;
