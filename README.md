@@ -1,13 +1,58 @@
 <h1><img src="https://rawgit.com/KoKuToru/gTox/master/Icons/icon_128.svg">GTK3-Style Tox-Client</h1>
+
+* [Features](#features)
+* [How to install](#how-to-install)
+  * [ArchLinux](#archlinux)
+  * [Linux](#linux)
+  * [Mac, Windows](#mac-windows)
+* [How to build](#how-to-build)
+  * [Linux Dependencies](#linux-dependencies)
+* [Screenshot](#screenshot)
+* [Mockup](#mockup)
+
 Features
 ============
-* Invite contact
-* Delete contact
-* Accept invites
-* Basic chat
-* Change name
-* Change status message
-* Change online status
+For comparison https://wiki.tox.im/Client
+
+|               | gTox          | Issue  | Comment |
+| ------------- | ------------- | ------ |-------|
+| **Interface** | Desktop GUI   |        |
+| Linux         | **Yes**       |        |
+| Windows       | Maybe         |        | *If you can compile GTKmm..*
+| OS X          | Maybe         |        | *If you can compile GTKmm..*
+| BSD-like      | Maybe         |        | *If you can compile GTKmm..*
+| Android       | No            |        |
+| iOS           | No            |        |
+| 1v1 messaging | **Yes** | |
+| File transfer | No | #55 |
+| Group chat | No | |
+| Group audio | No | |
+| Audio | No | |
+| Video | No | |
+| DNS discovery | No | |
+| Chat logs | **Yes** | |
+| Proxy support | No | |
+| Audio Filtering | No | |
+| Faux offline messaging | No | |
+| Contact aliases | No | |
+| Contact blocking | No | |
+| Save file encryption | No | |
+| Multilingual | **Yes** | | *English and German*
+| Multiprofile | No | #26 |
+| Typing notification | No | |
+| Audio notifications | **Yes** | | *When a message comes in*
+| Emoticons | Yes/No | #25 | *Only UTF-8*
+| Spell check | No | | 
+| Desktop sharing | No | |
+| Inline images | No | |
+| File resuming | No | |
+| Read receipts | Yes/No | | *But not visual yet*
+| Message splitting | No | | 
+| Changing nospam | No | |
+| tox: URI | No | |
+| Avatars | No | #27 | 
+
+Special to gTox:
 * Markup support bold(crtl+b), italic (crtl+i), underline (crtl+u)
 
 Not much, not ready for daily use ! Please wait for the first release.
