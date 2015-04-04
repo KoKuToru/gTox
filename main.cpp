@@ -158,6 +158,20 @@ int main(int argc, char* argv[]) {
                 return f_gtox && f_tox && f_old_tox;
             })));
 
+    //filter files with same name .tox/.gtox
+    //1. remove extension
+    std::transform(accounts.begin(), accounts.end(), accounts.begin(), [](std::string a) {
+        auto a_p = a.find_last_of(".");
+        if (a_p != std::string::npos) {
+            a.resize(a_p);
+        }
+        return a;
+    });
+    //2. sort
+    std::sort(accounts.begin(), accounts.end());
+    //3. remove duplicates
+    accounts.erase(std::unique(accounts.begin(), accounts.end()), accounts.end());
+
     if (accounts.empty()) {
         // start new account assistant
         FirstStartAssistant assistant(config_path);
