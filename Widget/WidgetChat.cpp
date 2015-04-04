@@ -121,6 +121,11 @@ WidgetChat::WidgetChat(Tox::FriendNr nr)
 
     m_btn_send.signal_clicked().connect([this, bold, italic, underline]() {
         try {
+            bool allow_send = m_input.get_buffer()->get_text().find_first_not_of(" \t\n\v\f\r") != std::string::npos;
+
+            if(!allow_send)
+                return;
+
             Glib::ustring text;
             auto begin = m_input.get_buffer()->begin();
             auto end = m_input.get_buffer()->end();
