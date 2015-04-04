@@ -15,7 +15,7 @@ Features
 For comparison https://wiki.tox.im/Client
 
 |               | gTox          | Issue  | Comment |
-| ------------- | ------------- | ------ |-------|
+| ------------- |:-------------:|:------:|-------|
 | **Interface** | Desktop GUI   |        |
 | Linux         | **Yes**       |        |
 | Windows       | Maybe         |        | *If you can compile GTKmm..*
@@ -24,7 +24,7 @@ For comparison https://wiki.tox.im/Client
 | Android       | No            |        |
 | iOS           | No            |        |
 | 1v1 messaging | **Yes** | |
-| File transfer | No | #55 |
+| File transfer | No | [#55](https://github.com/KoKuToru/gTox/issues/55) |
 | Group chat | No | |
 | Group audio | No | |
 | Audio | No | |
@@ -38,10 +38,10 @@ For comparison https://wiki.tox.im/Client
 | Contact blocking | No | |
 | Save file encryption | No | |
 | Multilingual | **Yes** | | *English and German*
-| Multiprofile | No | #26 |
+| Multiprofile | No | [#26](https://github.com/KoKuToru/gTox/issues/26) |
 | Typing notification | No | |
 | Audio notifications | **Yes** | | *When a message comes in*
-| Emoticons | Yes/No | #25 | *Only UTF-8*
+| Emoticons | Yes/No | [#25](https://github.com/KoKuToru/gTox/issues/25) | *Only UTF-8*
 | Spell check | No | | 
 | Desktop sharing | No | |
 | Inline images | No | |
@@ -50,7 +50,7 @@ For comparison https://wiki.tox.im/Client
 | Message splitting | No | | 
 | Changing nospam | No | |
 | tox: URI | No | |
-| Avatars | No | #27 | 
+| Avatars | No | [#27](https://github.com/KoKuToru/gTox/issues/27) | 
 
 Special to gTox:
 * Markup support bold(crtl+b), italic (crtl+i), underline (crtl+u)
