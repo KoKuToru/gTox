@@ -78,7 +78,8 @@ class ToxLogEntity:
 
 class ToxDatabase {
   private:
-    std::string m_path;
+    std::string m_path_db;
+    std::string m_path_state;
     std::shared_ptr<SQLite::Database> m_db;
 
     void bind(SQLite::Statement& stmt, int i, const bool& value) {

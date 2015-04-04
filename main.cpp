@@ -29,6 +29,7 @@
 #include "Dialog/DialogError.h"
 #include <libnotifymm.h>
 #include <glibmm/i18n.h>
+#include <glibmm/exception.h>
 
 #include "Tox/Tox.h"
 
@@ -101,13 +102,15 @@ void terminate_handler() {
     std::exception_ptr exptr = std::current_exception();
     try {
         std::rethrow_exception(exptr);
-    } catch (SQLite::Exception &ex) {
+    } catch (const Glib::Exception &ex) {
+        DialogError(true, "Fatal Unexpected Glib Exception", ex.what()).run();
+    } catch (const SQLite::Exception &ex) {
         DialogError(true, "Fatal Unexpected Sqlite Exception", ex.what()).run();
-    } catch (Tox::Exception &ex) {
+    } catch (const Tox::Exception &ex) {
         DialogError(true, "Fatal Unexpected Tox Exception", gettext(ex.what())).run();
-    } catch (std::exception &ex) {
+    } catch (const std::exception &ex) {
         DialogError(true, "Fatal Unexpected Exception", ex.what()).run();
-    } catch (std::string &ex) {
+    } catch (const std::string &ex) {
         DialogError(true, "Fatal Unexpected String Exception", ex).run();
     } catch (...) {
         DialogError(true, "Fatal Unexpected Exception", "unknow exception !").run();
