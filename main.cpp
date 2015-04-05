@@ -27,6 +27,7 @@
 #include "Dialog/DialogContact.h"
 #include "Dialog/FirstStartAssistant.h"
 #include "Dialog/DialogError.h"
+#include "Dialog/DialogProfile.h"
 #include <libnotifymm.h>
 #include <glibmm/i18n.h>
 #include <glibmm/exception.h>
@@ -174,6 +175,10 @@ int main(int argc, char* argv[]) {
     std::sort(accounts.begin(), accounts.end());
     //3. remove duplicates
     accounts.erase(std::unique(accounts.begin(), accounts.end()), accounts.end());
+    //4. make the full paths
+    std::transform(accounts.begin(), accounts.end(), accounts.begin(), [&config_path](const std::string& name) {
+        return Glib::build_filename(config_path, name);
+    });
 
     if (accounts.empty()) {
         // start new account assistant
@@ -186,11 +191,13 @@ int main(int argc, char* argv[]) {
 
         config_path = assistant.getPath();
     } else if (accounts.size() > 1) {
-        // start user select
+        // start profile select
+        DialogProfile profile(accounts);
+        kit.run(profile);
         // TODO
         throw std::runtime_error("Multi profil support not implemented yet !");
     } else {
-        config_path = Glib::build_filename(config_path, accounts.front());
+        config_path = accounts.front();
         Tox::instance().init(config_path);
     }
 
