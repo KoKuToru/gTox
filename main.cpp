@@ -180,43 +180,35 @@ int main(int argc, char* argv[]) {
         return Glib::build_filename(config_path, name);
     });
 
-    if (accounts.empty()) {
-        // start new account assistant
-        FirstStartAssistant assistant(config_path);
-        kit.run(assistant);
+    // start profile select
+    while (true) {
+        DialogProfile profile(accounts);
 
-        if (assistant.isAborted()) {
+        if (!accounts.empty() && profile.get_path().empty()) {
+            kit.run(profile);
+        }
+
+        if (!accounts.empty() && profile.is_aborted()) {
             return 0;
         }
 
-        if (assistant.getPath() == "")
+        if (profile.get_path().empty()) {
+            profile.hide();
+            FirstStartAssistant assistant(config_path);
+            kit.run(assistant);
 
-        config_path = assistant.getPath();
-    } else {
-        // start profile select
-        while (true) {
-            DialogProfile profile(accounts);
-            if (profile.get_path().empty()) {
-                kit.run(profile);
-            }
-
-            if (profile.is_aborted()) {
-                return 0;
-            }
-
-            if (profile.get_path().empty()) {
-                profile.hide();
-                FirstStartAssistant assistant(config_path);
-                kit.run(assistant);
-
-                if (!assistant.isAborted()) {
-                    config_path = assistant.getPath();
-                    break;
-                }
-            } else {
-                config_path = profile.get_path();
+            if (!assistant.isAborted()) {
+                config_path = assistant.getPath();
                 break;
             }
+
+            if (accounts.empty()) {
+                //exit
+                return 0;
+            }
+        } else {
+            config_path = profile.get_path();
+            break;
         }
     }
 

@@ -106,8 +106,8 @@ void FirstStartAssistant::on_close() {
         Glib::ustring sMyAddr = Tox::to_hex(myAddr.data(), 32);
         Tox::instance().set_name(create.getEntryName().get_text());
         Tox::instance().set_status_message("Powered by gTox");
-        path = Glib::build_filename(path, sMyAddr + ".state");
-        Tox::instance().database().open(path, true);
+        path = Glib::build_filename(path, sMyAddr);
+        Tox::instance().database().open(path + ".gtox", true);
         Tox::instance().save(path);
     }
     Gtk::Main::quit();
