@@ -10,7 +10,7 @@
  */
 class ToxEventCallback {
   public:
-    typedef std::function<void(const Tox::SEvent&)> EFunc;
+    typedef std::function<void(const ToxEvent&)> EFunc;
 
     ToxEventCallback();
     ToxEventCallback(const EFunc& func);
@@ -24,7 +24,7 @@ class ToxEventCallback {
      * @brief Call all installed callbacks with the event data
      * @param data
      */
-    static void notify(const Tox::SEvent& data);
+    static void notify(const ToxEvent& data);
 
   private:
     /**

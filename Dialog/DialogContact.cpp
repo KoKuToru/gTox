@@ -41,7 +41,7 @@ DialogContact::DialogContact(const std::string& config_path)
       m_popover_settings(m_btn_settings),
       m_popover_add(m_btn_add) {
 
-    m_tox_callback = [this](const Tox::SEvent& ev) { tox_event_handling(ev); };
+    m_tox_callback = [this](const ToxEvent& ev) { tox_event_handling(ev); };
 
     auto css = Gtk::CssProvider::create();
     if (!css->load_from_data(THEME::main)) {
@@ -251,7 +251,7 @@ bool DialogContact::update() {
         set_status(Tox::instance().get_status());
     }
 
-    Tox::SEvent ev;
+    ToxEvent ev;
     while (Tox::instance().update(ev)) {
         ToxEventCallback::notify(ev);
     }
@@ -259,63 +259,37 @@ bool DialogContact::update() {
     return true;
 }
 
-void DialogContact::tox_event_handling(const Tox::SEvent& ev) {
-    bool save = false;
-    switch (ev.event) {
-        case Tox::EEventType::FRIENDACTION:  // not that important Tox adds
-                                             // "/me"
-            {
-                DialogChat* chat;
-                get_chat(ev.friend_action.nr, chat);
-                if (is_chat_open(ev.friend_action.nr)) {
-                    Tox::SEvent custom;
-                    custom.event = Tox::EEventType::CUSTOM;
-                    custom.custom.cmd = "ACTIVE_CHAT";
-                    custom.custom.nr = ev.friend_action.nr;
-                    ToxEventCallback::notify(custom);
-                }
-                Canberra::play("message-new-instant");
-            }
-            break;
-        case Tox::EEventType::FRIENDMESSAGE: {
-            DialogChat* chat;
-            get_chat(ev.friend_message.nr, chat);
-            if (is_chat_open(ev.friend_message.nr)) {
-                Tox::SEvent custom;
-                custom.event = Tox::EEventType::CUSTOM;
-                custom.custom.cmd = "ACTIVE_CHAT";
-                custom.custom.nr = ev.friend_message.nr;
-                ToxEventCallback::notify(custom);
-            } else
-                Canberra::play("message-new-instant");
-        } break;
-        case Tox::EEventType::FRIENDREQUEST:
-            std::cout << "FRIENDREQUEST ! " << ev.friend_request.message
-                      << std::endl;
-            m_notification.add_notification(
-                "Friend request ["
-                + Tox::to_hex(ev.friend_request.addr.data(), 32) + "]",
-                ev.friend_request.message,
-                "Accept",
-                [this, ev]() {
-                    add_contact(Tox::instance().add_friend_norequest(
-                        ev.friend_request.addr));
-                    Tox::instance().save();
-                });
-            break;
-        case Tox::EEventType::READRECEIPT:
-            std::cout << "READRECEIPT !" << ev.readreceipt.nr << " -> "
-                      << ev.readreceipt.data << std::endl;
-            break;
-        case Tox::EEventType::TYPINGCHANGE:
-            std::cout << "TYPINGCHANGE !" << ev.typing_change.nr << " -> "
-                      << ev.typing_change.is_typing << std::endl;
-            break;
-        default:
-            break;
-    }
-    if (save) {
-        Tox::instance().save();
+void DialogContact::tox_event_handling(const ToxEvent& ev) {
+    if (ev.type() == typeid(Tox::EventFriendMessage)) {
+        auto data = ev.get<Tox::EventFriendMessage>();
+        DialogChat* chat;
+        get_chat(data.nr, chat);
+        if (is_chat_open(data.nr)) {
+            ToxEventCallback::notify(ToxEvent(WidgetContactListItem::EventStopSpin{
+                                                  data.nr
+                                              }));
+        }
+        Canberra::play("message-new-instant");
+    } else if (ev.type() == typeid(Tox::EventFriendAction)) {
+        auto data = ev.get<Tox::EventFriendAction>();
+        DialogChat* chat;
+        get_chat(data.nr, chat);
+        if (is_chat_open(data.nr)) {
+            ToxEventCallback::notify(ToxEvent(WidgetContactListItem::EventStopSpin{
+                                                  data.nr
+                                              }));
+        }
+        Canberra::play("message-new-instant");
+    } else if (ev.type() == typeid(Tox::EventFriendRequest)) {
+        auto data = ev.get<Tox::EventFriendRequest>();
+        m_notification.add_notification(
+            "Friend request [" + Tox::to_hex(data.addr.data(), 32) + "]",
+            data.message,
+            "Accept",
+            [this, data]() {
+                add_contact(Tox::instance().add_friend_norequest(data.addr));
+                Tox::instance().save();
+            });
     }
 }
 
@@ -370,11 +344,7 @@ bool DialogContact::is_chat_open(Tox::FriendNr nr) {
 }
 
 void DialogContact::activate_chat(Tox::FriendNr nr) {
-    Tox::SEvent custom;
-    custom.event = Tox::EEventType::CUSTOM;
-    custom.custom.cmd = "ACTIVE_CHAT";
-    custom.custom.nr = nr;
-    ToxEventCallback::notify(custom);
+    ToxEventCallback::notify(ToxEvent(WidgetContactListItem::EventStopSpin()));
 
     // 1. Search if contact has already a open chat
     DialogChat* dialog = nullptr;
@@ -400,22 +370,19 @@ void DialogContact::activate_chat(Tox::FriendNr nr) {
     // 4. update headerbard
     m_headerbar_chat.set_title(Tox::instance().get_name_or_address(nr));
     m_headerbar_chat.set_subtitle(Tox::instance().get_status_message(nr));
-    m_tox_callback_chat = [this, nr](const Tox::SEvent& ev) {
-        switch (ev.event) {
-            case Tox::EEventType::NAMECHANGE:
-                if (ev.name_change.nr == nr) {
-                    m_headerbar_chat.set_title(
-                        Tox::instance().get_name_or_address(nr));
-                }
-                break;
-            case Tox::EEventType::STATUSMESSAGE:
-                if (ev.status_message.nr == nr) {
-                    m_headerbar_chat.set_subtitle(
-                        Tox::instance().get_status_message(nr));
-                }
-                break;
-            default:
-                break;
+    m_tox_callback_chat = [this, nr](const ToxEvent& ev) {
+        if (ev.type() == typeid(Tox::EventName)) {
+            auto data = ev.get<Tox::EventName>();
+            if (data.nr == nr) {
+                m_headerbar_chat
+                        .set_title(Tox::instance().get_name_or_address(nr));
+            }
+        } else if (ev.type() == typeid(Tox::EventStatusMessage)) {
+            auto data = ev.get<Tox::EventStatusMessage>();
+            if (data.nr == nr) {
+                m_headerbar_chat
+                        .set_subtitle(Tox::instance().get_status_message(nr));
+            }
         }
     };
 

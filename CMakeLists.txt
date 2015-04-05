@@ -124,6 +124,7 @@ set(SOURCES
     Helper/ToxEventCallback.cpp
     Tox/Tox.cpp
     Tox/ToxDatabase.cpp
+    Tox/ToxEvent.cpp
     Tox/ToxException.cpp)
 
 add_executable(${PROJECT_NAME}

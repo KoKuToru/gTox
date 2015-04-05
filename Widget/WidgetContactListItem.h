@@ -50,6 +50,11 @@ class WidgetContactListItem : public Gtk::ListBoxRow {
     ~WidgetContactListItem();
 
     Tox::FriendNr get_friend_nr();
+
+    class EventStopSpin {
+        public:
+            Tox::FriendNr nr;
+    };
 };
 
 #endif

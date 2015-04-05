@@ -29,6 +29,7 @@
 #include "SQLiteCpp/Database.h"
 #include "ToxDatabase.h"
 #include "ToxException.h"
+#include "ToxEvent.h"
 /**
  * @brief Wraps the toxcore but also add features with a sqlitedb
  */
@@ -65,16 +66,11 @@ class Tox {
 
     typedef ToxException Exception;
 
-    enum EEventType {
-        FRIENDREQUEST,
-        FRIENDMESSAGE,
-        FRIENDACTION,
-        NAMECHANGE,
-        STATUSMESSAGE,
-        USERSTATUS,
-        TYPINGCHANGE,
-        READRECEIPT,
-        CUSTOM
+    enum EUSERSTATUS {
+        OFFLINE = -1,
+        NONE = TOX_USER_STATUS::TOX_USER_STATUS_NONE,
+        AWAY = TOX_USER_STATUS::TOX_USER_STATUS_AWAY,
+        BUSY = TOX_USER_STATUS::TOX_USER_STATUS_BUSY
     };
 
     struct SFriendRequest {
@@ -103,18 +99,52 @@ class Tox {
         std::string data;
     };
 
-    struct SEvent {
-        EEventType event;
-        // not very optimal
-        SFriendRequest friend_request;
-        SFriendData friend_message;
-        SFriendData friend_action;
-        SFriendData name_change;
-        SFriendData status_message;
-        SFriendBool typing_change;
-        SFriendInt user_status;
-        SFriendInt readreceipt;
-        SCustom custom;
+    class EventFriendRequest {
+        public:
+            FriendAddr addr;
+            Glib::ustring message;
+    };
+
+    class EventFriendMessage {
+        public:
+            FriendNr nr;
+            Glib::ustring message;
+    };
+
+    class EventFriendAction {
+        public:
+            FriendNr nr;
+            Glib::ustring message;
+    };
+
+    class EventName {
+        public:
+            FriendNr nr;
+            Glib::ustring name;
+    };
+
+    class EventStatusMessage {
+        public:
+            FriendNr nr;
+            Glib::ustring status_message;
+    };
+
+    class EventTyping {
+        public:
+            FriendNr nr;
+            bool is_typing;
+    };
+
+    class EventUserStatus {
+        public:
+            FriendNr nr;
+            EUSERSTATUS status;
+    };
+
+    class EventReadReceipt {
+        public:
+            FriendNr nr;
+            unsigned receipt;
     };
 
     enum ELogType { LOGMSG = 1, LOGACTION = 2 };
@@ -126,13 +156,6 @@ class Tox {
         unsigned long long recvtime;
 
         Glib::ustring data;
-    };
-
-    enum EUSERSTATUS {
-        OFFLINE = -1,
-        NONE = TOX_USER_STATUS::TOX_USER_STATUS_NONE,
-        AWAY = TOX_USER_STATUS::TOX_USER_STATUS_AWAY,
-        BUSY = TOX_USER_STATUS::TOX_USER_STATUS_BUSY
     };
 
     /**
@@ -422,7 +445,7 @@ class Tox {
      *
      * @return True when ev was filled with a event
      */
-    bool update(SEvent& ev);
+    bool update(ToxEvent& ev);
 
     /**
      * @brief Helper function, convert byte array to hex-string
@@ -461,7 +484,7 @@ class Tox {
     std::vector<SLog> get_log(FriendNr nr, int offset = 0, int limit = 100);
 
   protected:
-    std::deque<SEvent> events;
+    std::deque<ToxEvent> m_events;
 
     static void callback_friend_request(Tox*,
                                         const unsigned char* addr,
@@ -503,6 +526,6 @@ class Tox {
                                            TOX_CONNECTION data,
                                            void*);
 
-    void inject_event(SEvent ev);
+    void inject_event(ToxEvent ev);
 };
 #endif
