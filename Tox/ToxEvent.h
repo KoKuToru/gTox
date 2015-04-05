@@ -37,7 +37,7 @@ class ToxEvent {
             m_type(typeid(T)),
             m_data(new std::vector<char>(sizeof(T)),
                    [](std::vector<char>* v) {
-                       ((T*)v)->~T();
+                       ((T*)v->data())->~T();
                        delete v;
                    }) {
             //init data:
