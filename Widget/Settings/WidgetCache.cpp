@@ -47,7 +47,16 @@ WidgetCache::WidgetCache()
 #endif
 
     m_clean_log.signal_clicked().connect([this](){
-        Tox::instance().database().toxcore_log_cleanup();
+        Gtk::Window *parent = dynamic_cast<Gtk::Window *>(this->get_toplevel());
+        if(parent){
+            Gtk::MessageDialog msg(*parent, _("REALLY_CLEANUP_LOGS"), false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO);
+            int ret = msg.run();
+            if(ret == Gtk::RESPONSE_YES){
+                msg.hide();
+                Tox::instance().database().toxcore_log_cleanup();
+                Gtk::MessageDialog(*parent, _("LOG_CLEANED"), false, Gtk::MESSAGE_INFO, Gtk::BUTTONS_OK).run();
+            }
+        }
     });
 
     property_valign() = Gtk::ALIGN_CENTER;
