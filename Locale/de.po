@@ -169,3 +169,24 @@ msgstr "ID wurde bereits hinzugefügt der NOSPAM-Wert war aber anders."
 
 msgid "TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM_UI_TITLE"
 msgstr "Hinzufügen fehlgeschlagen"
+
+msgid "PROFILE_ABORT"
+msgstr "Abbrechen"
+
+msgid "PROFILE_TITLE"
+msgstr "gTox"
+
+msgid "PROFILE_SUBTITLE"
+msgstr "Profil bitte auswählen"
+
+msgid "PROFILE_NEW"
+msgstr "Neu"
+
+msgid "PROFILE_SELECT"
+msgstr "Auswählen"
+
+msgid "PROFILE_CORRUPTED_TITLE"
+msgstr "Beschädigtes Profil"
+
+msgid "PROFILE_CORRUPTED"
+msgstr "Profil konnte nicht geladen werden"

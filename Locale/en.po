@@ -286,3 +286,24 @@ msgstr "Do you really want to clean the logs?"
 
 msgid "LOG_CLEANED"
 msgstr "Logs cleaned"
+
+msgid "PROFILE_ABORT"
+msgstr "Abort"
+
+msgid "PROFILE_TITLE"
+msgstr "gTox"
+
+msgid "PROFILE_SUBTITLE"
+msgstr "Select profile"
+
+msgid "PROFILE_NEW"
+msgstr "New"
+
+msgid "PROFILE_SELECT"
+msgstr "Select"
+
+msgid "PROFILE_CORRUPTED_TITLE"
+msgstr "Corrupted profile"
+
+msgid "PROFILE_CORRUPTED"
+msgstr "Profile couldn't be loaded"
