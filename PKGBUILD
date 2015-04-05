@@ -1,7 +1,7 @@
 # Maintainer: Luca Béla Palkovics <luca.bela.palkovics@gmail.com>
 
 pkgrel=1
-pkgver=20141013
+pkgver=20150405
 pkgname=('gtox-git')
 pkgdesc="a GTK-based tox-client"
 url="https://github.com/KoKuToru/gTox.git"
@@ -13,6 +13,7 @@ source=(.AURINFO "${pkgname%-git}::git+https://github.com/KoKuToru/gTox.git#bran
 sha256sums=('SKIP' 'SKIP')
 provides=('gtox')
 conflicts=('gtox')
+install="gTox.install"
 
 pkgver()
 {
