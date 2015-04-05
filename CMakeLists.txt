@@ -117,6 +117,7 @@ set(SOURCES
     Dialog/DialogContact.cpp
     Dialog/DialogSettings.cpp
     Dialog/DialogError.cpp
+    Dialog/DialogProfile.cpp
     Widget/WidgetNotification.cpp
     Dialog/Debug/DialogCss.cpp
     Helper/Canberra.cpp
