@@ -21,6 +21,7 @@
 #include "Generated/icon.h"
 #include <glibmm/i18n.h>
 #include <Tox/Tox.h>
+#include <stdio.h>
 
 WidgetCache::WidgetCache()
     : Glib::ObjectBase("WidgetNetwork"),
@@ -44,6 +45,19 @@ WidgetCache::WidgetCache()
 #else
 #warning "Without GTK 3.14+ signal_state_set() on Gtk::Switches wont work"
 #endif
+
+    m_clean_log.signal_clicked().connect([this](){
+        Gtk::Window *parent = dynamic_cast<Gtk::Window *>(this->get_toplevel());
+        if(parent){
+            Gtk::MessageDialog msg(*parent, _("REALLY_CLEANUP_LOGS"), false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO);
+            int ret = msg.run();
+            if(ret == Gtk::RESPONSE_YES){
+                msg.hide();
+                Tox::instance().database().toxcore_log_cleanup();
+                Gtk::MessageDialog(*parent, _("LOG_CLEANED"), false, Gtk::MESSAGE_INFO, Gtk::BUTTONS_OK).run();
+            }
+        }
+    });
 
     property_valign() = Gtk::ALIGN_CENTER;
     property_halign() = Gtk::ALIGN_CENTER;
