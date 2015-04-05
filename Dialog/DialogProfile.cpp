@@ -69,6 +69,7 @@ DialogProfile::DialogProfile(const std::vector<std::string>& accounts):
     add(*box);
     box->show();
 
+    bool loaded = false;
     for (auto path : accounts) {
         auto row = Gtk::manage(new Gtk::ListBoxRow());
         row->set_name("WidgetContactListItem");
@@ -111,6 +112,7 @@ DialogProfile::DialogProfile(const std::vector<std::string>& accounts):
             auto sstatus = Tox::instance().get_status_message();
             name->set_text(sname);
             status->set_text(sstatus);
+            loaded = true;
         } catch (...) {
             row->set_sensitive(false);
         }
@@ -146,6 +148,13 @@ DialogProfile::DialogProfile(const std::vector<std::string>& accounts):
         m_abort = false;
         quit();
     });
+
+    //quick check ..
+    if (accounts.size() == 1 && loaded) {
+        m_abort = false;
+        m_selected_path = m_accounts[0];
+        quit();
+    }
 }
 
 void DialogProfile::quit() {

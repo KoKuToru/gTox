@@ -192,11 +192,13 @@ int main(int argc, char* argv[]) {
         if (assistant.getPath() == "")
 
         config_path = assistant.getPath();
-    } else if (accounts.size() > 1) {
+    } else {
         // start profile select
         while (true) {
             DialogProfile profile(accounts);
-            kit.run(profile);
+            if (profile.get_path().empty()) {
+                kit.run(profile);
+            }
 
             if (profile.is_aborted()) {
                 return 0;
@@ -216,8 +218,6 @@ int main(int argc, char* argv[]) {
                 break;
             }
         }
-    } else {
-        config_path = accounts.front();
     }
 
     Tox::instance().init(config_path); //TODO do this somewhere in DialogContact..
