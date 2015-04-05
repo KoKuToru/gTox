@@ -19,15 +19,34 @@
 **/
 #include "ToxDatabase.h"
 #include <giomm/file.h>
+#include <glibmm/fileutils.h>
 #include "Generated/database.h"
+#include "toxcore/toxcore/tox.h"
+#include <fstream>
+#include <exception>
 
 void ToxDatabase::open(const std::string& path, bool init) {
     if (m_db) {
-        throw "ERROR";
+        throw std::runtime_error("ERROR");
     }
-    m_path = path;
+    m_path_db    = path + ".gtox";
+
+    std::string tox_save = "tox_save";
+    if (!(path.size() > tox_save.size()
+            && path.substr(path.size() - tox_save.size(),
+                    tox_save.size()) == tox_save)) {
+        m_path_state = path + ".tox";
+    } else {
+        m_path_state = path;
+    }
+
+    if (!Glib::file_test(m_path_db, Glib::FILE_TEST_IS_REGULAR)) {
+        //force init
+        init = true;
+    }
+
     m_db = std::make_shared<SQLite::Database>(
-        m_path, SQLITE_OPEN_READWRITE | (init ? SQLITE_OPEN_CREATE : 0));
+        m_path_db, SQLITE_OPEN_READWRITE | (init ? SQLITE_OPEN_CREATE : 0));
 
     if (init) {
         m_db->exec(DATABASE::version_1);
@@ -44,10 +63,10 @@ void ToxDatabase::open(const std::string& path, bool init) {
                &DATABASE::version_3,
                &DATABASE::version_4,
                &DATABASE::version_5,
-	       &DATABASE::version_6};
+           &DATABASE::version_6};
 
         if (version < 1 || version > (int)sizeof(upgrade_scripts)) {
-            throw "ERROR";
+            throw std::runtime_error("ERROR");
         }
 
         int version_max
@@ -83,10 +102,10 @@ void ToxDatabase::close() {
 
 void ToxDatabase::move(const std::string& path) {
     if (!m_db) {
-        throw "ERROR";
+        throw std::runtime_error("ERROR");
     }
 
-    if (m_path == path) {
+    if (m_path_db == path + ".gtox") {
         return;
     }
 
@@ -94,18 +113,26 @@ void ToxDatabase::move(const std::string& path) {
     m_db.reset();
     // try to move file
     try {
-        if (!Gio::File::create_for_path(m_path)
-                 ->move(Gio::File::create_for_path(path))) {
-            throw "ERROR";
+        //TODO ! MORE SECURE SOLUTION
+        if (Glib::file_test(m_path_db, Glib::FILE_TEST_IS_REGULAR)) {
+            if (!Gio::File::create_for_path(m_path_db)
+                    ->move(Gio::File::create_for_path(path + ".gtox"))) {
+                throw std::runtime_error("ERROR");
+            }
         }
-        m_path = path;
+        if (Glib::file_test(m_path_state, Glib::FILE_TEST_IS_REGULAR)) {
+            if (!Gio::File::create_for_path(m_path_state)
+                    ->move(Gio::File::create_for_path(path + ".tox"))) {
+                throw std::runtime_error("ERROR");
+            }
+        }
+        m_path_db    = path + ".gtox";
+        m_path_state = path + ".tox";
         // open new database
-        m_db
-            = std::make_shared<SQLite::Database>(m_path, SQLITE_OPEN_READWRITE);
+        m_db = std::make_shared<SQLite::Database>(m_path_db, SQLITE_OPEN_READWRITE);
     } catch (...) {
         // restore m_db state
-        m_db
-            = std::make_shared<SQLite::Database>(m_path, SQLITE_OPEN_READWRITE);
+        m_db = std::make_shared<SQLite::Database>(m_path_db, SQLITE_OPEN_READWRITE);
         throw;
     }
 }
@@ -113,7 +140,7 @@ void ToxDatabase::move(const std::string& path) {
 std::string ToxDatabase::config_get(const std::string& name,
                                     const std::string& value = "") {
     if (!m_db) {
-        throw "ERROR";
+        throw std::runtime_error("ERROR");
     }
 
     auto selectq
@@ -129,7 +156,7 @@ std::string ToxDatabase::config_get(const std::string& name,
 void ToxDatabase::config_set(const std::string& name,
                              const std::string& value) {
     if (!m_db) {
-        throw "ERROR";
+        throw std::runtime_error("ERROR");
     }
 
     if (query("UPDATE config SET value=?2 WHERE cast(name as text)=cast(?1 as text)", name, value)->exec()
@@ -141,7 +168,7 @@ void ToxDatabase::config_set(const std::string& name,
 
 int ToxDatabase::config_get(const std::string& name, int value = 0) {
     if (!m_db) {
-        throw "ERROR";
+        throw std::runtime_error("ERROR");
     }
 
     auto selectq
@@ -159,7 +186,7 @@ int ToxDatabase::config_get(const std::string& name, int value = 0) {
 
 void ToxDatabase::config_set(const std::string& name, int value) {
     if (!m_db) {
-        throw "ERROR";
+        throw std::runtime_error("ERROR");
     }
 
     if (query("UPDATE config SET value=?2 WHERE cast(name as text)=cast(?1 as text)", name, value)->exec()
@@ -171,7 +198,7 @@ void ToxDatabase::config_set(const std::string& name, int value) {
 
 void ToxDatabase::toxcore_state_cleanup() {
     if (!m_db) {
-        throw "ERROR";
+        throw std::runtime_error("ERROR");
     }
 
     auto max_stmt = query(
@@ -185,22 +212,46 @@ void ToxDatabase::toxcore_state_cleanup() {
 
 std::vector<unsigned char> ToxDatabase::toxcore_state_get(int nth) {
     if (!m_db) {
-        throw "ERROR";
+        throw std::runtime_error("ERROR");
     }
 
-    auto res = m_db->execAndGet(
-        "SELECT state FROM toxcore ORDER BY id DESC"
-        " LIMIT " + std::to_string(nth) + ", 1");
+    //here we try to load the ".tox" file
+    if (Glib::file_test(m_path_state, Glib::FILE_TEST_IS_REGULAR) && nth == 0) {
+        std::string state = Glib::file_get_contents(m_path_state);
+        //try to load it
+        TOX_ERR_NEW error;
+        auto tox_tmp = tox_new(nullptr, (const unsigned char*)state.data(), state.size(), &error);
+        if (tox_tmp != nullptr) {
+            tox_kill(tox_tmp);
+        }
+        if (error == TOX_ERR_NEW_OK) {
+            //successfully loaded
+            std::vector<unsigned char> tmp(state.size());
+            std::copy((const unsigned char*)state.data(),
+                      (const unsigned char*)state.data() + state.size(),
+                      tmp.begin());
+            return tmp;
+        }
+        //if not .. use the one in gtox
+    }
 
-    std::vector<unsigned char> tmp(res.getBytes());
-    unsigned char* raw = (unsigned char*)res.getBlob();
-    std::copy(raw, raw + tmp.size(), tmp.begin());
-    return tmp;
+    try {
+        auto res = m_db->execAndGet(
+                       "SELECT state FROM toxcore ORDER BY id DESC"
+                       " LIMIT " + std::to_string(nth) + ", 1");
+        std::vector<unsigned char> tmp(res.getBytes());
+        unsigned char* raw = (unsigned char*)res.getBlob();
+        std::copy(raw, raw + tmp.size(), tmp.begin());
+        return tmp;
+    } catch (...) {
+        //ERROR HANDLING !
+        throw;
+    }
 }
 
 int ToxDatabase::toxcore_state_max_nth() {
     if (!m_db) {
-        throw "ERROR";
+        throw std::runtime_error("ERROR");
     }
 
     return m_db->execAndGet("SELECT count(*) FROM toxcore").getInt();
@@ -208,9 +259,42 @@ int ToxDatabase::toxcore_state_max_nth() {
 
 void ToxDatabase::toxcore_state_add(const std::vector<unsigned char>& state) {
     if (!m_db) {
-        throw "ERROR";
+        throw std::runtime_error("ERROR");
     }
 
+    //save in tox
+    if (Glib::file_test(m_path_state, Glib::FILE_TEST_IS_REGULAR)) {
+        //copy a backup
+        if (!Gio::File::create_for_path(m_path_state)
+                ->copy(Gio::File::create_for_path(m_path_state + "~"), Gio::FileCopyFlags::FILE_COPY_OVERWRITE)) {
+            throw std::runtime_error("ERROR");
+        }
+    }
+    //write a tmp file
+    auto tmp_path = m_path_state + ".tmp";
+    std::ofstream o(tmp_path.c_str(), std::ios::trunc|std::ios::binary);
+    if (!o.is_open()) {
+        throw std::runtime_error("ERROR");
+    }
+    o.write((const char*)state.data(), state.size());
+    o.close();
+    //try to load
+    std::string state_tmp = Glib::file_get_contents(tmp_path);
+    TOX_ERR_NEW error;
+    auto tox_tmp = tox_new(nullptr, (const unsigned char*)state_tmp.data(), state_tmp.size(), &error);
+    if (tox_tmp != nullptr) {
+        tox_kill(tox_tmp);
+    }
+    if (error != TOX_ERR_NEW_OK) {
+        //FAILED ! Something went very wrong..
+        throw std::runtime_error("ERROR");
+    }
+    if (!Gio::File::create_for_path(tmp_path)
+            ->move(Gio::File::create_for_path(m_path_state), Gio::FileCopyFlags::FILE_COPY_OVERWRITE)) {
+        throw std::runtime_error("ERROR");
+    }
+
+    //save in gtox (just to be extra secure)
     int runid = config_get("runid", 0);
     if (query(
             "UPDATE toxcore"
@@ -269,7 +353,13 @@ void ToxDatabase::toxcore_log_set_received(std::string friendaddr, int receipt_i
         query("UPDATE " + table + " SET recvtime=CURRENT_TIMESTAMP"
               " WHERE friendaddr=?1 AND receipt=?2",
               friendaddr,
-              receipt_id);
+              receipt_id)->exec();
+    }
+}
+
+void ToxDatabase::toxcore_log_cleanup(){
+    for(std::string table : {"log", "mem.log"}){
+        query("DELETE FROM " + table)->exec();
     }
 }
 

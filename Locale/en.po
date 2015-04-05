@@ -280,3 +280,30 @@ msgstr "TOX_ERR_FRIEND_SEND_MESSAGE_TOO_LONG\nMessage length exceeded TOX_MAX_ME
 
 msgid "TOX_ERR_FRIEND_SEND_MESSAGE_EMPTY"
 msgstr "TOX_ERR_FRIEND_SEND_MESSAGE_EMPTY\nAttempted to send a zero-length message."
+
+msgid "REALLY_CLEANUP_LOGS"
+msgstr "Do you really want to clean the logs?"
+
+msgid "LOG_CLEANED"
+msgstr "Logs cleaned"
+
+msgid "PROFILE_ABORT"
+msgstr "Abort"
+
+msgid "PROFILE_TITLE"
+msgstr "gTox"
+
+msgid "PROFILE_SUBTITLE"
+msgstr "Select profile"
+
+msgid "PROFILE_NEW"
+msgstr "New"
+
+msgid "PROFILE_SELECT"
+msgstr "Select"
+
+msgid "PROFILE_CORRUPTED_TITLE"
+msgstr "Corrupted profile"
+
+msgid "PROFILE_CORRUPTED"
+msgstr "Profile couldn't be loaded"

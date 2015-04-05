@@ -27,8 +27,10 @@
 #include "Dialog/DialogContact.h"
 #include "Dialog/FirstStartAssistant.h"
 #include "Dialog/DialogError.h"
+#include "Dialog/DialogProfile.h"
 #include <libnotifymm.h>
 #include <glibmm/i18n.h>
+#include <glibmm/exception.h>
 
 #include "Tox/Tox.h"
 
@@ -101,13 +103,15 @@ void terminate_handler() {
     std::exception_ptr exptr = std::current_exception();
     try {
         std::rethrow_exception(exptr);
-    } catch (SQLite::Exception &ex) {
+    } catch (const Glib::Exception &ex) {
+        DialogError(true, "Fatal Unexpected Glib Exception", ex.what()).run();
+    } catch (const SQLite::Exception &ex) {
         DialogError(true, "Fatal Unexpected Sqlite Exception", ex.what()).run();
-    } catch (Tox::Exception &ex) {
+    } catch (const Tox::Exception &ex) {
         DialogError(true, "Fatal Unexpected Tox Exception", gettext(ex.what())).run();
-    } catch (std::exception &ex) {
+    } catch (const std::exception &ex) {
         DialogError(true, "Fatal Unexpected Exception", ex.what()).run();
-    } catch (std::string &ex) {
+    } catch (const std::string &ex) {
         DialogError(true, "Fatal Unexpected String Exception", ex).run();
     } catch (...) {
         DialogError(true, "Fatal Unexpected Exception", "unknow exception !").run();
@@ -135,7 +139,7 @@ int main(int argc, char* argv[]) {
     Notify::init("gTox");
 
     std::string config_path
-        = Glib::build_filename(Glib::get_user_config_dir(), "gTox");
+        = Glib::build_filename(Glib::get_user_config_dir(), "tox");
     if (!Glib::file_test(config_path, Glib::FILE_TEST_IS_DIR)) {
         Gio::File::create_for_path(config_path)->make_directory();
     }
@@ -146,11 +150,35 @@ int main(int argc, char* argv[]) {
         accounts.begin(),
         std::remove_if(
             accounts.begin(), accounts.end(), [](const std::string& name) {
-                const std::string state_ext = ".state";
-                return !(name.size() > state_ext.size()
-                         && name.substr(name.size() - state_ext.size(),
+                std::string state_ext = ".gtox";
+                bool f_gtox = !(name.size() > state_ext.size()
+                                && name.substr(name.size() - state_ext.size(),
                                         state_ext.size()) == state_ext);
+                state_ext = ".tox";
+                bool f_tox = !(name.size() > state_ext.size()
+                               && name.substr(name.size() - state_ext.size(),
+                                        state_ext.size()) == state_ext);
+                bool f_old_tox = (name != "tox_save");
+                return f_gtox && f_tox && f_old_tox;
             })));
+
+    //filter files with same name .tox/.gtox
+    //1. remove extension
+    std::transform(accounts.begin(), accounts.end(), accounts.begin(), [](std::string a) {
+        auto a_p = a.find_last_of(".");
+        if (a_p != std::string::npos) {
+            a.resize(a_p);
+        }
+        return a;
+    });
+    //2. sort
+    std::sort(accounts.begin(), accounts.end());
+    //3. remove duplicates
+    accounts.erase(std::unique(accounts.begin(), accounts.end()), accounts.end());
+    //4. make the full paths
+    std::transform(accounts.begin(), accounts.end(), accounts.begin(), [&config_path](const std::string& name) {
+        return Glib::build_filename(config_path, name);
+    });
 
     if (accounts.empty()) {
         // start new account assistant
@@ -161,17 +189,38 @@ int main(int argc, char* argv[]) {
             return 0;
         }
 
+        if (assistant.getPath() == "")
+
         config_path = assistant.getPath();
     } else if (accounts.size() > 1) {
-        // start user select
-        // TODO
-        config_path = Glib::build_filename(config_path, accounts.front());
-        Tox::instance().init(config_path);
+        // start profile select
+        while (true) {
+            DialogProfile profile(accounts);
+            kit.run(profile);
+
+            if (profile.is_aborted()) {
+                return 0;
+            }
+
+            if (profile.get_path().empty()) {
+                profile.hide();
+                FirstStartAssistant assistant(config_path);
+                kit.run(assistant);
+
+                if (!assistant.isAborted()) {
+                    config_path = assistant.getPath();
+                    break;
+                }
+            } else {
+                config_path = profile.get_path();
+                break;
+            }
+        }
     } else {
-        config_path = Glib::build_filename(config_path, accounts.front());
-        Tox::instance().init(config_path);
+        config_path = accounts.front();
     }
 
+    Tox::instance().init(config_path); //TODO do this somewhere in DialogContact..
     DialogContact::init(config_path);
     kit.run(DialogContact::instance());
     DialogContact::destroy();

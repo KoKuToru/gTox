@@ -38,7 +38,7 @@ For comparison https://wiki.tox.im/Client
 | Contact blocking | No | |
 | Save file encryption | No | |
 | Multilingual | **Yes** | | *English and German*
-| Multiprofile | No | [#26](https://github.com/KoKuToru/gTox/issues/26) |
+| Multiprofile | **Yes** | [#26](https://github.com/KoKuToru/gTox/issues/26) |
 | Typing notification | No | |
 | Audio notifications | **Yes** | | *When a message comes in*
 | Emoticons | Yes/No | [#25](https://github.com/KoKuToru/gTox/issues/25) | *Only UTF-8*
