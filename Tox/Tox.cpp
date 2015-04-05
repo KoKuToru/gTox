@@ -152,17 +152,17 @@ int Tox::update_optimal_interval() {
     return tox_iteration_interval(m_tox);
 }
 
-bool Tox::update(Tox::SEvent& ev) {
+bool Tox::update(ToxEvent& ev) {
     std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
         throw std::runtime_error("TOX_UNITIALIZED");
     }
     tox_iterate(m_tox);
-    if (events.empty()) {
+    if (m_events.empty()) {
         return false;
     }
-    ev = events.front();
-    events.pop_front();
+    ev = m_events.front();
+    m_events.pop_front();
     return true;
 }
 
@@ -519,42 +519,46 @@ void Tox::send_typing(FriendNr nr, bool is_typing) {
     }
 }
 
-void Tox::inject_event(SEvent ev) {
+void Tox::inject_event(ToxEvent ev) {
     std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
         throw std::runtime_error("TOX_UNITIALIZED");
     }
 
-    if (ev.event == FRIENDMESSAGE) {
+    //FIX /me PROBLEM
+    if (ev.type() == typeid(EventFriendMessage)) {
         // check if message includes "/me"
-        if (ev.friend_message.data.find("/me ") == 0) {
-            ev.event = FRIENDACTION;
-            ev.friend_action.nr = ev.friend_message.nr;
-            ev.friend_action.data = ev.friend_message.data;
+        auto data = ev.get<EventFriendMessage>();
+        if (data.message.find("/me ") == 0) {
+            ev = ToxEvent(EventFriendAction{data.nr, data.message});
         }
-    } else if (ev.event == FRIENDACTION) {
+    } else if (ev.type() == typeid(EventFriendAction)) {
         // check if message already includes "/me"
-        if (ev.friend_action.data.find("/me ") != 0) {
-            ev.friend_action.data = "/me " + ev.friend_action.data;
+        auto data = ev.get<EventFriendAction>();
+        if (data.message.find("/me ") != 0) {
+            data.message = "/me " + data.message;
         }
     }
 
-    events.push_back(ev);
+    m_events.push_back(ev);
 
-    if (ev.event == READRECEIPT) {
-        auto addr = get_address(ev.readreceipt.nr);
+    if (ev.type() == typeid(EventReadReceipt)) {
+        auto data = ev.get<EventReadReceipt>();
+        auto addr = get_address(data.nr);
         m_db.toxcore_log_set_received(to_hex(addr.data(), addr.size()),
-                                      ev.readreceipt.data);
-    } else if (ev.event == FRIENDMESSAGE) {
-        auto addr = get_address(ev.friend_message.nr);
+                                      data.receipt);
+    } else if (ev.type() == typeid(EventFriendMessage)) {
+        auto data = ev.get<EventFriendMessage>();
+        auto addr = get_address(data.nr);
         m_db.toxcore_log_add(ToxLogRecvEntity(to_hex(addr.data(), addr.size()),
                              ELogType::LOGMSG,
-                             ev.friend_message.data));
-    } else if (ev.event == FRIENDACTION) {
-        auto addr = get_address(ev.friend_action.nr);
+                             data.message));
+    } else if (ev.type() == typeid(EventFriendAction)) {
+        auto data = ev.get<EventFriendAction>();
+        auto addr = get_address(data.nr);
         m_db.toxcore_log_add(ToxLogRecvEntity(to_hex(addr.data(), addr.size()),
                              ELogType::LOGACTION,
-                             ev.friend_action.data));
+                             data.message));
     }
 }
 
@@ -589,14 +593,12 @@ void Tox::callback_friend_request(Tox*,
                                   const unsigned char* data,
                                   size_t len,
                                   void*) {
-    Tox::SEvent tmp;
-    tmp.event = EEventType::FRIENDREQUEST;
+    EventFriendRequest event;
     std::copy(addr,
-              addr + tmp.friend_request.addr.size(),
-              tmp.friend_request.addr.begin());
-    tmp.friend_request.message
-        = Glib::ustring(std::string((const char*)data, len));  // no shortcut ?
-    Tox::instance().inject_event(tmp);
+              addr + event.addr.size(),
+              event.addr.begin());
+    event.message = std::string((const char*)data, len);
+    Tox::instance().inject_event(ToxEvent(event));
 }
 
 void Tox::callback_friend_message(Tox*,
@@ -609,12 +611,10 @@ void Tox::callback_friend_message(Tox*,
         callback_friend_action(nullptr, nr, data, len, nullptr);
         return;
     }
-    Tox::SEvent tmp;
-    tmp.event = EEventType::FRIENDMESSAGE;
-    tmp.friend_message.nr = nr;
-    tmp.friend_message.data
-        = Glib::ustring(std::string((const char*)data, len));
-    Tox::instance().inject_event(tmp);
+    Tox::instance().inject_event(ToxEvent(EventFriendMessage{
+                                              nr,
+                                              std::string((const char*)data, len)
+                                          }));
 }
 
 void Tox::callback_friend_action(Tox*,
@@ -622,11 +622,10 @@ void Tox::callback_friend_action(Tox*,
                                  const unsigned char* data,
                                  size_t len,
                                  void*) {
-    Tox::SEvent tmp;
-    tmp.event = EEventType::FRIENDACTION;
-    tmp.friend_action.nr = nr;
-    tmp.friend_action.data = Glib::ustring(std::string((const char*)data, len));
-    Tox::instance().inject_event(tmp);
+    Tox::instance().inject_event(ToxEvent(EventFriendAction{
+                                              nr,
+                                              std::string((const char*)data, len)
+                                          }));
 }
 
 void Tox::callback_name_change(Tox*,
@@ -634,11 +633,10 @@ void Tox::callback_name_change(Tox*,
                                const unsigned char* data,
                                size_t len,
                                void*) {
-    Tox::SEvent tmp;
-    tmp.event = EEventType::NAMECHANGE;
-    tmp.name_change.nr = nr;
-    tmp.name_change.data = Glib::ustring(std::string((const char*)data, len));
-    Tox::instance().inject_event(tmp);
+    Tox::instance().inject_event(ToxEvent(EventName{
+                                              nr,
+                                              std::string((const char*)data, len)
+                                          }));
 }
 
 void Tox::callback_status_message(Tox*,
@@ -646,47 +644,41 @@ void Tox::callback_status_message(Tox*,
                                   const unsigned char* data,
                                   size_t len,
                                   void*) {
-    Tox::SEvent tmp;
-    tmp.event = EEventType::STATUSMESSAGE;
-    tmp.status_message.nr = nr;
-    tmp.status_message.data
-        = Glib::ustring(std::string((const char*)data, len));
-    Tox::instance().inject_event(tmp);
+    Tox::instance().inject_event(ToxEvent(EventStatusMessage{
+                                              nr,
+                                              std::string((const char*)data, len)
+                                          }));
 }
 
 void Tox::callback_user_status(Tox*, FriendNr nr, TOX_USER_STATUS, void*) {
-    Tox::SEvent tmp;
-    tmp.event = EEventType::USERSTATUS;
-    tmp.user_status.nr = nr;
-    tmp.user_status.data = Tox::instance().get_status(nr);
-    Tox::instance().inject_event(tmp);
+    Tox::instance().inject_event(ToxEvent(EventUserStatus{
+                                              nr,
+                                              Tox::instance().get_status(nr)
+                                          }));
 }
 
 void Tox::callback_typing_change(Tox*, FriendNr nr, bool data, void*) {
-    Tox::SEvent tmp;
-    tmp.event = EEventType::TYPINGCHANGE;
-    tmp.typing_change.nr = nr;
-    tmp.typing_change.is_typing = data;
-    Tox::instance().inject_event(tmp);
+    Tox::instance().inject_event(ToxEvent(EventTyping{
+                                              nr,
+                                              data
+                                          }));
 }
 
 void Tox::callback_read_receipt(Tox*, FriendNr nr, unsigned data, void*) {
-    Tox::SEvent tmp;
-    tmp.event = EEventType::READRECEIPT;
-    tmp.readreceipt.nr = nr;
-    tmp.readreceipt.data = data;
-    Tox::instance().inject_event(tmp);
+    Tox::instance().inject_event(ToxEvent(EventReadReceipt{
+                                              nr,
+                                              data
+                                          }));
 }
 
 void Tox::callback_connection_status(Tox*,
                                      FriendNr nr,
                                      TOX_CONNECTION,
                                      void*) {
-    Tox::SEvent tmp;
-    tmp.event = EEventType::USERSTATUS;
-    tmp.user_status.nr = nr;
-    tmp.user_status.data = Tox::instance().get_status(nr);
-    Tox::instance().inject_event(tmp);
+    Tox::instance().inject_event(ToxEvent(EventUserStatus{
+                                              nr,
+                                              Tox::instance().get_status(nr)
+                                          }));
 }
 
 Tox::FriendAddr Tox::get_address(Tox::FriendNr nr) {

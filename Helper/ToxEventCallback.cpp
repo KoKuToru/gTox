@@ -23,14 +23,13 @@ ToxEventCallback::~ToxEventCallback() {
     uninstall();
 }
 
-void ToxEventCallback::operator=(
-    const std::function<void(const Tox::SEvent&)>& func) {
+void ToxEventCallback::operator=(const std::function<void(const ToxEvent&)>& func) {
     uninstall();
     m_callback = func;
     install();
 }
 
-void ToxEventCallback::notify(const Tox::SEvent& data) {
+void ToxEventCallback::notify(const ToxEvent& data) {
     // call everyone
     std::lock_guard<std::recursive_mutex> lg(m_mutex);
     // 1. make a copy

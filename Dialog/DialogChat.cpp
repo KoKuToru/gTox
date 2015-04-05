@@ -32,21 +32,17 @@ DialogChat::DialogChat(Tox::FriendNr nr)
     m_header.set_subtitle(Tox::instance().get_status_message(nr));
     m_header.set_show_close_button();
 
-    m_tox_callback = [this, nr](const Tox::SEvent& ev) {
-        switch (ev.event) {
-            case Tox::EEventType::NAMECHANGE:
-                if (nr == ev.name_change.nr) {
-                    m_header.set_title(Tox::instance().get_name_or_address(nr));
-                }
-                break;
-            case Tox::EEventType::STATUSMESSAGE:
-                if (nr == ev.status_message.nr) {
-                    m_header.set_subtitle(
-                        Tox::instance().get_status_message(nr));
-                }
-                break;
-            default:
-                break;
+    m_tox_callback = [this, nr](const ToxEvent& ev) {
+        if (ev.type() == typeid(Tox::EventName))  {
+            auto data = ev.get<Tox::EventName>();
+            if (data.nr == nr) {
+                m_header.set_title(Tox::instance().get_name_or_address(nr));
+            }
+        } else if (ev.type() == typeid(Tox::EventStatusMessage)) {
+            auto data = ev.get<Tox::EventStatusMessage>();
+            if (data.nr == nr) {
+                m_header.set_subtitle(Tox::instance().get_status_message(nr));
+            }
         }
     };
 

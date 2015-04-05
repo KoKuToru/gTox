@@ -100,7 +100,7 @@ class DialogContact : public Gtk::Window {
   protected:
     void detach_chat();
     bool update();
-    void tox_event_handling(const Tox::SEvent& event);
+    void tox_event_handling(const ToxEvent& event);
     WidgetChat* get_chat(Tox::FriendNr nr, DialogChat*& dialog);
 };
 
