@@ -286,8 +286,8 @@ void DialogContact::tox_event_handling(const Tox::SEvent& ev) {
                 custom.custom.cmd = "ACTIVE_CHAT";
                 custom.custom.nr = ev.friend_message.nr;
                 ToxEventCallback::notify(custom);
-            }
-            Canberra::play("message-new-instant");
+            } else
+                Canberra::play("message-new-instant");
         } break;
         case Tox::EEventType::FRIENDREQUEST:
             std::cout << "FRIENDREQUEST ! " << ev.friend_request.message

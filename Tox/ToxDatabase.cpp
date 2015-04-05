@@ -269,7 +269,13 @@ void ToxDatabase::toxcore_log_set_received(std::string friendaddr, int receipt_i
         query("UPDATE " + table + " SET recvtime=CURRENT_TIMESTAMP"
               " WHERE friendaddr=?1 AND receipt=?2",
               friendaddr,
-              receipt_id);
+              receipt_id)->exec();
+    }
+}
+
+void ToxDatabase::toxcore_log_cleanup(){
+    for(std::string table : {"log", "mem.log"}){
+        query("DELETE FROM " + table)->exec();
     }
 }
 
