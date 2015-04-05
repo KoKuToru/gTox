@@ -26,9 +26,18 @@
 class DialogProfile : public Gtk::Window {
   private:
     std::vector<std::string> m_accounts;
+    bool m_abort;
+    bool m_quited;
+    std::string m_selected_path;
+
+    void quit();
+
   public:
     DialogProfile(const std::vector<std::string>& accounts);
     ~DialogProfile();
+
+    bool is_aborted();
+    std::string get_path();
 };
 
 #endif

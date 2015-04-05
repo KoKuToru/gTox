@@ -189,18 +189,38 @@ int main(int argc, char* argv[]) {
             return 0;
         }
 
+        if (assistant.getPath() == "")
+
         config_path = assistant.getPath();
     } else if (accounts.size() > 1) {
         // start profile select
-        DialogProfile profile(accounts);
-        kit.run(profile);
-        // TODO
-        throw std::runtime_error("Multi profil support not implemented yet !");
+        while (true) {
+            DialogProfile profile(accounts);
+            kit.run(profile);
+
+            if (profile.is_aborted()) {
+                return 0;
+            }
+
+            if (profile.get_path().empty()) {
+                profile.hide();
+                FirstStartAssistant assistant(config_path);
+                kit.run(assistant);
+
+                if (!assistant.isAborted()) {
+                    config_path = assistant.getPath();
+                    break;
+                }
+            } else {
+                config_path = profile.get_path();
+                break;
+            }
+        }
     } else {
         config_path = accounts.front();
-        Tox::instance().init(config_path);
     }
 
+    Tox::instance().init(config_path); //TODO do this somewhere in DialogContact..
     DialogContact::init(config_path);
     kit.run(DialogContact::instance());
     DialogContact::destroy();

@@ -25,7 +25,7 @@
 #include <Tox/Tox.h>
 
 DialogProfile::DialogProfile(const std::vector<std::string>& accounts):
-    m_accounts(accounts) {
+    m_accounts(accounts), m_abort(true), m_quited(false) {
 
     auto css = Gtk::CssProvider::create();
     if (!css->load_from_data(THEME::main)) {
@@ -51,8 +51,17 @@ DialogProfile::DialogProfile(const std::vector<std::string>& accounts):
     hbar->pack_start(*abort);
     abort->show();
 
+    auto rbox = Gtk::manage(new Gtk::Box());
+    rbox->get_style_context()->add_class("linked");
+    hbar->pack_end(*rbox);
+    rbox->show();
+
+    auto badd = Gtk::manage(new Gtk::Button(_("PROFILE_NEW")));
+    rbox->pack_start(*badd);
+    badd->show();
+
     auto select = Gtk::manage(new Gtk::Button(_("PROFILE_SELECT")));
-    hbar->pack_end(*select);
+    rbox->add(*select);
     select->get_style_context()->add_class("suggested-action");
     select->show();
 
@@ -108,11 +117,50 @@ DialogProfile::DialogProfile(const std::vector<std::string>& accounts):
         Tox::destroy();
     }
 
-    abort->signal_clicked().connect([this]() {
-        Gtk::Main::quit();
+    box->set_activate_on_single_click(false);
+    box->signal_row_activated().connect([this, box](Gtk::ListBoxRow* row) {
+        m_abort = false;
+        m_selected_path = m_accounts[row->get_index()];
+        quit();
     });
+    box->signal_row_selected().connect([this, select](Gtk::ListBoxRow* row) {
+        if (m_quited) {
+            return;
+        }
+        select->set_sensitive(row != nullptr);
+    });
+
+    select->set_sensitive(false);
+    select->signal_clicked().connect([this, box]() {
+        m_abort = false;
+        auto row = box->get_selected_row();
+        m_selected_path = m_accounts[row->get_index()];
+        quit();
+    });
+
+    abort->signal_clicked().connect([this]() {
+        quit();
+    });
+
+    badd->signal_clicked().connect([this]() {
+        m_abort = false;
+        quit();
+    });
+}
+
+void DialogProfile::quit() {
+    m_quited = true;
+    Gtk::Main::quit();
 }
 
 DialogProfile::~DialogProfile() {
     //
+}
+
+bool DialogProfile::is_aborted() {
+    return m_abort;
+}
+
+std::string DialogProfile::get_path() {
+    return m_selected_path;
 }
