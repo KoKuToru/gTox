@@ -190,3 +190,15 @@ msgstr "Beschädigtes Profil"
 
 msgid "PROFILE_CORRUPTED"
 msgstr "Profil konnte nicht geladen werden"
+
+msgid "SETTINGS_CACHE_CLEAN_LOG_TITLE"
+msgstr "Nachrichtenverlauf löschen"
+
+msgid "SETTINGS_CACHE_CLEAN_LOG"
+msgstr "Diese Action wird alle Nachrichtenverläufe aller Kontakte löschen.\nDiese Aktion kann nicht rückgängig gemacht werden !"
+
+msgid "SETTINGS_CACHE_CLEAN_LOG_SUCCESS_TITLE"
+msgstr "Nachrichtenverlauf gelöscht"
+
+msgid "SETTINGS_CACHE_CLEAN_LOG_SUCCESS"
+msgstr "%1 Einträge wurden gelöscht"

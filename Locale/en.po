@@ -281,11 +281,17 @@ msgstr "TOX_ERR_FRIEND_SEND_MESSAGE_TOO_LONG\nMessage length exceeded TOX_MAX_ME
 msgid "TOX_ERR_FRIEND_SEND_MESSAGE_EMPTY"
 msgstr "TOX_ERR_FRIEND_SEND_MESSAGE_EMPTY\nAttempted to send a zero-length message."
 
-msgid "REALLY_CLEANUP_LOGS"
-msgstr "Do you really want to clean the logs?"
+msgid "SETTINGS_CACHE_CLEAN_LOG_TITLE"
+msgstr "Delete all logs ?"
 
-msgid "LOG_CLEANED"
-msgstr "Logs cleaned"
+msgid "SETTINGS_CACHE_CLEAN_LOG"
+msgstr "You are about to remove all conversations logs of all contacts.\nThis action cannot be undone !"
+
+msgid "SETTINGS_CACHE_CLEAN_LOG_SUCCESS_TITLE"
+msgstr "Logs removed"
+
+msgid "SETTINGS_CACHE_CLEAN_LOG_SUCCESS"
+msgstr "%1 log entries successfully removed"
 
 msgid "PROFILE_ABORT"
 msgstr "Abort"

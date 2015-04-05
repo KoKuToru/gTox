@@ -265,7 +265,11 @@ class ToxDatabase {
     void toxcore_log_add(ToxLogSendEntity entity);
     void toxcore_log_add(ToxLogRecvEntity entity);
     void toxcore_log_set_received(std::string friendaddr, int receipt_id);
-    void toxcore_log_cleanup();
+    /**
+     * @brief Removes everything from log
+     * @return Number of deleted log-entries
+     */
+    size_t toxcore_log_cleanup();
     /**
      * @brief Get chat log
      *

@@ -357,10 +357,12 @@ void ToxDatabase::toxcore_log_set_received(std::string friendaddr, int receipt_i
     }
 }
 
-void ToxDatabase::toxcore_log_cleanup(){
+size_t ToxDatabase::toxcore_log_cleanup(){
+    size_t res = 0;
     for(std::string table : {"log", "mem.log"}){
-        query("DELETE FROM " + table)->exec();
+        res += query("DELETE FROM " + table)->exec();
     }
+    return res;
 }
 
 std::vector<ToxLogEntity> ToxDatabase::toxcore_log_get(std::string friendaddr, int offset, int limit) {

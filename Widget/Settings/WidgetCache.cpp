@@ -47,15 +47,26 @@ WidgetCache::WidgetCache()
 #endif
 
     m_clean_log.signal_clicked().connect([this](){
-        Gtk::Window *parent = dynamic_cast<Gtk::Window *>(this->get_toplevel());
-        if(parent){
-            Gtk::MessageDialog msg(*parent, _("REALLY_CLEANUP_LOGS"), false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO);
-            int ret = msg.run();
-            if(ret == Gtk::RESPONSE_YES){
-                msg.hide();
-                Tox::instance().database().toxcore_log_cleanup();
-                Gtk::MessageDialog(*parent, _("LOG_CLEANED"), false, Gtk::MESSAGE_INFO, Gtk::BUTTONS_OK).run();
-            }
+        Gtk::Window& parent = dynamic_cast<Gtk::Window&>(*this->get_toplevel());
+        Gtk::MessageDialog msg(parent,
+                               _("SETTINGS_CACHE_CLEAN_LOG_TITLE"),
+                               false,
+                               Gtk::MESSAGE_QUESTION,
+                               Gtk::BUTTONS_OK_CANCEL,
+                               true);
+        msg.set_secondary_text(_("SETTINGS_CACHE_CLEAN_LOG"));
+        if (msg.run() == Gtk::RESPONSE_YES) {
+            msg.hide();
+            Gtk::MessageDialog msg2(parent,
+                                    _("SETTINGS_CACHE_CLEAN_LOG_SUCCESS_TITLE"),
+                                    false,
+                                    Gtk::MESSAGE_INFO,
+                                    Gtk::BUTTONS_OK);
+            msg2.set_secondary_text(
+                        Glib::ustring::compose(
+                            _("SETTINGS_CACHE_CLEAN_LOG_SUCCESS"),
+                            Tox::instance().database().toxcore_log_cleanup()));
+            msg2.run();
         }
     });
 
