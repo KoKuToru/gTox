@@ -40,8 +40,12 @@ WidgetContactListItem::WidgetContactListItem(WidgetContact* contact,
             (ev.type() == typeid(Tox::EventUserStatus)    && ev.get<Tox::EventUserStatus>().nr == nr)) {
             refresh();
         } else if ((ev.type() == typeid(Tox::EventFriendMessage) && ev.get<Tox::EventFriendMessage>().nr == nr) ||
-                   (ev.type() == typeid(Tox::EventFriendAction)  && ev.get<Tox::EventFriendAction>().nr == nr) ||
-                   (ev.type() == typeid(EventStopSpin)           && ev.get<EventStopSpin>().nr == nr)) {
+                   (ev.type() == typeid(Tox::EventFriendAction)  && ev.get<Tox::EventFriendAction>().nr == nr)) {
+            if (!spin) {
+                spin = true;
+                refresh();
+            }
+        } else if (ev.type() == typeid(EventStopSpin)           && ev.get<EventStopSpin>().nr == nr) {
             if (spin) {
                 spin = false;
                 refresh();
