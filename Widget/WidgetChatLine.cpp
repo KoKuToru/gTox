@@ -51,6 +51,7 @@ WidgetChatLine::WidgetChatLine(bool left_side)
     m_avatar.set_size_request(64, 0);
     m_avatar.property_xalign() = m_side ? 1 : 0;
     m_avatar.property_yalign() = m_side ? 1 : 0;
+    m_avatar.set_tooltip_text("TODO Display name here..");
 
     frame->set_name(m_side ? "WidgetChatLineLeft" : "WidgetChatLineRight");
 
