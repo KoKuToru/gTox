@@ -114,6 +114,7 @@ set(SOURCES
     Widget/Settings/WidgetProfile.cpp
     Widget/Settings/WidgetNetwork.cpp
     Widget/Settings/WidgetCache.cpp
+    Widget/Settings/WidgetAudioVideo.cpp
     Dialog/FirstStartAssistant.cpp
     Dialog/DialogChat.cpp
     Dialog/DialogContact.cpp
