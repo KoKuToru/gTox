@@ -34,7 +34,8 @@ void ToxDatabase::open(const std::string& path, bool init) {
     std::string tox_save = "tox_save";
     if (!(path.size() > tox_save.size()
             && path.substr(path.size() - tox_save.size(),
-                    tox_save.size()) == tox_save)) {
+                    tox_save.size()) == tox_save) ||
+            (Glib::file_test(path + ".tox", Glib::FILE_TEST_IS_REGULAR))) {
         m_path_state = path + ".tox";
     } else {
         m_path_state = path;
