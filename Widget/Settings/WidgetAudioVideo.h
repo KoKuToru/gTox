@@ -24,17 +24,9 @@
 #include <gstreamermm.h>
 #include <gstreamermm/playbin.h>
 class WidgetAudioVideo : public Gtk::VBox {
-    private:
-        Gtk::DrawingArea m_videoarea;
-        gulong m_x_window_id;
-        Glib::RefPtr<Gst::PlayBin> playbin;
     public:
         WidgetAudioVideo();
         ~WidgetAudioVideo();
-    protected:
-        void on_bus_message_sync(const Glib::RefPtr<Gst::Message>& message);
-        bool on_bus_message(const Glib::RefPtr<Gst::Bus>& bus, const Glib::RefPtr<Gst::Message>& message);
-        Gst::PadProbeReturn on_video_pad_got_buffer(const Glib::RefPtr<Gst::Pad>& pad, const Gst::PadProbeInfo& data);
 };
 
 #endif
