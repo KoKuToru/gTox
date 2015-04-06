@@ -4,7 +4,7 @@
 std::vector<ToxEventCallback::EFunc*> ToxEventCallback::m_callback_list;
 std::recursive_mutex ToxEventCallback::m_mutex;
 
-ToxEventCallback::ToxEventCallback() {
+ToxEventCallback::ToxEventCallback() : m_callback(nullptr) {
 }
 
 ToxEventCallback::ToxEventCallback(const EFunc& func) : m_callback(func) {
@@ -59,5 +59,10 @@ void ToxEventCallback::uninstall() {
         std::lock_guard<std::recursive_mutex> lg(m_mutex);
         m_callback_list.erase(std::find(
             m_callback_list.begin(), m_callback_list.end(), &m_callback));
+        m_callback = nullptr;
     }
+}
+
+void ToxEventCallback::reset() {
+    uninstall();
 }

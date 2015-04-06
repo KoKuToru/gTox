@@ -29,7 +29,6 @@ WidgetChatLabel::WidgetChatLabel()
       selection_index_to(0) {
     // add default name because
     // styling with "gtkmm_CustomObject_WidgetChatMessage" is not nice
-    get_style_context()->add_class("chatmsg");
 
     signal_size_allocate().connect_notify([this](Gtk::Allocation&) {
         // update hightlight

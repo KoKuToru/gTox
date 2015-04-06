@@ -1,7 +1,7 @@
 /**
     gTox a GTK-based tox-client - https://github.com/KoKuToru/gTox.git
 
-    Copyright (C) 2014  Luca Béla Palkovics
+    Copyright (C) 2015  Luca Béla Palkovics
     Copyright (C) 2014  Maurice Mohlek
 
     This program is free software: you can redistribute it and/or modify
@@ -17,43 +17,22 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 **/
-#ifndef WIDGETCHAT_H
-#define WIDGETCHAT_H
+#ifndef WIDGETCHATBUBBLEROW_H
+#define WIDGETCHATBUBBLEROW_H
 
+#include <string>
 #include <gtkmm.h>
-#include "Chat/WidgetChatEntry.h"
-#include "Tox/Tox.h"
-#include "Chat/WidgetChatLayout.h"
 #include "Helper/ToxEventCallback.h"
-#include "WidgetChatLine.h"
-// Content of DialogChat
-class WidgetChat : public Gtk::VPaned {
-  private:
-    Gtk::TextView m_input;
-    WidgetChatEntry m_output;
 
-    Gtk::HBox m_hbox;
-    Gtk::Button m_btn_send;
-
-    Tox::FriendNr m_nr;
-
-    Gtk::ScrolledWindow m_scrolled;
-    WidgetChatLayout m_vbox;
-
-    bool m_autoscroll;
-
-    ToxEventCallback m_tox_callback;
-
-    void add_line(Glib::ustring text);
-
-    void add_line(bool left_side, WidgetChatLine::Line new_line);
-
-  public:
-    WidgetChat(Tox::FriendNr nr);
-    ~WidgetChat();
-
-    Tox::FriendNr get_friend_nr() const;
-    void focus();
+class WidgetChatBubbleRow {
+    private:
+        Gtk::Frame* m_frame_left;
+        Gtk::Frame* m_frame_right;
+    public:
+        ToxEventCallback tox_callback;
+        WidgetChatBubbleRow(Gtk::Grid &grid, int row, Gtk::Widget &left, Gtk::Widget& right);
+        void set_class(const std::string& css_class);
+        void set_class(bool is_top, bool is_bottom);
 };
 
 #endif

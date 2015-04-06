@@ -21,6 +21,9 @@
 #define WIDGETCHATLINE_H
 
 #include <gtkmm.h>
+#include "Chat/WidgetChatBubbleRow.h"
+#include <vector>
+#include "Tox/Tox.h"
 
 class WidgetChatLabel;
 
@@ -29,23 +32,32 @@ class WidgetChatLine : public Gtk::Box {
     bool m_side;
 
     int m_row_count;
-    struct {
-        WidgetChatLabel* msg;
-        Gtk::Label* time;
-        unsigned long long timestamp;
-    } m_last_row;
+
+    unsigned long long m_last_timestamp;
 
     Gtk::Grid m_grid;
     Gtk::Image m_avatar;
 
     void on_size_allocate(Gtk::Allocation& allocation);
 
+    std::vector<WidgetChatBubbleRow> rows;
+
   public:
     WidgetChatLine(bool side);
     ~WidgetChatLine();
 
     bool get_side();
-    void add_line(unsigned long long timestamp, const Glib::ustring& message);
+
+    struct Line {
+            bool error;
+            bool wait_for_receipt;
+            Tox::ReceiptNr receipt;
+            unsigned long long timestamp;
+            Tox::FriendNr nr;
+            Glib::ustring message;
+    };
+
+    void add_line(Line new_line);
 
     unsigned long long last_timestamp();
 };

@@ -108,6 +108,7 @@ set(SOURCES
     Widget/Chat/WidgetChatLabel.cpp
     Widget/Chat/WidgetChatEntry.cpp
     Widget/Chat/WidgetChatLayout.cpp
+    Widget/Chat/WidgetChatBubbleRow.cpp
     Widget/Settings/WidgetAbout.cpp
     Widget/Settings/WidgetProfile.cpp
     Widget/Settings/WidgetNetwork.cpp

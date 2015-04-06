@@ -61,7 +61,7 @@ class Tox {
 
   public:
     typedef uint32_t FriendNr;
-    typedef int ReceiptNr;
+    typedef unsigned ReceiptNr;
     typedef std::array<unsigned char, TOX_ADDRESS_SIZE> FriendAddr;
 
     typedef ToxException Exception;

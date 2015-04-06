@@ -194,10 +194,15 @@ WidgetChat::WidgetChat(Tox::FriendNr nr)
                 text += gunichar(0xFDD0);
             }
 
-            Tox::instance().send_message(get_friend_nr(), text);
-
             // add to chat
-            add_line(0, false, text);
+            add_line(false, WidgetChatLine::Line{
+                         false,
+                         true,
+                         Tox::instance().send_message(get_friend_nr(), text),
+                         0,
+                         get_friend_nr(),
+                         text
+                     });
 
             // clear chat input
             m_input.get_buffer()->set_text("");
@@ -237,9 +242,23 @@ WidgetChat::WidgetChat(Tox::FriendNr nr)
     auto log = Tox::instance().get_log(nr);
     for (auto l : log) {
         if (l.sendtime != 0) {
-            add_line(l.sendtime, false, l.data);
+            add_line(false, WidgetChatLine::Line{
+                         false,
+                         false,
+                         0,
+                         l.sendtime,
+                         nr,
+                         l.data
+                     });
         } else {
-            add_line(l.recvtime, true, l.data);
+            add_line(true, WidgetChatLine::Line{
+                         false,
+                         false,
+                         0,
+                         l.recvtime,
+                         0,
+                         l.data
+                     });
         }
     }
 
@@ -247,12 +266,26 @@ WidgetChat::WidgetChat(Tox::FriendNr nr)
         if (ev.type() == typeid(Tox::EventFriendAction)) {
             auto data = ev.get<Tox::EventFriendAction>();
             if (nr == data.nr) {
-                add_line(0, true, data.message);
+                add_line(true, WidgetChatLine::Line{
+                             false,
+                             false,
+                             0,
+                             0,
+                             data.nr,
+                             data.message
+                         });
             }
         } else if (ev.type() == typeid(Tox::EventFriendMessage)) {
             auto data = ev.get<Tox::EventFriendMessage>();
             if (nr == data.nr) {
-                add_line(0, true, data.message);
+                add_line(true, WidgetChatLine::Line{
+                             false,
+                             false,
+                             0,
+                             0,
+                             data.nr,
+                             data.message
+                         });
             }
         }
     };
@@ -270,17 +303,16 @@ Tox::FriendNr WidgetChat::get_friend_nr() const {
 }
 
 void WidgetChat::add_line(Glib::ustring text) {
+    //what does this do ?
     m_output.add_line(text);
 }
 
-void WidgetChat::add_line(unsigned long long timestamp,
-                          bool left_side,
-                          const Glib::ustring& message) {
+void WidgetChat::add_line(bool left_side, WidgetChatLine::Line new_line) {
     // check if time i set, if not we will give it actual time
-    if (timestamp == 0) {
-        timestamp = Glib::DateTime::create_now_utc().to_unix();
+    if (new_line.timestamp == 0) {
+        new_line.timestamp = Glib::DateTime::create_now_utc().to_unix();
     }
-    auto new_time = Glib::DateTime::create_now_utc(timestamp);
+    auto new_time = Glib::DateTime::create_now_utc(new_line.timestamp);
     new_time = Glib::DateTime::create_utc(new_time.get_year(),
                                           new_time.get_month(),
                                           new_time.get_day_of_month(),
@@ -289,7 +321,7 @@ void WidgetChat::add_line(unsigned long long timestamp,
                                           0);
     decltype(new_time) last_time = Glib::DateTime::create_now_utc(0);
 
-    bool action = message.find("/me ") == 0;
+    bool action = new_line.message.find("/me ") == 0;
 
     // check last message blob
     std::vector<Gtk::Widget*> childs = m_vbox.get_children();
@@ -307,7 +339,7 @@ void WidgetChat::add_line(unsigned long long timestamp,
             if (!action && item->get_side() == left_side) {
                 // check if it's same day month year
                 if (last_time.compare(new_time) == 0) {
-                    item->add_line(timestamp, message);
+                    item->add_line(new_line);
                     return;
                 }
             }
@@ -318,7 +350,7 @@ void WidgetChat::add_line(unsigned long long timestamp,
     if (last_time.compare(new_time) != 0) {
         // add a date message
         auto msg = Gtk::manage(new WidgetChatLabel() /*new Gtk::Label()*/);
-        msg->set_text(Glib::DateTime::create_now_local(timestamp)
+        msg->set_text(Glib::DateTime::create_now_local(new_line.timestamp)
                           .format(_("DATE_FORMAT")));
         msg->set_name("ChatTime");
         msg->set_halign(Gtk::ALIGN_CENTER);
@@ -328,17 +360,17 @@ void WidgetChat::add_line(unsigned long long timestamp,
 
     if (!action) {
         // add new line
-        auto new_line = Gtk::manage(new WidgetChatLine(left_side));
-        new_line->add_line(timestamp, message);
-        new_line->show_all();
-        m_vbox.pack_start(*new_line, false, false);
+        auto new_bubble = Gtk::manage(new WidgetChatLine(left_side));
+        new_bubble->add_line(new_line);
+        new_bubble->show_all();
+        m_vbox.pack_start(*new_bubble, false, false);
     } else {
         // TODO add a WidgetChatLineMe ..
         // add new action line
         auto msg = Gtk::manage(new WidgetChatLabel() /*new Gtk::Label()*/);
         auto name = left_side ? Tox::instance().get_name_or_address(m_nr)
                               : Tox::instance().get_name_or_address();
-        msg->set_text(name + message.substr(Glib::ustring("/me").size()));
+        msg->set_text(name + new_line.message.substr(Glib::ustring("/me").size()));
         msg->set_name("ChatTime");
         msg->set_halign(Gtk::ALIGN_CENTER);
         msg->show_all();

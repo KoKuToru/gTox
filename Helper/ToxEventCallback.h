@@ -26,6 +26,8 @@ class ToxEventCallback {
      */
     static void notify(const ToxEvent& data);
 
+    void reset();
+
   private:
     /**
      * @brief Protects the m_callback_list

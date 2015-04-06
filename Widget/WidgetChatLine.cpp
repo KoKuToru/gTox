@@ -20,6 +20,7 @@
 #include "WidgetChatLine.h"
 #include "Generated/icon.h"
 #include "Chat/WidgetChatLabel.h"
+#include "Tox/Tox.h"
 
 WidgetChatLine::WidgetChatLine(bool left_side)
     : Glib::ObjectBase("WidgetChatLine"), m_side(left_side), m_row_count(0) {
@@ -41,29 +42,17 @@ WidgetChatLine::WidgetChatLine(bool left_side)
     }
     frame->add(m_grid);
 
-    // m_msg.set_size_request(500);
-    /*m_msg.set_selectable(true);
-    m_msg.set_line_wrap(true);
-    m_msg.set_line_wrap_mode(Pango::WRAP_WORD_CHAR);
-    m_msg.set_justify(Gtk::JUSTIFY_LEFT);*/
-
     m_avatar.set_name("Avatar");
     m_avatar.set_size_request(64, 0);
     m_avatar.property_xalign() = m_side ? 1 : 0;
     m_avatar.property_yalign() = m_side ? 1 : 0;
-    m_avatar.set_tooltip_text("TODO Display name here..");
+//    m_avatar.set_tooltip_text("TODO Display name here..");
 
     frame->set_name(m_side ? "WidgetChatLineLeft" : "WidgetChatLineRight");
 
     show_all();
 
-    m_last_row.msg = nullptr;
-    m_last_row.time = nullptr;
-    m_last_row.timestamp = 0;
-
-    m_grid.set_column_spacing(10);
-    m_grid.set_row_spacing(5);
-    m_grid.property_margin() = 5;
+    m_last_timestamp = 0;
 
     m_grid.show_all();
 }
@@ -75,12 +64,8 @@ bool WidgetChatLine::get_side() {
     return m_side;
 }
 
-void WidgetChatLine::add_line(unsigned long long timestamp,
-                              const Glib::ustring& message) {
-    // TODO display timestmap
-    (void)timestamp;
-
-    auto msg_time = Glib::DateTime::create_now_utc(timestamp);
+void WidgetChatLine::add_line(Line new_line) {
+    auto msg_time = Glib::DateTime::create_now_utc(new_line.timestamp);
     // remove seconds
     msg_time = Glib::DateTime::create_utc(msg_time.get_year(),
                                           msg_time.get_month(),
@@ -91,8 +76,8 @@ void WidgetChatLine::add_line(unsigned long long timestamp,
 
     bool display_time = true;
 
-    if (m_last_row.msg != nullptr) {
-        auto old_time = Glib::DateTime::create_now_utc(m_last_row.timestamp);
+    if (m_last_timestamp != 0) {
+        auto old_time = Glib::DateTime::create_now_utc(m_last_timestamp);
         // remove seconds
         old_time = Glib::DateTime::create_utc(old_time.get_year(),
                                               old_time.get_month(),
@@ -105,37 +90,68 @@ void WidgetChatLine::add_line(unsigned long long timestamp,
     }
 
     // create a new row
-    m_last_row.msg = Gtk::manage(/*new Gtk::Label()*/ new WidgetChatLabel());
-    m_last_row.time = Gtk::manage(new Gtk::Label());
-    m_last_row.timestamp = timestamp;
+    auto msg  = Gtk::manage(new WidgetChatLabel());
+    auto time = Gtk::manage(new Gtk::Label());
+    m_last_timestamp = new_line.timestamp;
 
     // get local time
-    msg_time = Glib::DateTime::create_now_local(timestamp);
+    msg_time = Glib::DateTime::create_now_local(m_last_timestamp);
 
-    m_last_row.time->set_text(msg_time.format("%R"));
-    m_last_row.msg->set_text(message);
-    /*m_last_row.msg->set_line_wrap(true);
-    m_last_row.msg->set_line_wrap_mode(Pango::WRAP_WORD_CHAR);
-    m_last_row.msg->set_justify(Gtk::JUSTIFY_FILL);*/
+    time->set_text(msg_time.format("%R"));
+    msg->set_text(new_line.message);
 
     // add to grid
-    m_grid.attach(*m_last_row.msg, m_side ? 1 : 0, m_row_count, 1, 1);
-    m_grid.attach(*m_last_row.time, m_side ? 0 : 1, m_row_count, 1, 1);
-
+    if (m_side == 0) {
+        rows.emplace_back(m_grid, m_row_count, *msg, *time);
+    } else {
+        rows.emplace_back(m_grid, m_row_count, *time, *msg);
+    }
+    if (new_line.wait_for_receipt) {
+        rows.back().set_class("message_pending");
+        //callback !
+        auto nr = new_line.nr;
+        auto receipt = new_line.receipt;
+        auto index = rows.size() - 1;
+        rows.back().tox_callback = [this, index, nr, receipt](const ToxEvent &ev) {
+            //wait for receipt
+            if (ev.type() == typeid(Tox::EventReadReceipt)) {
+                auto& row = rows[index];
+                auto data = ev.get<Tox::EventReadReceipt>();
+                if (data.nr == nr) {
+                    if (data.receipt > receipt) {
+                        //message failed !
+                        row.set_class("message_failed");
+                        row.tox_callback.reset();
+                    } else if (data.receipt == receipt) {
+                        //message got !
+                        row.set_class("message_receipt");
+                        row.tox_callback.reset();
+                    }
+                }
+            }
+        };
+    }
+    if (new_line.error) {
+        rows.back().set_class("message_failed");
+    }
+    for(size_t i = 0; i < rows.size(); ++i) {
+        rows[i].set_class(i == 0, i == rows.size()-1);
+    }
     m_row_count += 1;
 
     // styling
-    m_last_row.time->set_halign(Gtk::ALIGN_CENTER);
-    m_last_row.time->set_valign(Gtk::ALIGN_START);
-    m_last_row.time->set_name("ChatTime");
+    time->set_halign(Gtk::ALIGN_CENTER);
+    time->set_valign(Gtk::ALIGN_START);
+    time->set_name("ChatTime");
 
-    m_last_row.msg->set_halign(Gtk::ALIGN_START);
+    msg->set_halign(Gtk::ALIGN_START);
+    msg->set_valign(Gtk::ALIGN_CENTER);
 
-    m_last_row.msg->show_all();
-    m_last_row.time->show_all();
-    m_last_row.time->set_no_show_all();
+    msg->show_all();
+    time->show_all();
+    time->set_no_show_all();
     if (!display_time) {
-        m_last_row.time->hide();
+        time->hide();
     }
 }
 
@@ -164,5 +180,5 @@ void WidgetChatLine::on_size_allocate(Gtk::Allocation& allocation) {
 }
 
 unsigned long long WidgetChatLine::last_timestamp() {
-    return m_last_row.timestamp;
+    return m_last_timestamp;
 }
