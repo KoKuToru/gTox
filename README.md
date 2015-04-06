@@ -46,7 +46,7 @@ For comparison https://wiki.tox.im/Client
 | Desktop sharing | No | |
 | Inline images | No | |
 | File resuming | No | |
-| Read receipts | Yes/No | | *But not visual yet*
+| Read receipts | Yes | | *But log wont save "failed" yet, probably problems when id wraps (32bit)*
 | Message splitting | No | | 
 | Changing nospam | No | |
 | tox: URI | No | [#93](https://github.com/KoKuToru/gTox/issues/93) |
