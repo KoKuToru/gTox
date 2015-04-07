@@ -21,8 +21,6 @@
 #define WIDGETAUDIOVIDEO_H
 
 #include <gtkmm.h>
-#include <gstreamermm.h>
-#include <gstreamermm/playbin.h>
 class WidgetAudioVideo : public Gtk::VBox {
     public:
         WidgetAudioVideo();

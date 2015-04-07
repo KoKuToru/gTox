@@ -18,82 +18,17 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 **/
 #include "WidgetAudioVideo.h"
-#include "Generated/icon.h"
-#include <glibmm/i18n.h>
-#ifdef GDK_WINDOWING_X11
-#include <gdk/gdkx.h>
-#endif
-#ifdef GDK_WINDOWING_WIN32
-#include <gdk/gdkwin32.h>
-#endif
-#include <gstreamermm/bus.h>
-#include <gstreamermm/caps.h>
-#include <gstreamermm/clock.h>
-#include <gstreamermm/buffer.h>
-#include <gstreamermm/event.h>
-#include <gstreamermm/message.h>
-#include <gstreamermm/query.h>
-#include <gstreamermm/videooverlay.h>
-#include <gstreamermm/playbin.h>
-#include <gstreamermm/ximagesink.h>
-#include <gstreamermm/appsink.h>
-
-
-#include <iostream>
+#include "../VideoPlayer.h"
 
 WidgetAudioVideo::WidgetAudioVideo() : Glib::ObjectBase("WidgetAudioVideo") {
     property_valign() = Gtk::ALIGN_CENTER;
     property_halign() = Gtk::ALIGN_CENTER;
 
-    auto playbin = Gst::PlayBin::create("playbin");
-
-    //setup pipeline
-    auto sink = Gst::AppSink::create();
-    sink->property_max_buffers() = 3;
-    sink->property_drop() = true;
-    sink->property_caps() = Gst::Caps::create_from_string("video/x-raw,format=RGB,pixel-aspect-ratio=1/1");
-    playbin->property_video_sink() = sink; //overwrite sink
-
-    //open video
-    playbin->property_uri() = "v4l2:///dev/video0";
-
-    //when to
-    auto btn = Gtk::manage(new Gtk::Button("CLICK ME"));
-    btn->signal_clicked().connect([this, sink]() {
-        //TODO !! ERROR CHECKING !
-
-        auto sample = sink->pull_sample();
-        auto caps   = sample->get_caps();
-        auto struc  = caps->get_structure(0);
-        auto buffer = sample->get_buffer();
-
-        auto map = Glib::RefPtr<Gst::MapInfo>(new Gst::MapInfo);
-        buffer->map(map, Gst::MAP_READ);
-
-        int w, h;
-        if (!(struc.get_field("width", w) && struc.get_field("height", h))) {
-            std::cerr << "Couldn't get dimension" << std::endl;
-            return;
-        }
-
-        //read memory
-        auto pix = Gdk::Pixbuf::create_from_data((const guint8*)map->get_data(),
-                                                 Gdk::COLORSPACE_RGB,
-                                                 false,
-                                                 8,
-                                                 w,
-                                                 h,
-                                                 GST_ROUND_UP_4( w*3 ));
-        auto img = Gtk::manage(new Gtk::Image(pix));
-        pack_start(*img);
-        img->show();
-    });
-
-    btn->show();
-    pack_end(*btn);
-
-    //start recording..
-    playbin->set_state(Gst::STATE_PLAYING);
+    auto player = Gtk::manage(new VideoPlayer());
+    player->set_uri("v4l2:///dev/video0");
+    player->play();
+    add(*player);
+    player->show();
 }
 
 WidgetAudioVideo::~WidgetAudioVideo() {
