@@ -30,13 +30,24 @@ namespace sigc {
     SIGC_FUNCTORS_DEDUCE_RESULT_TYPE_WITH_DECLTYPE
 }
 
-VideoPlayer::VideoPlayer() : Glib::ObjectBase("VideoPlayer"), m_fps(15), m_state(STOP) {
+VideoPlayer::VideoPlayer() : Glib::ObjectBase("VideoPlayer"), m_state(STOP) {
     m_playbin = Gst::PlayBin::create("playbin");
 
     //setup pipeline
     m_appsink = Gst::AppSink::create();
     m_appsink->property_caps() = Gst::Caps::create_from_string("video/x-raw,format=RGB,pixel-aspect-ratio=1/1");
     m_playbin->property_video_sink() = m_appsink; //overwrite sink
+
+    //events
+    m_appsink->property_emit_signals() = true;
+    m_appsink->signal_new_sample().connect_notify([this](){
+        if (m_state == PLAY) {
+            m_state = PLAYING;
+        }
+        if (m_state == PLAYING) {
+            queue_draw();
+        }
+    });
 }
 
 VideoPlayer::~VideoPlayer() {
@@ -51,7 +62,7 @@ bool VideoPlayer::set_uri(Glib::ustring uri) {
     m_appsink->property_max_buffers() = 1;
     m_appsink->property_drop() = false;
     play();
-    auto sample = m_appsink->pull_sample();
+    auto sample = m_appsink->pull_sample(); //probably bad for the performance !
     stop();
     m_lastimg.reset();
     if (sample) {
@@ -100,34 +111,19 @@ bool VideoPlayer::set_uri(Glib::ustring uri) {
     return true;
 }
 
-void VideoPlayer::set_fps(int fps) {
-    if (fps == 0) {
-        throw "fps can't be 0";
-    }
-    m_fps = fps;
-    pause();
-    play();
-}
-
 void VideoPlayer::play() {
     pause();
     m_playbin->set_state(Gst::STATE_PLAYING);
-    m_interval = Glib::signal_timeout().connect([this](){
-        queue_draw();
-        return true;
-    }, std::max(1, 1000/m_fps));
-    m_state = PLAYING;
+    m_state = PLAY;
 }
 
 void VideoPlayer::pause() {
     m_playbin->set_state(Gst::STATE_PAUSED);
-    m_interval.disconnect();
     m_state = PAUSE;
 }
 
 void VideoPlayer::stop() {
     m_playbin->set_state(Gst::STATE_NULL);
-    m_interval.disconnect();
     m_state = STOP;
 }
 

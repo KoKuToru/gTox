@@ -28,14 +28,13 @@ class VideoPlayer : public Gtk::DrawingArea {
     private:
         enum State {
             PLAYING,
+            PLAY,
             PAUSE,
             STOP
         };
 
         Glib::RefPtr<Gst::PlayBin> m_playbin;
         Glib::RefPtr<Gst::AppSink> m_appsink;
-        sigc::connection           m_interval;
-        int                        m_fps;
         Glib::RefPtr<Gdk::Pixbuf>  m_lastimg;
         State                      m_state;
 
@@ -46,7 +45,6 @@ class VideoPlayer : public Gtk::DrawingArea {
         virtual ~VideoPlayer();
 
         bool set_uri(Glib::ustring uri);
-        void set_fps(int fps);
 
         void play();
         void pause();
