@@ -31,6 +31,7 @@
 #include <libnotifymm.h>
 #include <glibmm/i18n.h>
 #include <glibmm/exception.h>
+#include <gstreamermm/init.h>
 
 #include "Tox/Tox.h"
 
@@ -124,6 +125,7 @@ int main(int argc, char* argv[]) {
     Glib::add_exception_handler(sigc::ptr_fun(&terminate_handler));
 
     Gtk::Main kit(argc, argv);
+    Gst::init(argc, argv);
 
     Gtk::Settings::get_default()
             ->property_gtk_application_prefer_dark_theme() = true;

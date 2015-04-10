@@ -8,10 +8,11 @@ find_package(PkgConfig)
 pkg_check_modules(GTKMM gtkmm-3.0)
 pkg_check_modules(LIBNOTIFYMM libnotifymm-1.0)
 pkg_check_modules(LIBCANBERRA libcanberra)
+pkg_check_modules(GSTREAMERMM gstreamermm-1.0)
 link_directories(
-    ${GTKMM_LIBRARY_DIRS} ${LIBNOTIFYMM_LIBRARY_DIRS} ${LIBCANBERRA_LIBRARY_DIRS})
+    ${GTKMM_LIBRARY_DIRS} ${LIBNOTIFYMM_LIBRARY_DIRS} ${LIBCANBERRA_LIBRARY_DIRS} ${GSTREAMERMM_LIBRARY_DIRS})
 include_directories(
-    ${GTKMM_INCLUDE_DIRS} ${LIBNOTIFYMM_INCLUDE_DIRS} ${LIBCANBERRA_INCLUDE_DIRS})
+    ${GTKMM_INCLUDE_DIRS} ${LIBNOTIFYMM_INCLUDE_DIRS} ${LIBCANBERRA_INCLUDE_DIRS} ${GSTREAMERMM_INCLUDE_DIRS})
 
 if(NOT SUBMODULES_INITED)
   execute_process(
@@ -113,6 +114,8 @@ set(SOURCES
     Widget/Settings/WidgetProfile.cpp
     Widget/Settings/WidgetNetwork.cpp
     Widget/Settings/WidgetCache.cpp
+    Widget/Settings/WidgetAudioVideo.cpp
+    Widget/VideoPlayer.cpp
     Dialog/FirstStartAssistant.cpp
     Dialog/DialogChat.cpp
     Dialog/DialogContact.cpp
@@ -135,7 +138,7 @@ add_executable(${PROJECT_NAME}
     "${CMAKE_CURRENT_SOURCE_DIR}/Generated/database.cpp"
 )
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(${PROJECT_NAME} ${GTKMM_LIBRARIES} ${LIBNOTIFYMM_LIBRARIES} ${LIBCANBERRA_LIBRARIES} "${CMAKE_CURRENT_SOURCE_DIR}/toxcore/build/.libs/libtoxcore.a" -lsodium -lpthread -lsqlite3 SQLiteCpp)
+target_link_libraries(${PROJECT_NAME} ${GTKMM_LIBRARIES} ${LIBNOTIFYMM_LIBRARIES} ${LIBCANBERRA_LIBRARIES} ${GSTREAMERMM_LIBRARIES} "${CMAKE_CURRENT_SOURCE_DIR}/toxcore/build/.libs/libtoxcore.a" -lsodium -lpthread -lsqlite3 SQLiteCpp)
 add_dependencies(${PROJECT_NAME} toxcore SQLiteCpp)
 install(PROGRAMS "${PROJECT_BINARY_DIR}/${PROJECT_NAME}"
         DESTINATION bin

@@ -25,6 +25,7 @@
 #include "Widget/Settings/WidgetProfile.h"
 #include "Widget/Settings/WidgetNetwork.h"
 #include "Widget/Settings/WidgetCache.h"
+#include "Widget/Settings/WidgetAudioVideo.h"
 
 DialogSettings::DialogSettings() {
     set_title(_("SETTINGS_TITLE"));
@@ -54,6 +55,7 @@ DialogSettings::DialogSettings() {
                 "emojis");*/
     m_stack.add(*Gtk::manage(new WidgetCache), "cache");
     // m_stack.add(*Gtk::manage(new WidgetNetwork), "network");
+    m_stack.add(*Gtk::manage(new WidgetAudioVideo), "av");
     m_stack.add(*Gtk::manage(new WidgetAbout), "about");
 
     listbox->get_style_context()->add_class("settings");
@@ -63,6 +65,7 @@ DialogSettings::DialogSettings() {
     // listbox->add(*Gtk::manage(new Gtk::Label("Emojis", 0, 0.5)));
     listbox->add(*Gtk::manage(new Gtk::Label("Cache", 0, 0.5)));
     // listbox->add(*Gtk::manage(new Gtk::Label("Network", 0, 0.5)));
+    listbox->add(*Gtk::manage(new Gtk::Label("Audio/Video", 0, 0.5)));
     listbox->add(*Gtk::manage(new Gtk::Label(_("SETTINGS_ABOUT"), 0, 0.5)));
 
     // only scroll vertically
