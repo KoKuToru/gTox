@@ -19,12 +19,20 @@
 **/
 #ifndef WIDGETAUDIOVIDEO_H
 #define WIDGETAUDIOVIDEO_H
-
+#include <iostream>
 #include <gtkmm.h>
+#include "../VideoPlayer.h"
+
 class WidgetAudioVideo : public Gtk::VBox {
+    private:
+        VideoPlayer m_player;
+
     public:
         WidgetAudioVideo();
         ~WidgetAudioVideo();
+
+        virtual void on_map();
+        virtual void on_unmap();
 };
 
 #endif

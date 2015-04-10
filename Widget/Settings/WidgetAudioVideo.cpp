@@ -18,18 +18,25 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 **/
 #include "WidgetAudioVideo.h"
-#include "../VideoPlayer.h"
 
 WidgetAudioVideo::WidgetAudioVideo() : Glib::ObjectBase("WidgetAudioVideo") {
     property_valign() = Gtk::ALIGN_CENTER;
     property_halign() = Gtk::ALIGN_CENTER;
 
-    auto player = Gtk::manage(new VideoPlayer());
-    player->set_uri("v4l2:///dev/video0");
-    player->play();
-    add(*player);
-    player->show();
+    m_player.set_uri("v4l2:///dev/video0");
+    add(m_player);
+    m_player.show();
 }
 
 WidgetAudioVideo::~WidgetAudioVideo() {
+}
+
+void WidgetAudioVideo::on_map() {
+    m_player.play();
+    Gtk::VBox::on_map();
+}
+
+void WidgetAudioVideo::on_unmap() {
+    m_player.stop();
+    Gtk::VBox::on_unmap();
 }
