@@ -1,5 +1,5 @@
-* > GtkWindow {
-    border-radius: 15px 15px 0 0;
+GtkPaned {
+	background: black;
 }
 
 *:insensitive {
@@ -34,11 +34,11 @@ GtkPopover {
     padding: 0.5em;
 }
 
-#HeaderBarRight {
+.headerbar-right {
     border-top-left-radius: 0;
 }
 
-#HeaderBarLeft {
+.headerbar-left {
     border-top-right-radius: 0;
 }
 

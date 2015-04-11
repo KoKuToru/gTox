@@ -70,6 +70,14 @@ DialogContact::DialogContact(const std::string& config_path)
 
     m_headerbar_chat.set_title("Chat");
     m_headerbar_chat.set_subtitle("with DemoUser");
+    m_headerbar_chat.signal_map().connect_notify([this](){
+        m_headerbar_chat.get_style_context()->add_class("headerbar-left");
+        m_headerbar_contact.get_style_context()->add_class("headerbar-right");
+    });
+    m_headerbar_chat.signal_unmap().connect_notify([this](){
+        m_headerbar_chat.get_style_context()->remove_class("headerbar-left");
+        m_headerbar_contact.get_style_context()->remove_class("headerbar-right");
+    });
 
     m_btn_xxtach.set_image(m_icon_detach);
 
