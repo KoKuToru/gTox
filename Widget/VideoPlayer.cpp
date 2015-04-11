@@ -36,17 +36,71 @@ VideoPlayer::VideoPlayer() : Glib::ObjectBase("VideoPlayer"), m_state(STOP) {
     //setup pipeline
     m_appsink = Gst::AppSink::create();
     m_appsink->property_caps() = Gst::Caps::create_from_string("video/x-raw,format=RGB,pixel-aspect-ratio=1/1");
+    m_appsink->property_max_buffers() = 3;
+    m_appsink->property_drop() = true;
     m_playbin->property_video_sink() = m_appsink; //overwrite sink
 
     //events
     m_appsink->property_emit_signals() = true;
     m_appsink->signal_new_sample().connect_notify([this](){
-        if (m_state == PLAY) {
-            m_state = PLAYING;
+        auto sample = m_appsink->pull_sample();
+        if (!sample) {
+            return;
         }
-        if (m_state == PLAYING) {
-            queue_draw();
-        }
+        //switch to GTK-Mainloop
+        m_signal_helper = Glib::signal_idle().connect([this, sample](){
+            auto state = m_state;
+            if (state == INIT) {
+                auto caps = sample->get_caps();
+
+                if (!caps) {
+                    return false;
+                }
+
+                if (caps->empty()) {
+                    return false;
+                }
+
+                auto struc = caps->get_structure(0);
+                if (!(struc.get_field("width", m_videowidth) &&
+                      struc.get_field("height", m_videoheight))) {
+                    return false;
+                }
+
+                set_size_request(m_videowidth, m_videoheight);
+                queue_resize();
+
+                m_state = STOP;
+                m_playbin->set_state(Gst::STATE_NULL);
+            }
+            if (state == PLAY || state == INIT) {
+                auto buffer = sample->get_buffer();
+                if (!buffer) {
+                    return false;
+                }
+
+                auto map = Glib::RefPtr<Gst::MapInfo>(new Gst::MapInfo);
+                if (!buffer->map(map, Gst::MAP_READ)) {
+                    return false;
+                }
+
+                //convert to pixbuf
+                m_lastimg = Gdk::Pixbuf::create_from_data(map->get_data(),
+                                                          Gdk::COLORSPACE_RGB,
+                                                          false,
+                                                          8,
+                                                          m_videowidth,
+                                                          m_videoheight,
+                                                          GST_ROUND_UP_4( m_videowidth*3 ),
+                                                          [sample, buffer, map](const guint8*){
+                            //free memory
+                            buffer->unmap(map);
+                });
+
+                queue_draw();
+            }
+            return false;
+        });
     });
 }
 
@@ -59,112 +113,38 @@ bool VideoPlayer::set_uri(Glib::ustring uri) {
     m_playbin->property_uri() = uri;
 
     //Get first frame:
-    m_appsink->property_max_buffers() = 1;
-    m_appsink->property_drop() = false;
-    play();
-    auto sample = m_appsink->pull_sample(); //probably bad for the performance !
-    stop();
     m_lastimg.reset();
-    if (sample) {
-        auto caps = sample->get_caps();
-        if (!caps) {
-            return false;
-        }
-        if (caps->size() < 1) {
-            return false;
-        }
-        auto struc = caps->get_structure(0);
-        if (!(struc.get_field("width", m_videowidth) && struc.get_field("height", m_videoheight))) {
-            return false;
-        }
-
-        //get frame:
-        auto buffer = sample->get_buffer();
-        if (!buffer) {
-            return false;
-        }
-
-        auto map = Glib::RefPtr<Gst::MapInfo>(new Gst::MapInfo);
-        if (!buffer->map(map, Gst::MAP_READ)) {
-            return false;
-        }
-
-        //convert to pixbuf
-        m_lastimg = Gdk::Pixbuf::create_from_data(map->get_data(),
-                                                  Gdk::COLORSPACE_RGB,
-                                                  false,
-                                                  8,
-                                                  m_videowidth,
-                                                  m_videoheight,
-                                                  GST_ROUND_UP_4( m_videowidth*3 ),
-                                                  [buffer, map](const guint8*){
-            //free memory
-            buffer->unmap(map);
-        });
-
-        set_size_request(m_videowidth, m_videoheight);
-        queue_resize();
-    }
-    //settings for normal playback:
-    m_appsink->property_max_buffers() = 3;
-    m_appsink->property_drop() = true;
+    m_state = INIT;
+    m_playbin->set_state(Gst::STATE_PLAYING);
     return true;
 }
 
 void VideoPlayer::play() {
-    pause();
-    m_playbin->set_state(Gst::STATE_PLAYING);
+    if (m_state == INIT) {
+        throw std::runtime_error("NOT READY");
+    }
     m_state = PLAY;
+    m_playbin->set_state(Gst::STATE_PLAYING);
 }
 
 void VideoPlayer::pause() {
-    m_playbin->set_state(Gst::STATE_PAUSED);
+    if (m_state == INIT) {
+        throw std::runtime_error("NOT READY");
+    }
     m_state = PAUSE;
+    m_playbin->set_state(Gst::STATE_PAUSED);
 }
 
 void VideoPlayer::stop() {
-    m_playbin->set_state(Gst::STATE_NULL);
+    if (m_state == INIT) {
+        throw std::runtime_error("NOT READY");
+    }
     m_state = STOP;
+    m_playbin->set_state(Gst::STATE_NULL);
 }
 
 Glib::RefPtr<Gdk::Pixbuf> VideoPlayer::snapshot() {
-    if (m_state != PLAYING) {
-        return m_lastimg;
-    }
-
-    Glib::RefPtr<Gdk::Pixbuf> pix;
-
-    auto sample = m_appsink->pull_sample();
-    if (!sample) {
-        return pix;
-    }
-
-    auto buffer = sample->get_buffer();
-    if (!buffer) {
-        return pix;
-    }
-
-    auto map = Glib::RefPtr<Gst::MapInfo>(new Gst::MapInfo);
-    if (!buffer->map(map, Gst::MAP_READ)) {
-        return pix;
-    }
-
-    //convert to pixbuf
-    pix = Gdk::Pixbuf::create_from_data(map->get_data(),
-                                        Gdk::COLORSPACE_RGB,
-                                        false,
-                                        8,
-                                        m_videowidth,
-                                        m_videoheight,
-                                        GST_ROUND_UP_4( m_videowidth*3 ),
-                                        [buffer, map](const guint8*){
-        //free memory
-        buffer->unmap(map);
-    });
-
-    m_lastimg = pix;
-
-    return pix;
+    return m_lastimg;
 }
 
 bool VideoPlayer::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
@@ -173,6 +153,5 @@ bool VideoPlayer::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
         Gdk::Cairo::set_source_pixbuf(cr, img, 0, 0);
         cr->paint();
     }
-
     return true;
 }

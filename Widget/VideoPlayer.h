@@ -27,7 +27,7 @@
 class VideoPlayer : public Gtk::DrawingArea {
     private:
         enum State {
-            PLAYING,
+            INIT,
             PLAY,
             PAUSE,
             STOP
@@ -37,6 +37,8 @@ class VideoPlayer : public Gtk::DrawingArea {
         Glib::RefPtr<Gst::AppSink> m_appsink;
         Glib::RefPtr<Gdk::Pixbuf>  m_lastimg;
         State                      m_state;
+
+        sigc::connection m_signal_helper;
 
         int m_videowidth;
         int m_videoheight;
