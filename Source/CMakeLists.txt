@@ -44,6 +44,11 @@ add_custom_target(
    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/Libs/toxcore"
 )
 
+option(SQLITECPP_RUN_CPPLINT OFF)
+option(SQLITECPP_RUN_CPPCHECK OFF)
+option(SQLITECPP_RUN_DOXYGEN OFF)
+option(SQLITECPP_BUILD_EXAMPLES OFF)
+option(SQLITECPP_BUILD_TESTS OFF)
 add_subdirectory(Libs/SQLiteCpp)
 include_directories(Libs/SQLiteCpp/include)
 
