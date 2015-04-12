@@ -29,11 +29,11 @@ endif()
 if(NOT TOXCORE_INITED)
   execute_process(
     COMMAND ./autogen.sh
-    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/toxcore"
+    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/Libs/toxcore"
   )
   execute_process(
     COMMAND ./configure
-    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/toxcore"
+    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/Libs/toxcore"
   )
   set(TOXCORE_INITED TRUE CACHE BOOL "Is toxcore configured ?" FORCE)
 endif()
@@ -41,11 +41,11 @@ endif()
 add_custom_target(
    toxcore
    COMMAND make
-   WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/toxcore"
+   WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/Libs/toxcore"
 )
 
-add_subdirectory(SQLiteCpp)
-include_directories(SQLiteCpp/include)
+add_subdirectory(Libs/SQLiteCpp)
+include_directories(Libs/SQLiteCpp/include)
 
 add_subdirectory(Tools)
 
@@ -147,7 +147,7 @@ add_executable(${PROJECT_NAME}
     "${CMAKE_CURRENT_SOURCE_DIR}/Generated/database.cpp"
 )
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(${PROJECT_NAME} ${GTKMM_LIBRARIES} ${LIBNOTIFYMM_LIBRARIES} ${LIBCANBERRA_LIBRARIES} ${GSTREAMERMM_LIBRARIES} "${CMAKE_CURRENT_SOURCE_DIR}/toxcore/build/.libs/libtoxcore.a" -lsodium -lpthread -lsqlite3 SQLiteCpp)
+target_link_libraries(${PROJECT_NAME} ${GTKMM_LIBRARIES} ${LIBNOTIFYMM_LIBRARIES} ${LIBCANBERRA_LIBRARIES} ${GSTREAMERMM_LIBRARIES} "${CMAKE_CURRENT_SOURCE_DIR}/Libs/toxcore/build/.libs/libtoxcore.a" -lsodium -lpthread -lsqlite3 SQLiteCpp)
 add_dependencies(${PROJECT_NAME} toxcore SQLiteCpp)
 install(PROGRAMS "${PROJECT_BINARY_DIR}/${PROJECT_NAME}"
         DESTINATION bin

@@ -24,7 +24,7 @@
 #include <typeindex>
 #include <memory>
 #include <vector>
-#include "toxcore/toxcore/tox.h"
+#include "Libs/toxcore/toxcore/tox.h"
 
 class ToxEvent {
   private:

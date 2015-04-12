@@ -19,7 +19,7 @@
 **/
 #ifndef TOXMM_H
 #define TOXMM_H
-#include "toxcore/toxcore/tox.h"
+#include "Libs/toxcore/toxcore/tox.h"
 #include <thread>
 #include <mutex>
 #include <functional>

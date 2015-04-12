@@ -1,6 +1,6 @@
-[submodule "toxcore"]
-	path = toxcore
-	url = https://github.com/irungentoo/toxcore.git
-[submodule "SQLiteCpp"]
-	path = SQLiteCpp
+[submodule "Source/Libs/toxcore"]
+	path = Source/Libs/toxcore
+	url = https://github.com/irungentoo/toxcore
+[submodule "Source/Libs/SQLiteCpp"]
+	path = Source/Libs/SQLiteCpp
 	url = https://github.com/SRombauts/SQLiteCpp

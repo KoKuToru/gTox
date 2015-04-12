@@ -17,7 +17,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 **/
-#include "toxcore/toxcore/tox.h"
+#include "Libs/toxcore/toxcore/tox.h"
 #include <iostream>
 #include <unistd.h>
 #include <stdlib.h>
