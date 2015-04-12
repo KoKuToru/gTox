@@ -27,6 +27,7 @@
 class WidgetContact : public Gtk::ScrolledWindow {
   private:
     Gtk::ListBox m_list;
+    bool m_check_item_size;
 
     bool on_button_press(GdkEventButton* event);
 

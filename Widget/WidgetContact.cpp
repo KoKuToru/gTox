@@ -22,8 +22,11 @@
 #include "Dialog/DialogContact.h"
 #include "../Popover/PopoverContextContact.h"
 
-WidgetContact::WidgetContact() : Glib::ObjectBase("WidgetContact") {
-    this->add(m_list);  //, true, true);
+WidgetContact::WidgetContact() :
+    Glib::ObjectBase("WidgetContact"),
+    m_check_item_size(true) {
+
+    this->add(m_list);
 
     m_list.set_activate_on_single_click(false);
     m_list.signal_row_activated().connect([this](Gtk::ListBoxRow* it) {
@@ -39,11 +42,20 @@ WidgetContact::WidgetContact() : Glib::ObjectBase("WidgetContact") {
 
 WidgetContact::~WidgetContact() {
 }
-
+#include <iostream>
 void WidgetContact::add_contact(Tox::FriendNr nr) {
     Gtk::Widget* w = Gtk::manage(new WidgetContactListItem(this, nr));
     m_list.add(*w);
     w->show_all();
+
+    if (m_check_item_size) {
+        m_check_item_size = false;
+        //pixel perfect list size
+        int min_height;
+        int natural_height;
+        w->get_preferred_height(min_height, natural_height);
+        this->set_size_request(-1, min_height*6);
+    }
 }
 
 bool WidgetContact::on_button_press(GdkEventButton* event) {
