@@ -16,7 +16,6 @@
             <property name="height_request">72</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="stock">gtk-missing-image</property>
           </object>
           <packing>
             <property name="left_attach">1</property>
@@ -29,11 +28,11 @@
             <property name="name">Name</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="halign">end</property>
             <property name="hexpand">True</property>
             <property name="label" translatable="yes">PROFILE_CORRUPTED_TITLE</property>
             <property name="ellipsize">end</property>
             <property name="single_line_mode">True</property>
-            <property name="xalign">1</property>
           </object>
           <packing>
             <property name="left_attach">0</property>
@@ -45,11 +44,11 @@
             <property name="name">Status</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="halign">end</property>
             <property name="hexpand">True</property>
             <property name="label" translatable="yes">PROFILE_CORRUPTED</property>
             <property name="ellipsize">end</property>
             <property name="single_line_mode">True</property>
-            <property name="xalign">1</property>
           </object>
           <packing>
             <property name="left_attach">0</property>
@@ -61,10 +60,10 @@
             <property name="name">Status</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="halign">start</property>
             <property name="hexpand">True</property>
             <property name="ellipsize">end</property>
             <property name="single_line_mode">True</property>
-            <property name="xalign">0</property>
             <attributes>
               <attribute name="style" value="oblique"/>
             </attributes>

@@ -237,7 +237,6 @@
                     <property name="halign">end</property>
                     <property name="valign">center</property>
                     <property name="xalign">1</property>
-                    <property name="stock">gtk-missing-image</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
