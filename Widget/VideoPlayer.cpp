@@ -136,9 +136,6 @@ void VideoPlayer::pause() {
 }
 
 void VideoPlayer::stop() {
-    if (m_state == INIT) {
-        throw std::runtime_error("NOT READY");
-    }
     m_state = STOP;
     m_playbin->set_state(Gst::STATE_NULL);
 }

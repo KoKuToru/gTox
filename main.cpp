@@ -119,7 +119,7 @@ void terminate_handler() {
     }
     abort();
 }
-
+#include "Helper/Notification.h"
 int main(int argc, char* argv[]) {
     std::set_terminate(terminate_handler);
     Glib::add_exception_handler(sigc::ptr_fun(&terminate_handler));
