@@ -24,7 +24,6 @@
 
 #include "Widget/WidgetChat.h"
 #include "Widget/WidgetContact.h"
-#include "Widget/WidgetNotification.h"
 #include "Popover/PopoverStatus.h"
 #include "Popover/PopoverSettings.h"
 #include "Popover/PopoverAddContact.h"
@@ -65,7 +64,6 @@ class DialogContact : public Gtk::Window {
     Gtk::VBox m_vbox;
 
     WidgetContact m_contact;
-    WidgetNotification m_notification;
 
     std::vector<std::shared_ptr<DialogChat>> m_chat_dialog;
 

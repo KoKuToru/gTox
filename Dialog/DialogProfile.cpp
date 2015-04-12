@@ -106,6 +106,8 @@ DialogProfile::DialogProfile(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Bu
     }
 }
 
+
+
 void DialogProfile::set_accounts(const std::vector<std::string>& accounts) {
     m_accounts = accounts;
     Gtk::ListBox* list = nullptr;
