@@ -18,25 +18,38 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
  **/
 
-#ifndef ACCOUNTWIDGET_H
-#define ACCOUNTWIDGET_H
+#ifndef FIRSTSTARTASSISTANT_H
+#define FIRSTSTARTASSISTANT_H
 
 #include <gtkmm.h>
 
-class AccountWidget : public Gtk::Box {
+class DialogProfileCreate : public Gtk::Assistant {
   private:
-    Gtk::Label importText;
-    Gtk::Grid gridLayout;
-    Gtk::VBox radioBtnBox;
-    Gtk::RadioButton rbNew, rbImport;
+    const Glib::RefPtr<Gtk::Builder> m_builder;
+    bool m_aborted;
+    Glib::ustring m_path;
+
+    Gtk::Entry  *m_username = nullptr;
+    Gtk::Entry  *m_status = nullptr;
+    Gtk::Switch *m_logging = nullptr;
+    Gtk::Entry  *m_file_tox = nullptr;
+    Gtk::Entry  *m_file_gtox = nullptr;
+
+    int on_next(int page);
+    void on_cancel();
+    void on_close();
+    void on_apply();
+
+    void set_path(const Glib::ustring& path);
 
   public:
-    AccountWidget();
-    ~AccountWidget();
+    ~DialogProfileCreate();
 
-    Gtk::RadioButton& getRbImport() {
-        return rbImport;
-    }
+    DialogProfileCreate(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& builder);
+    static std::shared_ptr<DialogProfileCreate> create(const Glib::ustring& path);
+
+    bool is_aborted();
+    Glib::ustring get_path();
 };
 
 #endif

@@ -313,3 +313,36 @@ msgstr "Corrupted profile"
 
 msgid "PROFILE_CORRUPTED"
 msgstr "Profile couldn't be loaded"
+
+msgid "ASSISTANT_WELCOME_TEXT"
+msgstr ""
+"Wellcome to gTox\n"
+"\n"
+"gTox and Tox are by no means complete.\n"
+"We cannot guarantee what works today will work tomorrow.\n"
+"gTox and Tox are alpha software and code changes daily."
+
+msgid "ASSISTANT_USERNAME"
+msgstr "Name"
+
+msgid "ASSISTANT_STATUSMESSAGE"
+msgstr "Status message"
+
+msgid "ASSISTANT_LOGGING"
+msgstr "Chat logging"
+
+msgid "ASSISTANT_LOGGING_TEXT"
+msgstr "<span size='x-small'>gTox saves the log into a uncrypted SqliteDB</span>"
+
+msgid "ASSISTANT_FILE_TOX"
+msgstr "toxcore file"
+
+msgid "ASSISTANT_FILE_GTOX"
+msgstr "gTox file"
+
+msgid "ASSISTANT_FILE_TEXT"
+msgstr ""
+"<span size='x-small'><u>toxcore file</u> includes the profile and contact list,\n"
+"<u>gTox file</u> includes the chat log and gTox specified settings.\n\n"
+"<b>If you do a backup you must at least backup the <u>toxcore file</u> !</b></span>"
+

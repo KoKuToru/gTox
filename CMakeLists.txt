@@ -51,7 +51,8 @@ add_subdirectory(Tools)
 
 set(LAYOUT
     Layout/dialog_profile.ui
-    Layout/list_item_profile.ui)
+    Layout/list_item_profile.ui
+    Layout/dialog_assistant.ui)
 add_custom_command(
     OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/Generated/layout.cpp"
     COMMAND "${PROJECT_BINARY_DIR}/Tools/text2h" LAYOUT Generated/layout ${LAYOUT}
@@ -114,9 +115,6 @@ set(SOURCES
     Popover/PopoverSettings.cpp
     Popover/PopoverAddContact.cpp
     Popover/PopoverContextContact.cpp
-    Widget/Assistant/WelcomePage.cpp
-    Widget/Assistant/AccountWidget.cpp
-    Widget/Assistant/NewAccountWidget.cpp
     Widget/Chat/WidgetChatLabel.cpp
     Widget/Chat/WidgetChatEntry.cpp
     Widget/Chat/WidgetChatLayout.cpp
@@ -127,13 +125,12 @@ set(SOURCES
     Widget/Settings/WidgetCache.cpp
     Widget/Settings/WidgetAudioVideo.cpp
     Widget/VideoPlayer.cpp
-    Dialog/FirstStartAssistant.cpp
+    Dialog/DialogProfileCreate.cpp
     Dialog/DialogChat.cpp
     Dialog/DialogContact.cpp
     Dialog/DialogSettings.cpp
     Dialog/DialogError.cpp
     Dialog/DialogProfile.cpp
-    Widget/WidgetNotification.cpp
     Dialog/Debug/DialogCss.cpp
     Helper/Canberra.cpp
     Helper/ToxEventCallback.cpp

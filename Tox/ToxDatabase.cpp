@@ -295,7 +295,11 @@ void ToxDatabase::toxcore_state_add(const std::vector<unsigned char>& state) {
             ->move(Gio::File::create_for_path(m_path_state), Gio::FileCopyFlags::FILE_COPY_OVERWRITE)) {
         throw std::runtime_error("ERROR");
     }
-    Gio::File::create_for_path(m_path_state + "~")->remove();
+    if (Glib::file_test(m_path_state + "~", Glib::FILE_TEST_IS_REGULAR)) {
+        //delete the backup
+        Gio::File::create_for_path(m_path_state + "~")->remove();
+    }
+
 
     //save in gtox (just to be extra secure)
     int runid = config_get("runid", 0);

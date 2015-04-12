@@ -202,3 +202,37 @@ msgstr "Nachrichtenverlauf gelöscht"
 
 msgid "SETTINGS_CACHE_CLEAN_LOG_SUCCESS"
 msgstr "%1 Einträge wurden gelöscht"
+
+msgid "ASSISTANT_WELCOME_TEXT"
+msgstr ""
+"Willkommen bei gTox\n"
+"\n"
+"gTox sowie Tox ist keineswegs vollständig.\n"
+"Wir können nicht garantieren, das was heute funktioniert auch morgen funktioniert.\n"
+"gTox sowie Tox ist eine alpha Software und der Sourcecode ändert sich täglich."
+
+msgid "ASSISTANT_USERNAME"
+msgstr "Anzeigename"
+
+msgid "ASSISTANT_STATUSMESSAGE"
+msgstr "Status Nachricht"
+
+msgid "ASSISTANT_LOGGING"
+msgstr "Nachrichte protokollieren"
+
+msgid "ASSISTANT_LOGGING_TEXT"
+msgstr "<span size='x-small'>gTox speichert die Protokolle in eine unverschlüsselte SqliteDB</span>"
+
+msgid "ASSISTANT_FILE_TOX"
+msgstr "toxcore Datei"
+
+msgid "ASSISTANT_FILE_GTOX"
+msgstr "gTox Datei"
+
+msgid "ASSISTANT_FILE_TEXT"
+msgstr ""
+"<span size='x-small'><u>toxcore Datei</u> enthält die Pofile daten sowie die Kontaktliste,\n"
+"<u>gTox Datei</u> enthält die Protokolle so wie gTox spezifische Einstellungen.\n\n"
+"<b>Bei einen Datenbackup muss mindesetens die <u>toxcore Datei</u> gesicht werden !</b></span>"
+
+

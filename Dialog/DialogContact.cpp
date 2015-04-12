@@ -154,7 +154,6 @@ DialogContact::DialogContact(const std::string& config_path)
     this->set_titlebar(m_header_paned);
 
     m_vbox.add(m_contact);
-    m_vbox.pack_end(m_notification, false, false);
 
     // Setup content
     m_paned.pack1(m_chat, false, false);
@@ -197,10 +196,10 @@ DialogContact::DialogContact(const std::string& config_path)
 
     m_btn_status.set_sensitive(false);
 
-    m_notification.add_notification(
+    /*m_notification.add_notification(
         _("PREALPHA_SOFTWARE"), _("NOT_READY_YET"), _("OKAY"), []() {
             // nothing
-        });
+        });*/
 
     set_status(Tox::OFFLINE);
 }
@@ -292,6 +291,7 @@ void DialogContact::tox_event_handling(const ToxEvent& ev) {
         Canberra::play("message-new-instant");
     } else if (ev.type() == typeid(Tox::EventFriendRequest)) {
         auto data = ev.get<Tox::EventFriendRequest>();
+        /*
         m_notification.add_notification(
             "Friend request [" + Tox::to_hex(data.addr.data(), 32) + "]",
             data.message,
@@ -299,7 +299,7 @@ void DialogContact::tox_event_handling(const ToxEvent& ev) {
             [this, data]() {
                 add_contact(Tox::instance().add_friend_norequest(data.addr));
                 Tox::instance().save();
-            });
+            });*/
     }
 }
 

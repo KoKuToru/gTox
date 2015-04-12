@@ -25,7 +25,7 @@
 
 #include <gtkmm.h>
 #include "Dialog/DialogContact.h"
-#include "Dialog/FirstStartAssistant.h"
+#include "Dialog/DialogProfileCreate.h"
 #include "Dialog/DialogError.h"
 #include "Dialog/DialogProfile.h"
 #include <libnotifymm.h>
@@ -196,11 +196,11 @@ int main(int argc, char* argv[]) {
 
         if (profile->get_path().empty()) {
             profile->hide();
-            FirstStartAssistant assistant(config_path);
-            kit.run(assistant);
+            auto assistant = DialogProfileCreate::create(config_path);
+            kit.run(*assistant);
 
-            if (!assistant.isAborted()) {
-                config_path = assistant.getPath();
+            if (!assistant->is_aborted()) {
+                config_path = assistant->get_path();
                 break;
             }
 
