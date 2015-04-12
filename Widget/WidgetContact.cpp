@@ -42,7 +42,7 @@ WidgetContact::WidgetContact() :
 
 WidgetContact::~WidgetContact() {
 }
-#include <iostream>
+
 void WidgetContact::add_contact(Tox::FriendNr nr) {
     Gtk::Widget* w = Gtk::manage(new WidgetContactListItem(this, nr));
     m_list.add(*w);
