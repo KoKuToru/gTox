@@ -36,6 +36,8 @@ class DialogContact : public Gtk::Window {
   private:
     static DialogContact* m_instance;
 
+    Glib::RefPtr<Gtk::StatusIcon> m_status_icon;
+
     Gtk::Paned m_header_paned;
     Gtk::HeaderBar m_headerbar_chat;
     Gtk::HeaderBar m_headerbar_contact;

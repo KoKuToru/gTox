@@ -201,6 +201,8 @@ DialogContact::DialogContact(const std::string& config_path)
         _("PREALPHA_SOFTWARE"), _("NOT_READY_YET"), _("OKAY"), []() {
             // nothing
         });
+
+    set_status(Tox::OFFLINE);
 }
 
 DialogContact::~DialogContact() {
@@ -438,7 +440,22 @@ void DialogContact::set_status(Tox::EUSERSTATUS status_code) {
         default:
             break;
     }
-    Tox::instance().save();
+    if (!m_status_icon) {
+        m_status_icon = Gtk::StatusIcon::create(m_icon_status.property_pixbuf());
+        m_status_icon->set_visible(true);
+        m_status_icon->set_name("gTox");
+        m_status_icon->signal_activate().connect([this](){
+            present();
+        });
+        auto menu = Gtk::manage(new Gtk::Menu);
+        menu->add(*Gtk::manage(new Gtk::MenuItem("Test")));
+        menu->show_all();
+        m_status_icon->signal_popup_menu().connect([this, menu](const unsigned int& btn, const unsigned int& time){
+            m_status_icon->popup_menu_at_position(*menu, btn, time);
+        });
+    } else {
+        m_status_icon->set(m_icon_status.property_pixbuf());
+    }
 }
 
 void DialogContact::exit() {
