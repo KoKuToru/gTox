@@ -55,7 +55,7 @@ WidgetCache::WidgetCache()
                                Gtk::BUTTONS_OK_CANCEL,
                                true);
         msg.set_secondary_text(_("SETTINGS_CACHE_CLEAN_LOG"));
-        if (msg.run() == Gtk::RESPONSE_YES) {
+        if (msg.run() == Gtk::RESPONSE_OK) {
             msg.hide();
             Gtk::MessageDialog msg2(parent,
                                     _("SETTINGS_CACHE_CLEAN_LOG_SUCCESS_TITLE"),
