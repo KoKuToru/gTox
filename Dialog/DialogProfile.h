@@ -25,6 +25,7 @@
 // Single chat window
 class DialogProfile : public Gtk::Window {
   private:
+    const Glib::RefPtr<Gtk::Builder> m_builder;
     std::vector<std::string> m_accounts;
     bool m_abort;
     bool m_quited;
@@ -32,8 +33,12 @@ class DialogProfile : public Gtk::Window {
 
     void quit();
 
+    void set_accounts(const std::vector<std::string>& accounts);
+
   public:
-    DialogProfile(const std::vector<std::string>& accounts);
+    DialogProfile(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& builder);
+    static std::shared_ptr<DialogProfile> create(const std::vector<std::string>& accounts);
+
     ~DialogProfile();
 
     bool is_aborted();

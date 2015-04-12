@@ -21,11 +21,15 @@
 #include <glibmm/i18n.h>
 #include "Generated/icon.h"
 #include "Generated/theme.h"
+#include "Generated/layout.h"
 #include <iostream>
 #include <Tox/Tox.h>
 
-DialogProfile::DialogProfile(const std::vector<std::string>& accounts):
-    m_accounts(accounts), m_abort(true), m_quited(false) {
+DialogProfile::DialogProfile(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& builder):
+    Gtk::Window(cobject),
+    m_builder(builder),
+    m_abort(true),
+    m_quited(false) {
 
     auto css = Gtk::CssProvider::create();
     if (!css->load_from_data(THEME::main)) {
@@ -41,120 +45,115 @@ DialogProfile::DialogProfile(const std::vector<std::string>& accounts):
     set_default_geometry(300, 300);
     set_position(Gtk::WindowPosition::WIN_POS_CENTER);
 
-    auto hbar = Gtk::manage(new Gtk::HeaderBar());
-    set_titlebar(*hbar);
-    hbar->set_title(_("PROFILE_TITLE"));
-    hbar->set_subtitle(_("PROFILE_SUBTITLE"));
-    hbar->show();
-
-    auto abort = Gtk::manage(new Gtk::Button(_("PROFILE_ABORT")));
-    hbar->pack_start(*abort);
-    abort->show();
-
-    auto rbox = Gtk::manage(new Gtk::Box());
-    rbox->get_style_context()->add_class("linked");
-    hbar->pack_end(*rbox);
-    rbox->show();
-
-    auto badd = Gtk::manage(new Gtk::Button(_("PROFILE_NEW")));
-    rbox->pack_start(*badd);
-    badd->show();
-
-    auto select = Gtk::manage(new Gtk::Button(_("PROFILE_SELECT")));
-    rbox->add(*select);
-    select->get_style_context()->add_class("suggested-action");
-    select->show();
-
-    auto box = Gtk::manage(new Gtk::ListBox());
-    add(*box);
-    box->show();
-
-    bool loaded = false;
-    for (auto path : accounts) {
-        auto row = Gtk::manage(new Gtk::ListBoxRow());
-        row->set_name("WidgetContactListItem");
-        auto layout = Gtk::manage(new Gtk::Grid());
-        auto avatar = Gtk::manage(new Gtk::Image());
-        avatar->set(ICON::load_icon(ICON::avatar)->scale_simple(
-                       72,
-                       72,
-                       Gdk::INTERP_BILINEAR));
-
-        auto name   = Gtk::manage(new Gtk::Label(_("PROFILE_CORRUPTED_TITLE"), 1.0, 0.5));
-        name->set_line_wrap(false);
-        name->set_ellipsize(Pango::ELLIPSIZE_END);
-        name->set_hexpand(true);
-        name->set_name("Name");
-        auto status = Gtk::manage(new Gtk::Label(_("PROFILE_CORRUPTED"), 1.0, 0.5));
-        status->set_line_wrap(false);
-        status->set_ellipsize(Pango::ELLIPSIZE_END);
-        status->set_hexpand(true);
-        status->set_name("Status");
-        auto wpath   = Gtk::manage(new Gtk::Label(path, 0, 0.5));
-        wpath->set_line_wrap(false);
-        wpath->set_ellipsize(Pango::ELLIPSIZE_END);
-        wpath->set_hexpand(true);
-        wpath->set_name("Status");
-
-        layout->attach(*name, 0, 0, 1, 1);
-        layout->attach(*status, 0, 1, 1, 1);
-        layout->attach(*wpath, 0, 2, 1, 1);
-        layout->attach(*avatar, 1, 0, 1, 3);
-        row->add(*layout);
-        row->show_all();
-
-        box->add(*row);
-
-        //TRY TO LOAD TOX DATA
-        try {
-            Tox::instance().init(path);
-            auto sname = Tox::instance().get_name_or_address();
-            auto sstatus = Tox::instance().get_status_message();
-            name->set_text(sname);
-            status->set_text(sstatus);
-            loaded = true;
-        } catch (...) {
-            row->set_sensitive(false);
-        }
-        Tox::destroy();
+    Gtk::HeaderBar* hbar = nullptr;
+    builder->get_widget("headerbar", hbar);
+    if (hbar) {
+        set_titlebar(*hbar);
+        hbar->set_title(_("PROFILE_TITLE"));
+        hbar->set_subtitle(_("PROFILE_SUBTITLE"));
     }
 
-    box->set_activate_on_single_click(false);
-    box->signal_row_activated().connect([this, box](Gtk::ListBoxRow* row) {
-        m_abort = false;
-        m_selected_path = m_accounts[row->get_index()];
-        quit();
-    });
-    box->signal_row_selected().connect([this, select](Gtk::ListBoxRow* row) {
-        if (m_quited) {
-            return;
-        }
-        select->set_sensitive(row != nullptr);
-    });
+    Gtk::ListBox* profile_list = nullptr;
+    Gtk::Button* profile_new = nullptr;
+    Gtk::Button* profile_select = nullptr;
+    Gtk::Button* profile_abort = nullptr;
+    builder->get_widget("profile_list", profile_list);
+    builder->get_widget("profile_new", profile_new);
+    builder->get_widget("profile_select", profile_select);
+    builder->get_widget("profile_abort", profile_abort);
 
-    select->set_sensitive(false);
-    select->signal_clicked().connect([this, box]() {
-        m_abort = false;
-        auto row = box->get_selected_row();
-        m_selected_path = m_accounts[row->get_index()];
-        quit();
-    });
-
-    abort->signal_clicked().connect([this]() {
-        quit();
-    });
-
-    badd->signal_clicked().connect([this]() {
-        m_abort = false;
-        quit();
-    });
-
-    //quick check ..
-    if (accounts.size() == 1 && loaded) {
-        m_abort = false;
-        m_selected_path = m_accounts[0];
-        quit();
+    if (profile_list) {
+        profile_list->signal_row_selected().connect([this, profile_select](Gtk::ListBoxRow* row) {
+                if (m_quited) {
+                    return;
+                }
+                if (profile_select) {
+                    profile_select->set_sensitive(row != nullptr);
+                }
+            });
     }
+
+    if (profile_new) {
+        profile_new->signal_clicked().connect([this](){
+            m_abort = false;
+            quit();
+        });
+    }
+
+    if (profile_select) {
+        profile_select->set_sensitive(false);
+        profile_select->signal_clicked().connect([this, profile_list](){
+            m_abort = false;
+            if (profile_list) {
+                auto row = profile_list->get_selected_row();
+                if (row) {
+                    m_selected_path = m_accounts[row->get_index()];
+                }
+            }
+            quit();
+        });
+    }
+
+    if (profile_abort) {
+        profile_abort->signal_clicked().connect([this](){
+            quit();
+        });
+    }
+}
+
+void DialogProfile::set_accounts(const std::vector<std::string>& accounts) {
+    m_accounts = accounts;
+    Gtk::ListBox* list = nullptr;
+    m_builder->get_widget("profile_list", list);
+    if (list) {
+        bool loaded = false;
+        for (auto acc : accounts) {
+            auto builder = Gtk::Builder::create_from_string(LAYOUT::list_item_profile);
+            Gtk::ListBoxRow* row = nullptr;
+            builder->get_widget("pofile_list_item", row);
+            if (row) {
+                Gtk::Label* name = nullptr;
+                Gtk::Label* status = nullptr;
+                Gtk::Label* path = nullptr;
+                Gtk::Image* avatar = nullptr;
+                builder->get_widget("name", name);
+                builder->get_widget("status", status);
+                builder->get_widget("path", path);
+                builder->get_widget("avatar", avatar);
+                if (name && status && path && avatar) {
+                    avatar->set(ICON::load_icon(ICON::avatar)->scale_simple(
+                                   72,
+                                   72,
+                                   Gdk::INTERP_BILINEAR));
+                    path->set_text(acc);
+                    //TRY TO LOAD TOX DATA
+                    try {
+                        Tox::instance().init(acc);
+                        name->set_text(Tox::instance().get_name_or_address());
+                        status->set_text(Tox::instance().get_status_message());
+                    } catch (...) {
+                        row->set_sensitive(false);
+                    }
+                    Tox::destroy();
+                }
+                row->show();
+                list->add(*row);
+            }
+        }
+        if (accounts.size() == 1 && loaded) {
+            m_abort = false;
+            m_selected_path = m_accounts[0];
+            quit();
+        }
+    }
+}
+
+std::shared_ptr<DialogProfile> DialogProfile::create(const std::vector<std::string>& accounts) {
+    auto builder = Gtk::Builder::create_from_string(LAYOUT::dialog_profile);
+    DialogProfile* tmp = nullptr;
+    builder->get_widget_derived("dialog_profile", tmp);
+    tmp->set_accounts(accounts);
+    return std::shared_ptr<DialogProfile>(tmp);
 }
 
 void DialogProfile::quit() {

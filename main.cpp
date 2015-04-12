@@ -184,18 +184,18 @@ int main(int argc, char* argv[]) {
 
     // start profile select
     while (true) {
-        DialogProfile profile(accounts);
+        auto profile = DialogProfile::create(accounts);//DialogProfile profile(accounts);
 
-        if (!accounts.empty() && profile.get_path().empty()) {
-            kit.run(profile);
+        if (!accounts.empty() && profile->get_path().empty()) {
+            kit.run(*profile);
         }
 
-        if (!accounts.empty() && profile.is_aborted()) {
+        if (!accounts.empty() && profile->is_aborted()) {
             return 0;
         }
 
-        if (profile.get_path().empty()) {
-            profile.hide();
+        if (profile->get_path().empty()) {
+            profile->hide();
             FirstStartAssistant assistant(config_path);
             kit.run(assistant);
 
@@ -209,7 +209,7 @@ int main(int argc, char* argv[]) {
                 return 0;
             }
         } else {
-            config_path = profile.get_path();
+            config_path = profile->get_path();
             break;
         }
     }

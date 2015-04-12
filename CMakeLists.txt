@@ -49,6 +49,16 @@ include_directories(SQLiteCpp/include)
 
 add_subdirectory(Tools)
 
+set(LAYOUT
+    Layout/dialog_profile.ui
+    Layout/list_item_profile.ui)
+add_custom_command(
+    OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/Generated/layout.cpp"
+    COMMAND "${PROJECT_BINARY_DIR}/Tools/text2h" LAYOUT Generated/layout ${LAYOUT}
+    DEPENDS text2h ${LAYOUT}
+    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+)
+
 set(THEME
     Theme/main.css)
 add_custom_command(
@@ -135,6 +145,7 @@ add_executable(${PROJECT_NAME}
      ${SOURCES}
     "${CMAKE_CURRENT_SOURCE_DIR}/Generated/icon.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/Generated/theme.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/Generated/layout.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/Generated/database.cpp"
 )
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
