@@ -218,7 +218,7 @@ msgid "ASSISTANT_STATUSMESSAGE"
 msgstr "Status Nachricht"
 
 msgid "ASSISTANT_LOGGING"
-msgstr "Nachrichte protokollieren"
+msgstr "Nachrichten protokollieren"
 
 msgid "ASSISTANT_LOGGING_TEXT"
 msgstr "<span size='x-small'>gTox speichert die Protokolle in eine unverschlüsselte SqliteDB</span>"
@@ -231,8 +231,8 @@ msgstr "gTox Datei"
 
 msgid "ASSISTANT_FILE_TEXT"
 msgstr ""
-"<span size='x-small'><u>toxcore Datei</u> enthält die Pofile daten sowie die Kontaktliste,\n"
+"<span size='x-small'><u>toxcore Datei</u> enthält die Pofile Daten sowie die Kontaktliste,\n"
 "<u>gTox Datei</u> enthält die Protokolle so wie gTox spezifische Einstellungen.\n\n"
-"<b>Bei einen Datenbackup muss mindesetens die <u>toxcore Datei</u> gesicht werden !</b></span>"
+"<b>Bei einer Datensicherung muss mindesetens die <u>toxcore Datei</u> gesichert werden !</b></span>"
 
 
