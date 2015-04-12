@@ -71,6 +71,11 @@ DialogProfile::DialogProfile(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Bu
                     profile_select->set_sensitive(row != nullptr);
                 }
             });
+        profile_list->signal_row_activated().connect([this, profile_select](Gtk::ListBoxRow*) {
+            if (profile_select) {
+                profile_select->clicked();
+            }
+        });
     }
 
     if (profile_new) {
