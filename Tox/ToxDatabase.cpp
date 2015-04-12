@@ -64,7 +64,8 @@ void ToxDatabase::open(const std::string& path, bool init) {
                &DATABASE::version_3,
                &DATABASE::version_4,
                &DATABASE::version_5,
-           &DATABASE::version_6};
+               &DATABASE::version_6,
+               &DATABASE::version_7};
 
         if (version < 1 || version > (int)sizeof(upgrade_scripts)) {
             throw std::runtime_error("ERROR");
