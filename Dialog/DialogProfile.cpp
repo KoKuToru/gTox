@@ -162,7 +162,7 @@ void DialogProfile::quit() {
 }
 
 DialogProfile::~DialogProfile() {
-    //
+    m_quited = true;
 }
 
 bool DialogProfile::is_aborted() {
