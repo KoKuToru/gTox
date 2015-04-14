@@ -81,9 +81,9 @@ This project will need `toxcore`.
 
 ```bash
 git clone https://github.com/KoKuToru/gTox.git
+cd gTox
 git submodule init
 git submodule update
-cd gTox
 mkdir build
 cd build
 cmake ../Source
