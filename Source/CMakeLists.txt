@@ -14,18 +14,6 @@ link_directories(
 include_directories(
     ${GTKMM_INCLUDE_DIRS} ${LIBNOTIFYMM_INCLUDE_DIRS} ${LIBCANBERRA_INCLUDE_DIRS} ${GSTREAMERMM_INCLUDE_DIRS})
 
-if(NOT SUBMODULES_INITED)
-  execute_process(
-    COMMAND git submodule init
-    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-  )
-  execute_process(
-    COMMAND git submodule update
-    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-  )
-  set(SUBMODULES_INITED TRUE CACHE BOOL "Are submodules pulled ?" FORCE)
-endif()
-
 option(TOXCORE_BUNDLE "TOXCORE_BUNDLE" OFF)
 if(TOXCORE_BUNDLE)
 

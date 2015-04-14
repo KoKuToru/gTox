@@ -77,11 +77,12 @@ No idea. Somehow get dependencies installed.
 How to build
 ============
 First read <a href="https://github.com/irungentoo/toxcore/blob/master/INSTALL.md">`https://github.com/irungentoo/toxcore/blob/master/INSTALL.md`</a>.<br />
-This project will download and compile `toxcore`.
-Make sure you have all dependencies.
+This project will need `toxcore`.
 
 ```bash
 git clone https://github.com/KoKuToru/gTox.git
+git submodule init
+git submodule update
 cd gTox
 mkdir build
 cd build
