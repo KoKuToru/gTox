@@ -21,7 +21,7 @@
 #include <giomm/file.h>
 #include <glibmm/fileutils.h>
 #include "Generated/database.h"
-#include "Libs/toxcore/toxcore/tox.h"
+#include <tox/tox.h>
 #include <fstream>
 #include <exception>
 

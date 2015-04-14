@@ -26,23 +26,14 @@ if(NOT SUBMODULES_INITED)
   set(SUBMODULES_INITED TRUE CACHE BOOL "Are submodules pulled ?" FORCE)
 endif()
 
-if(NOT TOXCORE_INITED)
-  execute_process(
-    COMMAND ./autogen.sh
-    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/Libs/toxcore"
-  )
-  execute_process(
-    COMMAND ./configure
-    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/Libs/toxcore"
-  )
-  set(TOXCORE_INITED TRUE CACHE BOOL "Is toxcore configured ?" FORCE)
-endif()
+option(TOXCORE_BUNDLE "TOXCORE_BUNDLE" OFF)
+if(TOXCORE_BUNDLE)
 
-add_custom_target(
-   toxcore
-   COMMAND make
-   WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/Libs/toxcore"
-)
+else()
+  set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
+  find_package(Tox)
+  include_directories(${TOX_INCLUDE_DIR})
+endif()
 
 option(SQLITECPP_RUN_CPPLINT OFF)
 option(SQLITECPP_RUN_CPPCHECK OFF)
@@ -152,8 +143,8 @@ add_executable(${PROJECT_NAME}
     "${CMAKE_CURRENT_SOURCE_DIR}/Generated/database.cpp"
 )
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(${PROJECT_NAME} ${GTKMM_LIBRARIES} ${LIBNOTIFYMM_LIBRARIES} ${LIBCANBERRA_LIBRARIES} ${GSTREAMERMM_LIBRARIES} "${CMAKE_CURRENT_SOURCE_DIR}/Libs/toxcore/build/.libs/libtoxcore.a" -lsodium -lpthread -lsqlite3 SQLiteCpp)
-add_dependencies(${PROJECT_NAME} toxcore SQLiteCpp)
+target_link_libraries(${PROJECT_NAME} ${GTKMM_LIBRARIES} ${LIBNOTIFYMM_LIBRARIES} ${LIBCANBERRA_LIBRARIES} ${GSTREAMERMM_LIBRARIES} ${TOX_LIBRARY} -lpthread -lsqlite3 SQLiteCpp)
+add_dependencies(${PROJECT_NAME} SQLiteCpp)
 install(PROGRAMS "${PROJECT_BINARY_DIR}/${PROJECT_NAME}"
         DESTINATION bin
         PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ WORLD_EXECUTE WORLD_READ)

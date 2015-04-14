@@ -22,7 +22,7 @@
 #include <string>
 #include <typeinfo>
 #include <typeindex>
-#include "Libs/toxcore/toxcore/tox.h"
+#include <tox/tox.h>
 
 class ToxException: public std::exception {
   private:
