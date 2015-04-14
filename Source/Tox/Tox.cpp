@@ -104,7 +104,7 @@ void Tox::init(const Glib::ustring& statefile) {
 
     if (statefile != "") {
         for (auto boots : m_db.toxcore_bootstrap_get()) {
-            if (boots.pub_key.size() == 32) {
+            if (boots.pub_key.size()%2 == 0) {
                 auto pub = from_hex(boots.pub_key);
                 TOX_ERR_BOOTSTRAP error;
                 okay |= tox_bootstrap(m_tox,
