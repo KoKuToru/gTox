@@ -60,7 +60,7 @@ void print_copyright() {
         << std::endl;
 }
 
-static const char* TRANSLATION_CHECK = "OKAY";
+static const char* TRANSLATION_CHECK = "TRANSLATION_CHECKER";
 
 bool try_setup_translation(const char* lng) {
     // https://www.gnu.org/software/gettext/manual/html_node/gettext-grok.html
@@ -97,6 +97,8 @@ bool try_setup_translation(const char* lng) {
         }
     }
 
+    _("TRANSLATION_CHECKER");
+
     return true;
 }
 
@@ -109,7 +111,7 @@ void terminate_handler() {
     } catch (const SQLite::Exception &ex) {
         DialogError(true, "Fatal Unexpected Sqlite Exception", ex.what()).run();
     } catch (const Tox::Exception &ex) {
-        DialogError(true, "Fatal Unexpected Tox Exception", gettext(ex.what())).run();
+        DialogError(true, "Fatal Unexpected Tox Exception", ex.what()).run();
     } catch (const std::exception &ex) {
         DialogError(true, "Fatal Unexpected Exception", ex.what()).run();
     } catch (const std::string &ex) {
@@ -184,7 +186,7 @@ int main(int argc, char* argv[]) {
 
     // start profile select
     while (true) {
-        auto profile = DialogProfile::create(accounts);//DialogProfile profile(accounts);
+        auto profile = DialogProfile::create(accounts);
 
         if (!accounts.empty() && profile->get_path().empty()) {
             kit.run(*profile);

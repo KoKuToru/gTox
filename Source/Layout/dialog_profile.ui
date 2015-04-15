@@ -23,7 +23,7 @@
         <property name="show_close_button">True</property>
         <child>
           <object class="GtkButton" id="profile_abort">
-            <property name="label" translatable="yes">PROFILE_ABORT</property>
+            <property name="label" translatable="yes" comments="Exit the application, abort the profile selection">PROFILE_ABORT</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
@@ -35,7 +35,7 @@
             <property name="can_focus">False</property>
             <child>
               <object class="GtkButton" id="profile_new">
-                <property name="label" translatable="yes">PROFILE_NEW</property>
+                <property name="label" translatable="yes" comments="Button for creating a new profile">PROFILE_NEW</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
@@ -48,7 +48,7 @@
             </child>
             <child>
               <object class="GtkButton" id="profile_select">
-                <property name="label" translatable="yes">PROFILE_SELECT</property>
+                <property name="label" translatable="yes" comments="Button for loading the selected profile">PROFILE_SELECT</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>

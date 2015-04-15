@@ -19,6 +19,7 @@
 **/
 #include "ToxException.h"
 #include <map>
+#include <glibmm/i18n.h>
 
 const char* ToxException::what() const noexcept {
     return m_what.c_str();
@@ -41,7 +42,7 @@ ToxException::ToxException(const std::string& what):
 ToxException::ToxException(TOX_ERR_OPTIONS_NEW error):
     m_type(typeid(error)) {
     static std::map<decltype(error), std::string> enum2str =
-    {{TOX_ERR_OPTIONS_NEW_MALLOC, "TOX_ERR_OPTIONS_NEW_MALLOC"}};
+    {{TOX_ERR_OPTIONS_NEW_MALLOC, _("TOX_ERR_OPTIONS_NEW_MALLOC")}};
     auto iter = enum2str.find(error);
     if (iter != enum2str.end()) {
         m_what = iter->second;
@@ -54,15 +55,15 @@ ToxException::ToxException(TOX_ERR_OPTIONS_NEW error):
 ToxException::ToxException(TOX_ERR_NEW error):
     m_type(typeid(error)) {
     static std::map<decltype(error), std::string> enum2str =
-    {{TOX_ERR_NEW_NULL, "TOX_ERR_NEW_NULL"},
-    {TOX_ERR_NEW_MALLOC, "TOX_ERR_NEW_MALLOC"},
-    {TOX_ERR_NEW_PORT_ALLOC, "TOX_ERR_NEW_PORT_ALLOC"},
-    {TOX_ERR_NEW_PROXY_BAD_TYPE, "TOX_ERR_NEW_PROXY_BAD_HOST"},
-    {TOX_ERR_NEW_PROXY_BAD_HOST, "TOX_ERR_NEW_PROXY_BAD_HOST"},
-    {TOX_ERR_NEW_PROXY_BAD_PORT, "TOX_ERR_NEW_PROXY_BAD_PORT"},
-    {TOX_ERR_NEW_PROXY_NOT_FOUND, "TOX_ERR_NEW_PROXY_NOT_FOUND"},
-    {TOX_ERR_NEW_LOAD_ENCRYPTED, "TOX_ERR_NEW_LOAD_ENCRYPTED"},
-    {TOX_ERR_NEW_LOAD_BAD_FORMAT, "TOX_ERR_NEW_LOAD_BAD_FORMAT"}};
+    {{TOX_ERR_NEW_NULL, _("TOX_ERR_NEW_NULL")},
+    {TOX_ERR_NEW_MALLOC, _("TOX_ERR_NEW_MALLOC")},
+    {TOX_ERR_NEW_PORT_ALLOC, _("TOX_ERR_NEW_PORT_ALLOC")},
+    {TOX_ERR_NEW_PROXY_BAD_TYPE, _("TOX_ERR_NEW_PROXY_BAD_HOST")},
+    {TOX_ERR_NEW_PROXY_BAD_HOST, _("TOX_ERR_NEW_PROXY_BAD_HOST")},
+    {TOX_ERR_NEW_PROXY_BAD_PORT, _("TOX_ERR_NEW_PROXY_BAD_PORT")},
+    {TOX_ERR_NEW_PROXY_NOT_FOUND, _("TOX_ERR_NEW_PROXY_NOT_FOUND")},
+    {TOX_ERR_NEW_LOAD_ENCRYPTED, _("TOX_ERR_NEW_LOAD_ENCRYPTED")},
+    {TOX_ERR_NEW_LOAD_BAD_FORMAT, _("TOX_ERR_NEW_LOAD_BAD_FORMAT")}};
     auto iter = enum2str.find(error);
     if (iter != enum2str.end()) {
         m_what = iter->second;
@@ -75,9 +76,9 @@ ToxException::ToxException(TOX_ERR_NEW error):
 ToxException::ToxException(TOX_ERR_BOOTSTRAP error):
     m_type(typeid(error)) {
     static std::map<decltype(error), std::string> enum2str =
-    {{TOX_ERR_BOOTSTRAP_NULL, "TOX_ERR_BOOTSTRAP_NULL"},
-    {TOX_ERR_BOOTSTRAP_BAD_HOST, "TOX_ERR_BOOTSTRAP_BAD_HOST"},
-    {TOX_ERR_BOOTSTRAP_BAD_PORT, "TOX_ERR_BOOTSTRAP_BAD_PORT"}};
+    {{TOX_ERR_BOOTSTRAP_NULL, _("TOX_ERR_BOOTSTRAP_NULL")},
+    {TOX_ERR_BOOTSTRAP_BAD_HOST, _("TOX_ERR_BOOTSTRAP_BAD_HOST")},
+    {TOX_ERR_BOOTSTRAP_BAD_PORT, _("TOX_ERR_BOOTSTRAP_BAD_PORT")}};
     auto iter = enum2str.find(error);
     if (iter != enum2str.end()) {
         m_what = iter->second;
@@ -90,14 +91,14 @@ ToxException::ToxException(TOX_ERR_BOOTSTRAP error):
 ToxException::ToxException(TOX_ERR_FRIEND_ADD error):
     m_type(typeid(error)) {
     static std::map<decltype(error), std::string> enum2str =
-    {{TOX_ERR_FRIEND_ADD_NULL, "TOX_ERR_FRIEND_ADD_NULL"},
-    {TOX_ERR_FRIEND_ADD_TOO_LONG, "TOX_ERR_FRIEND_ADD_TOO_LONG"},
-    {TOX_ERR_FRIEND_ADD_NO_MESSAGE, "TOX_ERR_FRIEND_ADD_NO_MESSAGE"},
-    {TOX_ERR_FRIEND_ADD_OWN_KEY, "TOX_ERR_FRIEND_ADD_OWN_KEY"},
-    {TOX_ERR_FRIEND_ADD_ALREADY_SENT, "TOX_ERR_FRIEND_ADD_ALREADY_SENT"},
-    {TOX_ERR_FRIEND_ADD_BAD_CHECKSUM, "TOX_ERR_FRIEND_ADD_BAD_CHECKSUM"},
-    {TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM, "TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM"},
-    {TOX_ERR_FRIEND_ADD_MALLOC, "TOX_ERR_FRIEND_ADD_MALLOC"}};
+    {{TOX_ERR_FRIEND_ADD_NULL, _("TOX_ERR_FRIEND_ADD_NULL")},
+    {TOX_ERR_FRIEND_ADD_TOO_LONG, _("TOX_ERR_FRIEND_ADD_TOO_LONG")},
+    {TOX_ERR_FRIEND_ADD_NO_MESSAGE, _("TOX_ERR_FRIEND_ADD_NO_MESSAGE")},
+    {TOX_ERR_FRIEND_ADD_OWN_KEY, _("TOX_ERR_FRIEND_ADD_OWN_KEY")},
+    {TOX_ERR_FRIEND_ADD_ALREADY_SENT, _("TOX_ERR_FRIEND_ADD_ALREADY_SENT")},
+    {TOX_ERR_FRIEND_ADD_BAD_CHECKSUM, _("TOX_ERR_FRIEND_ADD_BAD_CHECKSUM")},
+    {TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM, _("TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM")},
+    {TOX_ERR_FRIEND_ADD_MALLOC, _("TOX_ERR_FRIEND_ADD_MALLOC")}};
     auto iter = enum2str.find(error);
     if (iter != enum2str.end()) {
         m_what = iter->second;
@@ -110,8 +111,8 @@ ToxException::ToxException(TOX_ERR_FRIEND_ADD error):
 ToxException::ToxException(TOX_ERR_FRIEND_BY_PUBLIC_KEY error):
     m_type(typeid(error)) {
     static std::map<decltype(error), std::string> enum2str =
-    {{TOX_ERR_FRIEND_BY_PUBLIC_KEY_NULL, "TOX_ERR_FRIEND_BY_PUBLIC_KEY_NULL"},
-    {TOX_ERR_FRIEND_BY_PUBLIC_KEY_NOT_FOUND, "TOX_ERR_FRIEND_BY_PUBLIC_KEY_NOT_FOUND"},};
+    {{TOX_ERR_FRIEND_BY_PUBLIC_KEY_NULL, _("TOX_ERR_FRIEND_BY_PUBLIC_KEY_NULL")},
+    {TOX_ERR_FRIEND_BY_PUBLIC_KEY_NOT_FOUND, _("TOX_ERR_FRIEND_BY_PUBLIC_KEY_NOT_FOUND")}};
     auto iter = enum2str.find(error);
     if (iter != enum2str.end()) {
         m_what = iter->second;
@@ -124,7 +125,7 @@ ToxException::ToxException(TOX_ERR_FRIEND_BY_PUBLIC_KEY error):
 ToxException::ToxException(TOX_ERR_FRIEND_DELETE error):
     m_type(typeid(error)) {
     static std::map<decltype(error), std::string> enum2str =
-    {{TOX_ERR_FRIEND_DELETE_FRIEND_NOT_FOUND, "TOX_ERR_FRIEND_BY_PUBLIC_KEY_NULL"}};
+    {{TOX_ERR_FRIEND_DELETE_FRIEND_NOT_FOUND, _("TOX_ERR_FRIEND_BY_PUBLIC_KEY_NULL")}};
     auto iter = enum2str.find(error);
     if (iter != enum2str.end()) {
         m_what = iter->second;
@@ -137,12 +138,12 @@ ToxException::ToxException(TOX_ERR_FRIEND_DELETE error):
 ToxException::ToxException(TOX_ERR_FRIEND_SEND_MESSAGE error):
     m_type(typeid(error)) {
     static std::map<decltype(error), std::string> enum2str =
-    {{TOX_ERR_FRIEND_SEND_MESSAGE_NULL, "TOX_ERR_FRIEND_SEND_MESSAGE_NULL"},
-    {TOX_ERR_FRIEND_SEND_MESSAGE_FRIEND_NOT_FOUND, "TOX_ERR_FRIEND_SEND_MESSAGE_FRIEND_NOT_FOUND"},
-    {TOX_ERR_FRIEND_SEND_MESSAGE_FRIEND_NOT_CONNECTED, "TOX_ERR_FRIEND_SEND_MESSAGE_FRIEND_NOT_CONNECTED"},
-    {TOX_ERR_FRIEND_SEND_MESSAGE_SENDQ, "TOX_ERR_FRIEND_SEND_MESSAGE_SENDQ"},
-    {TOX_ERR_FRIEND_SEND_MESSAGE_TOO_LONG, "TOX_ERR_FRIEND_SEND_MESSAGE_TOO_LONG"},
-    {TOX_ERR_FRIEND_SEND_MESSAGE_EMPTY, "TOX_ERR_FRIEND_SEND_MESSAGE_EMPTY"}};
+    {{TOX_ERR_FRIEND_SEND_MESSAGE_NULL, _("TOX_ERR_FRIEND_SEND_MESSAGE_NULL")},
+    {TOX_ERR_FRIEND_SEND_MESSAGE_FRIEND_NOT_FOUND, _("TOX_ERR_FRIEND_SEND_MESSAGE_FRIEND_NOT_FOUND")},
+    {TOX_ERR_FRIEND_SEND_MESSAGE_FRIEND_NOT_CONNECTED, _("TOX_ERR_FRIEND_SEND_MESSAGE_FRIEND_NOT_CONNECTED")},
+    {TOX_ERR_FRIEND_SEND_MESSAGE_SENDQ, _("TOX_ERR_FRIEND_SEND_MESSAGE_SENDQ")},
+    {TOX_ERR_FRIEND_SEND_MESSAGE_TOO_LONG, _("TOX_ERR_FRIEND_SEND_MESSAGE_TOO_LONG")},
+    {TOX_ERR_FRIEND_SEND_MESSAGE_EMPTY, _("TOX_ERR_FRIEND_SEND_MESSAGE_EMPTY")}};
     auto iter = enum2str.find(error);
     if (iter != enum2str.end()) {
         m_what = iter->second;
@@ -155,8 +156,8 @@ ToxException::ToxException(TOX_ERR_FRIEND_SEND_MESSAGE error):
 ToxException::ToxException(TOX_ERR_SET_INFO error):
     m_type(typeid(error)) {
     static std::map<decltype(error), std::string> enum2str =
-    {{TOX_ERR_SET_INFO_NULL, "TOX_ERR_SET_INFO_NULL"},
-    {TOX_ERR_SET_INFO_TOO_LONG, "TOX_ERR_SET_INFO_TOO_LONG"}};
+    {{TOX_ERR_SET_INFO_NULL, _("TOX_ERR_SET_INFO_NULL")},
+    {TOX_ERR_SET_INFO_TOO_LONG, _("TOX_ERR_SET_INFO_TOO_LONG")}};
     auto iter = enum2str.find(error);
     if (iter != enum2str.end()) {
         m_what = iter->second;
@@ -169,8 +170,8 @@ ToxException::ToxException(TOX_ERR_SET_INFO error):
 ToxException::ToxException(TOX_ERR_FRIEND_QUERY error):
     m_type(typeid(error)) {
     static std::map<decltype(error), std::string> enum2str =
-    {{TOX_ERR_FRIEND_QUERY_NULL, "TOX_ERR_FRIEND_QUERY_NULL"},
-    {TOX_ERR_FRIEND_QUERY_FRIEND_NOT_FOUND, "TOX_ERR_FRIEND_QUERY_FRIEND_NOT_FOUND"}};
+    {{TOX_ERR_FRIEND_QUERY_NULL, _("TOX_ERR_FRIEND_QUERY_NULL")},
+    {TOX_ERR_FRIEND_QUERY_FRIEND_NOT_FOUND, _("TOX_ERR_FRIEND_QUERY_FRIEND_NOT_FOUND")}};
     auto iter = enum2str.find(error);
     if (iter != enum2str.end()) {
         m_what = iter->second;
@@ -183,7 +184,7 @@ ToxException::ToxException(TOX_ERR_FRIEND_QUERY error):
 ToxException::ToxException(TOX_ERR_SET_TYPING error):
     m_type(typeid(error)) {
     static std::map<decltype(error), std::string> enum2str =
-    {{TOX_ERR_SET_TYPING_FRIEND_NOT_FOUND, "TOX_ERR_SET_TYPING_FRIEND_NOT_FOUND"}};
+    {{TOX_ERR_SET_TYPING_FRIEND_NOT_FOUND, _("TOX_ERR_SET_TYPING_FRIEND_NOT_FOUND")}};
     auto iter = enum2str.find(error);
     if (iter != enum2str.end()) {
         m_what = iter->second;
@@ -196,7 +197,7 @@ ToxException::ToxException(TOX_ERR_SET_TYPING error):
 ToxException::ToxException(TOX_ERR_FRIEND_GET_PUBLIC_KEY error):
     m_type(typeid(error)) {
     static std::map<decltype(error), std::string> enum2str =
-    {{TOX_ERR_FRIEND_GET_PUBLIC_KEY_FRIEND_NOT_FOUND, "TOX_ERR_FRIEND_GET_PUBLIC_KEY_FRIEND_NOT_FOUND"}};
+    {{TOX_ERR_FRIEND_GET_PUBLIC_KEY_FRIEND_NOT_FOUND, _("TOX_ERR_FRIEND_GET_PUBLIC_KEY_FRIEND_NOT_FOUND")}};
     auto iter = enum2str.find(error);
     if (iter != enum2str.end()) {
         m_what = iter->second;
@@ -209,7 +210,7 @@ ToxException::ToxException(TOX_ERR_FRIEND_GET_PUBLIC_KEY error):
 ToxException::ToxException(TOX_ERR_FRIEND_GET_LAST_ONLINE error):
     m_type(typeid(error)) {
     static std::map<decltype(error), std::string> enum2str =
-    {{TOX_ERR_FRIEND_GET_LAST_ONLINE_FRIEND_NOT_FOUND, "TOX_ERR_FRIEND_GET_LAST_ONLINE_FRIEND_NOT_FOUND"}};
+    {{TOX_ERR_FRIEND_GET_LAST_ONLINE_FRIEND_NOT_FOUND, _("TOX_ERR_FRIEND_GET_LAST_ONLINE_FRIEND_NOT_FOUND")}};
     auto iter = enum2str.find(error);
     if (iter != enum2str.end()) {
         m_what = iter->second;

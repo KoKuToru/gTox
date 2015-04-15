@@ -156,10 +156,11 @@ foreach(_trans ${TRANSLATIONS})
 add_custom_command(
    COMMENT "Generate Locale '${_trans}'"
    TARGET ${PROJECT_NAME}
-   PRE_BUILD
+   POST_BUILD
    COMMAND mkdir -p Locale/${_trans}/LC_MESSAGES
-   COMMAND ${GETTEXT_MSGMERGE_EXECUTABLE} --no-fuzzy-matching "${CMAKE_CURRENT_SOURCE_DIR}/Locale/${_trans}.po" "${CMAKE_CURRENT_SOURCE_DIR}/Locale/en.po" -o "${CMAKE_CURRENT_SOURCE_DIR}/Generated/${_trans}.po"
-   COMMAND ${GETTEXT_MSGFMT_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/Generated/${_trans}.po" -o "${PROJECT_BINARY_DIR}/Locale/${_trans}/LC_MESSAGES/gTox.mo"
+   COMMAND ${GETTEXT_MSGMERGE_EXECUTABLE} --no-fuzzy-matching "${CMAKE_CURRENT_SOURCE_DIR}/Locale/${_trans}.po" "${CMAKE_CURRENT_SOURCE_DIR}/Locale/en.po" -o "${CMAKE_CURRENT_SOURCE_DIR}/Locale/${_trans}.po"
+   COMMAND ${GETTEXT_MSGMERGE_EXECUTABLE} --no-fuzzy-matching "${CMAKE_CURRENT_SOURCE_DIR}/Locale/${_trans}.po" "${CMAKE_CURRENT_SOURCE_DIR}/Locale/template.pot" -o "${CMAKE_CURRENT_SOURCE_DIR}/Locale/${_trans}.po"
+   COMMAND ${GETTEXT_MSGFMT_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/Locale/${_trans}.po" -o "${PROJECT_BINARY_DIR}/Locale/${_trans}/LC_MESSAGES/gTox.mo"
    DEPENDS Locale/${_trans}.po)
    install(DIRECTORY "${PROJECT_BINARY_DIR}/Locale/${_trans}"
            DESTINATION share/locale
@@ -195,7 +196,7 @@ foreach(_size ${SIZES})
         COMMAND mkdir -p "${PROJECT_BINARY_DIR}/share/icons/hicolor/${_size}x${_size}/apps"
         #COMMAND convert -density 1024 Icons/icon.svg -resize "${_size}^" "${PROJECT_BINARY_DIR}/share/icons/hicolor/${_size}x${_size}/apps/gTox.png"
         COMMAND ${RSVG_CONVERT_EXECUTEABLE} Icons/icon.svg -w ${_size} -h ${_size} -f png -o "${PROJECT_BINARY_DIR}/share/icons/hicolor/${_size}x${_size}/apps/gTox.png"
-        PRE_BUILD
+        POST_BUILD
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
         DEPENDS Icons/icon.svg)
     install(DIRECTORY "${PROJECT_BINARY_DIR}/share/icons/hicolor/${_size}x${_size}"
@@ -208,7 +209,7 @@ add_custom_command(
     TARGET ${PROJECT_NAME}
     COMMAND mkdir -p "${PROJECT_BINARY_DIR}/share/icons/hicolor/scalable/apps"
     COMMAND cp Icons/icon.svg "${PROJECT_BINARY_DIR}/share/icons/hicolor/scalable/apps/gTox.svg"
-    PRE_BUILD
+    POST_BUILD
     WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
     DEPENDS Icons/icon.svg)
 install(DIRECTORY "${PROJECT_BINARY_DIR}/share/icons/hicolor/scalable"
@@ -220,12 +221,19 @@ if(NOT GETTEXT_XGETTEXT_EXECUTEABLE)
     message(FATAL_ERROR "xgettext not found")
 endif()
 
+find_program(GETTEXT_MSGCAT_EXECUTEABLE msgcat)
+if(NOT GETTEXT_MSGCAT_EXECUTEABLE)
+    message(FATAL_ERROR "msgcat not found")
+endif()
+
 add_custom_command(
    COMMENT "Generate pot file"
    TARGET ${PROJECT_NAME}
    PRE_BUILD
-   COMMAND ${GETTEXT_XGETTEXT_EXECUTEABLE} -o "${CMAKE_CURRENT_SOURCE_DIR}/Locale/template.pot" --from-code=UTF-8 --c++ --omit-header -k_ -s ${SOURCES}
-   DEPENDS ${SOURCES}
+   COMMAND ${GETTEXT_XGETTEXT_EXECUTEABLE} -o "${CMAKE_CURRENT_SOURCE_DIR}/Locale/source.pot" --from-code=UTF-8 --sort-output --c++ --omit-header -k_ -s ${SOURCES}
+   COMMAND ${GETTEXT_XGETTEXT_EXECUTEABLE} -o "${CMAKE_CURRENT_SOURCE_DIR}/Locale/layout.pot" --from-code=UTF-8 --sort-output --keyword=translatable -k_ -s ${LAYOUT}
+   COMMAND ${GETTEXT_MSGCAT_EXECUTEABLE} -us "${CMAKE_CURRENT_SOURCE_DIR}/Locale/source.pot" "${CMAKE_CURRENT_SOURCE_DIR}/Locale/layout.pot" > "${CMAKE_CURRENT_SOURCE_DIR}/Locale/template.pot"
+   DEPENDS ${SOURCES} ${LAYOUT}
    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
 
 add_custom_command(

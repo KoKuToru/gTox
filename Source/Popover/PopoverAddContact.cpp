@@ -80,20 +80,36 @@ PopoverAddContact::PopoverAddContact(const Gtk::Widget& relative_to)
             if (ex.type() != typeid(TOX_ERR_FRIEND_ADD)) {
                 throw;
             }
-            std::string title = ex.what();
-            title += std::string("_UI_TITLE");
-            std::string message = ex.what();
-            message += "_UI";
             switch(ex.what_id()) {
                 case TOX_ERR_FRIEND_ADD_NO_MESSAGE:
+                    DialogError(false,
+                                _("TOX_ERR_FRIEND_ADD_NO_MESSAGE_UI_TITLE"),
+                                _("TOX_ERR_FRIEND_ADD_NO_MESSAGE_UI")).run();
+                    break;
                 case TOX_ERR_FRIEND_ADD_BAD_CHECKSUM:
+                    DialogError(false,
+                                _("TOX_ERR_FRIEND_ADD_BAD_CHECKSUM_UI_TITLE"),
+                                _("TOX_ERR_FRIEND_ADD_BAD_CHECKSUM_UI")).run();
+                    break;
                 case TOX_ERR_FRIEND_ADD_ALREADY_SENT:
+                    DialogError(false,
+                                _("TOX_ERR_FRIEND_ADD_ALREADY_SENT_UI_TITLE"),
+                                _("TOX_ERR_FRIEND_ADD_ALREADY_SENT_UI")).run();
+                    break;
                 case TOX_ERR_FRIEND_ADD_OWN_KEY:
+                    DialogError(false,
+                                _("TOX_ERR_FRIEND_ADD_OWN_KEY_UI_TITLE"),
+                                _("TOX_ERR_FRIEND_ADD_OWN_KEY_UI")).run();
+                    break;
                 case TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM:
+                    DialogError(false,
+                                _("TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM_UI_TITLE"),
+                                _("TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM_UI")).run();
+                    break;
                 case TOX_ERR_FRIEND_ADD_TOO_LONG:
                     DialogError(false,
-                                gettext(title.c_str()),
-                                gettext(message.c_str())).run();
+                                _("TOX_ERR_FRIEND_ADD_TOO_LONG_UI_TITLE"),
+                                _("TOX_ERR_FRIEND_ADD_TOO_LONG_UI")).run();
                     break;
                 default:
                     throw;

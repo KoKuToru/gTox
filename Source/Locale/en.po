@@ -1,319 +1,81 @@
 msgid ""
 msgstr ""
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-04-15 20:58+0200\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: ENCODING\n"
 
-msgid "ACCOUNT"
-msgstr "Account"
-
-msgid "ACCOUNT_WIDGET_NEW_IMPORT_MSG"
-msgstr "Would you like to import an existing account or create a new one?"
-
-msgid "ADD"
-msgstr "Add"
-
-msgid "AWAY"
-msgstr "Away"
-
-msgid "BUSY"
-msgstr "Busy"
-
-msgid "CREATE_NEW_ACCOUNT"
-msgstr "Create a new account"
-
-msgid "DISPLAYNAME"
-msgstr "Displayname"
-
-msgid "DATE_FORMAT"
-msgstr "%A, %e. %B %Y"
-
-msgid "EXIT"
-msgstr "Exit"
-
-msgid "FINISH"
-msgstr "Finish"
-
-msgid "FRIST_START_ASSISTANT_FINISH_MSG"
-msgstr ""
-"You are done.\n"
-" Have fun using gTox!"
-
-msgid "IMPORT"
-msgstr "Import"
-
-msgid "IMPORT_ACCOUNT"
-msgstr "Import an existing account"
-
-msgid "LOADING_THEME_FAILED"
-msgstr "Failed to load theme"
-
-msgid "MESSAGE"
-msgstr "Message"
-
-msgid "NEW_ACCOUNT"
-msgstr "New account"
-
-msgid "NOT_IMPLEMENTED"
-msgstr "Not implemented yet"
-
-msgid "NOT_READY_YET"
-msgstr "Not ready yet"
-
-msgid "OKAY"
-msgstr "Okay"
-
-msgid "ONLINE"
-msgstr "Online"
-
-msgid "PREALPHA_SOFTWARE"
-msgstr "pre-alpha software"
-
-msgid "QUIT_ASSISTANT_QUESTION"
-msgstr "Do you really want to guit the assistant?"
-
-msgid "REMOVE"
-msgstr "Remove"
-
-msgid "SETTINGS"
-msgstr "Settings"
-
-msgid "SETTINGS_TITLE"
-msgstr "gTox settings"
-
-msgid "SEND"
-msgstr "Send"
-
-msgid "TOX_ID"
-msgstr "Tox ID"
-
-msgid "USERNAME"
-msgstr "Username"
-
-msgid "WELCOME"
-msgstr "Welcome"
-
-msgid "WELCOME_PAGE_MSG"
-msgstr ""
-"Welcome to gTox\n"
-"\n"
-"This is the first time you start gTox.\n"
-"\n"
-"Please take a moment and follow the instruction."
-
-msgid "ABOUT_SOFTWARE_NAME"
-msgstr "<b>gTox</b>"
-
-msgid "ABOUT_SOFTWARE_VERSION"
-msgstr "<i>pre-alpha version</i>"
-
-msgid "ABOUT_SOFTWARE_HOMEPAGE"
-msgstr "<a href=\"https://github.com/KoKuToru/gTox.git\">github.com/KoKuToru/gTox.git</a>"
-
+#: Widget/Settings/WidgetAbout.cpp:44
 msgid "ABOUT_SOFTWARE_COPYRIGHT"
 msgstr "Copyright © 2014 - the gTox team"
 
+#: Widget/Settings/WidgetAbout.cpp:41
+msgid "ABOUT_SOFTWARE_HOMEPAGE"
+msgstr ""
+"<a href=\"https://github.com/KoKuToru/gTox.git\">github.com/KoKuToru/gTox."
+"git</a>"
+
+#: Widget/Settings/WidgetAbout.cpp:30
+msgid "ABOUT_SOFTWARE_NAME"
+msgstr "<b>gTox</b>"
+
+#: Widget/Settings/WidgetAbout.cpp:35
+msgid "ABOUT_SOFTWARE_VERSION"
+msgstr "<i>pre-alpha version</i>"
+
+#: Widget/Settings/WidgetAbout.cpp:48
 msgid "ABOUT_SOFTWARE_WARRANTY"
 msgstr "<i>This program comes with ABSOLUTELY NO WARRANTY</i>"
 
-msgid "SETTINGS_ABOUT"
-msgstr "About"
-
-msgid "ERROR_REPORT_TEXT_INTRO"
-msgstr "gTox can't continue.\nThe following problem occured:\n\n<i><b>"
-
-msgid "ERROR_REPORT_TEXT_OUTRO"
-msgstr "</b></i>\n\nPlease make sure that you are using the newest gTox version.\nIf you do use the newest, please report the error to us."
-
-msgid "ERROR_REPORT_BTN"
-msgstr "Report"
-
-msgid "ERROR_ADD_CONTACT_ADDR_WRONG_SIZE_TITLE"
-msgstr "Wrong ID length"
-
-msgid "ERROR_ADD_CONTACT_ADDR_WRONG_SIZE"
-msgstr "A tox id must be 76 letters long"
-
-msgid "TOX_ERR_OPTIONS_NEW_MALLOC"
-msgstr "TOX_ERR_OPTIONS_NEW_MALLOC\nThe function failed to allocate enough memory for the options struct."
-
-msgid "TOX_ERR_NEW_NULL"
-msgstr "TOX_ERR_NEW_NULL"
-
-msgid "TOX_ERR_NEW_MALLOC"
-msgstr "TOX_ERR_NEW_MALLOC\nThe function was unable to allocate enough memory to store the internal structures for the Tox object"
-
-msgid "TOX_ERR_NEW_PORT_ALLOC"
-msgstr "TOX_ERR_NEW_PORT_ALLOC\nThe function was unable to bind to a port. This may mean that all ports have already been bound, e.g. by other Tox instances, or it may mean a permission error. You may be able to gather more information from errno."
-
-msgid "TOX_ERR_NEW_PROXY_BAD_TYPE"
-msgstr "TOX_ERR_NEW_PROXY_BAD_TYPE\nproxy_type was invalid."
-
-msgid "TOX_ERR_NEW_PROXY_BAD_HOST"
-msgstr "TOX_ERR_NEW_PROXY_BAD_HOST\nproxy_type was valid but the proxy_host passed had an invalid format or was NULL."
-
-msgid "TOX_ERR_NEW_PROXY_BAD_PORT"
-msgstr "TOX_ERR_NEW_PROXY_BAD_PORT\nproxy_type was valid, but the proxy_port was invalid."
-
-msgid "TOX_ERR_NEW_PROXY_NOT_FOUND"
-msgstr "TOX_ERR_NEW_PROXY_NOT_FOUND\nThe proxy host passed could not be resolved."
-
-msgid "TOX_ERR_NEW_LOAD_ENCRYPTED"
-msgstr "TOX_ERR_NEW_LOAD_ENCRYPTED\nThe byte array to be loaded contained an encrypted save."
-
-msgid "TOX_ERR_NEW_LOAD_BAD_FORMAT"
-msgstr "TOX_ERR_NEW_LOAD_BAD_FORMAT\nhe data format was invalid. This can happen when loading data that was saved by an older version of Tox, or when the data has been corrupted. When loading from badly formatted data, some data may have been loaded, and the rest is discarded. Passing an invalid length parameter also causes this error."
-
-msgid "TOX_ERR_BOOTSTRAP_NULL"
-msgstr "TOX_ERR_BOOTSTRAP_NULL"
-
-msgid "TOX_ERR_BOOTSTRAP_BAD_HOST"
-msgstr "TOX_ERR_BOOTSTRAP_BAD_HOST\nThe host could not be resolved to an IP address, or the IP address passed was invalid."
-
-msgid "TOX_ERR_BOOTSTRAP_BAD_PORT"
-msgstr "TOX_ERR_BOOTSTRAP_BAD_PORT\nThe port passed was invalid. The valid port range is (1, 65535)."
-
-msgid "TOX_ERR_SET_INFO_NULL"
-msgstr "TOX_ERR_SET_INFO_NULL"
-
-msgid "TOX_ERR_SET_INFO_TOO_LONG"
-msgstr "TOX_ERR_SET_INFO_TOO_LONG\nInformation length exceeded maximum permissible size."
-
-msgid "TOX_ERR_FRIEND_ADD_NULL"
-msgstr "TOX_ERR_FRIEND_ADD_NULL"
-
-msgid "TOX_ERR_FRIEND_ADD_TOO_LONG"
-msgstr "TOX_ERR_FRIEND_ADD_TOO_LONG\nThe length of the friend request message exceeded TOX_MAX_FRIEND_REQUEST_LENGTH."
-
-msgid "TOX_ERR_FRIEND_ADD_TOO_LONG_UI"
-msgstr "The length of the friend request message exceeded 1016 bytes."
-
-msgid "TOX_ERR_FRIEND_ADD_TOO_LONG_UI_TITLE"
-msgstr "Friend request failed"
-
-msgid "TOX_ERR_FRIEND_ADD_NO_MESSAGE"
-msgstr "TOX_ERR_FRIEND_ADD_NO_MESSAGE\nThe friend request message was empty. This, and the TOO_LONG code will never be returned from tox_friend_add_norequest."
-
-msgid "TOX_ERR_FRIEND_ADD_NO_MESSAGE_UI_TITLE"
-msgstr "Empty message"
-
-msgid "TOX_ERR_FRIEND_ADD_NO_MESSAGE_UI"
-msgstr "The friend request message is not allowed to be empty."
-
-msgid "TOX_ERR_FRIEND_ADD_OWN_KEY"
-msgstr "TOX_ERR_FRIEND_ADD_OWN_KEY\nThe friend address belongs to the sending client."
-
-msgid "TOX_ERR_FRIEND_ADD_OWN_KEY_UI"
-msgstr "The friend address belongs to you"
-
-msgid "TOX_ERR_FRIEND_ADD_OWN_KEY_UI_TITLE"
-msgstr "Friend request failed"
-
-msgid "TOX_ERR_FRIEND_ADD_ALREADY_SENT"
-msgstr "TOX_ERR_FRIEND_ADD_ALREADY_SENT\nA friend request has already been sent, or the address belongs to a friend that is already on the friend list."
-
-msgid "TOX_ERR_FRIEND_ADD_ALREADY_SENT_UI"
-msgstr "A friend request has already been sent, or the address belongs to a friend that is already on the friend list."
-
-msgid "TOX_ERR_FRIEND_ADD_ALREADY_SENT_UI_TITLE"
-msgstr "Friend request failed"
-
-msgid "TOX_ERR_FRIEND_ADD_BAD_CHECKSUM"
-msgstr "TOX_ERR_FRIEND_ADD_BAD_CHECKSUM\nThe friend address checksum failed."
-
-msgid "TOX_ERR_FRIEND_ADD_BAD_CHECKSUM_UI"
-msgstr "The friend address checksum failed."
-
-msgid "TOX_ERR_FRIEND_ADD_BAD_CHECKSUM_UI_TITLE"
-msgstr "Wrong checksum"
-
-msgid "TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM"
-msgstr "TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM\nThe friend was already there, but the nospam value was different."
-
-msgid "TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM_UI"
-msgstr "The friend was already there, but the nospam value was different."
-
-msgid "TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM_UI_TITLE"
-msgstr "Friend request failed"
-
-msgid "TOX_ERR_FRIEND_ADD_MALLOC"
-msgstr "TOX_ERR_FRIEND_ADD_MALLOC\nA memory allocation failed when trying to increase the friend list size."
-
-msgid "TOX_ERR_FRIEND_DELETE_FRIEND_NOT_FOUND"
-msgstr "TOX_ERR_FRIEND_DELETE_FRIEND_NOT_FOUND\nThere was no friend with the given friend number. No friends were deleted."
-
-msgid "TOX_ERR_FRIEND_BY_PUBLIC_KEY_NULL"
-msgstr "TOX_ERR_FRIEND_BY_PUBLIC_KEY_NULL"
-
-msgid "TOX_ERR_FRIEND_BY_PUBLIC_KEY_NOT_FOUND"
-msgstr "TOX_ERR_FRIEND_BY_PUBLIC_KEY_NOT_FOUND\nNo friend with the given Public Key exists on the friend list."
-
-msgid "TOX_ERR_FRIEND_GET_PUBLIC_KEY_FRIEND_NOT_FOUND"
-msgstr "TOX_ERR_FRIEND_GET_PUBLIC_KEY_FRIEND_NOT_FOUND\nNo friend with the given number exists on the friend list."
-
-msgid "TOX_ERR_FRIEND_GET_LAST_ONLINE_FRIEND_NOT_FOUND"
-msgstr "TOX_ERR_FRIEND_GET_LAST_ONLINE_FRIEND_NOT_FOUND\nNo friend with the given number exists on the friend list."
-
-msgid "TOX_ERR_FRIEND_QUERY_NULL"
-msgstr "TOX_ERR_FRIEND_QUERY_NULL\nThe pointer parameter for storing the query result (name, message) was NULL. Unlike the `_self_` variants of these functions, which have no effect when a parameter is NULL, these functions return an error in that case."
-
-msgid "TOX_ERR_FRIEND_QUERY_FRIEND_NOT_FOUND"
-msgstr "TOX_ERR_FRIEND_QUERY_FRIEND_NOT_FOUND\nThe friend_number did not designate a valid friend."
-
-msgid "TOX_ERR_SET_TYPING_FRIEND_NOT_FOUND"
-msgstr "TOX_ERR_SET_TYPING_FRIEND_NOT_FOUND\nThe friend number did not designate a valid friend."
-
-msgid "TOX_ERR_FRIEND_SEND_MESSAGE_NULL"
-msgstr "TOX_ERR_FRIEND_SEND_MESSAGE_NULL"
-
-msgid "TOX_ERR_FRIEND_SEND_MESSAGE_FRIEND_NOT_FOUND"
-msgstr "TOX_ERR_FRIEND_SEND_MESSAGE_FRIEND_NOT_FOUND\nThe friend number did not designate a valid friend."
-
-msgid "TOX_ERR_FRIEND_SEND_MESSAGE_FRIEND_NOT_CONNECTED"
-msgstr "TOX_ERR_FRIEND_SEND_MESSAGE_FRIEND_NOT_CONNECTED\nThis client is currently not connected to the friend."
-
-msgid "TOX_ERR_FRIEND_SEND_MESSAGE_SENDQ"
-msgstr "TOX_ERR_FRIEND_SEND_MESSAGE_SENDQ\nAn allocation error occurred while increasing the send queue size."
-
-msgid "TOX_ERR_FRIEND_SEND_MESSAGE_TOO_LONG"
-msgstr "TOX_ERR_FRIEND_SEND_MESSAGE_TOO_LONG\nMessage length exceeded TOX_MAX_MESSAGE_LENGTH."
-
-msgid "TOX_ERR_FRIEND_SEND_MESSAGE_EMPTY"
-msgstr "TOX_ERR_FRIEND_SEND_MESSAGE_EMPTY\nAttempted to send a zero-length message."
-
-msgid "SETTINGS_CACHE_CLEAN_LOG_TITLE"
-msgstr "Delete all logs ?"
-
-msgid "SETTINGS_CACHE_CLEAN_LOG"
-msgstr "You are about to remove all conversations logs of all contacts.\nThis action cannot be undone !"
-
-msgid "SETTINGS_CACHE_CLEAN_LOG_SUCCESS_TITLE"
-msgstr "Logs removed"
-
-msgid "SETTINGS_CACHE_CLEAN_LOG_SUCCESS"
-msgstr "%1 log entries successfully removed"
-
-msgid "PROFILE_ABORT"
-msgstr "Abort"
-
-msgid "PROFILE_TITLE"
-msgstr "gTox"
-
-msgid "PROFILE_SUBTITLE"
-msgstr "Select profile"
-
-msgid "PROFILE_NEW"
-msgstr "New"
-
-msgid "PROFILE_SELECT"
-msgstr "Select"
-
-msgid "PROFILE_CORRUPTED_TITLE"
-msgstr "Corrupted profile"
-
-msgid "PROFILE_CORRUPTED"
-msgstr "Profile couldn't be loaded"
-
+#: Popover/PopoverAddContact.cpp:33
+msgid "ADD"
+msgstr "Add"
+
+#. Label for the gTox database path
+#: Layout/dialog_assistant.ui:165
+msgid "ASSISTANT_FILE_GTOX"
+msgstr "gTox file"
+
+#. Describes how to backup the tox profile
+#: Layout/dialog_assistant.ui:204
+msgid "ASSISTANT_FILE_TEXT"
+msgstr ""
+"<span size='x-small'><u>toxcore file</u> includes the profile and contact "
+"list,\n"
+"<u>gTox file</u> includes the chat log and gTox specified settings.\n"
+"\n"
+"<b>If you do a backup you must at least backup the <u>toxcore file</u> !</"
+"b></span>"
+
+#. Label for the toxcore profile save path
+#: Layout/dialog_assistant.ui:152
+msgid "ASSISTANT_FILE_TOX"
+msgstr "toxcore file"
+
+#. Lable for the log enable/disable switch
+#: Layout/dialog_assistant.ui:101
+msgid "ASSISTANT_LOGGING"
+msgstr "Chat logging"
+
+#. Describes that gTox will log into a uncrypted sqlite db
+#: Layout/dialog_assistant.ui:137
+msgid "ASSISTANT_LOGGING_TEXT"
+msgstr ""
+"<span size='x-small'>gTox saves the log into a uncrypted SqliteDB</span>"
+
+#. Label for the profile statusmessage
+#: Layout/dialog_assistant.ui:65
+msgid "ASSISTANT_STATUSMESSAGE"
+msgstr "Status message"
+
+#. Label for the profile username
+#: Layout/dialog_assistant.ui:39
+msgid "ASSISTANT_USERNAME"
+msgstr "Name"
+
+#. Welcome text in profile creation, should warn about alpha-software
+#: Layout/dialog_assistant.ui:221
 msgid "ASSISTANT_WELCOME_TEXT"
 msgstr ""
 "Wellcome to gTox\n"
@@ -322,27 +84,405 @@ msgstr ""
 "We cannot guarantee what works today will work tomorrow.\n"
 "gTox and Tox are alpha software and code changes daily."
 
-msgid "ASSISTANT_USERNAME"
-msgstr "Name"
+#: Popover/PopoverStatus.cpp:32
+msgid "AWAY"
+msgstr "Away"
 
-msgid "ASSISTANT_STATUSMESSAGE"
-msgstr "Status message"
+#: Popover/PopoverStatus.cpp:31
+msgid "BUSY"
+msgstr "Busy"
 
-msgid "ASSISTANT_LOGGING"
-msgstr "Chat logging"
+#: Widget/WidgetChat.cpp:354
+msgid "DATE_FORMAT"
+msgstr "%A, %e. %B %Y"
 
-msgid "ASSISTANT_LOGGING_TEXT"
-msgstr "<span size='x-small'>gTox saves the log into a uncrypted SqliteDB</span>"
+#: Popover/PopoverAddContact.cpp:65
+msgid "ERROR_ADD_CONTACT_ADDR_WRONG_SIZE"
+msgstr "A tox id must be 76 letters long"
 
-msgid "ASSISTANT_FILE_TOX"
-msgstr "toxcore file"
+#: Popover/PopoverAddContact.cpp:64
+msgid "ERROR_ADD_CONTACT_ADDR_WRONG_SIZE_TITLE"
+msgstr "Wrong ID length"
 
-msgid "ASSISTANT_FILE_GTOX"
-msgstr "gTox file"
+#: Dialog/DialogError.cpp:34
+msgid "ERROR_REPORT_BTN"
+msgstr "Report"
 
-msgid "ASSISTANT_FILE_TEXT"
+#: Dialog/DialogError.cpp:28
+msgid "ERROR_REPORT_TEXT_INTRO"
 msgstr ""
-"<span size='x-small'><u>toxcore file</u> includes the profile and contact list,\n"
-"<u>gTox file</u> includes the chat log and gTox specified settings.\n\n"
-"<b>If you do a backup you must at least backup the <u>toxcore file</u> !</b></span>"
+"gTox can't continue.\n"
+"The following problem occured:\n"
+"\n"
+"<i><b>"
 
+#: Dialog/DialogError.cpp:31
+msgid "ERROR_REPORT_TEXT_OUTRO"
+msgstr ""
+"</b></i>\n"
+"\n"
+"Please make sure that you are using the newest gTox version.\n"
+"If you do use the newest, please report the error to us."
+
+#: Popover/PopoverStatus.cpp:34
+msgid "EXIT"
+msgstr "Exit"
+
+#: Dialog/DialogContact.cpp:48 Dialog/DialogProfile.cpp:36
+msgid "LOADING_THEME_FAILED"
+msgstr "Failed to load theme"
+
+#: Popover/PopoverAddContact.cpp:32 Widget/Settings/WidgetProfile.cpp:55
+msgid "MESSAGE"
+msgstr "Message"
+
+#: Popover/PopoverStatus.cpp:30
+msgid "ONLINE"
+msgstr "Online"
+
+#. Exit the application, abort the profile selection
+#: Layout/dialog_profile.ui:26
+msgid "PROFILE_ABORT"
+msgstr "Abort"
+
+#: Layout/list_item_profile.ui:49
+msgid "PROFILE_CORRUPTED"
+msgstr "Profile couldn't be loaded"
+
+#: Layout/list_item_profile.ui:33
+msgid "PROFILE_CORRUPTED_TITLE"
+msgstr "Corrupted profile"
+
+#. Button for creating a new profile
+#: Layout/dialog_profile.ui:38
+msgid "PROFILE_NEW"
+msgstr "New"
+
+#. Button for loading the selected profile
+#: Layout/dialog_profile.ui:51
+msgid "PROFILE_SELECT"
+msgstr "Select"
+
+#: Dialog/DialogProfile.cpp:53
+msgid "PROFILE_SUBTITLE"
+msgstr "Select profile"
+
+#: Dialog/DialogProfile.cpp:44 Dialog/DialogProfile.cpp:52
+msgid "PROFILE_TITLE"
+msgstr "gTox"
+
+#: Dialog/DialogProfileCreate.cpp:89
+msgid "QUIT_ASSISTANT_QUESTION"
+msgstr "Do you really want to guit the assistant?"
+
+#: Popover/PopoverContextContact.cpp:28
+msgid "REMOVE"
+msgstr "Remove"
+
+#: Widget/WidgetChat.cpp:41
+msgid "SEND"
+msgstr "Send"
+
+#: Popover/PopoverSettings.cpp:30
+msgid "SETTINGS"
+msgstr "Settings"
+
+#: Dialog/DialogSettings.cpp:69
+msgid "SETTINGS_ABOUT"
+msgstr "About"
+
+#: Widget/Settings/WidgetCache.cpp:57
+msgid "SETTINGS_CACHE_CLEAN_LOG"
+msgstr ""
+"You are about to remove all conversations logs of all contacts.\n"
+"This action cannot be undone !"
+
+#: Widget/Settings/WidgetCache.cpp:67
+msgid "SETTINGS_CACHE_CLEAN_LOG_SUCCESS"
+msgstr "%1 log entries successfully removed"
+
+#: Widget/Settings/WidgetCache.cpp:61
+msgid "SETTINGS_CACHE_CLEAN_LOG_SUCCESS_TITLE"
+msgstr "Logs removed"
+
+#: Widget/Settings/WidgetCache.cpp:52
+msgid "SETTINGS_CACHE_CLEAN_LOG_TITLE"
+msgstr "Delete all logs ?"
+
+#: Dialog/DialogSettings.cpp:31
+msgid "SETTINGS_TITLE"
+msgstr "gTox settings"
+
+#: Tox/ToxException.cpp:80
+msgid "TOX_ERR_BOOTSTRAP_BAD_HOST"
+msgstr ""
+"TOX_ERR_BOOTSTRAP_BAD_HOST\n"
+"The host could not be resolved to an IP address, or the IP address passed "
+"was invalid."
+
+#: Tox/ToxException.cpp:81
+msgid "TOX_ERR_BOOTSTRAP_BAD_PORT"
+msgstr ""
+"TOX_ERR_BOOTSTRAP_BAD_PORT\n"
+"The port passed was invalid. The valid port range is (1, 65535)."
+
+#: Tox/ToxException.cpp:79
+msgid "TOX_ERR_BOOTSTRAP_NULL"
+msgstr "TOX_ERR_BOOTSTRAP_NULL"
+
+#: Tox/ToxException.cpp:98
+msgid "TOX_ERR_FRIEND_ADD_ALREADY_SENT"
+msgstr ""
+"TOX_ERR_FRIEND_ADD_ALREADY_SENT\n"
+"A friend request has already been sent, or the address belongs to a friend "
+"that is already on the friend list."
+
+#: Popover/PopoverAddContact.cpp:97
+msgid "TOX_ERR_FRIEND_ADD_ALREADY_SENT_UI"
+msgstr ""
+"A friend request has already been sent, or the address belongs to a friend "
+"that is already on the friend list."
+
+#: Popover/PopoverAddContact.cpp:96
+msgid "TOX_ERR_FRIEND_ADD_ALREADY_SENT_UI_TITLE"
+msgstr "Friend request failed"
+
+#: Tox/ToxException.cpp:99
+msgid "TOX_ERR_FRIEND_ADD_BAD_CHECKSUM"
+msgstr ""
+"TOX_ERR_FRIEND_ADD_BAD_CHECKSUM\n"
+"The friend address checksum failed."
+
+#: Popover/PopoverAddContact.cpp:92
+msgid "TOX_ERR_FRIEND_ADD_BAD_CHECKSUM_UI"
+msgstr "The friend address checksum failed."
+
+#: Popover/PopoverAddContact.cpp:91
+msgid "TOX_ERR_FRIEND_ADD_BAD_CHECKSUM_UI_TITLE"
+msgstr "Wrong checksum"
+
+#: Tox/ToxException.cpp:101
+msgid "TOX_ERR_FRIEND_ADD_MALLOC"
+msgstr ""
+"TOX_ERR_FRIEND_ADD_MALLOC\n"
+"A memory allocation failed when trying to increase the friend list size."
+
+#: Tox/ToxException.cpp:96
+msgid "TOX_ERR_FRIEND_ADD_NO_MESSAGE"
+msgstr ""
+"TOX_ERR_FRIEND_ADD_NO_MESSAGE\n"
+"The friend request message was empty. This, and the TOO_LONG code will never "
+"be returned from tox_friend_add_norequest."
+
+#: Popover/PopoverAddContact.cpp:87
+msgid "TOX_ERR_FRIEND_ADD_NO_MESSAGE_UI"
+msgstr "The friend request message is not allowed to be empty."
+
+#: Popover/PopoverAddContact.cpp:86
+msgid "TOX_ERR_FRIEND_ADD_NO_MESSAGE_UI_TITLE"
+msgstr "Empty message"
+
+#: Tox/ToxException.cpp:94
+msgid "TOX_ERR_FRIEND_ADD_NULL"
+msgstr "TOX_ERR_FRIEND_ADD_NULL"
+
+#: Tox/ToxException.cpp:97
+msgid "TOX_ERR_FRIEND_ADD_OWN_KEY"
+msgstr ""
+"TOX_ERR_FRIEND_ADD_OWN_KEY\n"
+"The friend address belongs to the sending client."
+
+#: Popover/PopoverAddContact.cpp:102
+msgid "TOX_ERR_FRIEND_ADD_OWN_KEY_UI"
+msgstr "The friend address belongs to you"
+
+#: Popover/PopoverAddContact.cpp:101
+msgid "TOX_ERR_FRIEND_ADD_OWN_KEY_UI_TITLE"
+msgstr "Friend request failed"
+
+#: Tox/ToxException.cpp:100
+msgid "TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM"
+msgstr ""
+"TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM\n"
+"The friend was already there, but the nospam value was different."
+
+#: Popover/PopoverAddContact.cpp:107
+msgid "TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM_UI"
+msgstr "The friend was already there, but the nospam value was different."
+
+#: Popover/PopoverAddContact.cpp:106
+msgid "TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM_UI_TITLE"
+msgstr "Friend request failed"
+
+#: Tox/ToxException.cpp:95
+msgid "TOX_ERR_FRIEND_ADD_TOO_LONG"
+msgstr ""
+"TOX_ERR_FRIEND_ADD_TOO_LONG\n"
+"The length of the friend request message exceeded "
+"TOX_MAX_FRIEND_REQUEST_LENGTH."
+
+#: Popover/PopoverAddContact.cpp:112
+msgid "TOX_ERR_FRIEND_ADD_TOO_LONG_UI"
+msgstr "The length of the friend request message exceeded 1016 bytes."
+
+#: Popover/PopoverAddContact.cpp:111
+msgid "TOX_ERR_FRIEND_ADD_TOO_LONG_UI_TITLE"
+msgstr "Friend request failed"
+
+#: Tox/ToxException.cpp:115
+msgid "TOX_ERR_FRIEND_BY_PUBLIC_KEY_NOT_FOUND"
+msgstr ""
+"TOX_ERR_FRIEND_BY_PUBLIC_KEY_NOT_FOUND\n"
+"No friend with the given Public Key exists on the friend list."
+
+#: Tox/ToxException.cpp:114 Tox/ToxException.cpp:128
+msgid "TOX_ERR_FRIEND_BY_PUBLIC_KEY_NULL"
+msgstr "TOX_ERR_FRIEND_BY_PUBLIC_KEY_NULL"
+
+#: Tox/ToxException.cpp:213
+msgid "TOX_ERR_FRIEND_GET_LAST_ONLINE_FRIEND_NOT_FOUND"
+msgstr ""
+"TOX_ERR_FRIEND_GET_LAST_ONLINE_FRIEND_NOT_FOUND\n"
+"No friend with the given number exists on the friend list."
+
+#: Tox/ToxException.cpp:200
+msgid "TOX_ERR_FRIEND_GET_PUBLIC_KEY_FRIEND_NOT_FOUND"
+msgstr ""
+"TOX_ERR_FRIEND_GET_PUBLIC_KEY_FRIEND_NOT_FOUND\n"
+"No friend with the given number exists on the friend list."
+
+#: Tox/ToxException.cpp:174
+msgid "TOX_ERR_FRIEND_QUERY_FRIEND_NOT_FOUND"
+msgstr ""
+"TOX_ERR_FRIEND_QUERY_FRIEND_NOT_FOUND\n"
+"The friend_number did not designate a valid friend."
+
+#: Tox/ToxException.cpp:173
+msgid "TOX_ERR_FRIEND_QUERY_NULL"
+msgstr ""
+"TOX_ERR_FRIEND_QUERY_NULL\n"
+"The pointer parameter for storing the query result (name, message) was NULL. "
+"Unlike the `_self_` variants of these functions, which have no effect when a "
+"parameter is NULL, these functions return an error in that case."
+
+#: Tox/ToxException.cpp:146
+msgid "TOX_ERR_FRIEND_SEND_MESSAGE_EMPTY"
+msgstr ""
+"TOX_ERR_FRIEND_SEND_MESSAGE_EMPTY\n"
+"Attempted to send a zero-length message."
+
+#: Tox/ToxException.cpp:143
+msgid "TOX_ERR_FRIEND_SEND_MESSAGE_FRIEND_NOT_CONNECTED"
+msgstr ""
+"TOX_ERR_FRIEND_SEND_MESSAGE_FRIEND_NOT_CONNECTED\n"
+"This client is currently not connected to the friend."
+
+#: Tox/ToxException.cpp:142
+msgid "TOX_ERR_FRIEND_SEND_MESSAGE_FRIEND_NOT_FOUND"
+msgstr ""
+"TOX_ERR_FRIEND_SEND_MESSAGE_FRIEND_NOT_FOUND\n"
+"The friend number did not designate a valid friend."
+
+#: Tox/ToxException.cpp:141
+msgid "TOX_ERR_FRIEND_SEND_MESSAGE_NULL"
+msgstr "TOX_ERR_FRIEND_SEND_MESSAGE_NULL"
+
+#: Tox/ToxException.cpp:144
+msgid "TOX_ERR_FRIEND_SEND_MESSAGE_SENDQ"
+msgstr ""
+"TOX_ERR_FRIEND_SEND_MESSAGE_SENDQ\n"
+"An allocation error occurred while increasing the send queue size."
+
+#: Tox/ToxException.cpp:145
+msgid "TOX_ERR_FRIEND_SEND_MESSAGE_TOO_LONG"
+msgstr ""
+"TOX_ERR_FRIEND_SEND_MESSAGE_TOO_LONG\n"
+"Message length exceeded TOX_MAX_MESSAGE_LENGTH."
+
+#: Tox/ToxException.cpp:66
+msgid "TOX_ERR_NEW_LOAD_BAD_FORMAT"
+msgstr ""
+"TOX_ERR_NEW_LOAD_BAD_FORMAT\n"
+"he data format was invalid. This can happen when loading data that was saved "
+"by an older version of Tox, or when the data has been corrupted. When "
+"loading from badly formatted data, some data may have been loaded, and the "
+"rest is discarded. Passing an invalid length parameter also causes this "
+"error."
+
+#: Tox/ToxException.cpp:65
+msgid "TOX_ERR_NEW_LOAD_ENCRYPTED"
+msgstr ""
+"TOX_ERR_NEW_LOAD_ENCRYPTED\n"
+"The byte array to be loaded contained an encrypted save."
+
+#: Tox/ToxException.cpp:59
+msgid "TOX_ERR_NEW_MALLOC"
+msgstr ""
+"TOX_ERR_NEW_MALLOC\n"
+"The function was unable to allocate enough memory to store the internal "
+"structures for the Tox object"
+
+#: Tox/ToxException.cpp:58
+msgid "TOX_ERR_NEW_NULL"
+msgstr "TOX_ERR_NEW_NULL"
+
+#: Tox/ToxException.cpp:60
+msgid "TOX_ERR_NEW_PORT_ALLOC"
+msgstr ""
+"TOX_ERR_NEW_PORT_ALLOC\n"
+"The function was unable to bind to a port. This may mean that all ports have "
+"already been bound, e.g. by other Tox instances, or it may mean a permission "
+"error. You may be able to gather more information from errno."
+
+#: Tox/ToxException.cpp:61 Tox/ToxException.cpp:62
+msgid "TOX_ERR_NEW_PROXY_BAD_HOST"
+msgstr ""
+"TOX_ERR_NEW_PROXY_BAD_HOST\n"
+"proxy_type was valid but the proxy_host passed had an invalid format or was "
+"NULL."
+
+#: Tox/ToxException.cpp:63
+msgid "TOX_ERR_NEW_PROXY_BAD_PORT"
+msgstr ""
+"TOX_ERR_NEW_PROXY_BAD_PORT\n"
+"proxy_type was valid, but the proxy_port was invalid."
+
+#: Tox/ToxException.cpp:64
+msgid "TOX_ERR_NEW_PROXY_NOT_FOUND"
+msgstr ""
+"TOX_ERR_NEW_PROXY_NOT_FOUND\n"
+"The proxy host passed could not be resolved."
+
+#: Tox/ToxException.cpp:45
+msgid "TOX_ERR_OPTIONS_NEW_MALLOC"
+msgstr ""
+"TOX_ERR_OPTIONS_NEW_MALLOC\n"
+"The function failed to allocate enough memory for the options struct."
+
+#: Tox/ToxException.cpp:159
+msgid "TOX_ERR_SET_INFO_NULL"
+msgstr "TOX_ERR_SET_INFO_NULL"
+
+#: Tox/ToxException.cpp:160
+msgid "TOX_ERR_SET_INFO_TOO_LONG"
+msgstr ""
+"TOX_ERR_SET_INFO_TOO_LONG\n"
+"Information length exceeded maximum permissible size."
+
+#: Tox/ToxException.cpp:187
+msgid "TOX_ERR_SET_TYPING_FRIEND_NOT_FOUND"
+msgstr ""
+"TOX_ERR_SET_TYPING_FRIEND_NOT_FOUND\n"
+"The friend number did not designate a valid friend."
+
+#: Popover/PopoverAddContact.cpp:31 Widget/Settings/WidgetProfile.cpp:58
+msgid "TOX_ID"
+msgstr "Tox ID"
+
+#: main.cpp:100
+msgid "TRANSLATION_CHECKER"
+msgstr "Okay"
+
+#: Widget/Settings/WidgetProfile.cpp:51
+msgid "USERNAME"
+msgstr "Username"
