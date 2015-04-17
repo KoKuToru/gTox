@@ -36,7 +36,8 @@ add_subdirectory(Tools)
 set(LAYOUT
     Layout/dialog_profile.ui
     Layout/list_item_profile.ui
-    Layout/dialog_assistant.ui)
+    Layout/dialog_assistant.ui
+    Layout/dialog_contact.ui)
 add_custom_command(
     OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/Generated/layout.cpp"
     COMMAND "${PROJECT_BINARY_DIR}/Tools/text2h" LAYOUT Generated/layout ${LAYOUT}
