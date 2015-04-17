@@ -35,8 +35,8 @@ class WidgetContact : public Gtk::ScrolledWindow {
     WidgetContact();
     ~WidgetContact();
 
-    void add_contact(Tox::FriendNr nr);
-    void delete_contact(Tox::FriendNr nr);
+    void add_contact(Toxmm::FriendNr nr);
+    void delete_contact(Toxmm::FriendNr nr);
 };
 
 #endif

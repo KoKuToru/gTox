@@ -23,7 +23,7 @@
 #include <gtkmm.h>
 #include "Chat/WidgetChatBubbleRow.h"
 #include <vector>
-#include "Tox/Tox.h"
+#include "Tox/Toxmm.h"
 
 class WidgetChatLabel;
 
@@ -51,9 +51,9 @@ class WidgetChatLine : public Gtk::Box {
     struct Line {
             bool error;
             bool wait_for_receipt;
-            Tox::ReceiptNr receipt;
+            Toxmm::ReceiptNr receipt;
             unsigned long long timestamp;
-            Tox::FriendNr nr;
+            Toxmm::FriendNr nr;
             Glib::ustring message;
     };
 

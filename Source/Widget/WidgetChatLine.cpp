@@ -20,7 +20,7 @@
 #include "WidgetChatLine.h"
 #include "Generated/icon.h"
 #include "Chat/WidgetChatLabel.h"
-#include "Tox/Tox.h"
+#include "Tox/Toxmm.h"
 
 WidgetChatLine::WidgetChatLine(bool left_side)
     : Glib::ObjectBase("WidgetChatLine"), m_side(left_side), m_row_count(0) {
@@ -114,9 +114,9 @@ void WidgetChatLine::add_line(Line new_line) {
         auto index = rows.size() - 1;
         rows.back().tox_callback = [this, index, nr, receipt](const ToxEvent &ev) {
             //wait for receipt
-            if (ev.type() == typeid(Tox::EventReadReceipt)) {
+            if (ev.type() == typeid(Toxmm::EventReadReceipt)) {
                 auto& row = rows[index];
-                auto data = ev.get<Tox::EventReadReceipt>();
+                auto data = ev.get<Toxmm::EventReadReceipt>();
                 if (data.nr == nr) {
                     if (data.receipt > receipt) {
                         //message failed !

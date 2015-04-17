@@ -20,7 +20,7 @@
 #include "DialogContact.h"
 #include "Generated/icon.h"
 #include <gdkmm.h>
-#include "Tox/Tox.h"
+#include "Tox/Toxmm.h"
 #include <iostream>
 #include <libnotifymm.h>
 #include "Generated/theme.h"
@@ -64,8 +64,8 @@ DialogContact::DialogContact(const std::string& config_path)
 
     // Setup titleba
     set_title("gTox");
-    m_headerbar_contact.set_title(Tox::instance().get_name_or_address());
-    m_headerbar_contact.set_subtitle(Tox::instance().get_status_message());
+    m_headerbar_contact.set_title(Toxmm::instance().get_name_or_address());
+    m_headerbar_contact.set_subtitle(Toxmm::instance().get_status_message());
     m_headerbar_contact.set_show_close_button();
 
     m_headerbar_chat.set_title("Chat");
@@ -145,9 +145,9 @@ DialogContact::DialogContact(const std::string& config_path)
         } else {
             WidgetChat* item = dynamic_cast<WidgetChat*>(child);
             m_headerbar_chat.set_title(
-                Tox::instance().get_name_or_address(item->get_friend_nr()));
+                Toxmm::instance().get_name_or_address(item->get_friend_nr()));
             m_headerbar_chat.set_subtitle(
-                Tox::instance().get_status_message(item->get_friend_nr()));
+                Toxmm::instance().get_status_message(item->get_friend_nr()));
         }
     });
 
@@ -175,10 +175,10 @@ DialogContact::DialogContact(const std::string& config_path)
 
     m_update_interval = Glib::signal_timeout().connect(
         sigc::mem_fun(this, &DialogContact::update),
-        Tox::instance().update_optimal_interval());
+        Toxmm::instance().update_optimal_interval());
 
     // display friend id
-    Tox::FriendAddr my_addr = Tox::instance().get_address();
+    Toxmm::FriendAddr my_addr = Toxmm::instance().get_address();
     std::cout << "PUB: ";
     for (auto c : my_addr) {
         static const char hex[] = "0123456789ABCDEF";
@@ -201,12 +201,12 @@ DialogContact::DialogContact(const std::string& config_path)
             // nothing
         });*/
 
-    set_status(Tox::OFFLINE);
+    set_status(Toxmm::OFFLINE);
 }
 
 DialogContact::~DialogContact() {
     // save ?
-    Tox::instance().destroy();
+    Toxmm::instance().destroy();
 }
 
 void DialogContact::detach_chat() {
@@ -235,7 +235,7 @@ void DialogContact::detach_chat() {
     m_btn_xchat.clicked();
 }
 
-void DialogContact::attach_chat(Tox::FriendNr nr) {
+void DialogContact::attach_chat(Toxmm::FriendNr nr) {
     DialogChat* dialog = nullptr;
     WidgetChat* item = get_chat(nr, dialog);
 
@@ -255,13 +255,13 @@ void DialogContact::attach_chat(Tox::FriendNr nr) {
 }
 
 bool DialogContact::update() {
-    if (!m_btn_status.get_sensitive() && Tox::instance().is_connected()) {
+    if (!m_btn_status.get_sensitive() && Toxmm::instance().is_connected()) {
         m_btn_status.set_sensitive(true);
-        set_status(Tox::instance().get_status());
+        set_status(Toxmm::instance().get_status());
     }
 
     ToxEvent ev;
-    while (Tox::instance().update(ev)) {
+    while (Toxmm::instance().update(ev)) {
         ToxEventCallback::notify(ev);
     }
 
@@ -269,8 +269,8 @@ bool DialogContact::update() {
 }
 
 void DialogContact::tox_event_handling(const ToxEvent& ev) {
-    if (ev.type() == typeid(Tox::EventFriendMessage)) {
-        auto data = ev.get<Tox::EventFriendMessage>();
+    if (ev.type() == typeid(Toxmm::EventFriendMessage)) {
+        auto data = ev.get<Toxmm::EventFriendMessage>();
         DialogChat* chat;
         get_chat(data.nr, chat);
         if (is_chat_open(data.nr)) {
@@ -279,8 +279,8 @@ void DialogContact::tox_event_handling(const ToxEvent& ev) {
                                               }));
         }
         Canberra::play("message-new-instant");
-    } else if (ev.type() == typeid(Tox::EventFriendAction)) {
-        auto data = ev.get<Tox::EventFriendAction>();
+    } else if (ev.type() == typeid(Toxmm::EventFriendAction)) {
+        auto data = ev.get<Toxmm::EventFriendAction>();
         DialogChat* chat;
         get_chat(data.nr, chat);
         if (is_chat_open(data.nr)) {
@@ -289,26 +289,26 @@ void DialogContact::tox_event_handling(const ToxEvent& ev) {
                                               }));
         }
         Canberra::play("message-new-instant");
-    } else if (ev.type() == typeid(Tox::EventFriendRequest)) {
-        auto data = ev.get<Tox::EventFriendRequest>();
+    } else if (ev.type() == typeid(Toxmm::EventFriendRequest)) {
+        auto data = ev.get<Toxmm::EventFriendRequest>();
         /*
         m_notification.add_notification(
-            "Friend request [" + Tox::to_hex(data.addr.data(), 32) + "]",
+            "Friend request [" + Toxmm::to_hex(data.addr.data(), 32) + "]",
             data.message,
             "Accept",
             [this, data]() {
-                add_contact(Tox::instance().add_friend_norequest(data.addr));
-                Tox::instance().save();
+                add_contact(Toxmm::instance().add_friend_norequest(data.addr));
+                Toxmm::instance().save();
             });*/
     }
 }
 
-void DialogContact::add_contact(Tox::FriendNr nr) {
+void DialogContact::add_contact(Toxmm::FriendNr nr) {
     m_contact.add_contact(nr);
-    Tox::instance().save();
+    Toxmm::instance().save();
 }
 
-WidgetChat* DialogContact::get_chat(Tox::FriendNr nr, DialogChat*& dialog) {
+WidgetChat* DialogContact::get_chat(Toxmm::FriendNr nr, DialogChat*& dialog) {
     dialog = nullptr;
     for (Gtk::Widget* it : m_chat.get_children()) {
         WidgetChat* item = dynamic_cast<WidgetChat*>(it);
@@ -327,13 +327,13 @@ WidgetChat* DialogContact::get_chat(Tox::FriendNr nr, DialogChat*& dialog) {
     item->show_all();
 
     m_chat.add(*item,
-               Tox::to_hex(Tox::instance().get_address(nr).data(),
+               Toxmm::to_hex(Toxmm::instance().get_address(nr).data(),
                            TOX_PUBLIC_KEY_SIZE));
 
     return item;
 }
 
-bool DialogContact::is_chat_open(Tox::FriendNr nr) {
+bool DialogContact::is_chat_open(Toxmm::FriendNr nr) {
     for (Gtk::Widget* it : m_chat.get_children()) {
         WidgetChat* item = dynamic_cast<WidgetChat*>(it);
         if (item->get_friend_nr() == nr) {
@@ -353,7 +353,7 @@ bool DialogContact::is_chat_open(Tox::FriendNr nr) {
     return false;
 }
 
-void DialogContact::activate_chat(Tox::FriendNr nr) {
+void DialogContact::activate_chat(Toxmm::FriendNr nr) {
     ToxEventCallback::notify(ToxEvent(WidgetContactListItem::EventStopSpin()));
 
     // 1. Search if contact has already a open chat
@@ -378,20 +378,20 @@ void DialogContact::activate_chat(Tox::FriendNr nr) {
     m_chat.set_visible_child(*item);
 
     // 4. update headerbard
-    m_headerbar_chat.set_title(Tox::instance().get_name_or_address(nr));
-    m_headerbar_chat.set_subtitle(Tox::instance().get_status_message(nr));
+    m_headerbar_chat.set_title(Toxmm::instance().get_name_or_address(nr));
+    m_headerbar_chat.set_subtitle(Toxmm::instance().get_status_message(nr));
     m_tox_callback_chat = [this, nr](const ToxEvent& ev) {
-        if (ev.type() == typeid(Tox::EventName)) {
-            auto data = ev.get<Tox::EventName>();
+        if (ev.type() == typeid(Toxmm::EventName)) {
+            auto data = ev.get<Toxmm::EventName>();
             if (data.nr == nr) {
                 m_headerbar_chat
-                        .set_title(Tox::instance().get_name_or_address(nr));
+                        .set_title(Toxmm::instance().get_name_or_address(nr));
             }
-        } else if (ev.type() == typeid(Tox::EventStatusMessage)) {
-            auto data = ev.get<Tox::EventStatusMessage>();
+        } else if (ev.type() == typeid(Toxmm::EventStatusMessage)) {
+            auto data = ev.get<Toxmm::EventStatusMessage>();
             if (data.nr == nr) {
                 m_headerbar_chat
-                        .set_subtitle(Tox::instance().get_status_message(nr));
+                        .set_subtitle(Toxmm::instance().get_status_message(nr));
             }
         }
     };
@@ -421,19 +421,19 @@ void DialogContact::destroy() {
     }
 }
 
-void DialogContact::set_status(Tox::EUSERSTATUS status_code) {
-    Tox::instance().set_status(status_code);
+void DialogContact::set_status(Toxmm::EUSERSTATUS status_code) {
+    Toxmm::instance().set_status(status_code);
     // TODO: implement a get_status_icon function
     switch (status_code) {
-        case Tox::NONE:
+        case Toxmm::NONE:
             m_icon_status.property_pixbuf()
                 = ICON::load_icon(ICON::status_online);
             break;
-        case Tox::BUSY:
+        case Toxmm::BUSY:
             m_icon_status.property_pixbuf()
                 = ICON::load_icon(ICON::status_busy);
             break;
-        case Tox::AWAY:
+        case Toxmm::AWAY:
             m_icon_status.property_pixbuf()
                 = ICON::load_icon(ICON::status_away);
             break;
@@ -459,21 +459,21 @@ void DialogContact::set_status(Tox::EUSERSTATUS status_code) {
 }
 
 void DialogContact::exit() {
-    Tox::instance().save();
+    Toxmm::instance().save();
     // TODO: ask for confirmation
     Gtk::Main::quit();
 }
 
 void DialogContact::change_name(Glib::ustring name, Glib::ustring msg) {
-    Tox::instance().set_name(name);
-    Tox::instance().set_status_message(msg);
-    m_headerbar_contact.set_title(Tox::instance().get_name_or_address());
-    m_headerbar_contact.set_subtitle(Tox::instance().get_status_message());
-    Tox::instance().save();
+    Toxmm::instance().set_name(name);
+    Toxmm::instance().set_status_message(msg);
+    m_headerbar_contact.set_title(Toxmm::instance().get_name_or_address());
+    m_headerbar_contact.set_subtitle(Toxmm::instance().get_status_message());
+    Toxmm::instance().save();
 }
 
-void DialogContact::delete_friend(Tox::FriendNr nr) {
+void DialogContact::delete_friend(Toxmm::FriendNr nr) {
     m_contact.delete_contact(nr);
-    Tox::instance().del_friend(nr);
-    Tox::instance().save();
+    Toxmm::instance().del_friend(nr);
+    Toxmm::instance().save();
 }

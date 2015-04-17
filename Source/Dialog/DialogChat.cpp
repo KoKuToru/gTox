@@ -21,27 +21,27 @@
 #include "Generated/icon.h"
 #include "DialogContact.h"
 
-DialogChat::DialogChat(Tox::FriendNr nr)
+DialogChat::DialogChat(Toxmm::FriendNr nr)
     : m_icon_attach(ICON::load_icon(ICON::chat_attach)), m_chat(nr) {
     this->set_border_width(1);
     this->set_default_geometry(256, 256);
     this->set_position(Gtk::WindowPosition::WIN_POS_NONE);
 
     // Setup titlebar
-    m_header.set_title(Tox::instance().get_name_or_address(nr));
-    m_header.set_subtitle(Tox::instance().get_status_message(nr));
+    m_header.set_title(Toxmm::instance().get_name_or_address(nr));
+    m_header.set_subtitle(Toxmm::instance().get_status_message(nr));
     m_header.set_show_close_button();
 
     m_tox_callback = [this, nr](const ToxEvent& ev) {
-        if (ev.type() == typeid(Tox::EventName))  {
-            auto data = ev.get<Tox::EventName>();
+        if (ev.type() == typeid(Toxmm::EventName))  {
+            auto data = ev.get<Toxmm::EventName>();
             if (data.nr == nr) {
-                m_header.set_title(Tox::instance().get_name_or_address(nr));
+                m_header.set_title(Toxmm::instance().get_name_or_address(nr));
             }
-        } else if (ev.type() == typeid(Tox::EventStatusMessage)) {
-            auto data = ev.get<Tox::EventStatusMessage>();
+        } else if (ev.type() == typeid(Toxmm::EventStatusMessage)) {
+            auto data = ev.get<Toxmm::EventStatusMessage>();
             if (data.nr == nr) {
-                m_header.set_subtitle(Tox::instance().get_status_message(nr));
+                m_header.set_subtitle(Toxmm::instance().get_status_message(nr));
             }
         }
     };

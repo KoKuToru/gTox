@@ -18,7 +18,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
  **/
 #include "DialogProfileCreate.h"
-#include "Tox/Tox.h"
+#include "Tox/Toxmm.h"
 #include <glibmm/i18n.h>
 #include "Generated/layout.h"
 #include "Generated/icon.h"
@@ -99,13 +99,13 @@ void DialogProfileCreate::on_cancel() {
 
 void DialogProfileCreate::on_apply() {
     m_path = m_file_tox->get_text().substr(0, m_file_tox->get_text().find_last_of("."));
-    Tox::instance().init();
-    Tox::instance().set_name(m_username->get_text());
-    Tox::instance().set_status_message(m_status->get_text());
-    Tox::instance().database().open(m_path, true);
-    Tox::instance().database().config_set("LOG_CHAT", m_logging->get_active());
-    Tox::instance().save();
-    Tox::destroy();
+    Toxmm::instance().init();
+    Toxmm::instance().set_name(m_username->get_text());
+    Toxmm::instance().set_status_message(m_status->get_text());
+    Toxmm::instance().database().open(m_path, true);
+    Toxmm::instance().database().config_set("LOG_CHAT", m_logging->get_active());
+    Toxmm::instance().save();
+    Toxmm::destroy();
     Gtk::Main::quit();
     m_aborted = false;
 }

@@ -22,7 +22,7 @@
 #define POPOVER_POPOVERCONTEXTCONTACT_H_
 
 #include <gtkmm.h>
-#include "../Tox/Tox.h"
+#include "../Tox/Toxmm.h"
 
 /*
  *
@@ -33,10 +33,10 @@ class PopoverContextContact : public Gtk::Popover {
     Gtk::ListBoxRow& create_item(Glib::RefPtr<Gdk::Pixbuf> icon,
                                  Glib::ustring text);
 
-    Tox::FriendNr friendNr;
+    Toxmm::FriendNr friendNr;
 
   public:
-    PopoverContextContact(Tox::FriendNr friendNr);
+    PopoverContextContact(Toxmm::FriendNr friendNr);
     virtual ~PopoverContextContact();
 };
 

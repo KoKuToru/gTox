@@ -18,7 +18,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 **/
 #include "WidgetContact.h"
-#include "Tox/Tox.h"
+#include "Tox/Toxmm.h"
 #include "Dialog/DialogContact.h"
 #include "../Popover/PopoverContextContact.h"
 
@@ -35,7 +35,7 @@ WidgetContact::WidgetContact() :
     });
     m_list.signal_button_press_event().connect(
         sigc::mem_fun(this, &WidgetContact::on_button_press));
-    for (auto fr : Tox::instance().get_friendlist()) {
+    for (auto fr : Toxmm::instance().get_friendlist()) {
         add_contact(fr);
     }
 }
@@ -43,7 +43,7 @@ WidgetContact::WidgetContact() :
 WidgetContact::~WidgetContact() {
 }
 
-void WidgetContact::add_contact(Tox::FriendNr nr) {
+void WidgetContact::add_contact(Toxmm::FriendNr nr) {
     Gtk::Widget* w = Gtk::manage(new WidgetContactListItem(this, nr));
     m_list.add(*w);
     w->show_all();
@@ -75,7 +75,7 @@ bool WidgetContact::on_button_press(GdkEventButton* event) {
     return true;
 }
 
-void WidgetContact::delete_contact(Tox::FriendNr nr) {
+void WidgetContact::delete_contact(Toxmm::FriendNr nr) {
     for (Gtk::Widget* it : m_list.get_children()) {
         WidgetContactListItem* item = dynamic_cast<WidgetContactListItem*>(it);
         if (item->get_friend_nr() == nr) {

@@ -19,28 +19,28 @@
 **/
 #include "WidgetContactListItem.h"
 #include "WidgetContact.h"
-#include "Tox/Tox.h"
+#include "Tox/Toxmm.h"
 #include "Dialog/DialogContact.h"
 #include "Generated/icon.h"
 
 WidgetContactListItem::WidgetContactListItem(WidgetContact* contact,
-                                             Tox::FriendNr nr)
+                                             Toxmm::FriendNr nr)
     : Glib::ObjectBase("WidgetContactListItem"),
       m_contact(contact),
       m_friend_nr(nr),
       spin(false) {
     set_name("WidgetContactListItem");
 
-    m_name.set_text(Tox::instance().get_name_or_address(nr));
-    m_status_msg.set_text(Tox::instance().get_status_message(nr));
+    m_name.set_text(Toxmm::instance().get_name_or_address(nr));
+    m_status_msg.set_text(Toxmm::instance().get_status_message(nr));
 
     m_tox_callback = [this, nr](const ToxEvent& ev) {
-        if ((ev.type() == typeid(Tox::EventName)          && ev.get<Tox::EventName>().nr == nr) ||
-            (ev.type() == typeid(Tox::EventStatusMessage) && ev.get<Tox::EventStatusMessage>().nr == nr) ||
-            (ev.type() == typeid(Tox::EventUserStatus)    && ev.get<Tox::EventUserStatus>().nr == nr)) {
+        if ((ev.type() == typeid(Toxmm::EventName)          && ev.get<Toxmm::EventName>().nr == nr) ||
+            (ev.type() == typeid(Toxmm::EventStatusMessage) && ev.get<Toxmm::EventStatusMessage>().nr == nr) ||
+            (ev.type() == typeid(Toxmm::EventUserStatus)    && ev.get<Toxmm::EventUserStatus>().nr == nr)) {
             refresh();
-        } else if ((ev.type() == typeid(Tox::EventFriendMessage) && ev.get<Tox::EventFriendMessage>().nr == nr) ||
-                   (ev.type() == typeid(Tox::EventFriendAction)  && ev.get<Tox::EventFriendAction>().nr == nr)) {
+        } else if ((ev.type() == typeid(Toxmm::EventFriendMessage) && ev.get<Toxmm::EventFriendMessage>().nr == nr) ||
+                   (ev.type() == typeid(Toxmm::EventFriendAction)  && ev.get<Toxmm::EventFriendAction>().nr == nr)) {
             if (!spin) {
                 spin = true;
                 refresh();
@@ -88,25 +88,25 @@ WidgetContactListItem::WidgetContactListItem(WidgetContact* contact,
 WidgetContactListItem::~WidgetContactListItem() {
 }
 
-Tox::FriendNr WidgetContactListItem::get_friend_nr() {
+Toxmm::FriendNr WidgetContactListItem::get_friend_nr() {
     return m_friend_nr;
 }
 
 void WidgetContactListItem::refresh() {
     try {
-        m_name.set_text(Tox::instance().get_name_or_address(m_friend_nr));
-        m_status_msg.set_text(Tox::instance().get_status_message(m_friend_nr));
+        m_name.set_text(Toxmm::instance().get_name_or_address(m_friend_nr));
+        m_status_msg.set_text(Toxmm::instance().get_status_message(m_friend_nr));
 
         const std::string* status = nullptr;
 
-        switch (Tox::instance().get_status(m_friend_nr)) {
-            case Tox::EUSERSTATUS::BUSY:
+        switch (Toxmm::instance().get_status(m_friend_nr)) {
+            case Toxmm::EUSERSTATUS::BUSY:
                 status = &ICON::status_busy;
                 break;
-            case Tox::EUSERSTATUS::NONE:
+            case Toxmm::EUSERSTATUS::NONE:
                 status = &ICON::status_online;
                 break;
-            case Tox::EUSERSTATUS::AWAY:
+            case Toxmm::EUSERSTATUS::AWAY:
                 status = &ICON::status_away;
                 break;
             default:

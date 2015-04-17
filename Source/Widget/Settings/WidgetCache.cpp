@@ -20,7 +20,7 @@
 #include "WidgetCache.h"
 #include "Generated/icon.h"
 #include <glibmm/i18n.h>
-#include <Tox/Tox.h>
+#include <Tox/Toxmm.h>
 #include <stdio.h>
 
 WidgetCache::WidgetCache()
@@ -30,17 +30,17 @@ WidgetCache::WidgetCache()
       m_clean_log("Clean up logs"),
       m_clean_file("Clean up recieved files") {
 
-    m_log.set_active(Tox::instance().database().config_get("LOG_CHAT", 1));
-    m_file.set_active(Tox::instance().database().config_get("LOG_FILE", 1));
+    m_log.set_active(Toxmm::instance().database().config_get("LOG_CHAT", 1));
+    m_file.set_active(Toxmm::instance().database().config_get("LOG_FILE", 1));
     m_log.set_halign(Gtk::Align::ALIGN_END);
     m_file.set_halign(Gtk::Align::ALIGN_END);
 
 #if (GTK_MAJOR_VERSION >= 3 && GTK_MINOR_VERSION >= 14)
     m_log.signal_state_set().connect_notify([](bool state) {
-        Tox::instance().database().config_set("LOG_CHAT", state);
+        Toxmm::instance().database().config_set("LOG_CHAT", state);
     });
     m_file.signal_state_set().connect_notify([](bool state) {
-        Tox::instance().database().config_set("LOG_FILE", state);
+        Toxmm::instance().database().config_set("LOG_FILE", state);
     });
 #else
 #warning "Without GTK 3.14+ signal_state_set() on Gtk::Switches wont work"
@@ -65,7 +65,7 @@ WidgetCache::WidgetCache()
             msg2.set_secondary_text(
                         Glib::ustring::compose(
                             _("SETTINGS_CACHE_CLEAN_LOG_SUCCESS"),
-                            Tox::instance().database().toxcore_log_cleanup()));
+                            Toxmm::instance().database().toxcore_log_cleanup()));
             msg2.run();
         }
     });

@@ -80,7 +80,7 @@ class DialogContact : public Gtk::Window {
     ToxEventCallback m_tox_callback;
     ToxEventCallback m_tox_callback_chat;
 
-    bool is_chat_open(Tox::FriendNr nr);
+    bool is_chat_open(Toxmm::FriendNr nr);
 
   public:
     ~DialogContact();
@@ -88,20 +88,20 @@ class DialogContact : public Gtk::Window {
     static DialogContact& instance();
     static void destroy();
 
-    void activate_chat(Tox::FriendNr nr);
-    void set_status(Tox::EUSERSTATUS status_code);
+    void activate_chat(Toxmm::FriendNr nr);
+    void set_status(Toxmm::EUSERSTATUS status_code);
     void exit();
-    void add_contact(Tox::FriendNr nr);
+    void add_contact(Toxmm::FriendNr nr);
     void change_name(Glib::ustring name, Glib::ustring msg);
-    void delete_friend(Tox::FriendNr nr);
+    void delete_friend(Toxmm::FriendNr nr);
 
-    void attach_chat(Tox::FriendNr nr);
+    void attach_chat(Toxmm::FriendNr nr);
 
   protected:
     void detach_chat();
     bool update();
     void tox_event_handling(const ToxEvent& event);
-    WidgetChat* get_chat(Tox::FriendNr nr, DialogChat*& dialog);
+    WidgetChat* get_chat(Toxmm::FriendNr nr, DialogChat*& dialog);
 };
 
 #endif

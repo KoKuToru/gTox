@@ -33,7 +33,7 @@
 #include <glibmm/exception.h>
 #include <gstreamermm/init.h>
 
-#include "Tox/Tox.h"
+#include "Tox/Toxmm.h"
 
 void print_copyright() {
     std::clog
@@ -110,7 +110,7 @@ void terminate_handler() {
         DialogError(true, "Fatal Unexpected Glib Exception", ex.what()).run();
     } catch (const SQLite::Exception &ex) {
         DialogError(true, "Fatal Unexpected Sqlite Exception", ex.what()).run();
-    } catch (const Tox::Exception &ex) {
+    } catch (const Toxmm::Exception &ex) {
         DialogError(true, "Fatal Unexpected Tox Exception", ex.what()).run();
     } catch (const std::exception &ex) {
         DialogError(true, "Fatal Unexpected Exception", ex.what()).run();
@@ -216,7 +216,7 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    Tox::instance().init(config_path); //TODO do this somewhere in DialogContact..
+    Toxmm::instance().init(config_path); //TODO do this somewhere in DialogContact..
     DialogContact::init(config_path);
     kit.run(DialogContact::instance());
     DialogContact::destroy();

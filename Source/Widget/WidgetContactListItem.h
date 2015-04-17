@@ -21,7 +21,7 @@
 #define WIDGETCONTACTLISTITEM_H
 
 #include <gtkmm.h>
-#include "Tox/Tox.h"
+#include "Tox/Toxmm.h"
 #include "Helper/ToxEventCallback.h"
 
 class WidgetContact;
@@ -36,7 +36,7 @@ class WidgetContactListItem : public Gtk::ListBoxRow {
 
     WidgetContact* m_contact;
 
-    Tox::FriendNr m_friend_nr;
+    Toxmm::FriendNr m_friend_nr;
 
     ToxEventCallback m_tox_callback;
     void refresh();
@@ -46,14 +46,14 @@ class WidgetContactListItem : public Gtk::ListBoxRow {
     bool spin;
 
   public:
-    WidgetContactListItem(WidgetContact* contact, Tox::FriendNr nr);
+    WidgetContactListItem(WidgetContact* contact, Toxmm::FriendNr nr);
     ~WidgetContactListItem();
 
-    Tox::FriendNr get_friend_nr();
+    Toxmm::FriendNr get_friend_nr();
 
     class EventStopSpin {
         public:
-            Tox::FriendNr nr;
+            Toxmm::FriendNr nr;
     };
 };
 

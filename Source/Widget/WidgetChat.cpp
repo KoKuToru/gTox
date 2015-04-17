@@ -18,7 +18,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 **/
 #include "WidgetChat.h"
-#include "Tox/Tox.h"
+#include "Tox/Toxmm.h"
 #include "WidgetChatLine.h"
 #include "Chat/WidgetChatLabel.h"
 #include <glibmm/i18n.h>
@@ -28,7 +28,7 @@ namespace sigc {
     SIGC_FUNCTORS_DEDUCE_RESULT_TYPE_WITH_DECLTYPE
 }
 
-WidgetChat::WidgetChat(Tox::FriendNr nr)
+WidgetChat::WidgetChat(Toxmm::FriendNr nr)
     : Glib::ObjectBase("WidgetChat"), m_nr(nr), m_autoscroll(true) {
     m_output.set_editable(false);
     m_scrolled.add(m_vbox);
@@ -198,7 +198,7 @@ WidgetChat::WidgetChat(Tox::FriendNr nr)
             add_line(false, WidgetChatLine::Line{
                          false,
                          true,
-                         Tox::instance().send_message(get_friend_nr(), text),
+                         Toxmm::instance().send_message(get_friend_nr(), text),
                          0,
                          get_friend_nr(),
                          text
@@ -239,7 +239,7 @@ WidgetChat::WidgetChat(Tox::FriendNr nr)
     }
 
     // load log
-    auto log = Tox::instance().get_log(nr);
+    auto log = Toxmm::instance().get_log(nr);
     for (auto l : log) {
         if (l.sendtime != 0) {
             add_line(false, WidgetChatLine::Line{
@@ -263,8 +263,8 @@ WidgetChat::WidgetChat(Tox::FriendNr nr)
     }
 
     m_tox_callback = [this, nr](const ToxEvent& ev) {
-        if (ev.type() == typeid(Tox::EventFriendAction)) {
-            auto data = ev.get<Tox::EventFriendAction>();
+        if (ev.type() == typeid(Toxmm::EventFriendAction)) {
+            auto data = ev.get<Toxmm::EventFriendAction>();
             if (nr == data.nr) {
                 add_line(true, WidgetChatLine::Line{
                              false,
@@ -275,8 +275,8 @@ WidgetChat::WidgetChat(Tox::FriendNr nr)
                              data.message
                          });
             }
-        } else if (ev.type() == typeid(Tox::EventFriendMessage)) {
-            auto data = ev.get<Tox::EventFriendMessage>();
+        } else if (ev.type() == typeid(Toxmm::EventFriendMessage)) {
+            auto data = ev.get<Toxmm::EventFriendMessage>();
             if (nr == data.nr) {
                 add_line(true, WidgetChatLine::Line{
                              false,
@@ -298,7 +298,7 @@ void WidgetChat::focus() {
     m_input.grab_focus();
 }
 
-Tox::FriendNr WidgetChat::get_friend_nr() const {
+Toxmm::FriendNr WidgetChat::get_friend_nr() const {
     return m_nr;
 }
 
@@ -368,8 +368,8 @@ void WidgetChat::add_line(bool left_side, WidgetChatLine::Line new_line) {
         // TODO add a WidgetChatLineMe ..
         // add new action line
         auto msg = Gtk::manage(new WidgetChatLabel() /*new Gtk::Label()*/);
-        auto name = left_side ? Tox::instance().get_name_or_address(m_nr)
-                              : Tox::instance().get_name_or_address();
+        auto name = left_side ? Toxmm::instance().get_name_or_address(m_nr)
+                              : Toxmm::instance().get_name_or_address();
         msg->set_text(name + new_line.message.substr(Glib::ustring("/me").size()));
         msg->set_name("ChatTime");
         msg->set_halign(Gtk::ALIGN_CENTER);

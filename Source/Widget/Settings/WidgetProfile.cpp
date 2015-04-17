@@ -20,7 +20,7 @@
 #include "WidgetProfile.h"
 #include "Generated/icon.h"
 #include <glibmm/i18n.h>
-#include "Tox/Tox.h"
+#include "Tox/Toxmm.h"
 #include "Dialog/DialogContact.h"
 
 WidgetProfile::WidgetProfile()
@@ -28,8 +28,8 @@ WidgetProfile::WidgetProfile()
       m_clipboard(ICON::load_icon(ICON::clipboard)) {
     update();
 
-    std::string hex = Tox::to_hex(Tox::instance().get_address().data(),
-                                  Tox::instance().get_address().size());
+    std::string hex = Toxmm::to_hex(Toxmm::instance().get_address().data(),
+                                    Toxmm::instance().get_address().size());
     for (int i = 4; i > 0; --i) {
         hex.insert(2 * i * TOX_PUBLIC_KEY_SIZE / 4, 1, '\n');
     }
@@ -83,8 +83,8 @@ WidgetProfile::WidgetProfile()
 
     cpy_btn->signal_clicked().connect([this]() {
         Gtk::Clipboard::get()->set_text(
-            Tox::to_hex(Tox::instance().get_address().data(),
-                        Tox::instance().get_address().size()));
+            Toxmm::to_hex(Toxmm::instance().get_address().data(),
+                        Toxmm::instance().get_address().size()));
     });
 }
 
@@ -92,6 +92,6 @@ WidgetProfile::~WidgetProfile() {
 }
 
 void WidgetProfile::update() {
-    m_username.set_text(Tox::instance().get_name_or_address());
-    m_status.set_text(Tox::instance().get_status_message());
+    m_username.set_text(Toxmm::instance().get_name_or_address());
+    m_status.set_text(Toxmm::instance().get_status_message());
 }

@@ -21,7 +21,7 @@
 #define DIALOGCHAT_H
 
 #include <gtkmm.h>
-#include "Tox/Tox.h"
+#include "Tox/Toxmm.h"
 #include "Widget/WidgetChat.h"
 #include "Helper/ToxEventCallback.h"
 
@@ -38,7 +38,7 @@ class DialogChat : public Gtk::Window {
     ToxEventCallback m_tox_callback;
 
   public:
-    DialogChat(Tox::FriendNr nr);
+    DialogChat(Toxmm::FriendNr nr);
     ~DialogChat();
 
     void show();

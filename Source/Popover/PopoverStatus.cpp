@@ -39,13 +39,13 @@ PopoverStatus::PopoverStatus(const Gtk::Widget& relative_to)
     m_listbox.signal_row_activated().connect([this](Gtk::ListBoxRow* row) {
         switch (row->get_index()) {
             case 0:
-                DialogContact::instance().set_status(Tox::NONE);
+                DialogContact::instance().set_status(Toxmm::NONE);
                 break;
             case 1:
-                DialogContact::instance().set_status(Tox::BUSY);
+                DialogContact::instance().set_status(Toxmm::BUSY);
                 break;
             case 2:
-                DialogContact::instance().set_status(Tox::AWAY);
+                DialogContact::instance().set_status(Toxmm::AWAY);
                 break;
             case 3:
                 DialogContact::instance().exit();
@@ -91,14 +91,14 @@ void PopoverStatus::set_visible(bool visible) {
     }
 
     int select = 3;
-    switch (Tox::instance().get_status()) {
-        case Tox::NONE:
+    switch (Toxmm::instance().get_status()) {
+        case Toxmm::NONE:
             select = 0;
             break;
-        case Tox::BUSY:
+        case Toxmm::BUSY:
             select = 1;
             break;
-        case Tox::AWAY:
+        case Toxmm::AWAY:
             select = 2;
             break;
         default:

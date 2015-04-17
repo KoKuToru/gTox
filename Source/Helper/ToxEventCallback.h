@@ -3,7 +3,7 @@
 
 #include <mutex>
 #include <functional>
-#include "Tox/Tox.h"
+#include "Tox/Toxmm.h"
 
 /**
  * @brief Installs a callback for tox events

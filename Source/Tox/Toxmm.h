@@ -33,7 +33,7 @@
 /**
  * @brief Wraps the toxcore but also add features with a sqlitedb
  */
-class Tox {
+class Toxmm {
   private:
     /**
      * @brief Protects toxcore with a mutex
@@ -45,9 +45,9 @@ class Tox {
     /**
      * @brief Instance of Tox
      */
-    static Tox* m_instance;
+    static Toxmm* m_instance;
 
-    Tox();
+    Toxmm();
 
     /**
      * @brief Instance of toxcore
@@ -165,7 +165,7 @@ class Tox {
      *
      * @return tox instance
      */
-    static Tox& instance();
+    static Toxmm& instance();
 
     ToxDatabase& database();
 
@@ -187,7 +187,7 @@ class Tox {
      * If necessary update gTox save-file.
      * Removes old toxcore savestates if older than 7 days.
      *
-     * @throws Tox::Exception
+     * @throws Toxmm::Exception
      * @throws SQLite::Exception
      *
      * @param statefile Path to the save-file, can be empty
@@ -200,7 +200,7 @@ class Tox {
     /**
      * @brief Saves the custom gTox save-file.
      *
-     * @throws Tox::Exception
+     * @throws Toxmm::Exception
      * @throws SQLite::Exception
      *
      * @param statefile Path to the save-file, only works when never saved
@@ -211,10 +211,10 @@ class Tox {
     /**
      * @brief runs tox_kill if needed
      */
-    ~Tox();
+    ~Toxmm();
 
     /**
-     * @throws Tox::Exception
+     * @throws Toxmm::Exception
      *
      * @return Friendlist
      */
@@ -223,7 +223,7 @@ class Tox {
     /**
      * @brief Get own public address
      *
-     * @throws Tox::Exception
+     * @throws Toxmm::Exception
      *
      * @return Public address of yourself
      */
@@ -232,19 +232,19 @@ class Tox {
     /**
      * @brief Get friends public address
      *
-     * @throws Tox::Exception
+     * @throws Toxmm::Exception
      *
      * Public address which was used to accept the invite
      * or public address used to invite.
      *
      * @return Public address of friend
      */
-    FriendAddr get_address(Tox::FriendNr nr);
+    FriendAddr get_address(Toxmm::FriendNr nr);
 
     /**
      * @brief Invite friend
      *
-     * @throws Tox::Exception
+     * @throws Toxmm::Exception
      *
      * @param addr Public address of friend
      * @param message Invite message
@@ -256,7 +256,7 @@ class Tox {
     /**
      * @brief Accept friend request
      *
-     * @throws Tox::Exception
+     * @throws Toxmm::Exception
      *
      * @param addr Public address of friend
      *
@@ -265,7 +265,7 @@ class Tox {
     FriendNr add_friend_norequest(FriendAddr addr);
 
     /**
-     * @throws Tox::Exception
+     * @throws Toxmm::Exception
      *
      * @param address
      *
@@ -276,7 +276,7 @@ class Tox {
     /**
      * @brief Remove friend from friendlist
      *
-     * @throws Tox::Exception
+     * @throws Toxmm::Exception
      *
      * Removes friend from the friendlist,
      * can be quickly readded with add_friend_norequest().
@@ -289,7 +289,7 @@ class Tox {
     /**
      * @brief send message to somebody
      *
-     * @throws Tox::Exception
+     * @throws Toxmm::Exception
      * @throws SQLite::Exception
      *
      * @param nr ID of friend
@@ -305,7 +305,7 @@ class Tox {
      * Prefixes message with "/me "
      * Clients should render "actions" different than "message"
      *
-     * @throws Tox::Exception
+     * @throws Toxmm::Exception
      * @throws SQLite::Exception
      *
      * @param nr ID of friend
@@ -318,7 +318,7 @@ class Tox {
     /**
      * @brief send typing message
      *
-     * @throws Tox::Exception
+     * @throws Toxmm::Exception
      *
      * @param nr ID of friend
      *
@@ -329,21 +329,21 @@ class Tox {
     /**
      * @brief Changes the display name of yourself
      *
-     * @throws Tox::Exception
+     * @throws Toxmm::Exception
      *
      * @param name new display name
      */
     void set_name(const Glib::ustring& name);
 
     /**
-     * @throws Tox::Exception
+     * @throws Toxmm::Exception
      *
      * @return Name of yourself
      */
     Glib::ustring get_name();
 
     /**
-     * @throws Tox::Exception
+     * @throws Toxmm::Exception
      *
      * @param nr ID of friend
      *
@@ -352,14 +352,14 @@ class Tox {
     Glib::ustring get_name(FriendNr nr);
 
     /**
-     * @throws Tox::Exception
+     * @throws Toxmm::Exception
      *
      * @return Name of yourself or the address of yourself as hex-string
      */
     Glib::ustring get_name_or_address();
 
     /**
-     * @throws Tox::Exception
+     * @throws Toxmm::Exception
      *
      * @param nr ID of friend
      *
@@ -368,14 +368,14 @@ class Tox {
     Glib::ustring get_name_or_address(FriendNr nr);
 
     /**
-     * @throws Tox::Exception
+     * @throws Toxmm::Exception
      *
      * @return Status message of yourself
      */
     Glib::ustring get_status_message();
 
     /**
-     * @throws Tox::Exception
+     * @throws Toxmm::Exception
      *
      * @param nr ID of friend
      *
@@ -386,21 +386,21 @@ class Tox {
     /**
      * @brief Changes your status message
      *
-     * @throws Tox::Exception
+     * @throws Toxmm::Exception
      *
      * @param msg new message
      */
     void set_status_message(Glib::ustring msg);
 
     /**
-     * @throws Tox::Exception
+     * @throws Toxmm::Exception
      *
      * @return Online/Busy/Away/Offline status of yourself
      */
     EUSERSTATUS get_status();
 
     /**
-     * @throws Tox::Exception
+     * @throws Toxmm::Exception
      *
      * @param nr ID of friend
      *
@@ -421,7 +421,7 @@ class Tox {
     bool is_connected();
 
     /**
-     * @throws Tox::Exception
+     * @throws Toxmm::Exception
      *
      * @param nr ID of friend
      *
@@ -430,7 +430,7 @@ class Tox {
     unsigned long long get_last_online(FriendNr nr);
 
     /**
-     * @throws Tox::Exception
+     * @throws Toxmm::Exception
      *
      * @return Optimal interval for update() in ms
      */
@@ -439,7 +439,7 @@ class Tox {
     /**
      * @brief Event loop
      *
-     * @throws Tox::Exception
+     * @throws Toxmm::Exception
      *
      * @param ev Reference to a event-object
      *
@@ -450,7 +450,7 @@ class Tox {
     /**
      * @brief Helper function, convert byte array to hex-string
      *
-     * @throws Tox::Exception
+     * @throws Toxmm::Exception
      *
      * @param data unsigned char array
      * @param len length of data
@@ -462,7 +462,7 @@ class Tox {
     /**
      * @brief Helper function, convert hex-string to byte array
      *
-     * @throws Tox::Exception
+     * @throws Toxmm::Exception
      *
      * @param data hex-string
      *
