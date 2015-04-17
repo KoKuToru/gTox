@@ -150,6 +150,7 @@ endif()
 SET(TRANSLATIONS
     de
     en
+    ru
 )
 
 foreach(_trans ${TRANSLATIONS})
