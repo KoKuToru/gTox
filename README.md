@@ -18,9 +18,9 @@ For comparison https://wiki.tox.im/Client
 | ------------- |:-------------:|:------:|-------|
 | **Interface** | Desktop GUI   |        |
 | Linux         | **Yes**       |        |
-| Windows       | Maybe         |        | *If you can compile GTKmm..*
-| OS X          | Maybe         |        | *If you can compile GTKmm..*
-| BSD-like      | Maybe         |        | *If you can compile GTKmm..*
+| Windows       | Maybe         |        | *If you can build Gtk+..*
+| OS X          | Maybe         |        | *If you can build Gtk+..*
+| BSD-like      | Maybe         |        | *If you can build Gtk+..*
 | Android       | No            |        |
 | iOS           | No            |        |
 | 1v1 messaging | **Yes** | |
@@ -37,7 +37,7 @@ For comparison https://wiki.tox.im/Client
 | Contact aliases | No | |
 | Contact blocking | No | |
 | Save file encryption | No | |
-| Multilingual | **Yes** | | *English and German*
+| Multilingual | **Yes** | | *English / German / Russian*
 | Multiprofile | **Yes** | [#26](https://github.com/KoKuToru/gTox/issues/26) |
 | Typing notification | No | |
 | Audio notifications | **Yes** | | *When a message comes in*
