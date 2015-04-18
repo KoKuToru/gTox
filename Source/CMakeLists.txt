@@ -36,6 +36,8 @@ add_subdirectory(Tools)
 set(LAYOUT
     Layout/dialog_profile.ui
     Layout/list_item_profile.ui
+    Layout/list_item_contact.ui
+    Layout/list_item_contact_mini.ui
     Layout/dialog_assistant.ui
     Layout/dialog_contact.ui)
 add_custom_command(
@@ -93,7 +95,6 @@ add_custom_command(
 set(SOURCES
     main.cpp
     Widget/WidgetChat.cpp
-    Widget/WidgetContact.cpp
     Widget/WidgetContactListItem.cpp
     Widget/WidgetChatLine.cpp
     Popover/PopoverStatus.cpp

@@ -23,7 +23,6 @@
 #include <gtkmm.h>
 
 #include "Widget/WidgetChat.h"
-#include "Widget/WidgetContact.h"
 #include "Popover/PopoverStatus.h"
 #include "Popover/PopoverSettings.h"
 #include "Popover/PopoverAddContact.h"
@@ -38,51 +37,26 @@ class DialogContact : public Gtk::Window {
 
     Glib::RefPtr<Gtk::StatusIcon> m_status_icon;
 
-    Gtk::HeaderBar* m_headerbar_right;
-    Gtk::HeaderBar* m_headerbar_left;
+    Gtk::HeaderBar* m_headerbar;
 
-    Gtk::Paned m_header_paned;
-    Gtk::HeaderBar m_headerbar_chat;
-    Gtk::HeaderBar m_headerbar_contact;
+    Gtk::Button* m_btn_status;
 
-    Gtk::Paned m_paned;
+    Gtk::Stack* m_stack_header;
+    Gtk::Stack* m_stack;
 
-    Gtk::Image m_icon_attach;
-    Gtk::Image m_icon_detach;
-    Gtk::Image m_icon_settings;
     Gtk::Image m_icon_status;
-    Gtk::Image m_icon_add;
 
-    Gtk::Button m_btn_xxtach;
-    Gtk::Button m_btn_status;
-    Gtk::Button m_btn_settings;
-    Gtk::Button m_btn_add;
-    Gtk::Button m_btn_xchat;
-
-    Gtk::Box m_headerbar_chat_box_left;
-    Gtk::Box m_headerbar_contact_box_left;
-    Gtk::Box m_headerbar_contact_box_right;
-
-    Gtk::Stack m_chat;
-
-    Gtk::VBox m_vbox;
-
-    //WidgetContact m_contact;
-
-    std::vector<std::shared_ptr<DialogChat>> m_chat_dialog;
+    std::vector<std::shared_ptr<DialogChat>> m_chat;
 
     sigc::connection m_update_interval;
 
     std::string m_config_path;
 
-    /*PopoverStatus m_popover_status;
-    PopoverSettings m_popover_settings;
-    PopoverAddContact m_popover_add;*/
-
-    DialogContact(const std::string& config_path);
+    std::shared_ptr<PopoverStatus> m_popover_status;
+    std::shared_ptr<PopoverSettings> m_popover_settings;
+    std::shared_ptr<PopoverAddContact> m_popover_add_contact;
 
     ToxEventCallback m_tox_callback;
-    ToxEventCallback m_tox_callback_chat;
 
     bool is_chat_open(Toxmm::FriendNr nr);
 
@@ -90,25 +64,51 @@ class DialogContact : public Gtk::Window {
     DialogContact(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& builder);
     ~DialogContact();
 
-    static std::shared_ptr<DialogContact> create();
+    static std::shared_ptr<DialogContact> create(Glib::ustring file);
 
-    static void init(const std::string& config_path);
     static DialogContact& instance();
     static void destroy();
 
-    void activate_chat(Toxmm::FriendNr nr);
-    void set_status(Toxmm::EUSERSTATUS status_code);
     void exit();
-    void add_contact(Toxmm::FriendNr nr);
-    void change_name(Glib::ustring name, Glib::ustring msg);
-    void delete_friend(Toxmm::FriendNr nr);
 
-    void attach_chat(Toxmm::FriendNr nr);
+    class EventAttachWidget {
+        public:
+            Gtk::HeaderBar* header;
+            Gtk::Widget* body;
+    };
+
+    class EventDetachWidget {
+        public:
+            bool close;
+            Gtk::HeaderBar* header;
+            Gtk::Widget* body;
+    };
+
+    class EventSetName {
+        public:
+            Glib::ustring name;
+            Glib::ustring status;
+    };
+
+    class EventSetStatus {
+        public:
+            Toxmm::EUSERSTATUS status_code;
+    };
+
+    class EventPresentWidget {
+        public:
+            Gtk::HeaderBar* header;
+            Gtk::Widget* body;
+    };
+
+    void set_status(Toxmm::EUSERSTATUS status_code);
 
   protected:
-    void detach_chat();
+    void load_contacts();
+
     bool update();
     void tox_event_handling(const ToxEvent& event);
+
     WidgetChat* get_chat(Toxmm::FriendNr nr, DialogChat*& dialog);
 };
 

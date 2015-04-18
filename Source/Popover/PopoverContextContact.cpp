@@ -33,7 +33,7 @@ PopoverContextContact::PopoverContextContact(Toxmm::FriendNr friendNr)
     m_listbox.signal_row_activated().connect([this](Gtk::ListBoxRow* row) {
         switch (row->get_index()) {
             case 0:
-                DialogContact::instance().delete_friend(this->friendNr);
+                //DialogContact::instance().delete_friend(this->friendNr);
                 break;
         }
         set_visible(false);

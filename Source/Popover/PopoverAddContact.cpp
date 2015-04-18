@@ -70,8 +70,8 @@ PopoverAddContact::PopoverAddContact(const Gtk::Widget& relative_to)
             Toxmm::FriendAddr adr;
             auto adr_c = Toxmm::from_hex(m_addr.get_text());
             std::copy(adr_c.begin(), adr_c.end(), adr.begin());
-            DialogContact::instance().add_contact(Toxmm::instance().add_friend(
-                adr, m_msg.get_buffer()->get_text()));
+            /*DialogContact::instance().add_contact(Toxmm::instance().add_friend(
+                adr, m_msg.get_buffer()->get_text()));*/
 
             set_visible(false);
             m_addr.set_text("");

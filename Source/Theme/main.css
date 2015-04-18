@@ -1,8 +1,8 @@
-/*
+/**
     Profile selection
-*/
+**/
 
-.gtox-profile {
+.gtox-profile, .gtox-contact {
     padding: 5px;
     background-image:
 		-gtk-gradient (
@@ -25,27 +25,31 @@
     padding-right: 5px;
 }
 
-.gtox-profile .gtox-profile-avatar {
+.gtox-profile-avatar, .gtox-contact-avatar {
     padding: 5px
 }
 
-.gtox-profile .gtox-profile-name {
+.gtox-profile-name, .gtox-contact-name {
     font-size: 120%;
     padding: 0 5px;
 }
 
-.gtox-profile .gtox-profile-status {
+.gtox-profile-status, .gtox-contact-status {
     font-size: 80%;
     padding: 0 5px;
 }
 
-.gtox-profile .gtox-profile-path {
+.gtox-profile-path, .gtox-contact-path {
     font-size: 80%;
     padding: 0 5px;
     color: gray;
 }
 
-.gtox-profile:insensitive {
+.gtox-contact-status-icon {
+	padding-left: 6px;
+}
+
+.gtox-profile:insensitive, .gtox-contact:insensitive {
     background-image:
 		-gtk-gradient (
 			linear,
@@ -64,13 +68,20 @@
 	background-size: 10px 10px;
 }
 
-.gtox-profile:selected {
+.gtox-profile:selected, .gtox-contact:selected {
     background-color: rgba(40,150,40,0.2);
 }
 
+/**
+    Popovers
+**/
 GtkPopover {
     padding: 0.5em;
 }
+
+/**
+    Item lists, like in Status selection in Popover
+**/
 
 .gtox-item-list {
     border-bottom: 1px solid rgba(0,0,0,0.3);
@@ -79,6 +90,22 @@ GtkPopover {
 .gtox-item-list:selected {
     background: rgba(0,0,0,0.2);
 }
+
+/**
+    Headerbar tweaks, correctly render radius
+**/
+
+.gtox-headerbar-right {
+    border-top-left-radius: 0;
+}
+
+.gtox-headerbar-left {
+    border-top-right-radius: 0;
+}
+
+/**
+    Chat bubbles
+**/
 
 .gtox-chat {
     
@@ -96,13 +123,6 @@ GtkPopover {
     border-bottom-right-radius: 0;
 }
 
-.gtox-headerbar-right {
-    border-top-left-radius: 0;
-}
-
-.gtox-headerbar-left {
-    border-top-right-radius: 0;
-}
 
 .message_receipt {
 	opacity: 1;
@@ -134,3 +154,4 @@ GtkPopover {
 .bubble_chat_line.bottom_right {
 	border-radius: 0 0 0 5px;
 }
+

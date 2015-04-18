@@ -28,6 +28,7 @@
 // Single chat window
 class DialogChat : public Gtk::Window {
   private:
+    bool m_in_window;
     Gtk::HeaderBar m_header;
     Gtk::Box m_headerbar_btn_left;
     Gtk::Image m_icon_attach;
@@ -42,8 +43,9 @@ class DialogChat : public Gtk::Window {
     ~DialogChat();
 
     void show();
+    void present();
 
-    WidgetChat& get_chat();
+    bool is_visible();
 };
 
 #endif

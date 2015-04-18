@@ -20,9 +20,12 @@
 #include "DialogChat.h"
 #include "Generated/icon.h"
 #include "DialogContact.h"
+#include "Widget/WidgetContactListItem.h"
 
 DialogChat::DialogChat(Toxmm::FriendNr nr)
-    : m_icon_attach(ICON::load_icon(ICON::chat_attach)), m_chat(nr) {
+    : m_in_window(false),
+      m_icon_attach(ICON::load_icon(ICON::chat_attach)),
+      m_chat(nr) {
     this->set_border_width(1);
     this->set_default_geometry(256, 256);
     this->set_position(Gtk::WindowPosition::WIN_POS_NONE);
@@ -43,6 +46,16 @@ DialogChat::DialogChat(Toxmm::FriendNr nr)
             if (data.nr == nr) {
                 m_header.set_subtitle(Toxmm::instance().get_status_message(nr));
             }
+        } else if (ev.type() == typeid(Toxmm::EventFriendAction)) {
+            auto data = ev.get<Toxmm::EventFriendAction>();
+            if (data.nr == nr && is_visible()) {
+                ToxEventCallback::notify(ToxEvent(WidgetContactListItem::EventStopSpin{nr}));
+            }
+        } else if (ev.type() == typeid(Toxmm::EventFriendMessage)) {
+            auto data = ev.get<Toxmm::EventFriendMessage>();
+            if (data.nr == nr && is_visible()) {
+                ToxEventCallback::notify(ToxEvent(WidgetContactListItem::EventStopSpin{nr}));
+            }
         }
     };
 
@@ -52,23 +65,53 @@ DialogChat::DialogChat(Toxmm::FriendNr nr)
     m_headerbar_btn_left.add(m_btn_xxtach);
     m_header.pack_start(m_headerbar_btn_left);
 
-    this->set_titlebar(m_header);
+    //this->set_titlebar(m_header);
 
     // Setup content
-    add(m_chat);
+    //add(m_chat);
 
     m_btn_xxtach.signal_clicked().connect([this]() {
-        DialogContact::instance().attach_chat(m_chat.get_friend_nr());
+        //DialogContact::instance().attach_chat(m_chat.get_friend_nr());
     });
+
+    m_chat.show_all();
+    m_header.show_all();
+    ToxEventCallback::notify(ToxEvent(DialogContact::EventAttachWidget{
+                                          &m_header,
+                                          &m_chat
+                                      }));
 }
 
 DialogChat::~DialogChat() {
 }
 
 void DialogChat::show() {
-    show_all();
+    ToxEventCallback::notify(ToxEvent(DialogContact::EventDetachWidget{
+                                          true,
+                                          &m_header,
+                                          &m_chat
+                                      }));
+    add(m_chat);
+    Gtk::Window::show();
 }
 
-WidgetChat& DialogChat::get_chat() {
-    return m_chat;
+void DialogChat::present() {
+    if (m_in_window) {
+        Gtk::Window::present();
+    } else {
+        ToxEventCallback::notify(ToxEvent(DialogContact::EventPresentWidget{
+                                              &m_header,
+                                              &m_chat
+                                          }));
+    }
+    ToxEventCallback::notify(ToxEvent(WidgetContactListItem::EventStopSpin{m_chat.get_friend_nr()}));
+}
+
+bool DialogChat::is_visible() {
+    if (m_in_window) {
+        //no idea
+        return true;
+    } else {
+        return m_chat.get_mapped();
+    }
 }

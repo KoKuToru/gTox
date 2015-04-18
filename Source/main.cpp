@@ -142,7 +142,7 @@ int main(int argc, char* argv[]) {
 
     Notify::init("gTox");
 
-    auto dialog = DialogContact::create();
+    auto dialog = DialogContact::create("/home/luca/.config/tox/KoKuToru");
     kit.run(*dialog);
     return 0;
 
@@ -221,7 +221,7 @@ int main(int argc, char* argv[]) {
     }
 
     Toxmm::instance().init(config_path); //TODO do this somewhere in DialogContact..
-    DialogContact::init(config_path);
+    //DialogContact::init(config_path);
     kit.run(DialogContact::instance());
     DialogContact::destroy();
     return 0;
