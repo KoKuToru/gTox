@@ -142,6 +142,10 @@ int main(int argc, char* argv[]) {
 
     Notify::init("gTox");
 
+    auto dialog = DialogContact::create();
+    kit.run(*dialog);
+    return 0;
+
     std::string config_path
         = Glib::build_filename(Glib::get_user_config_dir(), "tox");
     if (!Glib::file_test(config_path, Glib::FILE_TEST_IS_DIR)) {

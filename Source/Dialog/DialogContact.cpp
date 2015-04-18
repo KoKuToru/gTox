@@ -19,6 +19,7 @@
 **/
 #include "DialogContact.h"
 #include "Generated/icon.h"
+#include "Generated/layout.h"
 #include <gdkmm.h>
 #include "Tox/Toxmm.h"
 #include <iostream>
@@ -30,16 +31,72 @@
 
 DialogContact* DialogContact::m_instance = nullptr;
 
+DialogContact::DialogContact(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& builder)
+    : Gtk::Window(cobject), m_builder(builder) {
+    m_tox_callback = [this](const ToxEvent& ev) { tox_event_handling(ev); };
+
+    auto css = Gtk::CssProvider::create();
+    if (!css->load_from_data(THEME::main)) {
+        std::cerr << _("LOADING_THEME_FAILED") << std::endl;
+    } else {
+        auto screen = Gdk::Screen::get_default();
+        auto ctx = get_style_context();
+        ctx->add_provider_for_screen(
+            screen, css, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+    }
+
+    set_icon(ICON::load_icon(ICON::icon_128));
+
+    set_border_width(0);
+    set_default_geometry(300, 600);
+    set_position(Gtk::WindowPosition::WIN_POS_CENTER);
+
+    //Connect the 2 paneds
+    Gtk::Paned* paned_top;
+    Gtk::Paned* paned_bottom;
+    m_builder->get_widget("paned_top", paned_top);
+    m_builder->get_widget("paned_bottom", paned_bottom);
+
+    // Connect properties C++ version ?
+    g_object_bind_property(
+        paned_top->gobj(),
+        "position",
+        paned_bottom->gobj(),
+        "position",
+        GBindingFlags(G_BINDING_DEFAULT |
+                      G_BINDING_BIDIRECTIONAL |
+                      G_BINDING_SYNC_CREATE));
+
+    m_builder->get_widget("headerbar_right", m_headerbar_right);
+    m_builder->get_widget("headerbar_left", m_headerbar_left);
+
+    m_headerbar_left->signal_map().connect_notify([this](){
+        m_headerbar_left->get_style_context()->add_class("headerbar-left");
+        m_headerbar_right->get_style_context()->add_class("headerbar-right");
+    });
+    m_headerbar_left->signal_unmap().connect_notify([this](){
+        m_headerbar_left->get_style_context()->remove_class("headerbar-left");
+        m_headerbar_right->get_style_context()->remove_class("headerbar-right");
+    });
+}
+
+std::shared_ptr<DialogContact> DialogContact::create() {
+    auto builder = Gtk::Builder::create_from_string(LAYOUT::dialog_contact);
+    DialogContact* tmp = nullptr;
+    builder->get_widget_derived("dialog_contact", tmp);
+    return std::shared_ptr<DialogContact>(tmp);
+}
+
 DialogContact::DialogContact(const std::string& config_path)
     : m_icon_attach(ICON::load_icon(ICON::chat_attach)),
       m_icon_detach(ICON::load_icon(ICON::chat_detach)),
       m_icon_settings(ICON::load_icon(ICON::settings)),
       m_icon_status(ICON::load_icon(ICON::status_offline)),
       m_icon_add(ICON::load_icon(ICON::plus)),
-      m_config_path(config_path),
-      m_popover_status(m_btn_status),
+      m_config_path(config_path)//,
+      /*m_popover_status(m_btn_status),
       m_popover_settings(m_btn_settings),
-      m_popover_add(m_btn_add) {
+      m_popover_add(m_btn_add)*/ {
 
     m_tox_callback = [this](const ToxEvent& ev) { tox_event_handling(ev); };
 
@@ -116,6 +173,7 @@ DialogContact::DialogContact(const std::string& config_path)
     m_header_paned.pack1(m_headerbar_chat, true, false);
     m_header_paned.pack2(m_headerbar_contact, false, false);
 
+    /*
     m_btn_status.signal_clicked().connect(
         [this]() { m_popover_status.set_visible(true); });
 
@@ -124,7 +182,7 @@ DialogContact::DialogContact(const std::string& config_path)
 
     m_btn_add.signal_clicked().connect(
         [this]() { m_popover_add.set_visible(true); });
-
+    */
     m_btn_xchat.signal_clicked().connect([this]() {
         auto child = m_chat.get_visible_child();
         if (!child) {
@@ -153,7 +211,7 @@ DialogContact::DialogContact(const std::string& config_path)
 
     this->set_titlebar(m_header_paned);
 
-    m_vbox.add(m_contact);
+    //m_vbox.add(m_contact);
 
     // Setup content
     m_paned.pack1(m_chat, false, false);
@@ -188,7 +246,7 @@ DialogContact::DialogContact(const std::string& config_path)
 
     m_header_paned.show();
     m_headerbar_contact.show_all();
-    m_contact.show_all();
+    //m_contact.show_all();
     m_paned.show();
     m_vbox.show();
     m_headerbar_chat_box_left.show_all();
@@ -304,7 +362,7 @@ void DialogContact::tox_event_handling(const ToxEvent& ev) {
 }
 
 void DialogContact::add_contact(Toxmm::FriendNr nr) {
-    m_contact.add_contact(nr);
+    //m_contact.add_contact(nr);
     Toxmm::instance().save();
 }
 
@@ -473,7 +531,7 @@ void DialogContact::change_name(Glib::ustring name, Glib::ustring msg) {
 }
 
 void DialogContact::delete_friend(Toxmm::FriendNr nr) {
-    m_contact.delete_contact(nr);
+    //m_contact.delete_contact(nr);
     Toxmm::instance().del_friend(nr);
     Toxmm::instance().save();
 }

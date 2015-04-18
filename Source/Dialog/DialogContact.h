@@ -34,8 +34,12 @@
 class DialogContact : public Gtk::Window {
   private:
     static DialogContact* m_instance;
+    const Glib::RefPtr<Gtk::Builder> m_builder;
 
     Glib::RefPtr<Gtk::StatusIcon> m_status_icon;
+
+    Gtk::HeaderBar* m_headerbar_right;
+    Gtk::HeaderBar* m_headerbar_left;
 
     Gtk::Paned m_header_paned;
     Gtk::HeaderBar m_headerbar_chat;
@@ -63,7 +67,7 @@ class DialogContact : public Gtk::Window {
 
     Gtk::VBox m_vbox;
 
-    WidgetContact m_contact;
+    //WidgetContact m_contact;
 
     std::vector<std::shared_ptr<DialogChat>> m_chat_dialog;
 
@@ -71,9 +75,9 @@ class DialogContact : public Gtk::Window {
 
     std::string m_config_path;
 
-    PopoverStatus m_popover_status;
+    /*PopoverStatus m_popover_status;
     PopoverSettings m_popover_settings;
-    PopoverAddContact m_popover_add;
+    PopoverAddContact m_popover_add;*/
 
     DialogContact(const std::string& config_path);
 
@@ -83,7 +87,11 @@ class DialogContact : public Gtk::Window {
     bool is_chat_open(Toxmm::FriendNr nr);
 
   public:
+    DialogContact(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& builder);
     ~DialogContact();
+
+    static std::shared_ptr<DialogContact> create();
+
     static void init(const std::string& config_path);
     static DialogContact& instance();
     static void destroy();
