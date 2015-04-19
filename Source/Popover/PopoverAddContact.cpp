@@ -35,8 +35,8 @@ PopoverAddContact::PopoverAddContact(const Gtk::Widget& relative_to)
     box_msg->add(m_msg);
     box_msg->get_style_context()->add_class("entry");
     box_msg->get_style_context()->remove_class("frame");
-    m_addr.set_size_request(300);
-    m_msg.set_size_request(300, 200);
+    m_addr.set_size_request(200);
+    m_msg.set_size_request(200, 100);
     m_msg.set_wrap_mode(Gtk::WRAP_WORD_CHAR);
     grid->set_column_homogeneous(false);
     grid->set_row_spacing(5);
