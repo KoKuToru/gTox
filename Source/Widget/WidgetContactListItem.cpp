@@ -23,12 +23,15 @@
 #include "Generated/icon.h"
 #include "Generated/layout.h"
 
-WidgetContactListItem* WidgetContactListItem::create(Toxmm::FriendNr nr) {
-    auto builder = Gtk::Builder::create_from_string(LAYOUT::list_item_contact);
+WidgetContactListItem* WidgetContactListItem::create(Toxmm::FriendNr nr, bool for_notify) {
+    auto builder = Gtk::Builder::create_from_string(use_mini(for_notify)?LAYOUT::list_item_contact_mini:LAYOUT::list_item_contact);
     WidgetContactListItem* tmp = nullptr;
     builder->get_widget_derived("contact_list_item", tmp);
     tmp->set_contact(nr);
-    tmp->show();
+    tmp->set_for_notify(for_notify);
+    if (!for_notify) {
+        tmp->show();
+    }
     return tmp;
 }
 
@@ -67,35 +70,30 @@ WidgetContactListItem::WidgetContactListItem(BaseObjectType* cobject, const Glib
             }
         } else if (ev.type() == typeid(EventActivated)) {
             auto data = ev.get<EventActivated>();
-            if (data.target != this) {
+            if (data.nr == m_friend_nr) {
+                if (!m_for_notify) {
+                    if (!m_chat) {
+                        m_chat = std::make_shared<DialogChat>(m_friend_nr);
+                    }
+                    m_chat->present();
+                } else {
+                    show();
+                }
                 return;
             }
-            //Display chat
-            if (!m_chat) {
-                m_chat = std::make_shared<DialogChat>(m_friend_nr);
-            }
-            m_chat->present();
-
-            get_style_context()->add_class("gtox-contact-chat-active");
-            dynamic_cast<Gtk::ListBox*>(get_parent())->invalidate_sort();
         } else if (ev.type() == typeid(EventDestroyChat)) {
             auto data = ev.get<EventDestroyChat>();
-            if (data.nr != m_friend_nr) {
-                return;
+            if (data.nr == m_friend_nr) {
+                if (!m_for_notify) {
+                    if (m_chat) {
+                        m_chat.reset();
+                    }
+                } else {
+                    hide();
+                }
             }
-            if (m_chat) {
-                m_chat.reset();
-            }
-            get_style_context()->remove_class("gtox-contact-chat-active");
-            dynamic_cast<Gtk::ListBox*>(get_parent())->invalidate_sort();
         }
     };
-
-    m_avatar->set(ICON::load_icon(ICON::avatar)->scale_simple(
-        64,
-        64,
-        Gdk::INTERP_BILINEAR));  // i would like to resize this depending
-                                 // on font-scale settings
 }
 
 WidgetContactListItem::~WidgetContactListItem() {
@@ -177,15 +175,24 @@ Glib::RefPtr<Gdk::PixbufAnimation> WidgetContactListItem::generate_animation(
 }
 
 int WidgetContactListItem::compare(WidgetContactListItem* other) {
-    if (m_chat && !other->m_chat) {
-        return -1;
-    } else if (!m_chat && other->m_chat) {
-        return 1;
-    }
     if (m_name < other->m_name) {
         return -1;
     } else if (m_name > other->m_name) {
         return 1;
     }
     return 0;
+}
+
+void WidgetContactListItem::set_for_notify(bool notify) {
+    m_for_notify = notify;
+
+    m_avatar->set(ICON::load_icon(ICON::avatar)->scale_simple(
+        use_mini(m_for_notify)?32:64,
+        use_mini(m_for_notify)?32:64,
+        Gdk::INTERP_BILINEAR));  // i would like to resize this depending
+                                 // on font-scale settings
+}
+
+bool WidgetContactListItem::use_mini(bool for_notify) {
+    return Toxmm::instance().database().config_get(for_notify?"VISUAL_CONTACT_NOTIFY":"VISUAL_CONTACT", for_notify?1:0);
 }

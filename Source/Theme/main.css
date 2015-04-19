@@ -68,16 +68,20 @@
 	background-size: 10px 10px;
 }
 
-.gtox-profile:selected, .gtox-contact:selected {
-    background-color: rgba(255,255,255,0.05);
+.gtox-profile:selected {
+    background-color: rgba(255,255,255,0.2);
 }
 
-.gtox-contact-chat-active {
+.gtox-contact-active {
     background-color: rgba(40,150,40,0.2);
 }
 
-.gtox-contact-chat-active:selected {
-    background-color: rgba(40,150,40,0.3);
+.gtox-contact:selected {
+    background-color: transparent;
+}
+
+.gtox-contact:prelight {
+    background-color: rgba(255,255,255,0.2);
 }
 
 /**

@@ -35,6 +35,7 @@ class WidgetContactListItem : public Gtk::ListBoxRow {
     Gtk::Image* m_status_icon;
 
     Toxmm::FriendNr m_friend_nr;
+    bool m_for_notify;
 
     ToxEventCallback m_tox_callback;
 
@@ -47,7 +48,7 @@ class WidgetContactListItem : public Gtk::ListBoxRow {
 
   public:
     WidgetContactListItem(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& builder);
-    static WidgetContactListItem* create(Toxmm::FriendNr nr);
+    static WidgetContactListItem* create(Toxmm::FriendNr nr, bool for_notify=false);
 
     ~WidgetContactListItem();
 
@@ -65,7 +66,7 @@ class WidgetContactListItem : public Gtk::ListBoxRow {
 
     class EventActivated {
         public:
-            WidgetContactListItem* target;
+            Toxmm::FriendNr nr;
     };
 
     int compare(WidgetContactListItem* other);
@@ -73,6 +74,8 @@ class WidgetContactListItem : public Gtk::ListBoxRow {
   protected:
     void refresh();
     void set_contact(Toxmm::FriendNr nr);
+    void set_for_notify(bool notify);
+    static bool use_mini(bool for_notify);
 };
 
 #endif

@@ -122,12 +122,16 @@ DialogContact::DialogContact(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Bu
     });
 
     Gtk::ListBox* list;
+    Gtk::ListBox* list_notify;
     m_builder->get_widget("list", list);
-    list->signal_row_activated().connect([this](Gtk::ListBoxRow* row) {
+    m_builder->get_widget("list_notify", list_notify);
+    auto activated = [this](Gtk::ListBoxRow* row) {
         //FORWARD SIGNAL TO THE ITEM
         WidgetContactListItem* item = dynamic_cast<WidgetContactListItem*>(row);
-        ToxEventCallback::notify(ToxEvent(WidgetContactListItem::EventActivated{item}));
-    });
+        ToxEventCallback::notify(ToxEvent(WidgetContactListItem::EventActivated{item->get_friend_nr()}));
+    };
+    list->signal_row_activated().connect(activated);
+    list_notify->signal_row_activated().connect(activated);
 
     list->set_sort_func([this](Gtk::ListBoxRow* a, Gtk::ListBoxRow* b){
         WidgetContactListItem* item_a = dynamic_cast<WidgetContactListItem*>(a);
@@ -155,7 +159,9 @@ std::shared_ptr<DialogContact> DialogContact::create(Glib::ustring file) {
 
 void DialogContact::load_contacts() {
     Gtk::ListBox* list;
+    Gtk::ListBox* list_notify;
     m_builder->get_widget("list", list);
+    m_builder->get_widget("list_notify", list_notify);
     if (!list) {
         return;
     }
@@ -176,6 +182,8 @@ void DialogContact::load_contacts() {
             scroll->set_size_request(-1, min_height*7);
             first = false;
         }
+        auto item_notify = Gtk::manage(WidgetContactListItem::create(contact, true));
+        list_notify->add(*item_notify);
     }
 }
 
