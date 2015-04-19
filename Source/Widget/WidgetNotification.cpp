@@ -71,11 +71,35 @@ void WidgetNotification::set_event(DialogContact::EventAddNotification event) {
         m_notify->set_image_from_pixbuf(ICON::load_icon(ICON::icon_128));
     }
 
+    icon->property_pixbuf() = ICON::load_icon(ICON::notification);
+
+    Gtk::Box* action_bar;
+    m_builder->get_widget("action_bar", action_bar);
+    //handle actions
+    for (auto action : event.actions) {
+        m_notify->add_action(action.first, action.first, [this, action](const Glib::ustring&){
+            //Who knows if notification events are on the same thread as gtk ?
+            Glib::signal_idle().connect_once([this, action](){
+                ToxEventCallback::notify(action.second);
+                Glib::signal_idle().connect_once([this](){
+                    delete this;
+                });
+            });
+        });
+        auto action_btn = Gtk::manage(new Gtk::Button(action.first));
+        action_btn->signal_clicked().connect([this, action](){
+            ToxEventCallback::notify(action.second);
+            Glib::signal_idle().connect_once([this](){
+                delete this;
+            });
+        });
+        action_btn->show();
+        action_bar->add(*action_btn);
+    }
+
     m_notify->signal_closed().connect([this](){
         activated();
     });
-
-    icon->property_pixbuf() = ICON::load_icon(ICON::notification);
 
     if (m_event.show_on_desktop) {
         m_notify->show();

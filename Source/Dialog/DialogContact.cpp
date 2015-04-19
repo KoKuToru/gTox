@@ -155,7 +155,6 @@ DialogContact::DialogContact(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Bu
         sigc::mem_fun(this, &DialogContact::update),
         Toxmm::instance().update_optimal_interval());
 
-    //DEMO
     ToxEventCallback::notify(ToxEvent(EventAddNotification{
                                           true,
                                           "pre-alpha Software",
