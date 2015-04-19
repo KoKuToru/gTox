@@ -133,6 +133,7 @@ void DialogChat::show() {
         m_header_box.add(m_header);
         m_chat_box.add(m_chat);
         m_in_window = true;
+        m_icon_attach.property_pixbuf() = ICON::load_icon(ICON::chat_attach);
     }
     Gtk::Window::show();
 }
@@ -147,6 +148,7 @@ void DialogChat::hide() {
                                               &m_header,
                                               &m_chat
                                           }));
+        m_icon_attach.property_pixbuf() = ICON::load_icon(ICON::chat_detach);
     }
     Gtk::Window::hide();
 }
