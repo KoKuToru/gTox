@@ -35,8 +35,8 @@ PopoverAddContact::PopoverAddContact(const Gtk::Widget& relative_to)
     box_msg->add(m_msg);
     box_msg->get_style_context()->add_class("entry");
     box_msg->get_style_context()->remove_class("frame");
-    m_addr.set_size_request(300);
-    m_msg.set_size_request(300, 200);
+    m_addr.set_size_request(200);
+    m_msg.set_size_request(200, 100);
     m_msg.set_wrap_mode(Gtk::WRAP_WORD_CHAR);
     grid->set_column_homogeneous(false);
     grid->set_row_spacing(5);
@@ -67,16 +67,16 @@ PopoverAddContact::PopoverAddContact(const Gtk::Widget& relative_to)
         }
 
         try {
-            Tox::FriendAddr adr;
-            auto adr_c = Tox::from_hex(m_addr.get_text());
+            Toxmm::FriendAddr adr;
+            auto adr_c = Toxmm::from_hex(m_addr.get_text());
             std::copy(adr_c.begin(), adr_c.end(), adr.begin());
-            DialogContact::instance().add_contact(Tox::instance().add_friend(
-                adr, m_msg.get_buffer()->get_text()));
+            /*DialogContact::instance().add_contact(Toxmm::instance().add_friend(
+                adr, m_msg.get_buffer()->get_text()));*/
 
             set_visible(false);
             m_addr.set_text("");
             m_msg.get_buffer()->set_text("");
-        } catch (Tox::Exception &ex) {
+        } catch (Toxmm::Exception &ex) {
             if (ex.type() != typeid(TOX_ERR_FRIEND_ADD)) {
                 throw;
             }

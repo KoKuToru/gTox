@@ -1,9 +1,56 @@
-GtkPaned {
-	background: black;
+/**
+    Profile selection
+**/
+
+.gtox-profile, .gtox-contact {
+    padding: 5px;
+    background-image:
+		-gtk-gradient (
+			linear,
+			left top, right bottom,
+			color-stop(0, transparent),
+			color-stop(0.01, transparent),
+			color-stop(0.03, transparent),
+			color-stop(0.47, transparent),
+			color-stop(0.49, transparent),
+			color-stop(0.51, transparent),
+			color-stop(0.53, transparent),
+			color-stop(0.97, transparent),
+			color-stop(0.99, transparent),
+			color-stop(1, transparent));		
+	background-repeat: repeat;
+	background-size: 10px 10px;
+	border-bottom: 1px solid rgba(0,0,0,0.3);
+	padding-left: 9px;
+    padding-right: 5px;
 }
 
-*:insensitive {
-	background-image:
+.gtox-profile-avatar, .gtox-contact-avatar {
+    padding: 5px
+}
+
+.gtox-profile-name, .gtox-contact-name {
+    font-size: 120%;
+    padding: 0 5px;
+}
+
+.gtox-profile-status, .gtox-contact-status {
+    font-size: 80%;
+    padding: 0 5px;
+}
+
+.gtox-profile-path, .gtox-contact-path {
+    font-size: 80%;
+    padding: 0 5px;
+    color: gray;
+}
+
+.gtox-contact-status-icon {
+	padding-left: 6px;
+}
+
+.gtox-profile:insensitive, .gtox-contact:insensitive {
+    background-image:
 		-gtk-gradient (
 			linear,
 			left top, right bottom,
@@ -21,132 +68,77 @@ GtkPaned {
 	background-size: 10px 10px;
 }
 
-*:insensitive > * {
-	background-image: initial;
+.gtox-profile:selected, .gtox-contact:selected {
+    background-color: rgba(255,255,255,0.05);
 }
 
-GtkFrame {
-    background-color: @theme_base_color;
-    border: none;
+.gtox-contact-chat-active {
+    background-color: rgba(40,150,40,0.2);
 }
 
+.gtox-contact-chat-active:selected {
+    background-color: rgba(40,150,40,0.3);
+}
+
+/**
+    Popovers
+**/
 GtkPopover {
     padding: 0.5em;
 }
 
-.headerbar-right {
-    border-top-left-radius: 0;
-}
+/**
+    Item lists, like in Status selection in Popover
+**/
 
-.headerbar-left {
-    border-top-right-radius: 0;
-}
-
-#WidgetNotification {
-    background-color: @bg_color;
-    color: @fg_color;
-    border-radius: 10px 10px 0 0;
-    border:none;
-    padding: 5px;
-}
-
-/*#HeaderBarRight {
-    background-color: transparent;
-}
-
-#HeaderBarLeft {
-    background-color: transparent;
-}*/
-
-#WidgetContactListItem {
+.gtox-item-list {
     border-bottom: 1px solid rgba(0,0,0,0.3);
 }
 
-#WidgetContactListItem:selected, #PopoverStatusListItem:selected {
+.gtox-item-list:selected {
     background: rgba(0,0,0,0.2);
 }
 
-#Debug {
-    border: 2px solid #FF0000;
+/**
+    Headerbar tweaks, correctly render radius
+**/
+
+.gtox-headerbar-right {
+    border-top-left-radius: 0;
 }
 
-#WidgetChatLineRight {
-    padding: 0.25em;
+.gtox-headerbar-left {
+    border-top-right-radius: 0;
+}
+
+/**
+    Chat bubbles
+**/
+
+.gtox-chat {
+    
+}
+
+.gtox-bubble {
+    border-radius: 7px;
     background-color: rgba(0,0,0,0.2);
-    border-radius: 7px 7px 0px 7px;
 }
 
-#WidgetChatLineLeft {
-    padding: 0.25em;
-    background-color: rgba(0,0,0,0.2);
-    border-radius: 0 7px 7px 7px;
+.gtox-bubble.gtox-left {
+    border-top-left-radius: 0;
 }
 
-#WidgetContactListItem {
-	padding: 5px;
+.gtox-bubble.gtox-right {
+    border-bottom-right-radius: 0;
 }
 
-#WidgetContactListItem #Avatar {
-    padding: 4px
-}
-
-#WidgetContactListItem #Name {
-    font-size: 120%;
-    padding: 5px;
-}
-
-#WidgetContactListItem #Status {
-    font-size: 80%;
-    padding: 5px;
-}
-
-#BigText {
-    font-size: 120%;
-}
-
-#SmallText {
-    font-size: 80%;
-}
-
-#WidgetContactListItem #StatusIcon {
-    padding-left: 9px;
-    padding-right: 5px;
-}
-
-#PopoverStatusListItem {
-    border-radius: 5px;
-}
-
-#ChatTime {
-    background: rgba(255,255,255,0.2);
-    color: black;
-    border-radius: 3px;
-    padding: 2px;
-}
-
-#WidgetChatLineRight .chatmsg {
-    padding: 2px;
-}
-
-#WidgetChatLineLeft .chatmsg {
-    padding: 2px;
-}
-
-GtkListBox.settings GtkListBoxRow {
-    padding: 10px;
-}
-
-.bubble_chat_line {
-	background: transparent;
-	padding: 2px;
-}
 
 .message_receipt {
 	opacity: 1;
 }
 
 .message_pending {
-        background: rgba(0,0,0,0.3);
+    background: rgba(0,0,0,0.3);
 	opacity: 0.3;
 }
 
@@ -155,8 +147,14 @@ GtkListBox.settings GtkListBoxRow {
 	background: rgba(255,0,0,0.3);
 }
 
+.bubble_chat_line {
+	background: transparent;
+	padding: 4px;
+	border: none;
+}
+
+
 .bubble_chat_line.top_left {
-	padding-top: 4px;
 	border-radius: 5px 0 0 0;
 }
 
@@ -165,9 +163,16 @@ GtkListBox.settings GtkListBoxRow {
 }
 
 .bubble_chat_line.bottom_left {
-	border-radius: 0 0 5px 0;
+	border-radius: 0 0 0 5px;
 }
 
 .bubble_chat_line.bottom_right {
-	border-radius: 0 0 0 5px;
+	border-radius: 0 0 5px 0;
+}
+
+.bubble_chat_line_time {
+    background: rgba(255,255,255,0.2);
+    color: black;
+    border-radius: 3px;
+    padding: 2px;
 }

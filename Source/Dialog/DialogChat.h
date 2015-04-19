@@ -21,29 +21,35 @@
 #define DIALOGCHAT_H
 
 #include <gtkmm.h>
-#include "Tox/Tox.h"
+#include "Tox/Toxmm.h"
 #include "Widget/WidgetChat.h"
 #include "Helper/ToxEventCallback.h"
 
 // Single chat window
 class DialogChat : public Gtk::Window {
   private:
+    bool m_in_window;
     Gtk::HeaderBar m_header;
+    Gtk::HeaderBar m_header2;
     Gtk::Box m_headerbar_btn_left;
     Gtk::Image m_icon_attach;
     Gtk::Button m_btn_xxtach;
+    Gtk::Box m_header_box;
 
     WidgetChat m_chat;
+    Gtk::Box m_chat_box;
 
     ToxEventCallback m_tox_callback;
 
   public:
-    DialogChat(Tox::FriendNr nr);
+    DialogChat(Toxmm::FriendNr nr);
     ~DialogChat();
 
     void show();
+    void hide();
+    void present();
 
-    WidgetChat& get_chat();
+    bool is_visible();
 };
 
 #endif

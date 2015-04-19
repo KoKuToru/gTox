@@ -36,7 +36,10 @@ add_subdirectory(Tools)
 set(LAYOUT
     Layout/dialog_profile.ui
     Layout/list_item_profile.ui
-    Layout/dialog_assistant.ui)
+    Layout/list_item_contact.ui
+    Layout/list_item_contact_mini.ui
+    Layout/dialog_assistant.ui
+    Layout/dialog_contact.ui)
 add_custom_command(
     OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/Generated/layout.cpp"
     COMMAND "${PROJECT_BINARY_DIR}/Tools/text2h" LAYOUT Generated/layout ${LAYOUT}
@@ -92,7 +95,6 @@ add_custom_command(
 set(SOURCES
     main.cpp
     Widget/WidgetChat.cpp
-    Widget/WidgetContact.cpp
     Widget/WidgetContactListItem.cpp
     Widget/WidgetChatLine.cpp
     Popover/PopoverStatus.cpp
@@ -118,7 +120,7 @@ set(SOURCES
     Dialog/Debug/DialogCss.cpp
     Helper/Canberra.cpp
     Helper/ToxEventCallback.cpp
-    Tox/Tox.cpp
+    Tox/Toxmm.cpp
     Tox/ToxDatabase.cpp
     Tox/ToxEvent.cpp
     Tox/ToxException.cpp)
@@ -159,8 +161,8 @@ add_custom_command(
    TARGET ${PROJECT_NAME}
    POST_BUILD
    COMMAND mkdir -p Locale/${_trans}/LC_MESSAGES
-   COMMAND ${GETTEXT_MSGMERGE_EXECUTABLE} --no-fuzzy-matching "${CMAKE_CURRENT_SOURCE_DIR}/Locale/${_trans}.po" "${CMAKE_CURRENT_SOURCE_DIR}/Locale/en.po" -o "${CMAKE_CURRENT_SOURCE_DIR}/Locale/${_trans}.po"
-   COMMAND ${GETTEXT_MSGMERGE_EXECUTABLE} --no-fuzzy-matching "${CMAKE_CURRENT_SOURCE_DIR}/Locale/${_trans}.po" "${CMAKE_CURRENT_SOURCE_DIR}/Locale/template.pot" -o "${CMAKE_CURRENT_SOURCE_DIR}/Locale/${_trans}.po"
+   COMMAND ${GETTEXT_MSGMERGE_EXECUTABLE} --update --no-fuzzy-matching "${CMAKE_CURRENT_SOURCE_DIR}/Locale/${_trans}.po" "${CMAKE_CURRENT_SOURCE_DIR}/Locale/en.po"
+   COMMAND ${GETTEXT_MSGMERGE_EXECUTABLE} --update --no-fuzzy-matching "${CMAKE_CURRENT_SOURCE_DIR}/Locale/${_trans}.po" "${CMAKE_CURRENT_SOURCE_DIR}/Locale/template.pot"
    COMMAND ${GETTEXT_MSGFMT_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/Locale/${_trans}.po" -o "${PROJECT_BINARY_DIR}/Locale/${_trans}/LC_MESSAGES/gTox.mo"
    DEPENDS Locale/${_trans}.po)
    install(DIRECTORY "${PROJECT_BINARY_DIR}/Locale/${_trans}"

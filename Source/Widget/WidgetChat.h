@@ -22,7 +22,7 @@
 
 #include <gtkmm.h>
 #include "Chat/WidgetChatEntry.h"
-#include "Tox/Tox.h"
+#include "Tox/Toxmm.h"
 #include "Chat/WidgetChatLayout.h"
 #include "Helper/ToxEventCallback.h"
 #include "WidgetChatLine.h"
@@ -35,7 +35,7 @@ class WidgetChat : public Gtk::VPaned {
     Gtk::HBox m_hbox;
     Gtk::Button m_btn_send;
 
-    Tox::FriendNr m_nr;
+    Toxmm::FriendNr m_nr;
 
     Gtk::ScrolledWindow m_scrolled;
     WidgetChatLayout m_vbox;
@@ -49,10 +49,10 @@ class WidgetChat : public Gtk::VPaned {
     void add_line(bool left_side, WidgetChatLine::Line new_line);
 
   public:
-    WidgetChat(Tox::FriendNr nr);
+    WidgetChat(Toxmm::FriendNr nr);
     ~WidgetChat();
 
-    Tox::FriendNr get_friend_nr() const;
+    Toxmm::FriendNr get_friend_nr() const;
     void focus();
 };
 

@@ -20,7 +20,7 @@
 #include "WidgetChatLine.h"
 #include "Generated/icon.h"
 #include "Chat/WidgetChatLabel.h"
-#include "Tox/Tox.h"
+#include "Tox/Toxmm.h"
 
 WidgetChatLine::WidgetChatLine(bool left_side)
     : Glib::ObjectBase("WidgetChatLine"), m_side(left_side), m_row_count(0) {
@@ -48,7 +48,8 @@ WidgetChatLine::WidgetChatLine(bool left_side)
     m_avatar.property_yalign() = m_side ? 1 : 0;
 //    m_avatar.set_tooltip_text("TODO Display name here..");
 
-    frame->set_name(m_side ? "WidgetChatLineLeft" : "WidgetChatLineRight");
+    frame->get_style_context()->add_class("gtox-bubble");
+    frame->get_style_context()->add_class(m_side ? "gtox-left" : "gtox-right");
 
     show_all();
 
@@ -114,9 +115,9 @@ void WidgetChatLine::add_line(Line new_line) {
         auto index = rows.size() - 1;
         rows.back().tox_callback = [this, index, nr, receipt](const ToxEvent &ev) {
             //wait for receipt
-            if (ev.type() == typeid(Tox::EventReadReceipt)) {
+            if (ev.type() == typeid(Toxmm::EventReadReceipt)) {
                 auto& row = rows[index];
-                auto data = ev.get<Tox::EventReadReceipt>();
+                auto data = ev.get<Toxmm::EventReadReceipt>();
                 if (data.nr == nr) {
                     if (data.receipt > receipt) {
                         //message failed !
@@ -142,7 +143,7 @@ void WidgetChatLine::add_line(Line new_line) {
     // styling
     time->set_halign(Gtk::ALIGN_CENTER);
     time->set_valign(Gtk::ALIGN_START);
-    time->set_name("ChatTime");
+    time->get_style_context()->add_class("bubble_chat_line_time");
 
     msg->set_halign(Gtk::ALIGN_START);
     msg->set_valign(Gtk::ALIGN_CENTER);

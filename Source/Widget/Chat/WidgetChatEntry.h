@@ -21,7 +21,7 @@
 #define WIDGETCHATBOX_H
 
 #include <gtkmm.h>
-#include "Tox/Tox.h"
+#include "Tox/Toxmm.h"
 
 class WidgetChat;
 class WidgetChatEntry : public Gtk::Box {

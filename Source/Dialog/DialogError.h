@@ -21,7 +21,7 @@
 #define DIALOGERROR_H
 
 #include <gtkmm.h>
-#include "Tox/Tox.h"
+#include "Tox/Toxmm.h"
 #include "Widget/WidgetChat.h"
 #include "Helper/ToxEventCallback.h"
 

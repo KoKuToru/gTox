@@ -23,7 +23,7 @@
 #include "Generated/theme.h"
 #include "Generated/layout.h"
 #include <iostream>
-#include <Tox/Tox.h>
+#include <Tox/Toxmm.h>
 
 DialogProfile::DialogProfile(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& builder):
     Gtk::Window(cobject),
@@ -135,13 +135,13 @@ void DialogProfile::set_accounts(const std::vector<std::string>& accounts) {
                     path->set_text(acc);
                     //TRY TO LOAD TOX DATA
                     try {
-                        Tox::instance().init(acc);
-                        name->set_text(Tox::instance().get_name_or_address());
-                        status->set_text(Tox::instance().get_status_message());
+                        Toxmm::instance().init(acc);
+                        name->set_text(Toxmm::instance().get_name_or_address());
+                        status->set_text(Toxmm::instance().get_status_message());
                     } catch (...) {
                         row->set_sensitive(false);
                     }
-                    Tox::destroy();
+                    Toxmm::destroy();
                 }
                 row->show();
                 list->add(*row);

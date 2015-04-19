@@ -18,95 +18,108 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 **/
 #include "WidgetContactListItem.h"
-#include "WidgetContact.h"
-#include "Tox/Tox.h"
+#include "Tox/Toxmm.h"
 #include "Dialog/DialogContact.h"
 #include "Generated/icon.h"
+#include "Generated/layout.h"
 
-WidgetContactListItem::WidgetContactListItem(WidgetContact* contact,
-                                             Tox::FriendNr nr)
-    : Glib::ObjectBase("WidgetContactListItem"),
-      m_contact(contact),
-      m_friend_nr(nr),
+WidgetContactListItem* WidgetContactListItem::create(Toxmm::FriendNr nr) {
+    auto builder = Gtk::Builder::create_from_string(LAYOUT::list_item_contact);
+    WidgetContactListItem* tmp = nullptr;
+    builder->get_widget_derived("contact_list_item", tmp);
+    tmp->set_contact(nr);
+    tmp->show();
+    return tmp;
+}
+
+void WidgetContactListItem::set_contact(Toxmm::FriendNr nr) {
+    m_friend_nr = nr;
+
+    refresh();
+}
+
+WidgetContactListItem::WidgetContactListItem(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& builder)
+    : Gtk::ListBoxRow(cobject),
+      m_builder(builder),
+      m_friend_nr(0),
       spin(false) {
-    set_name("WidgetContactListItem");
 
-    m_name.set_text(Tox::instance().get_name_or_address(nr));
-    m_status_msg.set_text(Tox::instance().get_status_message(nr));
+    m_builder->get_widget("avatar", m_avatar);
+    m_builder->get_widget("name", m_name);
+    m_builder->get_widget("status", m_status_msg);
+    m_builder->get_widget("status_icon", m_status_icon);
 
-    m_tox_callback = [this, nr](const ToxEvent& ev) {
-        if ((ev.type() == typeid(Tox::EventName)          && ev.get<Tox::EventName>().nr == nr) ||
-            (ev.type() == typeid(Tox::EventStatusMessage) && ev.get<Tox::EventStatusMessage>().nr == nr) ||
-            (ev.type() == typeid(Tox::EventUserStatus)    && ev.get<Tox::EventUserStatus>().nr == nr)) {
+    m_tox_callback = [this](const ToxEvent& ev) {
+        if ((ev.type() == typeid(Toxmm::EventName)          && ev.get<Toxmm::EventName>().nr == m_friend_nr) ||
+            (ev.type() == typeid(Toxmm::EventStatusMessage) && ev.get<Toxmm::EventStatusMessage>().nr == m_friend_nr) ||
+            (ev.type() == typeid(Toxmm::EventUserStatus)    && ev.get<Toxmm::EventUserStatus>().nr == m_friend_nr)) {
             refresh();
-        } else if ((ev.type() == typeid(Tox::EventFriendMessage) && ev.get<Tox::EventFriendMessage>().nr == nr) ||
-                   (ev.type() == typeid(Tox::EventFriendAction)  && ev.get<Tox::EventFriendAction>().nr == nr)) {
+        } else if ((ev.type() == typeid(Toxmm::EventFriendMessage) && ev.get<Toxmm::EventFriendMessage>().nr == m_friend_nr) ||
+                   (ev.type() == typeid(Toxmm::EventFriendAction)  && ev.get<Toxmm::EventFriendAction>().nr == m_friend_nr)) {
             if (!spin) {
                 spin = true;
                 refresh();
             }
-        } else if (ev.type() == typeid(EventStopSpin)           && ev.get<EventStopSpin>().nr == nr) {
+        } else if (ev.type() == typeid(EventStopSpin) && ev.get<EventStopSpin>().nr == m_friend_nr) {
             if (spin) {
                 spin = false;
                 refresh();
             }
+        } else if (ev.type() == typeid(EventActivated)) {
+            auto data = ev.get<EventActivated>();
+            if (data.target != this) {
+                return;
+            }
+            //Display chat
+            if (!m_chat) {
+                m_chat = std::make_shared<DialogChat>(m_friend_nr);
+            }
+            m_chat->present();
+
+            get_style_context()->add_class("gtox-contact-chat-active");
+            dynamic_cast<Gtk::ListBox*>(get_parent())->invalidate_sort();
+        } else if (ev.type() == typeid(EventDestroyChat)) {
+            auto data = ev.get<EventDestroyChat>();
+            if (data.nr != m_friend_nr) {
+                return;
+            }
+            if (m_chat) {
+                m_chat.reset();
+            }
+            get_style_context()->remove_class("gtox-contact-chat-active");
+            dynamic_cast<Gtk::ListBox*>(get_parent())->invalidate_sort();
         }
     };
 
-    m_name.set_line_wrap(false);
-    m_name.set_ellipsize(Pango::ELLIPSIZE_END);
-    m_name.set_name("Name");
-
-    m_status_msg.set_line_wrap(false);
-    m_status_msg.set_ellipsize(Pango::ELLIPSIZE_END);
-    m_status_msg.set_name("Status");
-
-    m_avatar.set(ICON::load_icon(ICON::avatar)->scale_simple(
+    m_avatar->set(ICON::load_icon(ICON::avatar)->scale_simple(
         64,
         64,
         Gdk::INTERP_BILINEAR));  // i would like to resize this depending
                                  // on font-scale settings
-    m_avatar.set_name("Avatar");
-
-    m_status_icon.set(ICON::load_icon(ICON::status_offline));
-    m_status_icon.set_name("StatusIcon");
-
-    m_layout.attach(m_status_icon, 0, 0, 1, 2);
-    m_layout.attach(m_name, 1, 0, 1, 1);
-    m_layout.attach(m_status_msg, 1, 1, 1, 1);
-    m_layout.attach(m_avatar, 2, 0, 1, 2);
-
-    m_name.set_halign(Gtk::Align::ALIGN_END);
-    m_status_msg.set_halign(Gtk::Align::ALIGN_END);
-
-    m_name.set_hexpand(true);
-    m_status_msg.set_hexpand(true);
-
-    this->add(m_layout);
 }
 
 WidgetContactListItem::~WidgetContactListItem() {
 }
 
-Tox::FriendNr WidgetContactListItem::get_friend_nr() {
+Toxmm::FriendNr WidgetContactListItem::get_friend_nr() {
     return m_friend_nr;
 }
 
 void WidgetContactListItem::refresh() {
     try {
-        m_name.set_text(Tox::instance().get_name_or_address(m_friend_nr));
-        m_status_msg.set_text(Tox::instance().get_status_message(m_friend_nr));
+        m_name->set_text(Toxmm::instance().get_name_or_address(m_friend_nr));
+        m_status_msg->set_text(Toxmm::instance().get_status_message(m_friend_nr));
 
         const std::string* status = nullptr;
 
-        switch (Tox::instance().get_status(m_friend_nr)) {
-            case Tox::EUSERSTATUS::BUSY:
+        switch (Toxmm::instance().get_status(m_friend_nr)) {
+            case Toxmm::EUSERSTATUS::BUSY:
                 status = &ICON::status_busy;
                 break;
-            case Tox::EUSERSTATUS::NONE:
+            case Toxmm::EUSERSTATUS::NONE:
                 status = &ICON::status_online;
                 break;
-            case Tox::EUSERSTATUS::AWAY:
+            case Toxmm::EUSERSTATUS::AWAY:
                 status = &ICON::status_away;
                 break;
             default:
@@ -115,9 +128,9 @@ void WidgetContactListItem::refresh() {
         }
 
         if (spin) {
-            m_status_icon.set(generate_animation(ICON::load_icon(*status)));
+            m_status_icon->set(generate_animation(ICON::load_icon(*status)));
         } else {
-            m_status_icon.set(ICON::load_icon(*status));
+            m_status_icon->set(ICON::load_icon(*status));
         }
     } catch (...) {
     }
@@ -132,7 +145,7 @@ std::string replace(std::string str,
     str.replace(start_pos, from.length(), to);
     return str;
 }
-#include <iostream>
+
 Glib::RefPtr<Gdk::PixbufAnimation> WidgetContactListItem::generate_animation(
     const Glib::RefPtr<Gdk::Pixbuf>& icon) {
     auto ani = gdk_pixbuf_simple_anim_new(24, 24, 30);
@@ -161,4 +174,18 @@ Glib::RefPtr<Gdk::PixbufAnimation> WidgetContactListItem::generate_animation(
     }
     gdk_pixbuf_simple_anim_set_loop(ani, true);
     return Glib::wrap(GDK_PIXBUF_ANIMATION(ani));
+}
+
+int WidgetContactListItem::compare(WidgetContactListItem* other) {
+    if (m_chat && !other->m_chat) {
+        return -1;
+    } else if (!m_chat && other->m_chat) {
+        return 1;
+    }
+    if (m_name < other->m_name) {
+        return -1;
+    } else if (m_name > other->m_name) {
+        return 1;
+    }
+    return 0;
 }

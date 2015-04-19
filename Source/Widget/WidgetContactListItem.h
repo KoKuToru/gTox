@@ -21,40 +21,58 @@
 #define WIDGETCONTACTLISTITEM_H
 
 #include <gtkmm.h>
-#include "Tox/Tox.h"
+#include "Tox/Toxmm.h"
 #include "Helper/ToxEventCallback.h"
+#include "Dialog/DialogChat.h"
 
 class WidgetContact;
 class WidgetContactListItem : public Gtk::ListBoxRow {
   private:
-    Gtk::Image m_avatar;
-    Gtk::Label m_name;
-    Gtk::Label m_status_msg;
-    Gtk::Image m_status_icon;
+    const Glib::RefPtr<Gtk::Builder> m_builder;
+    Gtk::Image* m_avatar;
+    Gtk::Label* m_name;
+    Gtk::Label* m_status_msg;
+    Gtk::Image* m_status_icon;
 
-    Gtk::Grid m_layout;
-
-    WidgetContact* m_contact;
-
-    Tox::FriendNr m_friend_nr;
+    Toxmm::FriendNr m_friend_nr;
 
     ToxEventCallback m_tox_callback;
-    void refresh();
+
     Glib::RefPtr<Gdk::PixbufAnimation> generate_animation(
         const Glib::RefPtr<Gdk::Pixbuf>& icon);
 
     bool spin;
 
+    std::shared_ptr<DialogChat> m_chat;
+
   public:
-    WidgetContactListItem(WidgetContact* contact, Tox::FriendNr nr);
+    WidgetContactListItem(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& builder);
+    static WidgetContactListItem* create(Toxmm::FriendNr nr);
+
     ~WidgetContactListItem();
 
-    Tox::FriendNr get_friend_nr();
+    Toxmm::FriendNr get_friend_nr();
 
     class EventStopSpin {
         public:
-            Tox::FriendNr nr;
+            Toxmm::FriendNr nr;
     };
+
+    class EventDestroyChat {
+        public:
+            Toxmm::FriendNr nr;
+    };
+
+    class EventActivated {
+        public:
+            WidgetContactListItem* target;
+    };
+
+    int compare(WidgetContactListItem* other);
+
+  protected:
+    void refresh();
+    void set_contact(Toxmm::FriendNr nr);
 };
 
 #endif
