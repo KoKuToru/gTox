@@ -180,6 +180,10 @@ void DialogContact::load_contacts() {
             Gtk::ScrolledWindow* scroll;
             m_builder->get_widget("contact_scroll", scroll);
             scroll->set_size_request(-1, min_height*7);
+            scroll->queue_resize_no_redraw();
+            Glib::signal_idle().connect_once([scroll](){
+                scroll->set_size_request(-1, -1);
+            });
             first = false;
         }
         auto item_notify = Gtk::manage(WidgetContactListItem::create(contact, true));
