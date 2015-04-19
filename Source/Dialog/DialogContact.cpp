@@ -219,11 +219,10 @@ void DialogContact::tox_event_handling(const ToxEvent& ev) {
     } else if (ev.type() == typeid(EventDetachWidget)) {
         auto data = ev.get<EventDetachWidget>();
 
-        /*property_gravity() = Gdk::GRAVITY_NORTH_WEST;
-        int x, y, w, h;
-        get_position(x, y);
-        get_size(w, h);
-        w -= m_headerbar->get_width();*/
+        property_gravity() = Gdk::GRAVITY_NORTH_WEST;
+        get_position(data.out_x, data.out_y);
+        get_size(data.out_w, data.out_h);
+        data.out_w -= m_headerbar->get_width();
 
         data.header->get_style_context()->remove_class("gtox-headerbar-left");
         m_stack_header->remove(*data.header);

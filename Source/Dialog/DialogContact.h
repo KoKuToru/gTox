@@ -82,6 +82,10 @@ class DialogContact : public Gtk::Window {
             bool close;
             Gtk::HeaderBar* header;
             Gtk::Widget* body;
+            int &out_x;
+            int &out_y;
+            int &out_w;
+            int &out_h;
     };
 
     class EventSetName {

@@ -115,21 +115,33 @@ DialogChat::DialogChat(Toxmm::FriendNr nr)
 
 DialogChat::~DialogChat() {
     if (!m_in_window) {
+        int x,y,w,h;
         ToxEventCallback::notify(ToxEvent(DialogContact::EventDetachWidget{
                                               false,
                                               &m_header,
-                                              &m_chat
+                                              &m_chat,
+                                              x,
+                                              y,
+                                              w,
+                                              h
                                           }));
     }
 }
 
 void DialogChat::show() {
     if (!m_in_window) {
+        int x,y,w,h;
         ToxEventCallback::notify(ToxEvent(DialogContact::EventDetachWidget{
                                               true,
                                               &m_header,
-                                              &m_chat
+                                              &m_chat,
+                                              x,
+                                              y,
+                                              w,
+                                              h
                                           }));
+        move(x, y);
+        resize(w, h);
         m_header_box.add(m_header);
         m_chat_box.add(m_chat);
         m_in_window = true;
