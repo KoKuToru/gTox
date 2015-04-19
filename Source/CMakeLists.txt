@@ -38,6 +38,8 @@ set(LAYOUT
     Layout/list_item_profile.ui
     Layout/list_item_contact.ui
     Layout/list_item_contact_mini.ui
+    Layout/list_item_notification.ui
+    Layout/list_item_notification_mini.ui
     Layout/dialog_assistant.ui
     Layout/dialog_contact.ui)
 add_custom_command(
@@ -84,6 +86,7 @@ set(ICONS
     Icons/remove.svg
     Icons/clipboard.svg
     Icons/status_message.svg
+    Icons/notification.svg
     Icons/status_away.svg)
 add_custom_command(
     OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/Generated/icon.cpp"
@@ -110,6 +113,7 @@ set(SOURCES
     Widget/Settings/WidgetNetwork.cpp
     Widget/Settings/WidgetCache.cpp
     Widget/Settings/WidgetAudioVideo.cpp
+    Widget/WidgetNotification.cpp
     Widget/VideoPlayer.cpp
     Dialog/DialogProfileCreate.cpp
     Dialog/DialogChat.cpp

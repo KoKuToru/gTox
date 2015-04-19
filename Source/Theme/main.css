@@ -2,7 +2,7 @@
     Profile selection
 **/
 
-.gtox-profile, .gtox-contact {
+.gtox-profile, .gtox-contact, .gtox-notification {
     padding: 5px;
     background-image:
 		-gtk-gradient (
@@ -25,16 +25,16 @@
     padding-right: 5px;
 }
 
-.gtox-profile-avatar, .gtox-contact-avatar {
+.gtox-profile-avatar, .gtox-contact-avatar, .gtox-notification-image {
     padding: 5px
 }
 
-.gtox-profile-name, .gtox-contact-name {
+.gtox-profile-name, .gtox-contact-name, .gtox-notification-title {
     font-size: 120%;
     padding: 0 5px;
 }
 
-.gtox-profile-status, .gtox-contact-status {
+.gtox-profile-status, .gtox-contact-status, .gtox-notification-status {
     font-size: 80%;
     padding: 0 5px;
 }
@@ -45,8 +45,9 @@
     color: gray;
 }
 
-.gtox-contact-status-icon {
+.gtox-contact-status-icon, .gtox-notification-icon {
 	padding-left: 6px;
+	padding-right: 6px;
 }
 
 .gtox-profile:insensitive, .gtox-contact:insensitive {
@@ -81,6 +82,22 @@
 }
 
 .gtox-contact:prelight {
+    background-color: rgba(255,255,255,0.2);
+}
+
+.gtox-notification:selected {
+    background-color: rgba(255,255,255,0.2);
+}
+
+.gtox-notification-area {
+    background-color: rgba(150,40,40,0.2);
+}
+
+.gtox-notification:selected {
+    background-color: transparent;
+}
+
+.gtox-notification:prelight {
     background-color: rgba(255,255,255,0.2);
 }
 

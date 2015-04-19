@@ -53,6 +53,9 @@ class ToxEvent {
             }
             return *(const T*)m_data->data();
         }
+        operator bool() {
+            return type() != typeid(void);
+        }
 };
 
 

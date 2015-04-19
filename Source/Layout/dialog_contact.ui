@@ -27,10 +27,9 @@
             <property name="can_focus">False</property>
             <property name="orientation">vertical</property>
             <child>
-              <object class="GtkListBox" id="list_notify">
+              <object class="GtkListBox" id="list_active_chat">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="activate_on_single_click">False</property>
                 <style>
                   <class name="gtox-contact-active"/>
                 </style>
@@ -64,6 +63,20 @@
                 <property name="expand">True</property>
                 <property name="fill">True</property>
                 <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkListBox" id="list_notify">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <style>
+                  <class name="gtox-notification-area"/>
+                </style>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">2</property>
               </packing>
             </child>
           </object>

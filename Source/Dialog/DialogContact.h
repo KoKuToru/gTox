@@ -104,6 +104,16 @@ class DialogContact : public Gtk::Window {
             Gtk::Widget* body;
     };
 
+    class EventAddNotification {
+        public:
+            bool show_on_desktop;
+            Glib::ustring title;
+            Glib::ustring message;
+            Glib::RefPtr<Gdk::Pixbuf> image;
+            std::vector<std::pair<Glib::ustring, ToxEvent>> actions;
+            ToxEvent activated_action;
+    };
+
     void set_status(Toxmm::EUSERSTATUS status_code);
 
   protected:

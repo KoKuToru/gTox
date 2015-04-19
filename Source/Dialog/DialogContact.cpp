@@ -29,6 +29,7 @@
 #include <glibmm/i18n.h>
 #include "Helper/Canberra.h"
 #include "Widget/WidgetContactListItem.h"
+#include "Widget/WidgetNotification.h"
 
 namespace sigc {
     SIGC_FUNCTORS_DEDUCE_RESULT_TYPE_WITH_DECLTYPE
@@ -122,8 +123,10 @@ DialogContact::DialogContact(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Bu
     });
 
     Gtk::ListBox* list;
+    Gtk::ListBox* list_active_chat;
     Gtk::ListBox* list_notify;
     m_builder->get_widget("list", list);
+    m_builder->get_widget("list_active_chat", list_active_chat);
     m_builder->get_widget("list_notify", list_notify);
     auto activated = [this](Gtk::ListBoxRow* row) {
         //FORWARD SIGNAL TO THE ITEM
@@ -131,12 +134,18 @@ DialogContact::DialogContact(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Bu
         ToxEventCallback::notify(ToxEvent(WidgetContactListItem::EventActivated{item->get_friend_nr()}));
     };
     list->signal_row_activated().connect(activated);
-    list_notify->signal_row_activated().connect(activated);
+    list_active_chat->signal_row_activated().connect(activated);
 
     list->set_sort_func([this](Gtk::ListBoxRow* a, Gtk::ListBoxRow* b){
         WidgetContactListItem* item_a = dynamic_cast<WidgetContactListItem*>(a);
         WidgetContactListItem* item_b = dynamic_cast<WidgetContactListItem*>(b);
         return item_a->compare(item_b);
+    });
+
+    list_notify->signal_row_activated().connect([](Gtk::ListBoxRow* row){
+        WidgetNotification* item = dynamic_cast<WidgetNotification*>(row);
+        item->activated();
+        delete item;
     });
 
     load_contacts();
@@ -146,6 +155,16 @@ DialogContact::DialogContact(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Bu
     m_update_interval = Glib::signal_timeout().connect(
         sigc::mem_fun(this, &DialogContact::update),
         Toxmm::instance().update_optimal_interval());
+
+    //DEMO
+    ToxEventCallback::notify(ToxEvent(EventAddNotification{
+                                          true,
+                                          "pre-alpha Software",
+                                          "Not ready for daily usage",
+                                          Glib::RefPtr<Gdk::Pixbuf>(),
+                                          {{"Action1", ToxEvent()}, {"Action2", ToxEvent()}},
+                                          ToxEvent()
+                                      }));
 }
 
 std::shared_ptr<DialogContact> DialogContact::create(Glib::ustring file) {
@@ -159,9 +178,9 @@ std::shared_ptr<DialogContact> DialogContact::create(Glib::ustring file) {
 
 void DialogContact::load_contacts() {
     Gtk::ListBox* list;
-    Gtk::ListBox* list_notify;
+    Gtk::ListBox* list_active_chat;
     m_builder->get_widget("list", list);
-    m_builder->get_widget("list_notify", list_notify);
+    m_builder->get_widget("list_active_chat", list_active_chat);
     if (!list) {
         return;
     }
@@ -187,7 +206,7 @@ void DialogContact::load_contacts() {
             first = false;
         }
         auto item_notify = Gtk::manage(WidgetContactListItem::create(contact, true));
-        list_notify->add(*item_notify);
+        list_active_chat->add(*item_notify);
     }
 }
 
@@ -282,6 +301,13 @@ void DialogContact::tox_event_handling(const ToxEvent& ev) {
 
         m_stack_header->set_visible_child(*data.header);
         m_stack->set_visible_child(*data.body);
+    } else if (ev.type() == typeid(EventAddNotification)) {
+        auto data = ev.get<EventAddNotification>();
+
+        //add to the list..
+        Gtk::ListBox* list;
+        m_builder->get_widget("list_notify", list);
+        list->add(*Gtk::manage(WidgetNotification::create(data)));
     }
 }
 
