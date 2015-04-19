@@ -114,6 +114,16 @@ class DialogContact : public Gtk::Window {
             ToxEvent activated_action;
     };
 
+    class EventCallback {
+        public:
+            std::function<void()> callback;
+    };
+
+    class EventAddContact {
+        public:
+            Toxmm::FriendNr nr;
+    };
+
     void set_status(Toxmm::EUSERSTATUS status_code);
 
   protected:

@@ -160,7 +160,7 @@ DialogContact::DialogContact(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Bu
                                           "pre-alpha Software",
                                           "Not ready for daily usage",
                                           Glib::RefPtr<Gdk::Pixbuf>(),
-                                          {{"Action1", ToxEvent()}, {"Action2", ToxEvent()}},
+                                          {},
                                           ToxEvent()
                                       }));
 }
@@ -230,15 +230,24 @@ bool DialogContact::update() {
 void DialogContact::tox_event_handling(const ToxEvent& ev) {
     if (ev.type() == typeid(Toxmm::EventFriendRequest)) {
         auto data = ev.get<Toxmm::EventFriendRequest>();
-        /*
-        m_notification.add_notification(
-            "Friend request [" + Toxmm::to_hex(data.addr.data(), 32) + "]",
-            data.message,
-            "Accept",
-            [this, data]() {
-                add_contact(Toxmm::instance().add_friend_norequest(data.addr));
-                Toxmm::instance().save();
-            });*/
+
+        ToxEventCallback::notify(ToxEvent(EventAddNotification{
+                                              true,
+                                              Toxmm::to_hex(data.addr.data(), 32),
+                                              Glib::ustring::compose(_("FRIEND_REQUEST"), data.message),
+                                              ICON::load_icon(ICON::avatar)->scale_simple(
+                                              64,
+                                              64,
+                                              Gdk::INTERP_BILINEAR),
+                                              {{_("IGNORE"), ToxEvent()}},
+                                              ToxEvent(EventCallback{[this, data](){
+                                                                         //todo dialog
+                                                                         ToxEventCallback::notify(ToxEvent(EventAddContact{
+                                                                             Toxmm::instance().add_friend_norequest(data.addr)
+                                                                         }));
+                                                                         Toxmm::instance().save();
+                                                                     }})
+                                          }));
     } else if (ev.type() == typeid(EventAttachWidget)) {
         auto data = ev.get<EventAttachWidget>();
 
@@ -306,6 +315,20 @@ void DialogContact::tox_event_handling(const ToxEvent& ev) {
         Gtk::ListBox* list;
         m_builder->get_widget("list_notify", list);
         list->add(*Gtk::manage(WidgetNotification::create(data)));
+    } else if (ev.type() == typeid(EventAddContact)) {
+        auto data = ev.get<EventAddContact>();
+
+        Gtk::ListBox* list;
+        Gtk::ListBox* list_active_chat;
+        m_builder->get_widget("list", list);
+        m_builder->get_widget("list_active_chat", list_active_chat);
+        auto item = Gtk::manage(WidgetContactListItem::create(data.nr));
+        list->add(*item);
+        auto item_notify = Gtk::manage(WidgetContactListItem::create(data.nr, true));
+        list_active_chat->add(*item_notify);
+    } else if (ev.type() == typeid(EventCallback)) {
+        auto data = ev.get<EventCallback>();
+        data.callback();
     }
 }
 
@@ -353,6 +376,7 @@ void DialogContact::set_status(Toxmm::EUSERSTATUS status_code) {
     } else {
         m_status_icon->set(m_icon_status.property_pixbuf());
     }
+    Toxmm::instance().save();
 }
 
 void DialogContact::exit() {
