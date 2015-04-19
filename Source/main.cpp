@@ -142,10 +142,6 @@ int main(int argc, char* argv[]) {
 
     Notify::init("gTox");
 
-    auto dialog = DialogContact::create("/home/luca/.config/tox/KoKuToru");
-    kit.run(*dialog);
-    return 0;
-
     std::string config_path
         = Glib::build_filename(Glib::get_user_config_dir(), "tox");
     if (!Glib::file_test(config_path, Glib::FILE_TEST_IS_DIR)) {
@@ -220,9 +216,8 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    Toxmm::instance().init(config_path); //TODO do this somewhere in DialogContact..
-    //DialogContact::init(config_path);
-    kit.run(DialogContact::instance());
-    DialogContact::destroy();
+    auto dialog = DialogContact::create(config_path);
+    kit.run(*dialog);
+    dialog.reset();
     return 0;
 }

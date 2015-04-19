@@ -67,7 +67,6 @@ class DialogContact : public Gtk::Window {
     static std::shared_ptr<DialogContact> create(Glib::ustring file);
 
     static DialogContact& instance();
-    static void destroy();
 
     void exit();
 

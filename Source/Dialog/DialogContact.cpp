@@ -280,13 +280,6 @@ DialogContact& DialogContact::instance() {
     return *m_instance;
 }
 
-void DialogContact::destroy() {
-    if (m_instance != nullptr) {
-        delete m_instance;
-        m_instance = nullptr;
-    }
-}
-
 void DialogContact::set_status(Toxmm::EUSERSTATUS status_code) {
     Toxmm::instance().set_status(status_code);
     // TODO: implement a get_status_icon function
