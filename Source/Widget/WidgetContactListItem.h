@@ -76,6 +76,8 @@ class WidgetContactListItem : public Gtk::ListBoxRow {
     void set_contact(Toxmm::FriendNr nr);
     void set_for_notify(bool notify);
     static bool use_mini(bool for_notify);
+    void on_show();
+    void on_hide();
 };
 
 #endif
