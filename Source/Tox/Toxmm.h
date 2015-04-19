@@ -191,8 +191,9 @@ class Toxmm {
      * @throws SQLite::Exception
      *
      * @param statefile Path to the save-file, can be empty
+     * @param bootstrap
      */
-    void init(const Glib::ustring& statefile);
+    void init(const Glib::ustring& statefile, bool bootstrap = true);
     void init() {
         init("");
     }

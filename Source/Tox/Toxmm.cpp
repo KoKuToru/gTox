@@ -56,7 +56,7 @@ void Toxmm::destroy() {
     }
 }
 
-void Toxmm::init(const Glib::ustring& statefile) {
+void Toxmm::init(const Glib::ustring& statefile, bool bootstrap) {
     std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox != nullptr) {
         tox_kill(m_tox);
@@ -102,29 +102,31 @@ void Toxmm::init(const Glib::ustring& statefile) {
     tox_callback_friend_read_receipt(m_tox, Toxmm::callback_read_receipt, nullptr);
     tox_callback_friend_connection_status(m_tox, Toxmm::callback_connection_status, nullptr);
 
-    if (statefile != "") {
-        for (auto boots : m_db.toxcore_bootstrap_get()) {
-            if (boots.pub_key.size()%2 == 0) {
-                auto pub = from_hex(boots.pub_key);
-                TOX_ERR_BOOTSTRAP error;
-                okay |= tox_bootstrap(m_tox,
-                                      boots.ip.c_str(),
-                                      boots.port, pub.data(), &error);
+    if (bootstrap) {
+        if (statefile != "") {
+            for (auto boots : m_db.toxcore_bootstrap_get()) {
+                if (boots.pub_key.size()%2 == 0) {
+                    auto pub = from_hex(boots.pub_key);
+                    TOX_ERR_BOOTSTRAP error;
+                    okay |= tox_bootstrap(m_tox,
+                                          boots.ip.c_str(),
+                                          boots.port, pub.data(), &error);
+                }
             }
         }
-    }
 
-    if (!okay) {
-        // Fallback ..
-        auto pub = from_hex(
-            "0095FC11A624EEF1"
-            "EED38B54A4BE3E7F"
-            "F3527D367DC0ACD1"
-            "0AC8329C99319513");
-        auto host = "urotukok.net";
-        TOX_ERR_BOOTSTRAP error;
-        if (!tox_bootstrap(m_tox, host, 33445, pub.data(), &error)) {
-            throw Exception(error);
+        if (!okay) {
+            // Fallback ..
+            auto pub = from_hex(
+                           "0095FC11A624EEF1"
+                           "EED38B54A4BE3E7F"
+                           "F3527D367DC0ACD1"
+                           "0AC8329C99319513");
+            auto host = "urotukok.net";
+            TOX_ERR_BOOTSTRAP error;
+            if (!tox_bootstrap(m_tox, host, 33445, pub.data(), &error)) {
+                throw Exception(error);
+            }
         }
     }
 }
