@@ -58,10 +58,17 @@ class WidgetContactListItem : public Gtk::ListBoxRow {
             Toxmm::FriendNr nr;
     };
 
+    class EventDestroyChat {
+        public:
+            Toxmm::FriendNr nr;
+    };
+
     class EventActivated {
         public:
             WidgetContactListItem* target;
     };
+
+    int compare(WidgetContactListItem* other);
 
   protected:
     void refresh();

@@ -48,7 +48,8 @@ WidgetChatLine::WidgetChatLine(bool left_side)
     m_avatar.property_yalign() = m_side ? 1 : 0;
 //    m_avatar.set_tooltip_text("TODO Display name here..");
 
-    frame->set_name(m_side ? "WidgetChatLineLeft" : "WidgetChatLineRight");
+    frame->get_style_context()->add_class("gtox-bubble");
+    frame->get_style_context()->add_class(m_side ? "gtox-left" : "gtox-right");
 
     show_all();
 
@@ -142,7 +143,7 @@ void WidgetChatLine::add_line(Line new_line) {
     // styling
     time->set_halign(Gtk::ALIGN_CENTER);
     time->set_valign(Gtk::ALIGN_START);
-    time->set_name("ChatTime");
+    time->get_style_context()->add_class("bubble_chat_line_time");
 
     msg->set_halign(Gtk::ALIGN_START);
     msg->set_valign(Gtk::ALIGN_CENTER);

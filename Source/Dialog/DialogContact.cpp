@@ -30,6 +30,10 @@
 #include "Helper/Canberra.h"
 #include "Widget/WidgetContactListItem.h"
 
+namespace sigc {
+    SIGC_FUNCTORS_DEDUCE_RESULT_TYPE_WITH_DECLTYPE
+}
+
 DialogContact* DialogContact::m_instance = nullptr;
 
 DialogContact::DialogContact(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& builder)
@@ -125,6 +129,12 @@ DialogContact::DialogContact(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Bu
         ToxEventCallback::notify(ToxEvent(WidgetContactListItem::EventActivated{item}));
     });
 
+    list->set_sort_func([this](Gtk::ListBoxRow* a, Gtk::ListBoxRow* b){
+        WidgetContactListItem* item_a = dynamic_cast<WidgetContactListItem*>(a);
+        WidgetContactListItem* item_b = dynamic_cast<WidgetContactListItem*>(b);
+        return item_a->compare(item_b);
+    });
+
     load_contacts();
 
     set_status(Toxmm::OFFLINE);
@@ -203,18 +213,9 @@ void DialogContact::tox_event_handling(const ToxEvent& ev) {
     } else if (ev.type() == typeid(EventAttachWidget)) {
         auto data = ev.get<EventAttachWidget>();
 
-        property_gravity() = Gdk::GRAVITY_NORTH_EAST;
-        if (!m_stack_header->is_visible()) {
-            resize(600 + get_width(), get_height());
-        }
-
         data.header->get_style_context()->add_class("gtox-headerbar-left");
         m_stack_header->add(*data.header);
-        m_stack_header->set_visible_child(*data.header);
         m_stack->add(*data.body);
-        m_stack->set_visible_child(*data.body);
-        m_stack_header->show();
-        m_stack->show();
     } else if (ev.type() == typeid(EventDetachWidget)) {
         auto data = ev.get<EventDetachWidget>();
 
@@ -250,6 +251,23 @@ void DialogContact::tox_event_handling(const ToxEvent& ev) {
         set_status(data.status_code);
     } else if (ev.type() == typeid(EventPresentWidget)) {
         auto data = ev.get<EventPresentWidget>();
+
+        if (data.header->get_parent() == nullptr) {
+            //attach
+            tox_event_handling(ToxEvent(EventAttachWidget{data.header, data.body}));
+        }
+
+        //present
+        property_gravity() = Gdk::GRAVITY_NORTH_EAST;
+        if (!m_stack_header->is_visible()) {
+            resize(600 + get_width(), get_height());
+        }
+
+        data.header->get_style_context()->add_class("gtox-headerbar-left");
+        m_stack_header->set_visible_child(*data.header);
+        m_stack->set_visible_child(*data.body);
+        m_stack_header->show();
+        m_stack->show();
 
         m_stack_header->set_visible_child(*data.header);
         m_stack->set_visible_child(*data.body);

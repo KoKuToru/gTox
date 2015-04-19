@@ -24,7 +24,7 @@
 
 DialogChat::DialogChat(Toxmm::FriendNr nr)
     : m_in_window(false),
-      m_icon_attach(ICON::load_icon(ICON::chat_attach)),
+      m_icon_attach(ICON::load_icon(ICON::chat_detach)),
       m_chat(nr) {
     this->set_border_width(1);
     this->set_default_geometry(256, 256);
@@ -33,7 +33,31 @@ DialogChat::DialogChat(Toxmm::FriendNr nr)
     // Setup titlebar
     m_header.set_title(Toxmm::instance().get_name_or_address(nr));
     m_header.set_subtitle(Toxmm::instance().get_status_message(nr));
-    m_header.set_show_close_button();
+    m_header.property_hexpand() = true;
+
+    // custom close button for chat
+    auto x_box = Gtk::manage(new Gtk::Box());
+    auto btn_x = Gtk::manage(new Gtk::Button());
+    x_box->add(*Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_VERTICAL)));
+    btn_x->set_image_from_icon_name("window-close-symbolic");
+    btn_x->get_style_context()->add_class("titlebutton");
+    btn_x->set_valign(Gtk::ALIGN_CENTER);
+    x_box->add(*btn_x);
+    x_box->show_all();
+    x_box->get_style_context()->add_class("right");
+    x_box->set_spacing(6);
+    m_header.pack_end(*x_box);
+
+    set_titlebar(m_header_box);
+    m_header_box.property_hexpand() = true;
+    m_header_box.show();
+
+    btn_x->signal_clicked().connect([this, nr](){
+        Gtk::Window::hide();
+        Glib::signal_idle().connect_once([nr](){
+            ToxEventCallback::notify(ToxEvent(WidgetContactListItem::EventDestroyChat{nr}));
+        });
+    });
 
     m_tox_callback = [this, nr](const ToxEvent& ev) {
         if (ev.type() == typeid(Toxmm::EventName))  {
@@ -65,15 +89,22 @@ DialogChat::DialogChat(Toxmm::FriendNr nr)
     m_headerbar_btn_left.add(m_btn_xxtach);
     m_header.pack_start(m_headerbar_btn_left);
 
-    //this->set_titlebar(m_header);
-
-    // Setup content
-    //add(m_chat);
+    add(m_chat_box);
+    m_chat_box.property_expand() = true;
+    m_chat_box.show();
 
     m_btn_xxtach.signal_clicked().connect([this]() {
-        //DialogContact::instance().attach_chat(m_chat.get_friend_nr());
+        if (m_in_window) {
+            m_icon_attach.property_pixbuf() = ICON::load_icon(ICON::chat_attach);
+            hide();
+            present();
+        } else {
+            m_icon_attach.property_pixbuf() = ICON::load_icon(ICON::chat_detach);
+            show();
+        }
     });
 
+    m_chat.property_expand() = true;
     m_chat.show_all();
     m_header.show_all();
     ToxEventCallback::notify(ToxEvent(DialogContact::EventAttachWidget{
@@ -83,16 +114,41 @@ DialogChat::DialogChat(Toxmm::FriendNr nr)
 }
 
 DialogChat::~DialogChat() {
+    if (!m_in_window) {
+        ToxEventCallback::notify(ToxEvent(DialogContact::EventDetachWidget{
+                                              false,
+                                              &m_header,
+                                              &m_chat
+                                          }));
+    }
 }
 
 void DialogChat::show() {
-    ToxEventCallback::notify(ToxEvent(DialogContact::EventDetachWidget{
-                                          true,
-                                          &m_header,
-                                          &m_chat
-                                      }));
-    add(m_chat);
+    if (!m_in_window) {
+        ToxEventCallback::notify(ToxEvent(DialogContact::EventDetachWidget{
+                                              true,
+                                              &m_header,
+                                              &m_chat
+                                          }));
+        m_header_box.add(m_header);
+        m_chat_box.add(m_chat);
+        m_in_window = true;
+    }
     Gtk::Window::show();
+}
+
+void DialogChat::hide() {
+    if (m_in_window) {
+        m_header_box.remove(m_header);
+        m_chat_box.remove(m_chat);
+        m_in_window = false;
+
+        ToxEventCallback::notify(ToxEvent(DialogContact::EventAttachWidget{
+                                              &m_header,
+                                              &m_chat
+                                          }));
+    }
+    Gtk::Window::hide();
 }
 
 void DialogChat::present() {
@@ -109,8 +165,7 @@ void DialogChat::present() {
 
 bool DialogChat::is_visible() {
     if (m_in_window) {
-        //no idea
-        return true;
+        return property_is_active();
     } else {
         return m_chat.get_mapped();
     }

@@ -69,7 +69,15 @@
 }
 
 .gtox-profile:selected, .gtox-contact:selected {
+    background-color: rgba(255,255,255,0.05);
+}
+
+.gtox-contact-chat-active {
     background-color: rgba(40,150,40,0.2);
+}
+
+.gtox-contact-chat-active:selected {
+    background-color: rgba(40,150,40,0.3);
 }
 
 /**
@@ -111,15 +119,16 @@ GtkPopover {
     
 }
 
-.gtox-chat .gtox-bubble {
-    border-radius: 5px;
+.gtox-bubble {
+    border-radius: 7px;
+    background-color: rgba(0,0,0,0.2);
 }
 
-.gtox-chat .gtox-bubble.gtox-left {
+.gtox-bubble.gtox-left {
     border-top-left-radius: 0;
 }
 
-.gtox-chat .gtox-bubble.gtox-right {
+.gtox-bubble.gtox-right {
     border-bottom-right-radius: 0;
 }
 
@@ -129,7 +138,7 @@ GtkPopover {
 }
 
 .message_pending {
-        background: rgba(0,0,0,0.3);
+    background: rgba(0,0,0,0.3);
 	opacity: 0.3;
 }
 
@@ -138,8 +147,14 @@ GtkPopover {
 	background: rgba(255,0,0,0.3);
 }
 
+.bubble_chat_line {
+	background: transparent;
+	padding: 4px;
+	border: none;
+}
+
+
 .bubble_chat_line.top_left {
-	padding-top: 4px;
 	border-radius: 5px 0 0 0;
 }
 
@@ -148,10 +163,16 @@ GtkPopover {
 }
 
 .bubble_chat_line.bottom_left {
-	border-radius: 0 0 5px 0;
-}
-
-.bubble_chat_line.bottom_right {
 	border-radius: 0 0 0 5px;
 }
 
+.bubble_chat_line.bottom_right {
+	border-radius: 0 0 5px 0;
+}
+
+.bubble_chat_line_time {
+    background: rgba(255,255,255,0.2);
+    color: black;
+    border-radius: 3px;
+    padding: 2px;
+}

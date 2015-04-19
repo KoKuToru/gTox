@@ -75,6 +75,19 @@ WidgetContactListItem::WidgetContactListItem(BaseObjectType* cobject, const Glib
                 m_chat = std::make_shared<DialogChat>(m_friend_nr);
             }
             m_chat->present();
+
+            get_style_context()->add_class("gtox-contact-chat-active");
+            dynamic_cast<Gtk::ListBox*>(get_parent())->invalidate_sort();
+        } else if (ev.type() == typeid(EventDestroyChat)) {
+            auto data = ev.get<EventDestroyChat>();
+            if (data.nr != m_friend_nr) {
+                return;
+            }
+            if (m_chat) {
+                m_chat.reset();
+            }
+            get_style_context()->remove_class("gtox-contact-chat-active");
+            dynamic_cast<Gtk::ListBox*>(get_parent())->invalidate_sort();
         }
     };
 
@@ -161,4 +174,18 @@ Glib::RefPtr<Gdk::PixbufAnimation> WidgetContactListItem::generate_animation(
     }
     gdk_pixbuf_simple_anim_set_loop(ani, true);
     return Glib::wrap(GDK_PIXBUF_ANIMATION(ani));
+}
+
+int WidgetContactListItem::compare(WidgetContactListItem* other) {
+    if (m_chat && !other->m_chat) {
+        return -1;
+    } else if (!m_chat && other->m_chat) {
+        return 1;
+    }
+    if (m_name < other->m_name) {
+        return -1;
+    } else if (m_name > other->m_name) {
+        return 1;
+    }
+    return 0;
 }
