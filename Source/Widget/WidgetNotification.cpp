@@ -37,6 +37,11 @@ WidgetNotification::WidgetNotification(BaseObjectType* cobject, const Glib::RefP
 }
 
 WidgetNotification::~WidgetNotification() {
+    if (m_notify) {
+        m_notify->signal_closed().connect([](){});
+        m_notify->close();
+        m_notify.reset();
+    }
 }
 
 void WidgetNotification::set_event(DialogContact::EventAddNotification event) {
@@ -52,6 +57,8 @@ void WidgetNotification::set_event(DialogContact::EventAddNotification event) {
     m_builder->get_widget("image", image);
     m_builder->get_widget("icon", icon);
 
+    m_notify = std::make_shared<Notify::Notification>(m_event.title, m_event.message);
+
     title->set_text(m_event.title);
     message->set_text(m_event.message);
     if (m_event.image) {
@@ -59,11 +66,25 @@ void WidgetNotification::set_event(DialogContact::EventAddNotification event) {
                                        64,
                                        64,
                                        Gdk::INTERP_BILINEAR);
+        m_notify->set_image_from_pixbuf(image->property_pixbuf());
+    } else {
+        m_notify->set_image_from_pixbuf(ICON::load_icon(ICON::icon_128));
     }
 
+    m_notify->signal_closed().connect([this](){
+        activated();
+    });
+
     icon->property_pixbuf() = ICON::load_icon(ICON::notification);
+
+    if (m_event.show_on_desktop) {
+        m_notify->show();
+    }
 }
 
 void WidgetNotification::activated() {
     ToxEventCallback::notify(m_event.activated_action);
+    Glib::signal_idle().connect_once([this](){
+        delete this;
+    });
 }

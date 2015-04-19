@@ -130,22 +130,21 @@ DialogContact::DialogContact(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Bu
     m_builder->get_widget("list_notify", list_notify);
     auto activated = [this](Gtk::ListBoxRow* row) {
         //FORWARD SIGNAL TO THE ITEM
-        WidgetContactListItem* item = dynamic_cast<WidgetContactListItem*>(row);
+        auto item = dynamic_cast<WidgetContactListItem*>(row);
         ToxEventCallback::notify(ToxEvent(WidgetContactListItem::EventActivated{item->get_friend_nr()}));
     };
     list->signal_row_activated().connect(activated);
     list_active_chat->signal_row_activated().connect(activated);
 
     list->set_sort_func([this](Gtk::ListBoxRow* a, Gtk::ListBoxRow* b){
-        WidgetContactListItem* item_a = dynamic_cast<WidgetContactListItem*>(a);
-        WidgetContactListItem* item_b = dynamic_cast<WidgetContactListItem*>(b);
+        auto item_a = dynamic_cast<WidgetContactListItem*>(a);
+        auto item_b = dynamic_cast<WidgetContactListItem*>(b);
         return item_a->compare(item_b);
     });
 
     list_notify->signal_row_activated().connect([](Gtk::ListBoxRow* row){
         WidgetNotification* item = dynamic_cast<WidgetNotification*>(row);
         item->activated();
-        delete item;
     });
 
     load_contacts();

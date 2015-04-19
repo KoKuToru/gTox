@@ -22,11 +22,13 @@
 
 #include <gtkmm.h>
 #include "Dialog/DialogContact.h"
+#include <libnotifymm.h>
 
 class WidgetNotification : public Gtk::ListBoxRow {
   private:
     const Glib::RefPtr<Gtk::Builder> m_builder;
     DialogContact::EventAddNotification m_event;
+    std::shared_ptr<Notify::Notification> m_notify;
 
   public:
     WidgetNotification(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& builder);
