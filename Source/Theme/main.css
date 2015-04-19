@@ -108,6 +108,10 @@ GtkPopover {
     padding: 0.5em;
 }
 
+GtkListBoxRow {
+	padding: 0px;
+}
+
 /**
     Item lists, like in Status selection in Popover
 **/

@@ -196,3 +196,31 @@ void WidgetContactListItem::set_for_notify(bool notify) {
 bool WidgetContactListItem::use_mini(bool for_notify) {
     return Toxmm::instance().database().config_get(for_notify?"VISUAL_CONTACT_NOTIFY":"VISUAL_CONTACT", for_notify?1:0);
 }
+
+void WidgetContactListItem::on_show() {
+    Gtk::Widget::on_show();
+    Gtk::Revealer* revealer;
+    m_builder->get_widget("revealer", revealer);
+    revealer->reference();
+    Glib::signal_idle().connect_once([revealer](){
+        revealer->set_reveal_child(true);
+        revealer->unreference();
+    });
+}
+
+void WidgetContactListItem::on_hide() {
+    Gtk::Revealer* revealer;
+    m_builder->get_widget("revealer", revealer);
+    if (revealer->get_reveal_child()) {
+        revealer->set_reveal_child(false);
+        revealer->reference();
+        Glib::signal_timeout().connect_once([this, revealer](){
+            if (!revealer->get_reveal_child()) {
+                hide();
+            }
+            revealer->unreference();
+        }, revealer->get_transition_duration());
+    } else {
+        Gtk::Widget::on_hide();
+    }
+}
