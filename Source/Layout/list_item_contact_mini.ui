@@ -94,12 +94,15 @@
               <placeholder/>
             </child>
             <style>
-              <class name="gtox-contact"/>
-              <class name="gtox-contact-mini"/>
+              <class name="gtox-contact-frame"/>
             </style>
           </object>
         </child>
       </object>
     </child>
+    <style>
+      <class name="gtox-contact-mini"/>
+      <class name="gtox-contact"/>
+    </style>
   </object>
 </interface>
