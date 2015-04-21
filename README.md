@@ -97,5 +97,5 @@ Screenshot
 ============
 <img src="https://rawgit.com/KoKuToru/gTox/master/Screenshots/profile_selection.png">
 <img src="https://rawgit.com/KoKuToru/gTox/master/Screenshots/profile_creation.png">
-<img src="https://rawgit.com/KoKuToru/gTox/master/Screenshots/client_chat.png.png">
+<img src="https://rawgit.com/KoKuToru/gTox/master/Screenshots/client_chat.png">
 
