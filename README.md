@@ -8,7 +8,6 @@
 * [How to build](#how-to-build)
   * [Linux Dependencies](#linux-dependencies)
 * [Screenshot](#screenshot)
-* [Mockup](#mockup)
 
 Features
 ============
@@ -96,9 +95,7 @@ Linux Dependencies
 
 Screenshot
 ============
-<img src="https://rawgit.com/KoKuToru/gTox/master/screenshot.png">
-
-Mockup
-============
-<img src="https://rawgit.com/KoKuToru/gTox/master/mockup.svg">
+<img src="https://rawgit.com/KoKuToru/gTox/master/Screenshots/profile_selection.png">
+<img src="https://rawgit.com/KoKuToru/gTox/master/Screenshots/profile_creation.png">
+<img src="https://rawgit.com/KoKuToru/gTox/master/Screenshots/client_chat.png.png">
 
