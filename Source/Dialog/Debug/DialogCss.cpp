@@ -18,7 +18,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 **/
 #include "DialogCss.h"
-#include "Generated/theme.h"
 
 DialogCss::DialogCss() {
     this->set_border_width(1);

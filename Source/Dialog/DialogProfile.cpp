@@ -19,7 +19,6 @@
 **/
 #include "DialogProfile.h"
 #include <glibmm/i18n.h>
-#include "Generated/theme.h"
 #include <iostream>
 #include <Tox/Toxmm.h>
 

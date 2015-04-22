@@ -18,7 +18,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 **/
 #include "DialogContact.h"
-#include "Generated/theme.h"
 #include <gdkmm.h>
 #include "Tox/Toxmm.h"
 #include <iostream>
