@@ -20,8 +20,6 @@
 #include "DialogProfileCreate.h"
 #include "Tox/Toxmm.h"
 #include <glibmm/i18n.h>
-#include "Generated/layout.h"
-#include "Generated/icon.h"
 
 DialogProfileCreate::DialogProfileCreate(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& builder):
     Gtk::Assistant(cobject), m_builder(builder), m_aborted(true) {
@@ -32,7 +30,7 @@ DialogProfileCreate::DialogProfileCreate(BaseObjectType* cobject, const Glib::Re
     Gtk::Image* icon = nullptr;
     m_builder->get_widget("assistant_icon", icon);
     if (icon) {
-        icon->property_pixbuf() = ICON::load_icon(ICON::icon_128);
+        icon->property_pixbuf() = Gdk::Pixbuf::create_from_resource("/org/gtox/icon/icon_128.png");
     }
 
     m_builder->get_widget("assistant_username", m_username);
@@ -70,7 +68,7 @@ DialogProfileCreate::DialogProfileCreate(BaseObjectType* cobject, const Glib::Re
 }
 
 std::shared_ptr<DialogProfileCreate> DialogProfileCreate::create(const Glib::ustring& path) {
-    auto builder = Gtk::Builder::create_from_string(LAYOUT::dialog_assistant);
+    auto builder = Gtk::Builder::create_from_resource("/org/gtox/ui/dialog_assistant.ui");
     DialogProfileCreate* tmp = nullptr;
     builder->get_widget_derived("dialog_assistant", tmp);
     tmp->set_path(path);

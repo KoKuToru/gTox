@@ -19,13 +19,12 @@
  **/
 
 #include "PopoverContextContact.h"
-#include "../Generated/icon.h"
-#include "../Dialog/DialogContact.h"
+#include "Dialog/DialogContact.h"
 #include <glibmm/i18n.h>
 
 PopoverContextContact::PopoverContextContact(Toxmm::FriendNr friendNr)
     : friendNr(friendNr) {
-    m_listbox.add(create_item(ICON::load_icon(ICON::remove), _("REMOVE")));
+    m_listbox.add(create_item(Gdk::Pixbuf::create_from_resource("/org/gtox/icon/remove.png"), _("REMOVE")));
     m_listbox.show_all();
     add(m_listbox);
 

@@ -18,13 +18,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 **/
 #include "DialogChat.h"
-#include "Generated/icon.h"
 #include "DialogContact.h"
 #include "Widget/WidgetContactListItem.h"
 
 DialogChat::DialogChat(Toxmm::FriendNr nr)
     : m_in_window(false),
-      m_icon_attach(ICON::load_icon(ICON::chat_detach)),
+      m_icon_attach(Gdk::Pixbuf::create_from_resource("/org/gtox/icon/chat_detach.png")),
       m_chat(nr) {
     this->set_border_width(1);
     this->set_default_geometry(256, 256);
@@ -95,11 +94,11 @@ DialogChat::DialogChat(Toxmm::FriendNr nr)
 
     m_btn_xxtach.signal_clicked().connect([this]() {
         if (m_in_window) {
-            m_icon_attach.property_pixbuf() = ICON::load_icon(ICON::chat_attach);
+            m_icon_attach.property_pixbuf() = Gdk::Pixbuf::create_from_resource("/org/gtox/icon/chat_attach.png");
             hide();
             present();
         } else {
-            m_icon_attach.property_pixbuf() = ICON::load_icon(ICON::chat_detach);
+            m_icon_attach.property_pixbuf() = Gdk::Pixbuf::create_from_resource("/org/gtox/icon/chat_detach.png");
             show();
         }
     });
@@ -145,7 +144,7 @@ void DialogChat::show() {
         m_header_box.add(m_header);
         m_chat_box.add(m_chat);
         m_in_window = true;
-        m_icon_attach.property_pixbuf() = ICON::load_icon(ICON::chat_attach);
+        m_icon_attach.property_pixbuf() = Gdk::Pixbuf::create_from_resource("/org/gtox/icon/chat_attach.png");
     }
     Gtk::Window::show();
 }
@@ -160,7 +159,7 @@ void DialogChat::hide() {
                                               &m_header,
                                               &m_chat
                                           }));
-        m_icon_attach.property_pixbuf() = ICON::load_icon(ICON::chat_detach);
+        m_icon_attach.property_pixbuf() = Gdk::Pixbuf::create_from_resource("/org/gtox/icon/chat_detach.png");
     }
     Gtk::Window::hide();
 }

@@ -18,13 +18,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 **/
 #include "WidgetAbout.h"
-#include "Generated/icon.h"
 #include <glibmm/i18n.h>
 
 WidgetAbout::WidgetAbout() : Glib::ObjectBase("WidgetAbout") {
     property_valign() = Gtk::ALIGN_CENTER;
     property_halign() = Gtk::ALIGN_CENTER;
-    pack_start(*Gtk::manage(new Gtk::Image(ICON::load_icon(ICON::icon_128))));
+    pack_start(*Gtk::manage(new Gtk::Image(Gdk::Pixbuf::create_from_resource("/org/gtox/icon/icon_128.png"))));
     pack_start(*Gtk::manage([]() {
         auto tmp = new Gtk::Label;
         tmp->set_markup(_("ABOUT_SOFTWARE_NAME"));

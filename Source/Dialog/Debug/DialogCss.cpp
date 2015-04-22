@@ -32,7 +32,7 @@ DialogCss::DialogCss() {
 
     this->set_titlebar(m_header);
 
-    m_text.get_buffer()->set_text(THEME::main);
+    m_text.get_buffer()->set_text(""/*THEME::main*/);
     m_text.get_buffer()->signal_changed().connect([this]() {
         try {
             auto css = Gtk::CssProvider::create();

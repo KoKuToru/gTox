@@ -18,11 +18,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 **/
 #include "WidgetNotification.h"
-#include "Generated/layout.h"
-#include "Generated/icon.h"
 
 WidgetNotification* WidgetNotification::create(DialogContact::EventAddNotification event) {
-    auto builder = Gtk::Builder::create_from_string(LAYOUT::list_item_notification);
+    auto builder = Gtk::Builder::create_from_resource("/org/gtox/ui/list_item_notification.ui");
     WidgetNotification* tmp = nullptr;
     builder->get_widget_derived("contact_list_item", tmp);
     tmp->set_event(event);
@@ -68,10 +66,10 @@ void WidgetNotification::set_event(DialogContact::EventAddNotification event) {
                                        Gdk::INTERP_BILINEAR);
         m_notify->set_image_from_pixbuf(image->property_pixbuf());
     } else {
-        m_notify->set_image_from_pixbuf(ICON::load_icon(ICON::icon_128));
+        m_notify->set_image_from_pixbuf(Gdk::Pixbuf::create_from_resource("/org/gtox/icon/icon_128.png"));
     }
 
-    icon->property_pixbuf() = ICON::load_icon(ICON::notification);
+    icon->property_pixbuf() = Gdk::Pixbuf::create_from_resource("/org/gtox/icon/notification.png");
 
     Gtk::Box* action_bar;
     m_builder->get_widget("action_bar", action_bar);

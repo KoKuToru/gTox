@@ -32,31 +32,9 @@ add_subdirectory(Libs/SQLiteCpp)
 include_directories(Libs/SQLiteCpp/include)
 
 add_subdirectory(Tools)
-
-set(LAYOUT
-    Layout/dialog_profile.ui
-    Layout/list_item_profile.ui
-    Layout/list_item_contact.ui
-    Layout/list_item_contact_mini.ui
-    Layout/list_item_notification.ui
-    Layout/list_item_notification_mini.ui
-    Layout/dialog_assistant.ui
-    Layout/dialog_contact.ui)
-add_custom_command(
-    OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/Generated/layout.cpp"
-    COMMAND "${PROJECT_BINARY_DIR}/Tools/text2h" LAYOUT Generated/layout ${LAYOUT}
-    DEPENDS text2h ${LAYOUT}
-    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-)
-
-set(THEME
-    Theme/main.css)
-add_custom_command(
-    OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/Generated/theme.cpp"
-    COMMAND "${PROJECT_BINARY_DIR}/Tools/text2h" THEME Generated/theme ${THEME}
-    DEPENDS text2h ${THEME}
-    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-)
+add_subdirectory(Icons)
+add_subdirectory(Layout)
+add_subdirectory(Theme)
 
 set(DATABASE
     Database/version_1.sql
@@ -70,28 +48,6 @@ add_custom_command(
     OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/Generated/database.cpp"
     COMMAND "${PROJECT_BINARY_DIR}/Tools/text2h" DATABASE Generated/database ${DATABASE}
     DEPENDS text2h ${DATABASE}
-    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-)
-
-set(ICONS
-    Icons/chat_attach.svg
-    Icons/chat_detach.svg
-    Icons/icon_128.svg
-    Icons/settings.svg
-    Icons/status_online.svg
-    Icons/status_offline.svg
-    Icons/status_busy.svg
-    Icons/avatar.svg
-    Icons/plus.svg
-    Icons/remove.svg
-    Icons/clipboard.svg
-    Icons/status_message.svg
-    Icons/notification.svg
-    Icons/status_away.svg)
-add_custom_command(
-    OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/Generated/icon.cpp"
-    COMMAND "${PROJECT_BINARY_DIR}/Tools/svg2h" ICON Generated/icon ${ICONS}
-    DEPENDS svg2h ${ICONS}
     WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
 )
 
@@ -128,17 +84,15 @@ set(SOURCES
     Tox/ToxDatabase.cpp
     Tox/ToxEvent.cpp
     Tox/ToxException.cpp)
-
+SET_SOURCE_FILES_PROPERTIES(${GRESOURCE} PROPERTIES GENERATED 1)
 add_executable(${PROJECT_NAME}
-     ${SOURCES}
-    "${CMAKE_CURRENT_SOURCE_DIR}/Generated/icon.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/Generated/theme.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/Generated/layout.cpp"
+    ${SOURCES}
     "${CMAKE_CURRENT_SOURCE_DIR}/Generated/database.cpp"
+    ${GRESOURCE}
 )
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(${PROJECT_NAME} ${GTKMM_LIBRARIES} ${LIBNOTIFYMM_LIBRARIES} ${LIBCANBERRA_LIBRARIES} ${GSTREAMERMM_LIBRARIES} ${TOX_LIBRARY} -lpthread -lsqlite3 SQLiteCpp)
-add_dependencies(${PROJECT_NAME} SQLiteCpp)
+add_dependencies(${PROJECT_NAME} gtox-style-resource gtox-icon-resource gtox-ui-resource)
 install(PROGRAMS "${PROJECT_BINARY_DIR}/${PROJECT_NAME}"
         DESTINATION bin
         PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ WORLD_EXECUTE WORLD_READ)
@@ -174,12 +128,11 @@ add_custom_command(
            FILE_PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)
 endforeach()
 
-#Application icon
 find_program(RSVG_CONVERT_EXECUTEABLE rsvg-convert)
 if(NOT RSVG_CONVERT_EXECUTEABLE)
     message(FATAL_ERROR "rsvg-convert not found")
 endif()
-
+#Application icon
 SET(SIZES
     14
     16
@@ -233,14 +186,23 @@ if(NOT GETTEXT_MSGCAT_EXECUTEABLE)
     message(FATAL_ERROR "msgcat not found")
 endif()
 
+FUNCTION(PREPEND var prefix)
+   SET(listVar "")
+   FOREACH(f ${ARGN})
+      LIST(APPEND listVar "${prefix}/${f}")
+   ENDFOREACH(f)
+   SET(${var} "${listVar}" PARENT_SCOPE)
+ENDFUNCTION(PREPEND)
+
+PREPEND(LAYOUT_P "Layout" ${LAYOUT})
 add_custom_command(
    COMMENT "Generate pot file"
    TARGET ${PROJECT_NAME}
    PRE_BUILD
    COMMAND ${GETTEXT_XGETTEXT_EXECUTEABLE} -o "${CMAKE_CURRENT_SOURCE_DIR}/Locale/source.pot" --from-code=UTF-8 --sort-output --c++ --omit-header -k_ -s ${SOURCES}
-   COMMAND ${GETTEXT_XGETTEXT_EXECUTEABLE} -o "${CMAKE_CURRENT_SOURCE_DIR}/Locale/layout.pot" --from-code=UTF-8 --sort-output --keyword=translatable -k_ -s ${LAYOUT}
+   #COMMAND ${GETTEXT_XGETTEXT_EXECUTEABLE} -o "${CMAKE_CURRENT_SOURCE_DIR}/Locale/layout.pot" --from-code=UTF-8 --sort-output --keyword=translatable -k_ -s ${LAYOUT_P}
    COMMAND ${GETTEXT_MSGCAT_EXECUTEABLE} -us "${CMAKE_CURRENT_SOURCE_DIR}/Locale/source.pot" "${CMAKE_CURRENT_SOURCE_DIR}/Locale/layout.pot" > "${CMAKE_CURRENT_SOURCE_DIR}/Locale/template.pot"
-   DEPENDS ${SOURCES} ${LAYOUT}
+   DEPENDS ${SOURCES} ${LAYOUT_P}
    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
 
 add_custom_command(

@@ -19,9 +19,7 @@
 **/
 #include "DialogProfile.h"
 #include <glibmm/i18n.h>
-#include "Generated/icon.h"
 #include "Generated/theme.h"
-#include "Generated/layout.h"
 #include <iostream>
 #include <Tox/Toxmm.h>
 
@@ -32,14 +30,11 @@ DialogProfile::DialogProfile(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Bu
     m_quited(false) {
 
     auto css = Gtk::CssProvider::create();
-    if (!css->load_from_data(THEME::main)) {
-        std::cerr << _("LOADING_THEME_FAILED") << std::endl;
-    } else {
-        auto screen = Gdk::Screen::get_default();
-        auto ctx = get_style_context();
-        ctx->add_provider_for_screen(
-            screen, css, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
-    }
+    css->load_from_resource("/org/gtox/style/main.css");
+    auto screen = Gdk::Screen::get_default();
+    auto ctx = get_style_context();
+    ctx->add_provider_for_screen(
+                screen, css, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
 
     set_title(_("PROFILE_TITLE"));
     set_default_geometry(300, 300);
@@ -115,7 +110,7 @@ void DialogProfile::set_accounts(const std::vector<std::string>& accounts) {
     if (list) {
         bool loaded = false;
         for (auto acc : accounts) {
-            auto builder = Gtk::Builder::create_from_string(LAYOUT::list_item_profile);
+            auto builder = Gtk::Builder::create_from_resource("/org/gtox/ui/list_item_profile.ui");
             Gtk::ListBoxRow* row = nullptr;
             builder->get_widget("pofile_list_item", row);
             if (row) {
@@ -128,7 +123,7 @@ void DialogProfile::set_accounts(const std::vector<std::string>& accounts) {
                 builder->get_widget("path", path);
                 builder->get_widget("avatar", avatar);
                 if (name && status && path && avatar) {
-                    avatar->set(ICON::load_icon(ICON::avatar)->scale_simple(
+                    avatar->set(Gdk::Pixbuf::create_from_resource("/org/gtox/icon/avatar.png")->scale_simple(
                                    72,
                                    72,
                                    Gdk::INTERP_BILINEAR));
@@ -156,7 +151,7 @@ void DialogProfile::set_accounts(const std::vector<std::string>& accounts) {
 }
 
 std::shared_ptr<DialogProfile> DialogProfile::create(const std::vector<std::string>& accounts) {
-    auto builder = Gtk::Builder::create_from_string(LAYOUT::dialog_profile);
+    auto builder = Gtk::Builder::create_from_resource("/org/gtox/ui/dialog_profile.ui");
     DialogProfile* tmp = nullptr;
     builder->get_widget_derived("dialog_profile", tmp);
     tmp->set_accounts(accounts);

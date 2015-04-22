@@ -18,7 +18,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 **/
 #include "WidgetNetwork.h"
-#include "Generated/icon.h"
 #include <glibmm/i18n.h>
 
 WidgetNetwork::WidgetNetwork()

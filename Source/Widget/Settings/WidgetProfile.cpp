@@ -18,14 +18,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 **/
 #include "WidgetProfile.h"
-#include "Generated/icon.h"
 #include <glibmm/i18n.h>
 #include "Tox/Toxmm.h"
 #include "Dialog/DialogContact.h"
 
 WidgetProfile::WidgetProfile()
     : Glib::ObjectBase("WidgetProfile"),
-      m_clipboard(ICON::load_icon(ICON::clipboard)) {
+      m_clipboard(Gdk::Pixbuf::create_from_resource("/org/gtox/icon/clipboard.png")) {
     update();
 
     std::string hex = Toxmm::to_hex(Toxmm::instance().get_address().data(),
@@ -44,7 +43,7 @@ WidgetProfile::WidgetProfile()
     grid->set_column_spacing(10);
 
     m_avatar.set_image(
-        *Gtk::manage(new Gtk::Image(ICON::load_icon(ICON::avatar))));
+        *Gtk::manage(new Gtk::Image(Gdk::Pixbuf::create_from_resource("/org/gtox/icon/avatar.png"))));
     grid->attach(m_avatar, 0, 0, 1, 2);
 
     grid->attach(

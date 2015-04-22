@@ -20,11 +20,11 @@
 #include "WidgetContactListItem.h"
 #include "Tox/Toxmm.h"
 #include "Dialog/DialogContact.h"
-#include "Generated/icon.h"
-#include "Generated/layout.h"
 
 WidgetContactListItem* WidgetContactListItem::create(Toxmm::FriendNr nr, bool for_notify) {
-    auto builder = Gtk::Builder::create_from_string(use_mini(for_notify)?LAYOUT::list_item_contact_mini:LAYOUT::list_item_contact);
+    auto builder = Gtk::Builder::create_from_resource(use_mini(for_notify)?
+                                                          "/org/gtox/ui/list_item_contact_mini.ui":
+                                                          "/org/gtox/ui/list_item_contact.ui");
     WidgetContactListItem* tmp = nullptr;
     builder->get_widget_derived("contact_list_item", tmp);
     tmp->set_contact(nr);
@@ -108,27 +108,28 @@ void WidgetContactListItem::refresh() {
         m_name->set_text(Toxmm::instance().get_name_or_address(m_friend_nr));
         m_status_msg->set_text(Toxmm::instance().get_status_message(m_friend_nr));
 
-        const std::string* status = nullptr;
+        const char* status;
 
         switch (Toxmm::instance().get_status(m_friend_nr)) {
             case Toxmm::EUSERSTATUS::BUSY:
-                status = &ICON::status_busy;
+                status = "/org/gtox/icon/status_busy.png";
                 break;
             case Toxmm::EUSERSTATUS::NONE:
-                status = &ICON::status_online;
+                status = "/org/gtox/icon/status_online.png";
                 break;
             case Toxmm::EUSERSTATUS::AWAY:
-                status = &ICON::status_away;
+                status = "/org/gtox/icon/status_away.png";
                 break;
             default:
-                status = &ICON::status_offline;
+                status = "/org/gtox/icon/status_offline.png";
                 break;
         }
 
         if (spin) {
-            m_status_icon->set(generate_animation(ICON::load_icon(*status)));
+            m_status_icon->set_from_resource(status);
+            //m_status_icon->set(generate_animation(ICON::load_icon(*status)));
         } else {
-            m_status_icon->set(ICON::load_icon(*status));
+            m_status_icon->set_from_resource(status);
         }
     } catch (...) {
     }
@@ -146,6 +147,7 @@ std::string replace(std::string str,
 
 Glib::RefPtr<Gdk::PixbufAnimation> WidgetContactListItem::generate_animation(
     const Glib::RefPtr<Gdk::Pixbuf>& icon) {
+    /*
     auto ani = gdk_pixbuf_simple_anim_new(24, 24, 30);
     static std::string frames[36];
     for (int ang = 0; ang < 36; ++ang) {
@@ -172,6 +174,8 @@ Glib::RefPtr<Gdk::PixbufAnimation> WidgetContactListItem::generate_animation(
     }
     gdk_pixbuf_simple_anim_set_loop(ani, true);
     return Glib::wrap(GDK_PIXBUF_ANIMATION(ani));
+    */
+    return Glib::RefPtr<Gdk::PixbufAnimation>();
 }
 
 int WidgetContactListItem::compare(WidgetContactListItem* other) {
@@ -186,7 +190,7 @@ int WidgetContactListItem::compare(WidgetContactListItem* other) {
 void WidgetContactListItem::set_for_notify(bool notify) {
     m_for_notify = notify;
 
-    m_avatar->set(ICON::load_icon(ICON::avatar)->scale_simple(
+    m_avatar->set(Gdk::Pixbuf::create_from_resource("/org/gtox/icon/avatar.png")->scale_simple(
         use_mini(m_for_notify)?32:64,
         use_mini(m_for_notify)?32:64,
         Gdk::INTERP_BILINEAR));  // i would like to resize this depending

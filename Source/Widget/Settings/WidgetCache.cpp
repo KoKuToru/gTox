@@ -18,7 +18,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 **/
 #include "WidgetCache.h"
-#include "Generated/icon.h"
 #include <glibmm/i18n.h>
 #include <Tox/Toxmm.h>
 #include <stdio.h>

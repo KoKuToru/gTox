@@ -18,13 +18,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 **/
 #include "DialogContact.h"
-#include "Generated/icon.h"
-#include "Generated/layout.h"
+#include "Generated/theme.h"
 #include <gdkmm.h>
 #include "Tox/Toxmm.h"
 #include <iostream>
 #include <libnotifymm.h>
-#include "Generated/theme.h"
 #include <iostream>
 #include <glibmm/i18n.h>
 #include "Helper/Canberra.h"
@@ -42,21 +40,18 @@ DialogContact::DialogContact(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Bu
     m_tox_callback = [this](const ToxEvent& ev) { tox_event_handling(ev); };
 
     auto css = Gtk::CssProvider::create();
-    if (!css->load_from_data(THEME::main)) {
-        std::cerr << _("LOADING_THEME_FAILED") << std::endl;
-    } else {
-        auto screen = Gdk::Screen::get_default();
-        auto ctx = get_style_context();
-        ctx->add_provider_for_screen(
-            screen, css, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
-    }
+    css->load_from_resource("/org/gtox/style/main.css");
+    auto screen = Gdk::Screen::get_default();
+    auto ctx = get_style_context();
+    ctx->add_provider_for_screen(
+                screen, css, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
 
     m_builder->get_widget("headerbar", m_headerbar);
     m_builder->get_widget("status_btn", m_btn_status);
     m_builder->get_widget("stack_header", m_stack_header);
     m_builder->get_widget("stack", m_stack);
 
-    set_icon(ICON::load_icon(ICON::icon_128));
+    set_icon(Gdk::Pixbuf::create_from_resource("/org/gtox/icon/icon_128.png"));
 
     set_border_width(0);
     set_default_geometry(300, 600);
@@ -104,7 +99,7 @@ DialogContact::DialogContact(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Bu
 
     Gtk::Button* add_contact_btn;
     m_builder->get_widget("add_contact_btn", add_contact_btn);
-    add_contact_btn->set_image(*Gtk::manage(new Gtk::Image(ICON::load_icon(ICON::plus))));
+    add_contact_btn->set_image(*Gtk::manage(new Gtk::Image(Gdk::Pixbuf::create_from_resource("/org/gtox/icon/plus.png"))));
     add_contact_btn->signal_clicked().connect([this, add_contact_btn]() {
         if (!m_popover_add_contact) {
             m_popover_add_contact = std::make_shared<PopoverAddContact>(*add_contact_btn);
@@ -114,7 +109,7 @@ DialogContact::DialogContact(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Bu
 
     Gtk::Button* setting_btn;
     m_builder->get_widget("setting_btn", setting_btn);
-    setting_btn->set_image(*Gtk::manage(new Gtk::Image(ICON::load_icon(ICON::settings))));
+    setting_btn->set_image(*Gtk::manage(new Gtk::Image(Gdk::Pixbuf::create_from_resource("/org/gtox/icon/settings.png"))));
     setting_btn->signal_clicked().connect([this, setting_btn]() {
         if (!m_popover_settings) {
             m_popover_settings = std::make_shared<PopoverSettings>(*setting_btn);
@@ -167,7 +162,7 @@ DialogContact::DialogContact(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Bu
 
 std::shared_ptr<DialogContact> DialogContact::create(Glib::ustring file) {
     Toxmm::instance().init(file);
-    auto builder = Gtk::Builder::create_from_string(LAYOUT::dialog_contact);
+    auto builder = Gtk::Builder::create_from_resource("/org/gtox/ui/dialog_contact.ui");
     DialogContact* tmp = nullptr;
     builder->get_widget_derived("dialog_contact", tmp);
     tmp->m_instance = tmp;
@@ -235,7 +230,7 @@ void DialogContact::tox_event_handling(const ToxEvent& ev) {
                                               true,
                                               Toxmm::to_hex(data.addr.data(), 32),
                                               Glib::ustring::compose(_("FRIEND_REQUEST"), data.message),
-                                              ICON::load_icon(ICON::avatar)->scale_simple(
+                                              Gdk::Pixbuf::create_from_resource("/org/gtox/icon/avatar.png")->scale_simple(
                                               64,
                                               64,
                                               Gdk::INTERP_BILINEAR),
@@ -345,19 +340,19 @@ void DialogContact::set_status(Toxmm::EUSERSTATUS status_code) {
     switch (status_code) {
         case Toxmm::NONE:
             m_icon_status.property_pixbuf()
-                = ICON::load_icon(ICON::status_online);
+                = Gdk::Pixbuf::create_from_resource("/org/gtox/icon/status_online.png");
             break;
         case Toxmm::BUSY:
             m_icon_status.property_pixbuf()
-                = ICON::load_icon(ICON::status_busy);
+                = Gdk::Pixbuf::create_from_resource("/org/gtox/icon/status_busy.png");
             break;
         case Toxmm::AWAY:
             m_icon_status.property_pixbuf()
-                = ICON::load_icon(ICON::status_away);
+                = Gdk::Pixbuf::create_from_resource("/org/gtox/icon/status_away.png");
             break;
         default:
             m_icon_status.property_pixbuf()
-                = ICON::load_icon(ICON::status_offline);
+                = Gdk::Pixbuf::create_from_resource("/org/gtox/icon/status_offline.png");
             break;
     }
     if (!m_status_icon) {

@@ -18,7 +18,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 **/
 #include "PopoverSettings.h"
-#include "Generated/icon.h"
 #include "Dialog/DialogContact.h"
 #include "Dialog/Debug/DialogCss.h"
 #include <glibmm/i18n.h>
