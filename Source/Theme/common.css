@@ -1,0 +1,107 @@
+/**
+    Profile selection
+**/
+
+.gtox-profile, .gtox-contact-frame, .gtox-notification {
+    padding: 5px;
+	padding-left: 9px;
+    padding-right: 5px;
+
+}
+
+.gtox-profile-avatar, .gtox-contact-avatar, .gtox-notification-image {
+    padding: 5px
+}
+
+.gtox-profile-name, .gtox-contact-name, .gtox-notification-title {
+    font-size: 120%;
+    padding: 0 5px;
+}
+
+.gtox-profile-status, .gtox-contact-status, .gtox-notification-status {
+    font-size: 80%;
+    padding: 0 5px;
+}
+
+.gtox-profile-path, .gtox-contact-path {
+    font-size: 80%;
+    padding: 0 5px;
+}
+
+.gtox-contact-status-icon, .gtox-notification-icon {
+	padding-left: 6px;
+	padding-right: 6px;
+}
+
+/**
+    Popovers
+**/
+GtkPopover {
+    padding: 0.5em;
+}
+
+GtkListBoxRow {
+	padding: 0px;
+}
+
+/**
+    Headerbar tweaks, correctly render radius
+**/
+
+.gtox-headerbar-right {
+    border-top-left-radius: 0;
+}
+
+.gtox-headerbar-left {
+    border-top-right-radius: 0;
+}
+
+/**
+    Chat bubbles
+**/
+
+.gtox-chat {
+    
+}
+
+.gtox-bubble {
+    border-radius: 7px;
+    background-color: rgba(0,0,0,0.2);
+}
+
+.gtox-bubble.gtox-left {
+    border-top-left-radius: 0;
+}
+
+.gtox-bubble.gtox-right {
+    border-bottom-right-radius: 0;
+}
+
+
+.bubble_chat_line {
+	background: transparent;
+	padding: 4px;
+	border: none;
+}
+
+
+.bubble_chat_line.top_left {
+	border-radius: 5px 0 0 0;
+}
+
+.bubble_chat_line.top_right {
+	border-radius: 0 5px 0 0;
+}
+
+.bubble_chat_line.bottom_left {
+	border-radius: 0 0 0 5px;
+}
+
+.bubble_chat_line.bottom_right {
+	border-radius: 0 0 5px 0;
+}
+
+.bubble_chat_line_time {
+    border-radius: 3px;
+    padding: 2px;
+}
