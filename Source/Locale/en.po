@@ -1,36 +1,40 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-04-15 20:58+0200\n"
+"POT-Creation-Date: 2015-04-22 21:52+0200\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: ENCODING\n"
 
-#: Widget/Settings/WidgetAbout.cpp:44
+#: Widget/Settings/WidgetAbout.cpp:43
 msgid "ABOUT_SOFTWARE_COPYRIGHT"
 msgstr "Copyright © 2014 - the gTox team"
 
-#: Widget/Settings/WidgetAbout.cpp:41
+#: Widget/Settings/WidgetAbout.cpp:40
 msgid "ABOUT_SOFTWARE_HOMEPAGE"
 msgstr ""
 "<a href=\"https://github.com/KoKuToru/gTox.git\">github.com/KoKuToru/gTox."
 "git</a>"
 
-#: Widget/Settings/WidgetAbout.cpp:30
+#: Widget/Settings/WidgetAbout.cpp:29
 msgid "ABOUT_SOFTWARE_NAME"
 msgstr "<b>gTox</b>"
 
-#: Widget/Settings/WidgetAbout.cpp:35
+#: Widget/Settings/WidgetAbout.cpp:34
 msgid "ABOUT_SOFTWARE_VERSION"
 msgstr "<i>pre-alpha version</i>"
 
-#: Widget/Settings/WidgetAbout.cpp:48
+#: Widget/Settings/WidgetAbout.cpp:47
 msgid "ABOUT_SOFTWARE_WARRANTY"
 msgstr "<i>This program comes with ABSOLUTELY NO WARRANTY</i>"
 
-#: Popover/PopoverAddContact.cpp:33
+#: Popover/PopoverAddContact.cpp:32
 msgid "ADD"
 msgstr "Add"
+
+#: gTox.cpp:36
+msgid "APPLICATION_NAME"
+msgstr ""
 
 #. Label for the gTox database path
 #: Layout/dialog_assistant.ui:165
@@ -84,11 +88,11 @@ msgstr ""
 "We cannot guarantee what works today will work tomorrow.\n"
 "gTox and Tox are alpha software and code changes daily."
 
-#: Popover/PopoverStatus.cpp:32
+#: Popover/PopoverStatus.cpp:30
 msgid "AWAY"
 msgstr "Away"
 
-#: Popover/PopoverStatus.cpp:31
+#: Popover/PopoverStatus.cpp:29
 msgid "BUSY"
 msgstr "Busy"
 
@@ -96,11 +100,11 @@ msgstr "Busy"
 msgid "DATE_FORMAT"
 msgstr "%A, %e. %B %Y"
 
-#: Popover/PopoverAddContact.cpp:65
+#: Popover/PopoverAddContact.cpp:64
 msgid "ERROR_ADD_CONTACT_ADDR_WRONG_SIZE"
 msgstr "A tox id must be 76 letters long"
 
-#: Popover/PopoverAddContact.cpp:64
+#: Popover/PopoverAddContact.cpp:63
 msgid "ERROR_ADD_CONTACT_ADDR_WRONG_SIZE_TITLE"
 msgstr "Wrong ID length"
 
@@ -124,19 +128,23 @@ msgstr ""
 "Please make sure that you are using the newest gTox version.\n"
 "If you do use the newest, please report the error to us."
 
-#: Popover/PopoverStatus.cpp:34
+#: Popover/PopoverStatus.cpp:31
 msgid "EXIT"
 msgstr "Exit"
 
-#: Dialog/DialogContact.cpp:48 Dialog/DialogProfile.cpp:36
-msgid "LOADING_THEME_FAILED"
-msgstr "Failed to load theme"
+#: Dialog/DialogContact.cpp:231
+msgid "FRIEND_REQUEST"
+msgstr ""
 
-#: Popover/PopoverAddContact.cpp:32 Widget/Settings/WidgetProfile.cpp:55
+#: Dialog/DialogContact.cpp:236
+msgid "IGNORE"
+msgstr ""
+
+#: Popover/PopoverAddContact.cpp:31 Widget/Settings/WidgetProfile.cpp:54
 msgid "MESSAGE"
 msgstr "Message"
 
-#: Popover/PopoverStatus.cpp:30
+#: Popover/PopoverStatus.cpp:28
 msgid "ONLINE"
 msgstr "Online"
 
@@ -145,11 +153,11 @@ msgstr "Online"
 msgid "PROFILE_ABORT"
 msgstr "Abort"
 
-#: Layout/list_item_profile.ui:49
+#: Layout/list_item_profile.ui:52
 msgid "PROFILE_CORRUPTED"
 msgstr "Profile couldn't be loaded"
 
-#: Layout/list_item_profile.ui:33
+#: Layout/list_item_profile.ui:34
 msgid "PROFILE_CORRUPTED_TITLE"
 msgstr "Corrupted profile"
 
@@ -163,19 +171,15 @@ msgstr "New"
 msgid "PROFILE_SELECT"
 msgstr "Select"
 
-#: Dialog/DialogProfile.cpp:53
+#: Dialog/DialogProfile.cpp:47
 msgid "PROFILE_SUBTITLE"
 msgstr "Select profile"
 
-#: Dialog/DialogProfile.cpp:44 Dialog/DialogProfile.cpp:52
+#: Dialog/DialogProfile.cpp:38 Dialog/DialogProfile.cpp:46
 msgid "PROFILE_TITLE"
 msgstr "gTox"
 
-#: Dialog/DialogProfileCreate.cpp:89
-msgid "QUIT_ASSISTANT_QUESTION"
-msgstr "Do you really want to guit the assistant?"
-
-#: Popover/PopoverContextContact.cpp:28
+#: Popover/PopoverContextContact.cpp:27
 msgid "REMOVE"
 msgstr "Remove"
 
@@ -183,33 +187,33 @@ msgstr "Remove"
 msgid "SEND"
 msgstr "Send"
 
-#: Popover/PopoverSettings.cpp:30
+#: Popover/PopoverSettings.cpp:29
 msgid "SETTINGS"
 msgstr "Settings"
 
-#: Dialog/DialogSettings.cpp:69
+#: Dialog/DialogSettings.cpp:77
 msgid "SETTINGS_ABOUT"
 msgstr "About"
 
-#: Widget/Settings/WidgetCache.cpp:57
+#: Widget/Settings/WidgetCache.cpp:56
 msgid "SETTINGS_CACHE_CLEAN_LOG"
 msgstr ""
 "You are about to remove all conversations logs of all contacts.\n"
 "This action cannot be undone !"
 
-#: Widget/Settings/WidgetCache.cpp:67
+#: Widget/Settings/WidgetCache.cpp:66
 msgid "SETTINGS_CACHE_CLEAN_LOG_SUCCESS"
 msgstr "%1 log entries successfully removed"
 
-#: Widget/Settings/WidgetCache.cpp:61
+#: Widget/Settings/WidgetCache.cpp:60
 msgid "SETTINGS_CACHE_CLEAN_LOG_SUCCESS_TITLE"
 msgstr "Logs removed"
 
-#: Widget/Settings/WidgetCache.cpp:52
+#: Widget/Settings/WidgetCache.cpp:51
 msgid "SETTINGS_CACHE_CLEAN_LOG_TITLE"
 msgstr "Delete all logs ?"
 
-#: Dialog/DialogSettings.cpp:31
+#: Dialog/DialogSettings.cpp:39
 msgid "SETTINGS_TITLE"
 msgstr "gTox settings"
 
@@ -237,13 +241,13 @@ msgstr ""
 "A friend request has already been sent, or the address belongs to a friend "
 "that is already on the friend list."
 
-#: Popover/PopoverAddContact.cpp:97
+#: Popover/PopoverAddContact.cpp:96
 msgid "TOX_ERR_FRIEND_ADD_ALREADY_SENT_UI"
 msgstr ""
 "A friend request has already been sent, or the address belongs to a friend "
 "that is already on the friend list."
 
-#: Popover/PopoverAddContact.cpp:96
+#: Popover/PopoverAddContact.cpp:95
 msgid "TOX_ERR_FRIEND_ADD_ALREADY_SENT_UI_TITLE"
 msgstr "Friend request failed"
 
@@ -253,11 +257,11 @@ msgstr ""
 "TOX_ERR_FRIEND_ADD_BAD_CHECKSUM\n"
 "The friend address checksum failed."
 
-#: Popover/PopoverAddContact.cpp:92
+#: Popover/PopoverAddContact.cpp:91
 msgid "TOX_ERR_FRIEND_ADD_BAD_CHECKSUM_UI"
 msgstr "The friend address checksum failed."
 
-#: Popover/PopoverAddContact.cpp:91
+#: Popover/PopoverAddContact.cpp:90
 msgid "TOX_ERR_FRIEND_ADD_BAD_CHECKSUM_UI_TITLE"
 msgstr "Wrong checksum"
 
@@ -274,11 +278,11 @@ msgstr ""
 "The friend request message was empty. This, and the TOO_LONG code will never "
 "be returned from tox_friend_add_norequest."
 
-#: Popover/PopoverAddContact.cpp:87
+#: Popover/PopoverAddContact.cpp:86
 msgid "TOX_ERR_FRIEND_ADD_NO_MESSAGE_UI"
 msgstr "The friend request message is not allowed to be empty."
 
-#: Popover/PopoverAddContact.cpp:86
+#: Popover/PopoverAddContact.cpp:85
 msgid "TOX_ERR_FRIEND_ADD_NO_MESSAGE_UI_TITLE"
 msgstr "Empty message"
 
@@ -292,11 +296,11 @@ msgstr ""
 "TOX_ERR_FRIEND_ADD_OWN_KEY\n"
 "The friend address belongs to the sending client."
 
-#: Popover/PopoverAddContact.cpp:102
+#: Popover/PopoverAddContact.cpp:101
 msgid "TOX_ERR_FRIEND_ADD_OWN_KEY_UI"
 msgstr "The friend address belongs to you"
 
-#: Popover/PopoverAddContact.cpp:101
+#: Popover/PopoverAddContact.cpp:100
 msgid "TOX_ERR_FRIEND_ADD_OWN_KEY_UI_TITLE"
 msgstr "Friend request failed"
 
@@ -306,11 +310,11 @@ msgstr ""
 "TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM\n"
 "The friend was already there, but the nospam value was different."
 
-#: Popover/PopoverAddContact.cpp:107
+#: Popover/PopoverAddContact.cpp:106
 msgid "TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM_UI"
 msgstr "The friend was already there, but the nospam value was different."
 
-#: Popover/PopoverAddContact.cpp:106
+#: Popover/PopoverAddContact.cpp:105
 msgid "TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM_UI_TITLE"
 msgstr "Friend request failed"
 
@@ -321,11 +325,11 @@ msgstr ""
 "The length of the friend request message exceeded "
 "TOX_MAX_FRIEND_REQUEST_LENGTH."
 
-#: Popover/PopoverAddContact.cpp:112
+#: Popover/PopoverAddContact.cpp:111
 msgid "TOX_ERR_FRIEND_ADD_TOO_LONG_UI"
 msgstr "The length of the friend request message exceeded 1016 bytes."
 
-#: Popover/PopoverAddContact.cpp:111
+#: Popover/PopoverAddContact.cpp:110
 msgid "TOX_ERR_FRIEND_ADD_TOO_LONG_UI_TITLE"
 msgstr "Friend request failed"
 
@@ -475,14 +479,20 @@ msgstr ""
 "TOX_ERR_SET_TYPING_FRIEND_NOT_FOUND\n"
 "The friend number did not designate a valid friend."
 
-#: Popover/PopoverAddContact.cpp:31 Widget/Settings/WidgetProfile.cpp:58
+#: Popover/PopoverAddContact.cpp:30 Widget/Settings/WidgetProfile.cpp:57
 msgid "TOX_ID"
 msgstr "Tox ID"
 
-#: main.cpp:100
+#: main.cpp:101
 msgid "TRANSLATION_CHECKER"
 msgstr "Okay"
 
-#: Widget/Settings/WidgetProfile.cpp:51
+#: Widget/Settings/WidgetProfile.cpp:50
 msgid "USERNAME"
 msgstr "Username"
+
+#~ msgid "QUIT_ASSISTANT_QUESTION"
+#~ msgstr "Do you really want to guit the assistant?"
+
+#~ msgid "LOADING_THEME_FAILED"
+#~ msgstr "Failed to load theme"
