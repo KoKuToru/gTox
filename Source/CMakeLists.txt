@@ -53,6 +53,7 @@ add_custom_command(
 
 set(SOURCES
     main.cpp
+    gTox.cpp
     Widget/WidgetChat.cpp
     Widget/WidgetContactListItem.cpp
     Widget/WidgetChatLine.cpp

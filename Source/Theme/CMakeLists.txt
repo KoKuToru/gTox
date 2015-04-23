@@ -5,9 +5,10 @@ set(CNAME "gtox_style")
 set(PREFIX "/org/gtox/style")
 set(OPTIONS "compressed=\\\"true\\\"")
 
-set(SRC 
-    main.css)
-    
+set(SRC
+    common.css
+    dark.css)
+
 find_program(GLIB_COMPILE_RESOURCE_EXECUTEABLE glib-compile-resources)
 if(NOT GLIB_COMPILE_RESOURCE_EXECUTEABLE)
     message(FATAL_ERROR "glib-compile-resources not found")
@@ -17,7 +18,7 @@ find_program(BASH_EXECUTEABLE bash)
 if(NOT BASH_EXECUTEABLE)
     message(FATAL_ERROR "bash not found")
 endif()
-    
+
 add_custom_command(
     OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/${NAME}.xml" "${CMAKE_CURRENT_BINARY_DIR}/${NAME}.c" "${CMAKE_CURRENT_BINARY_DIR}/${NAME}.h"
     COMMAND "${BASH_EXECUTEABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/../Tools/gresource.sh" "${CMAKE_CURRENT_BINARY_DIR}/${NAME}.xml" "${PREFIX}" "${OPTIONS}" ${SRC}

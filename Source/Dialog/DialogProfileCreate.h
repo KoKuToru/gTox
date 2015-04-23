@@ -46,7 +46,7 @@ class DialogProfileCreate : public Gtk::Assistant {
     ~DialogProfileCreate();
 
     DialogProfileCreate(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& builder);
-    static std::shared_ptr<DialogProfileCreate> create(const Glib::ustring& path);
+    static DialogProfileCreate* create(const Glib::ustring& path);
 
     bool is_aborted();
     Glib::ustring get_path();

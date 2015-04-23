@@ -25,6 +25,15 @@ DialogChat::DialogChat(Toxmm::FriendNr nr)
     : m_in_window(false),
       m_icon_attach(Gdk::Pixbuf::create_from_resource("/org/gtox/icon/chat_detach.png")),
       m_chat(nr) {
+
+    auto css = Gtk::CssProvider::create();
+    auto settings = Gio::Settings::create("org.gtox");
+    css->load_from_resource("/org/gtox/style/dark.css");
+    auto screen = Gdk::Screen::get_default();
+    auto ctx = get_style_context();
+    ctx->add_provider_for_screen(
+                screen, css, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+
     this->set_border_width(1);
     this->set_default_geometry(256, 256);
     this->set_position(Gtk::WindowPosition::WIN_POS_NONE);

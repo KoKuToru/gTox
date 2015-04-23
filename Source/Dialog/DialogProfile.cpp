@@ -29,7 +29,7 @@ DialogProfile::DialogProfile(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Bu
     m_quited(false) {
 
     auto css = Gtk::CssProvider::create();
-    css->load_from_resource("/org/gtox/style/main.css");
+    css->load_from_resource("/org/gtox/style/dark.css");
     auto screen = Gdk::Screen::get_default();
     auto ctx = get_style_context();
     ctx->add_provider_for_screen(
@@ -149,17 +149,17 @@ void DialogProfile::set_accounts(const std::vector<std::string>& accounts) {
     }
 }
 
-std::shared_ptr<DialogProfile> DialogProfile::create(const std::vector<std::string>& accounts) {
+DialogProfile* DialogProfile::create(const std::vector<std::string>& accounts) {
     auto builder = Gtk::Builder::create_from_resource("/org/gtox/ui/dialog_profile.ui");
     DialogProfile* tmp = nullptr;
     builder->get_widget_derived("dialog_profile", tmp);
     tmp->set_accounts(accounts);
-    return std::shared_ptr<DialogProfile>(tmp);
+    return tmp;
 }
 
 void DialogProfile::quit() {
     m_quited = true;
-    Gtk::Main::quit();
+    hide();
 }
 
 DialogProfile::~DialogProfile() {

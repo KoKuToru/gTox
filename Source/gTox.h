@@ -2,7 +2,7 @@
     gTox a GTK-based tox-client - https://github.com/KoKuToru/gTox.git
 
     Copyright (C) 2015  Luca Béla Palkovics
-    Copyright (C) 2014  Maurice Mohlek
+    Copyright (C) 2015  Maurice Mohlek
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,32 +17,23 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 **/
-#ifndef DIALOGPROFILE_H
-#define DIALOGPROFILE_H
+#ifndef GTOX_APPLICATION
 
 #include <gtkmm.h>
 
-// Single chat window
-class DialogProfile : public Gtk::Window {
-  private:
-    const Glib::RefPtr<Gtk::Builder> m_builder;
-    std::vector<std::string> m_accounts;
-    bool m_abort;
-    bool m_quited;
-    std::string m_selected_path;
+class gTox : public Gtk::Application {
+    public:
+        gTox();
+        static Glib::RefPtr<gTox> create();
 
-    void quit();
+    protected:
+        void on_activate() override;
+        void on_open(const Gio::Application::type_vec_files& files,
+                     const Glib::ustring& hint) override;
+        int on_command_line(const Glib::RefPtr<Gio::ApplicationCommandLine>& command_line) override;
 
-    void set_accounts(const std::vector<std::string>& accounts);
-
-  public:
-    DialogProfile(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& builder);
-    static DialogProfile* create(const std::vector<std::string>& accounts);
-
-    ~DialogProfile();
-
-    bool is_aborted();
-    std::string get_path();
+    private:
+        static Glib::RefPtr<gTox> m_instance;
 };
 
 #endif

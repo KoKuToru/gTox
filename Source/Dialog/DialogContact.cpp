@@ -39,7 +39,7 @@ DialogContact::DialogContact(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Bu
     m_tox_callback = [this](const ToxEvent& ev) { tox_event_handling(ev); };
 
     auto css = Gtk::CssProvider::create();
-    css->load_from_resource("/org/gtox/style/main.css");
+    css->load_from_resource("/org/gtox/style/dark.css");
     auto screen = Gdk::Screen::get_default();
     auto ctx = get_style_context();
     ctx->add_provider_for_screen(
@@ -159,13 +159,13 @@ DialogContact::DialogContact(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Bu
                                       }));
 }
 
-std::shared_ptr<DialogContact> DialogContact::create(Glib::ustring file) {
+DialogContact* DialogContact::create(Glib::ustring file) {
     Toxmm::instance().init(file);
     auto builder = Gtk::Builder::create_from_resource("/org/gtox/ui/dialog_contact.ui");
     DialogContact* tmp = nullptr;
     builder->get_widget_derived("dialog_contact", tmp);
     tmp->m_instance = tmp;
-    return std::shared_ptr<DialogContact>(tmp);
+    return tmp;
 }
 
 void DialogContact::load_contacts() {

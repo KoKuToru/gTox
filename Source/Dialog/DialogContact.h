@@ -64,7 +64,7 @@ class DialogContact : public Gtk::Window {
     DialogContact(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& builder);
     ~DialogContact();
 
-    static std::shared_ptr<DialogContact> create(Glib::ustring file);
+    static DialogContact* create(Glib::ustring file);
 
     static DialogContact& instance();
 

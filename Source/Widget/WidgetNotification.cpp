@@ -101,7 +101,7 @@ void WidgetNotification::set_event(DialogContact::EventAddNotification event) {
 
     if (m_event.show_on_desktop) {
         try {
-                        m_notify->show();
+            m_notify->show();
         } catch (...) {
             //Probably a desktop without Notification system
             m_notify.reset();

@@ -23,6 +23,14 @@
 
 DialogProfileCreate::DialogProfileCreate(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& builder):
     Gtk::Assistant(cobject), m_builder(builder), m_aborted(true) {
+
+    auto css = Gtk::CssProvider::create();
+    css->load_from_resource("/org/gtox/style/dark.css");
+    auto screen = Gdk::Screen::get_default();
+    auto ctx = get_style_context();
+    ctx->add_provider_for_screen(
+                screen, css, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+
     property_resizable() = false;
     set_size_request(800, 600);
     set_position(Gtk::WindowPosition::WIN_POS_CENTER_ALWAYS);
@@ -67,12 +75,12 @@ DialogProfileCreate::DialogProfileCreate(BaseObjectType* cobject, const Glib::Re
     }
 }
 
-std::shared_ptr<DialogProfileCreate> DialogProfileCreate::create(const Glib::ustring& path) {
+DialogProfileCreate* DialogProfileCreate::create(const Glib::ustring& path) {
     auto builder = Gtk::Builder::create_from_resource("/org/gtox/ui/dialog_assistant.ui");
     DialogProfileCreate* tmp = nullptr;
     builder->get_widget_derived("dialog_assistant", tmp);
     tmp->set_path(path);
-    return std::shared_ptr<DialogProfileCreate>(tmp);
+    return tmp;
 }
 
 DialogProfileCreate::~DialogProfileCreate() {
@@ -84,15 +92,8 @@ int DialogProfileCreate::on_next(int) {
 }
 
 void DialogProfileCreate::on_cancel() {
-    int status = Gtk::MessageDialog(_("QUIT_ASSISTANT_QUESTION"),
-                                    true,
-                                    Gtk::MESSAGE_QUESTION,
-                                    Gtk::BUTTONS_YES_NO,
-                                    true).run();
-
-    if (status == Gtk::RESPONSE_YES) {
-        Gtk::Main::quit();
-    }
+    m_path.clear();
+    hide();
 }
 
 void DialogProfileCreate::on_apply() {
@@ -104,8 +105,8 @@ void DialogProfileCreate::on_apply() {
     Toxmm::instance().database().config_set("LOG_CHAT", m_logging->get_active());
     Toxmm::instance().save();
     Toxmm::destroy();
-    Gtk::Main::quit();
     m_aborted = false;
+    hide();
 }
 
 void DialogProfileCreate::on_close() {

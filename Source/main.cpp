@@ -34,6 +34,7 @@
 #include <gstreamermm/init.h>
 
 #include "Tox/Toxmm.h"
+#include "gTox.h"
 
 void print_copyright() {
     std::clog
@@ -128,10 +129,10 @@ int main(int argc, char* argv[]) {
 
     Gtk::Main kit(argc, argv);
     Gst::init(argc, argv);
+    Notify::init("gTox");
 
     Gtk::Settings::get_default()
             ->property_gtk_application_prefer_dark_theme() = true;
-    Glib::set_application_name("gTox");
 
     if (!try_setup_translation(nullptr) && !try_setup_translation("en")) {
         DialogError(false, "Fatal Error", "Couldn't find translation files").run();
@@ -140,84 +141,8 @@ int main(int argc, char* argv[]) {
 
     print_copyright();
 
-    Notify::init("gTox");
+    Glib::RefPtr<gTox> application = gTox::create();
 
-    std::string config_path
-        = Glib::build_filename(Glib::get_user_config_dir(), "tox");
-    if (!Glib::file_test(config_path, Glib::FILE_TEST_IS_DIR)) {
-        Gio::File::create_for_path(config_path)->make_directory();
-    }
-
-    Glib::Dir dir(config_path);
-    std::vector<std::string> accounts(dir.begin(), dir.end());
-    accounts.resize(std::distance(
-        accounts.begin(),
-        std::remove_if(
-            accounts.begin(), accounts.end(), [](const std::string& name) {
-                std::string state_ext = ".gtox";
-                bool f_gtox = !(name.size() > state_ext.size()
-                                && name.substr(name.size() - state_ext.size(),
-                                        state_ext.size()) == state_ext);
-                state_ext = ".tox";
-                bool f_tox = !(name.size() > state_ext.size()
-                               && name.substr(name.size() - state_ext.size(),
-                                        state_ext.size()) == state_ext);
-                bool f_old_tox = (name != "tox_save");
-                return f_gtox && f_tox && f_old_tox;
-            })));
-
-    //filter files with same name .tox/.gtox
-    //1. remove extension
-    std::transform(accounts.begin(), accounts.end(), accounts.begin(), [](std::string a) {
-        auto a_p = a.find_last_of(".");
-        if (a_p != std::string::npos) {
-            a.resize(a_p);
-        }
-        return a;
-    });
-    //2. sort
-    std::sort(accounts.begin(), accounts.end());
-    //3. remove duplicates
-    accounts.erase(std::unique(accounts.begin(), accounts.end()), accounts.end());
-    //4. make the full paths
-    std::transform(accounts.begin(), accounts.end(), accounts.begin(), [&config_path](const std::string& name) {
-        return Glib::build_filename(config_path, name);
-    });
-
-    // start profile select
-    while (true) {
-        auto profile = DialogProfile::create(accounts);
-
-        if (!accounts.empty() && profile->get_path().empty()) {
-            kit.run(*profile);
-        }
-
-        if (!accounts.empty() && profile->is_aborted()) {
-            return 0;
-        }
-
-        if (profile->get_path().empty()) {
-            profile->hide();
-            auto assistant = DialogProfileCreate::create(config_path);
-            kit.run(*assistant);
-
-            if (!assistant->is_aborted()) {
-                config_path = assistant->get_path();
-                break;
-            }
-
-            if (accounts.empty()) {
-                //exit
-                return 0;
-            }
-        } else {
-            config_path = profile->get_path();
-            break;
-        }
-    }
-
-    auto dialog = DialogContact::create(config_path);
-    kit.run(*dialog);
-    dialog.reset();
-    return 0;
+    const int status = application->run(argc, argv);
+    return status;
 }
