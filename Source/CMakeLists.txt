@@ -201,7 +201,7 @@ add_custom_command(
    TARGET ${PROJECT_NAME}
    PRE_BUILD
    COMMAND ${GETTEXT_XGETTEXT_EXECUTEABLE} -o "${CMAKE_CURRENT_SOURCE_DIR}/Locale/source.pot" --from-code=UTF-8 --sort-output --c++ --omit-header -k_ -s ${SOURCES}
-   #COMMAND ${GETTEXT_XGETTEXT_EXECUTEABLE} -o "${CMAKE_CURRENT_SOURCE_DIR}/Locale/layout.pot" --from-code=UTF-8 --sort-output --keyword=translatable -k_ -s ${LAYOUT_P}
+   COMMAND ${GETTEXT_XGETTEXT_EXECUTEABLE} -o "${CMAKE_CURRENT_SOURCE_DIR}/Locale/layout.pot" --from-code=UTF-8 --sort-output --keyword=translatable -k_ -s ${LAYOUT_P}
    COMMAND ${GETTEXT_MSGCAT_EXECUTEABLE} -us "${CMAKE_CURRENT_SOURCE_DIR}/Locale/source.pot" "${CMAKE_CURRENT_SOURCE_DIR}/Locale/layout.pot" > "${CMAKE_CURRENT_SOURCE_DIR}/Locale/template.pot"
    DEPENDS ${SOURCES} ${LAYOUT_P}
    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
