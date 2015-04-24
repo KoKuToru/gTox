@@ -131,9 +131,6 @@ int main(int argc, char* argv[]) {
     Gst::init(argc, argv);
     Notify::init("gTox");
 
-    Gtk::Settings::get_default()
-            ->property_gtk_application_prefer_dark_theme() = true;
-
     if (!try_setup_translation(nullptr) && !try_setup_translation("en")) {
         DialogError(false, "Fatal Error", "Couldn't find translation files").run();
         return -1;
