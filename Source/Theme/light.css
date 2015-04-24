@@ -14,27 +14,33 @@
 }
 
 .gtox-profile:selected {
-    background-color: rgba(255,255,255,0.2);
+    background-color: rgba(0,0,0,0.2);
+    color: black;
 }
 
 .gtox-contact-active {
-    background-color: rgba(40,150,40,0.2);
+    background-color: rgba(40,150,40,0.4);
 }
 
 .gtox-contact:selected {
     background-color: transparent;
+    color: black;
 }
 
 .gtox-contact:prelight {
-    background-color: rgba(255,255,255,0.2);
+    background-color: rgba(0,0,0,0.2);
 }
 
 .gtox-notification:selected {
-    background-color: rgba(255,255,255,0.2);
+    background-color: rgba(0,0,0,0.2);
 }
 
 .gtox-notification-area {
-    background-color: rgba(150,40,40,0.2);
+    background-color: rgba(150,40,40,0.6);
+}
+
+.gtox-notification {
+	color: white;
 }
 
 .gtox-notification:selected {
@@ -42,7 +48,7 @@
 }
 
 .gtox-notification:prelight {
-    background-color: rgba(255,255,255,0.2);
+    background-color: rgba(0,0,0,0.2);
 }
 
 /**
@@ -100,3 +106,4 @@
     background: rgba(255,255,255,0.2);
     color: black;
 }
+
