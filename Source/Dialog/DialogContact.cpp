@@ -38,13 +38,6 @@ DialogContact::DialogContact(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Bu
     : Gtk::Window(cobject), m_builder(builder) {
     m_tox_callback = [this](const ToxEvent& ev) { tox_event_handling(ev); };
 
-    auto css = Gtk::CssProvider::create();
-    css->load_from_resource("/org/gtox/style/dark.css");
-    auto screen = Gdk::Screen::get_default();
-    auto ctx = get_style_context();
-    ctx->add_provider_for_screen(
-                screen, css, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
-
     m_builder->get_widget("headerbar", m_headerbar);
     m_builder->get_widget("status_btn", m_btn_status);
     m_builder->get_widget("stack_header", m_stack_header);

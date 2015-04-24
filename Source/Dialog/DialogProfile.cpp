@@ -28,13 +28,6 @@ DialogProfile::DialogProfile(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Bu
     m_abort(true),
     m_quited(false) {
 
-    auto css = Gtk::CssProvider::create();
-    css->load_from_resource("/org/gtox/style/dark.css");
-    auto screen = Gdk::Screen::get_default();
-    auto ctx = get_style_context();
-    ctx->add_provider_for_screen(
-                screen, css, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
-
     set_title(_("PROFILE_TITLE"));
     set_default_geometry(300, 300);
     set_position(Gtk::WindowPosition::WIN_POS_CENTER);

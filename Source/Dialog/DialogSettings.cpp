@@ -29,13 +29,6 @@
 
 DialogSettings::DialogSettings() {
 
-    auto css = Gtk::CssProvider::create();
-    css->load_from_resource("/org/gtox/style/dark.css");
-    auto screen = Gdk::Screen::get_default();
-    auto ctx = get_style_context();
-    ctx->add_provider_for_screen(
-                screen, css, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
-
     set_title(_("SETTINGS_TITLE"));
     set_default_geometry(600, 300);
     set_position(Gtk::WindowPosition::WIN_POS_CENTER);

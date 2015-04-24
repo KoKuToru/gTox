@@ -31,9 +31,18 @@ Glib::RefPtr<gTox> gTox::m_instance;
 gTox::gTox()
     : Gtk::Application("org.gtox",
                        Gio::ApplicationFlags(Gio::APPLICATION_HANDLES_OPEN | Gio::APPLICATION_HANDLES_COMMAND_LINE)) {
+    Glib::set_application_name(_("APPLICATION_NAME"));
+
     Gtk::Settings::get_default()
             ->property_gtk_application_prefer_dark_theme() = true;
-    Glib::set_application_name(_("APPLICATION_NAME"));
+    auto css = Gtk::CssProvider::create();
+
+    css->load_from_resource("/org/gtox/style/dark.css");
+    auto screen = Gdk::Screen::get_default();
+    Gtk::StyleContext::add_provider_for_screen(
+                screen,
+                css,
+                GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
 }
 
 Glib::RefPtr<gTox> gTox::create() {

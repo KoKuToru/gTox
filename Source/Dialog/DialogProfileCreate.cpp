@@ -24,13 +24,6 @@
 DialogProfileCreate::DialogProfileCreate(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& builder):
     Gtk::Assistant(cobject), m_builder(builder), m_aborted(true) {
 
-    auto css = Gtk::CssProvider::create();
-    css->load_from_resource("/org/gtox/style/dark.css");
-    auto screen = Gdk::Screen::get_default();
-    auto ctx = get_style_context();
-    ctx->add_provider_for_screen(
-                screen, css, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
-
     property_resizable() = false;
     set_size_request(800, 600);
     set_position(Gtk::WindowPosition::WIN_POS_CENTER_ALWAYS);
