@@ -27,7 +27,6 @@ DialogChat::DialogChat(Toxmm::FriendNr nr)
       m_chat(nr) {
 
     auto css = Gtk::CssProvider::create();
-    auto settings = Gio::Settings::create("org.gtox");
     css->load_from_resource("/org/gtox/style/dark.css");
     auto screen = Gdk::Screen::get_default();
     auto ctx = get_style_context();
