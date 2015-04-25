@@ -31,31 +31,14 @@ if(NOT BASH_EXECUTEABLE)
     message(FATAL_ERROR "bash not found")
 endif()
 
-#GENERATED ICON LIST
-set(ICONS_CONVERTED )
-set(ICONS_CONVERTED_N )
-foreach(_icon ${SRC})
-    get_filename_component(_icon_we "${_icon}" NAME_WE)
-
-    set(ICONS_CONVERTED_N ${ICONS_CONVERTED_N} "${_icon_we}.svg")
-
-    #CONVERT ICONS
-    add_custom_command(
-        OUTPUT "${_icon_we}.svg"
-        COMMAND cp "${_icon}" "${CMAKE_CURRENT_BINARY_DIR}/${_icon_we}.svg"
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        DEPENDS ${_icon}
-    )
-endforeach()
-
 #ADD ICONS TO RESOURCE
 add_custom_command(
     OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/${NAME}.xml" "${CMAKE_CURRENT_BINARY_DIR}/${NAME}.c" "${CMAKE_CURRENT_BINARY_DIR}/${NAME}.h"
-    COMMAND "${BASH_EXECUTEABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/../Tools/gresource.sh" "${CMAKE_CURRENT_BINARY_DIR}/${NAME}.xml" "${PREFIX}" "${OPTIONS}" ${ICONS_CONVERTED_N}
-    COMMAND "${GLIB_COMPILE_RESOURCE_EXECUTEABLE}" --target="${NAME}.c" --generate-source --c-name "${CNAME}" "${NAME}.xml"
-    COMMAND "${GLIB_COMPILE_RESOURCE_EXECUTEABLE}" --target="${NAME}.h" --generate-header --c-name "${CNAME}" "${NAME}.xml"
+    COMMAND "${BASH_EXECUTEABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/../Tools/gresource.sh" "${CMAKE_CURRENT_BINARY_DIR}/${NAME}.xml" "${PREFIX}" "${OPTIONS}" ${SRC}
+    COMMAND "${GLIB_COMPILE_RESOURCE_EXECUTEABLE}" --target="${NAME}.c" --sourcedir="${CMAKE_CURRENT_SOURCE_DIR}" --generate-source --c-name "${CNAME}" "${NAME}.xml"
+    COMMAND "${GLIB_COMPILE_RESOURCE_EXECUTEABLE}" --target="${NAME}.h" --sourcedir="${CMAKE_CURRENT_SOURCE_DIR}" --generate-header --c-name "${CNAME}" "${NAME}.xml"
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-    DEPENDS ${ICONS_CONVERTED}
+    DEPENDS ${SRC}
 )
 
 set (GRESOURCE ${GRESOURCE} "${CMAKE_CURRENT_BINARY_DIR}/${NAME}.c" PARENT_SCOPE)
