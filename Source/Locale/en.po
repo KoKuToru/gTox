@@ -1,10 +1,16 @@
 msgid ""
 msgstr ""
+"Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-04-25 11:56+0200\n"
+"POT-Creation-Date: 2015-04-25 13:59+0200\n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: ENCODING\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.7.5\n"
 
 #: Widget/Settings/WidgetAbout.cpp:43
 msgid "ABOUT_SOFTWARE_COPYRIGHT"
@@ -34,7 +40,7 @@ msgstr "Add"
 
 #: gTox.cpp:34
 msgid "APPLICATION_NAME"
-msgstr ""
+msgstr "gTox"
 
 #. Label for the gTox database path
 #: Layout/dialog_assistant.ui:165
@@ -134,11 +140,11 @@ msgstr "Exit"
 
 #: Dialog/DialogContact.cpp:222
 msgid "FRIEND_REQUEST"
-msgstr ""
+msgstr "%1"
 
 #: Dialog/DialogContact.cpp:227
 msgid "IGNORE"
-msgstr ""
+msgstr "Ignore"
 
 #: Popover/PopoverAddContact.cpp:31 Widget/Settings/WidgetProfile.cpp:53
 msgid "MESSAGE"
@@ -153,18 +159,18 @@ msgstr "Online"
 msgid "PROFILE_ABORT"
 msgstr "Abort"
 
-#: Layout/list_item_profile.ui:52
+#: Layout/list_item_profile.ui:62
 msgid "PROFILE_CORRUPTED"
 msgstr "Profile couldn't be loaded"
 
-#: Layout/list_item_profile.ui:34
+#: Layout/list_item_profile.ui:44
 msgid "PROFILE_CORRUPTED_TITLE"
 msgstr "Corrupted profile"
 
 #. Text next to the spinner, while profiles are loading
 #: Layout/dialog_profile.ui:61
 msgid "PROFILE_LOADING"
-msgstr ""
+msgstr "loading profiles..."
 
 #. Button for creating a new profile
 #: Layout/dialog_profile.ui:101
