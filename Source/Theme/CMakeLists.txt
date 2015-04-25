@@ -7,7 +7,8 @@ set(OPTIONS "compressed=\\\"true\\\"")
 
 set(SRC
     common.css
-    dark.css)
+    dark.css
+    light.css)
 
 find_program(GLIB_COMPILE_RESOURCE_EXECUTEABLE glib-compile-resources)
 if(NOT GLIB_COMPILE_RESOURCE_EXECUTEABLE)

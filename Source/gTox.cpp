@@ -40,12 +40,21 @@ gTox::gTox()
             ->property_gtk_application_prefer_dark_theme() = true;
 
     auto css = Gtk::CssProvider::create();
-    css->load_from_resource("/org/gtox/style/dark.css");
-    auto screen = Gdk::Screen::get_default();
-    Gtk::StyleContext::add_provider_for_screen(
-                screen,
-                css,
-                GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+    auto update_style = [css]() {
+        bool dark = Gtk::Settings::get_default()
+                    ->property_gtk_application_prefer_dark_theme();
+        css->load_from_resource(dark?"/org/gtox/style/dark.css":"/org/gtox/style/light.css");
+        auto screen = Gdk::Screen::get_default();
+        Gtk::StyleContext::add_provider_for_screen(
+                    screen,
+                    css,
+                    GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+    };
+
+    Gtk::Settings::get_default()
+            ->property_gtk_application_prefer_dark_theme().signal_changed().connect(update_style);
+
+    update_style();
 }
 
 Glib::RefPtr<gTox> gTox::create() {
