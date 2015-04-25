@@ -3,7 +3,6 @@ cmake_minimum_required(VERSION 2.8)
 set(NAME "gtox-icon.gresource")
 set(CNAME "gtox_icon")
 set(PREFIX "/org/gtox/icon")
-#set(OPTIONS "preprocess=\\\"to-pixdata\\\"")
 set(OPTIONS "compressed=\\\"true\\\"")
 
 set(SRC
@@ -22,11 +21,6 @@ set(SRC
     notification.svg
     status_away.svg)
 
-find_program(RSVG_CONVERT_EXECUTEABLE rsvg-convert)
-if(NOT RSVG_CONVERT_EXECUTEABLE)
-    message(FATAL_ERROR "rsvg-convert not found")
-endif()
-
 find_program(GLIB_COMPILE_RESOURCE_EXECUTEABLE glib-compile-resources)
 if(NOT GLIB_COMPILE_RESOURCE_EXECUTEABLE)
     message(FATAL_ERROR "glib-compile-resources not found")
@@ -42,18 +36,12 @@ set(ICONS_CONVERTED )
 set(ICONS_CONVERTED_N )
 foreach(_icon ${SRC})
     get_filename_component(_icon_we "${_icon}" NAME_WE)
-    set(ICONS_CONVERTED ${ICONS_CONVERTED} "${CMAKE_CURRENT_BINARY_DIR}/${_icon_we}.png")
-    set(ICONS_CONVERTED ${ICONS_CONVERTED} "${CMAKE_CURRENT_BINARY_DIR}/${_icon_we}@2.png")
 
-    #set(ICONS_CONVERTED_N ${ICONS_CONVERTED_N} "${_icon_we}.png")
-    #set(ICONS_CONVERTED_N ${ICONS_CONVERTED_N} "${_icon_we}@2.png")
     set(ICONS_CONVERTED_N ${ICONS_CONVERTED_N} "${_icon_we}.svg")
 
     #CONVERT ICONS
     add_custom_command(
-        OUTPUT "${_icon_we}.png" "${_icon_we}@2.png"
-        COMMAND ${RSVG_CONVERT_EXECUTEABLE} "${_icon}" -f png -o "${CMAKE_CURRENT_BINARY_DIR}/${_icon_we}.png"
-        COMMAND ${RSVG_CONVERT_EXECUTEABLE} "${_icon}" -x 2 -y 2 -f png -o "${CMAKE_CURRENT_BINARY_DIR}/${_icon_we}@2.png"
+        OUTPUT "${_icon_we}.svg"
         COMMAND cp "${_icon}" "${CMAKE_CURRENT_BINARY_DIR}/${_icon_we}.svg"
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         DEPENDS ${_icon}
