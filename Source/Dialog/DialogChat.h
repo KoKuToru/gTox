@@ -32,7 +32,6 @@ class DialogChat : public Gtk::Window {
     Gtk::HeaderBar m_header;
     Gtk::HeaderBar m_header2;
     Gtk::Box m_headerbar_btn_left;
-    Gtk::Image m_icon_attach;
     Gtk::Button m_btn_xxtach;
     Gtk::Box m_header_box;
 

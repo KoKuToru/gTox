@@ -112,16 +112,16 @@ void WidgetContactListItem::refresh() {
 
         switch (Toxmm::instance().get_status(m_friend_nr)) {
             case Toxmm::EUSERSTATUS::BUSY:
-                status = "/org/gtox/icon/status_busy.png";
+                status = "/org/gtox/icon/status_busy.svg";
                 break;
             case Toxmm::EUSERSTATUS::NONE:
-                status = "/org/gtox/icon/status_online.png";
+                status = "/org/gtox/icon/status_online.svg";
                 break;
             case Toxmm::EUSERSTATUS::AWAY:
-                status = "/org/gtox/icon/status_away.png";
+                status = "/org/gtox/icon/status_away.svg";
                 break;
             default:
-                status = "/org/gtox/icon/status_offline.png";
+                status = "/org/gtox/icon/status_offline.svg";
                 break;
         }
 
@@ -190,7 +190,7 @@ int WidgetContactListItem::compare(WidgetContactListItem* other) {
 void WidgetContactListItem::set_for_notify(bool notify) {
     m_for_notify = notify;
 
-    m_avatar->set(Gdk::Pixbuf::create_from_resource("/org/gtox/icon/avatar.png")->scale_simple(
+    m_avatar->set(Gdk::Pixbuf::create_from_resource("/org/gtox/icon/avatar.svg")->scale_simple(
         use_mini(m_for_notify)?32:64,
         use_mini(m_for_notify)?32:64,
         Gdk::INTERP_BILINEAR));  // i would like to resize this depending

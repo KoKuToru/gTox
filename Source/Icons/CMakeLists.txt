@@ -3,20 +3,21 @@ cmake_minimum_required(VERSION 2.8)
 set(NAME "gtox-icon.gresource")
 set(CNAME "gtox_icon")
 set(PREFIX "/org/gtox/icon")
-set(OPTIONS "preprocess=\\\"to-pixdata\\\"")
+#set(OPTIONS "preprocess=\\\"to-pixdata\\\"")
+set(OPTIONS "compressed=\\\"true\\\"")
 
 set(SRC
-    chat_attach.svg
-    chat_detach.svg
+    chat-attach-symbolic.svg
+    chat-detach-symbolic.svg
     icon_128.svg
-    settings.svg
+    settings-symbolic.svg
     status_online.svg
     status_offline.svg
     status_busy.svg
     avatar.svg
-    plus.svg
-    remove.svg
-    clipboard.svg
+    plus-symbolic.svg
+    remove-symbolic.svg
+    clipboard-symbolic.svg
     status_message.svg
     notification.svg
     status_away.svg)
@@ -43,15 +44,17 @@ foreach(_icon ${SRC})
     get_filename_component(_icon_we "${_icon}" NAME_WE)
     set(ICONS_CONVERTED ${ICONS_CONVERTED} "${CMAKE_CURRENT_BINARY_DIR}/${_icon_we}.png")
     set(ICONS_CONVERTED ${ICONS_CONVERTED} "${CMAKE_CURRENT_BINARY_DIR}/${_icon_we}@2.png")
-    
-    set(ICONS_CONVERTED_N ${ICONS_CONVERTED_N} "${_icon_we}.png")
-    set(ICONS_CONVERTED_N ${ICONS_CONVERTED_N} "${_icon_we}@2.png")
-    
+
+    #set(ICONS_CONVERTED_N ${ICONS_CONVERTED_N} "${_icon_we}.png")
+    #set(ICONS_CONVERTED_N ${ICONS_CONVERTED_N} "${_icon_we}@2.png")
+    set(ICONS_CONVERTED_N ${ICONS_CONVERTED_N} "${_icon_we}.svg")
+
     #CONVERT ICONS
     add_custom_command(
         OUTPUT "${_icon_we}.png" "${_icon_we}@2.png"
         COMMAND ${RSVG_CONVERT_EXECUTEABLE} "${_icon}" -f png -o "${CMAKE_CURRENT_BINARY_DIR}/${_icon_we}.png"
         COMMAND ${RSVG_CONVERT_EXECUTEABLE} "${_icon}" -x 2 -y 2 -f png -o "${CMAKE_CURRENT_BINARY_DIR}/${_icon_we}@2.png"
+        COMMAND cp "${_icon}" "${CMAKE_CURRENT_BINARY_DIR}/${_icon_we}.svg"
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         DEPENDS ${_icon}
     )

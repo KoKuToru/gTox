@@ -23,8 +23,7 @@
 #include "Dialog/DialogContact.h"
 
 WidgetProfile::WidgetProfile()
-    : Glib::ObjectBase("WidgetProfile"),
-      m_clipboard(Gdk::Pixbuf::create_from_resource("/org/gtox/icon/clipboard.png")) {
+    : Glib::ObjectBase("WidgetProfile") {
     update();
 
     std::string hex = Toxmm::to_hex(Toxmm::instance().get_address().data(),
@@ -43,7 +42,7 @@ WidgetProfile::WidgetProfile()
     grid->set_column_spacing(10);
 
     m_avatar.set_image(
-        *Gtk::manage(new Gtk::Image(Gdk::Pixbuf::create_from_resource("/org/gtox/icon/avatar.png"))));
+        *Gtk::manage(new Gtk::Image(Gdk::Pixbuf::create_from_resource("/org/gtox/icon/avatar.svg"))));
     grid->attach(m_avatar, 0, 0, 1, 2);
 
     grid->attach(
@@ -61,7 +60,7 @@ WidgetProfile::WidgetProfile()
     grid->attach(*tox_id, 2, 2, 1, 2);
 
     auto cpy_btn = Gtk::manage(new Gtk::Button());
-    cpy_btn->set_image(m_clipboard);
+    cpy_btn->set_image_from_icon_name("clipboard-symbolic");
     cpy_btn->set_halign(Gtk::ALIGN_END);
     cpy_btn->set_valign(Gtk::ALIGN_END);
     grid->attach(*cpy_btn, 1, 3, 1, 1);

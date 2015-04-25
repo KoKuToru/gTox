@@ -25,10 +25,10 @@ PopoverStatus::PopoverStatus(const Gtk::Widget& relative_to)
     : Gtk::Popover(relative_to) {
     // add_label("Settings");
 
-    m_listbox.add(create_item(Gdk::Pixbuf::create_from_resource("/org/gtox/icon/status_online.png"), _("ONLINE")));
-    m_listbox.add(create_item(Gdk::Pixbuf::create_from_resource("/org/gtox/icon/status_busy.png"), _("BUSY")));
-    m_listbox.add(create_item(Gdk::Pixbuf::create_from_resource("/org/gtox/icon/status_away.png"), _("AWAY")));
-    m_listbox.add(create_item(Gdk::Pixbuf::create_from_resource("/org/gtox/icon/status_offline.png"), _("EXIT")));
+    m_listbox.add(create_item(Gdk::Pixbuf::create_from_resource("/org/gtox/icon/status_online.svg"), _("ONLINE")));
+    m_listbox.add(create_item(Gdk::Pixbuf::create_from_resource("/org/gtox/icon/status_busy.svg"), _("BUSY")));
+    m_listbox.add(create_item(Gdk::Pixbuf::create_from_resource("/org/gtox/icon/status_away.svg"), _("AWAY")));
+    m_listbox.add(create_item(Gdk::Pixbuf::create_from_resource("/org/gtox/icon/status_offline.svg"), _("EXIT")));
     m_listbox.show_all();
     add(m_listbox);
 

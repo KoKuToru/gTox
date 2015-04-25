@@ -66,10 +66,10 @@ void WidgetNotification::set_event(DialogContact::EventAddNotification event) {
                                        Gdk::INTERP_BILINEAR);
         m_notify->set_image_from_pixbuf(image->property_pixbuf());
     } else {
-        m_notify->set_image_from_pixbuf(Gdk::Pixbuf::create_from_resource("/org/gtox/icon/icon_128.png"));
+        m_notify->set_image_from_pixbuf(Gdk::Pixbuf::create_from_resource("/org/gtox/icon/icon_128.svg"));
     }
 
-    icon->property_pixbuf() = Gdk::Pixbuf::create_from_resource("/org/gtox/icon/notification.png");
+    icon->property_pixbuf() = Gdk::Pixbuf::create_from_resource("/org/gtox/icon/notification.svg");
 
     Gtk::Box* action_bar;
     m_builder->get_widget("action_bar", action_bar);

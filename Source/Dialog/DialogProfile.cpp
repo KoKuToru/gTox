@@ -115,7 +115,7 @@ void DialogProfile::set_accounts(const std::vector<std::string>& accounts) {
                 builder->get_widget("path", path);
                 builder->get_widget("avatar", avatar);
                 if (name && status && path && avatar) {
-                    avatar->set(Gdk::Pixbuf::create_from_resource("/org/gtox/icon/avatar.png")->scale_simple(
+                    avatar->set(Gdk::Pixbuf::create_from_resource("/org/gtox/icon/avatar.svg")->scale_simple(
                                    72,
                                    72,
                                    Gdk::INTERP_BILINEAR));

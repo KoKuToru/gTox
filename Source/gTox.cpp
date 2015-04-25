@@ -33,10 +33,13 @@ gTox::gTox()
                        Gio::ApplicationFlags(Gio::APPLICATION_HANDLES_OPEN | Gio::APPLICATION_HANDLES_COMMAND_LINE)) {
     Glib::set_application_name(_("APPLICATION_NAME"));
 
+    Gtk::IconTheme::get_default()
+            ->add_resource_path("/org/gtox/icon");
+
     Gtk::Settings::get_default()
             ->property_gtk_application_prefer_dark_theme() = true;
-    auto css = Gtk::CssProvider::create();
 
+    auto css = Gtk::CssProvider::create();
     css->load_from_resource("/org/gtox/style/dark.css");
     auto screen = Gdk::Screen::get_default();
     Gtk::StyleContext::add_provider_for_screen(

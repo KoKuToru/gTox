@@ -43,7 +43,7 @@ DialogContact::DialogContact(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Bu
     m_builder->get_widget("stack_header", m_stack_header);
     m_builder->get_widget("stack", m_stack);
 
-    set_icon(Gdk::Pixbuf::create_from_resource("/org/gtox/icon/icon_128.png"));
+    set_icon(Gdk::Pixbuf::create_from_resource("/org/gtox/icon/icon_128.svg"));
 
     set_border_width(0);
     set_default_geometry(300, 600);
@@ -91,7 +91,6 @@ DialogContact::DialogContact(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Bu
 
     Gtk::Button* add_contact_btn;
     m_builder->get_widget("add_contact_btn", add_contact_btn);
-    add_contact_btn->set_image(*Gtk::manage(new Gtk::Image(Gdk::Pixbuf::create_from_resource("/org/gtox/icon/plus.png"))));
     add_contact_btn->signal_clicked().connect([this, add_contact_btn]() {
         if (!m_popover_add_contact) {
             m_popover_add_contact = std::make_shared<PopoverAddContact>(*add_contact_btn);
@@ -101,7 +100,6 @@ DialogContact::DialogContact(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Bu
 
     Gtk::Button* setting_btn;
     m_builder->get_widget("setting_btn", setting_btn);
-    setting_btn->set_image(*Gtk::manage(new Gtk::Image(Gdk::Pixbuf::create_from_resource("/org/gtox/icon/settings.png"))));
     setting_btn->signal_clicked().connect([this, setting_btn]() {
         if (!m_popover_settings) {
             m_popover_settings = std::make_shared<PopoverSettings>(*setting_btn);
@@ -222,7 +220,7 @@ void DialogContact::tox_event_handling(const ToxEvent& ev) {
                                               true,
                                               Toxmm::to_hex(data.addr.data(), 32),
                                               Glib::ustring::compose(_("FRIEND_REQUEST"), data.message),
-                                              Gdk::Pixbuf::create_from_resource("/org/gtox/icon/avatar.png")->scale_simple(
+                                              Gdk::Pixbuf::create_from_resource("/org/gtox/icon/avatar.svg")->scale_simple(
                                               64,
                                               64,
                                               Gdk::INTERP_BILINEAR),
@@ -332,19 +330,19 @@ void DialogContact::set_status(Toxmm::EUSERSTATUS status_code) {
     switch (status_code) {
         case Toxmm::NONE:
             m_icon_status.property_pixbuf()
-                = Gdk::Pixbuf::create_from_resource("/org/gtox/icon/status_online.png");
+                = Gdk::Pixbuf::create_from_resource("/org/gtox/icon/status_online.svg");
             break;
         case Toxmm::BUSY:
             m_icon_status.property_pixbuf()
-                = Gdk::Pixbuf::create_from_resource("/org/gtox/icon/status_busy.png");
+                = Gdk::Pixbuf::create_from_resource("/org/gtox/icon/status_busy.svg");
             break;
         case Toxmm::AWAY:
             m_icon_status.property_pixbuf()
-                = Gdk::Pixbuf::create_from_resource("/org/gtox/icon/status_away.png");
+                = Gdk::Pixbuf::create_from_resource("/org/gtox/icon/status_away.svg");
             break;
         default:
             m_icon_status.property_pixbuf()
-                = Gdk::Pixbuf::create_from_resource("/org/gtox/icon/status_offline.png");
+                = Gdk::Pixbuf::create_from_resource("/org/gtox/icon/status_offline.svg");
             break;
     }
     if (!m_status_icon) {

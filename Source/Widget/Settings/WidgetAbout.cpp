@@ -23,7 +23,7 @@
 WidgetAbout::WidgetAbout() : Glib::ObjectBase("WidgetAbout") {
     property_valign() = Gtk::ALIGN_CENTER;
     property_halign() = Gtk::ALIGN_CENTER;
-    pack_start(*Gtk::manage(new Gtk::Image(Gdk::Pixbuf::create_from_resource("/org/gtox/icon/icon_128.png"))));
+    pack_start(*Gtk::manage(new Gtk::Image(Gdk::Pixbuf::create_from_resource("/org/gtox/icon/icon_128.svg"))));
     pack_start(*Gtk::manage([]() {
         auto tmp = new Gtk::Label;
         tmp->set_markup(_("ABOUT_SOFTWARE_NAME"));

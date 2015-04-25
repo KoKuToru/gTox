@@ -23,7 +23,6 @@
 
 DialogChat::DialogChat(Toxmm::FriendNr nr)
     : m_in_window(false),
-      m_icon_attach(Gdk::Pixbuf::create_from_resource("/org/gtox/icon/chat_detach.png")),
       m_chat(nr) {
     this->set_border_width(1);
     this->set_default_geometry(256, 256);
@@ -82,7 +81,7 @@ DialogChat::DialogChat(Toxmm::FriendNr nr)
         }
     };
 
-    m_btn_xxtach.set_image(m_icon_attach);
+    m_btn_xxtach.set_image_from_icon_name("chat-detach-symbolic");
 
     m_headerbar_btn_left.get_style_context()->add_class("linked");
     m_headerbar_btn_left.add(m_btn_xxtach);
@@ -94,11 +93,11 @@ DialogChat::DialogChat(Toxmm::FriendNr nr)
 
     m_btn_xxtach.signal_clicked().connect([this]() {
         if (m_in_window) {
-            m_icon_attach.property_pixbuf() = Gdk::Pixbuf::create_from_resource("/org/gtox/icon/chat_attach.png");
+            m_btn_xxtach.set_image_from_icon_name("chat-attach-symbolic");
             hide();
             present();
         } else {
-            m_icon_attach.property_pixbuf() = Gdk::Pixbuf::create_from_resource("/org/gtox/icon/chat_detach.png");
+            m_btn_xxtach.set_image_from_icon_name("chat-detach-symbolic");
             show();
         }
     });
@@ -144,7 +143,7 @@ void DialogChat::show() {
         m_header_box.add(m_header);
         m_chat_box.add(m_chat);
         m_in_window = true;
-        m_icon_attach.property_pixbuf() = Gdk::Pixbuf::create_from_resource("/org/gtox/icon/chat_attach.png");
+        m_btn_xxtach.set_image_from_icon_name("chat-attach-symbolic");
     }
     Gtk::Window::show();
 }
@@ -159,7 +158,7 @@ void DialogChat::hide() {
                                               &m_header,
                                               &m_chat
                                           }));
-        m_icon_attach.property_pixbuf() = Gdk::Pixbuf::create_from_resource("/org/gtox/icon/chat_detach.png");
+        m_btn_xxtach.set_image_from_icon_name("chat-detach-symbolic");
     }
     Gtk::Window::hide();
 }

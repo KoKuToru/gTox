@@ -31,7 +31,7 @@ DialogProfileCreate::DialogProfileCreate(BaseObjectType* cobject, const Glib::Re
     Gtk::Image* icon = nullptr;
     m_builder->get_widget("assistant_icon", icon);
     if (icon) {
-        icon->property_pixbuf() = Gdk::Pixbuf::create_from_resource("/org/gtox/icon/icon_128.png");
+        icon->property_pixbuf() = Gdk::Pixbuf::create_from_resource("/org/gtox/icon/icon_128.svg");
     }
 
     m_builder->get_widget("assistant_username", m_username);

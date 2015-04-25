@@ -24,7 +24,7 @@
 
 PopoverContextContact::PopoverContextContact(Toxmm::FriendNr friendNr)
     : friendNr(friendNr) {
-    m_listbox.add(create_item(Gdk::Pixbuf::create_from_resource("/org/gtox/icon/remove.png"), _("REMOVE")));
+    m_listbox.add(create_item(Gdk::Pixbuf::create_from_resource("/org/gtox/icon/remove.svg"), _("REMOVE")));
     m_listbox.show_all();
     add(m_listbox);
 
