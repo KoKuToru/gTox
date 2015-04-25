@@ -76,12 +76,27 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkImage" id="status_icon">
+                  <object class="GtkOverlay" id="overlay1">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <style>
-                      <class name="gtox-contact-status-icon"/>
-                    </style>
+                    <property name="opacity">0.9882352941176471</property>
+                    <child>
+                      <object class="GtkImage" id="status_icon">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="icon_name">status_offline</property>
+                        <style>
+                          <class name="gtox-contact-status-icon"/>
+                        </style>
+                      </object>
+                    </child>
+                    <child type="overlay">
+                      <object class="GtkSpinner" id="spinner">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="active">True</property>
+                      </object>
+                    </child>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>

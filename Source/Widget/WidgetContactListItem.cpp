@@ -44,13 +44,14 @@ void WidgetContactListItem::set_contact(Toxmm::FriendNr nr) {
 WidgetContactListItem::WidgetContactListItem(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& builder)
     : Gtk::ListBoxRow(cobject),
       m_builder(builder),
-      m_friend_nr(0),
-      spin(false) {
+      m_friend_nr(0){
 
     m_builder->get_widget("avatar", m_avatar);
     m_builder->get_widget("name", m_name);
     m_builder->get_widget("status", m_status_msg);
     m_builder->get_widget("status_icon", m_status_icon);
+    m_builder->get_widget("spinner", m_spin);
+    m_spin->stop();
 
     m_tox_callback = [this](const ToxEvent& ev) {
         if ((ev.type() == typeid(Toxmm::EventName)          && ev.get<Toxmm::EventName>().nr == m_friend_nr) ||
@@ -59,14 +60,12 @@ WidgetContactListItem::WidgetContactListItem(BaseObjectType* cobject, const Glib
             refresh();
         } else if ((ev.type() == typeid(Toxmm::EventFriendMessage) && ev.get<Toxmm::EventFriendMessage>().nr == m_friend_nr) ||
                    (ev.type() == typeid(Toxmm::EventFriendAction)  && ev.get<Toxmm::EventFriendAction>().nr == m_friend_nr)) {
-            if (!spin) {
-                spin = true;
-                refresh();
+            if (!m_spin->property_active()) {
+                m_spin->start();
             }
         } else if (ev.type() == typeid(EventStopSpin) && ev.get<EventStopSpin>().nr == m_friend_nr) {
-            if (spin) {
-                spin = false;
-                refresh();
+            if (m_spin->property_active()) {
+                m_spin->stop();
             }
         } else if (ev.type() == typeid(EventActivated)) {
             auto data = ev.get<EventActivated>();
@@ -112,25 +111,20 @@ void WidgetContactListItem::refresh() {
 
         switch (Toxmm::instance().get_status(m_friend_nr)) {
             case Toxmm::EUSERSTATUS::BUSY:
-                status = "/org/gtox/icon/status_busy.svg";
+                status = "status_busy";
                 break;
             case Toxmm::EUSERSTATUS::NONE:
-                status = "/org/gtox/icon/status_online.svg";
+                status = "status_online";
                 break;
             case Toxmm::EUSERSTATUS::AWAY:
-                status = "/org/gtox/icon/status_away.svg";
+                status = "status_away";
                 break;
             default:
-                status = "/org/gtox/icon/status_offline.svg";
+                status = "status_offline";
                 break;
         }
 
-        if (spin) {
-            m_status_icon->set_from_resource(status);
-            //m_status_icon->set(generate_animation(ICON::load_icon(*status)));
-        } else {
-            m_status_icon->set_from_resource(status);
-        }
+        m_status_icon->set_from_icon_name(status, Gtk::BuiltinIconSize::ICON_SIZE_LARGE_TOOLBAR);
     } catch (...) {
     }
 }
@@ -143,39 +137,6 @@ std::string replace(std::string str,
         return str;
     str.replace(start_pos, from.length(), to);
     return str;
-}
-
-Glib::RefPtr<Gdk::PixbufAnimation> WidgetContactListItem::generate_animation(
-    const Glib::RefPtr<Gdk::Pixbuf>& icon) {
-    /*
-    auto ani = gdk_pixbuf_simple_anim_new(24, 24, 30);
-    static std::string frames[36];
-    for (int ang = 0; ang < 36; ++ang) {
-        if (frames[ang].empty()) {
-            frames[ang] = replace(ICON::status_message,
-                                  "id=\"rotate_me\"",
-                                  "id=\"rotate_me\" transform=\"rotate("
-                                  + std::to_string(ang * 10) + " 12 12)\"");
-        }
-        auto front = ICON::load_icon(frames[ang]);
-        auto back = icon->copy();
-        front->composite(back,
-                         0,
-                         0,
-                         24,
-                         24,
-                         0,
-                         0,
-                         1,
-                         1,
-                         Gdk::InterpType::INTERP_NEAREST,
-                         255);
-        gdk_pixbuf_simple_anim_add_frame(ani, back->gobj());
-    }
-    gdk_pixbuf_simple_anim_set_loop(ani, true);
-    return Glib::wrap(GDK_PIXBUF_ANIMATION(ani));
-    */
-    return Glib::RefPtr<Gdk::PixbufAnimation>();
 }
 
 int WidgetContactListItem::compare(WidgetContactListItem* other) {
