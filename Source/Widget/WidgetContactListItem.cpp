@@ -111,6 +111,13 @@ WidgetContactListItem::WidgetContactListItem(BaseObjectType* cobject, const Glib
 }
 
 WidgetContactListItem::~WidgetContactListItem() {
+    if (m_notify) {
+        try  {
+            m_notify->close();
+        } catch (...){
+            //ignore
+        }
+    }
 }
 
 Toxmm::FriendNr WidgetContactListItem::get_friend_nr() {

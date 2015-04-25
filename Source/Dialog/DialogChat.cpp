@@ -135,7 +135,7 @@ DialogChat::~DialogChat() {
                                               h
                                           }));
     }
-    if (!m_notify) {
+    if (m_notify) {
         try  {
             m_notify->close();
         } catch (...){
