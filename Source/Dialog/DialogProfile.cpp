@@ -22,6 +22,10 @@
 #include <iostream>
 #include <Tox/Toxmm.h>
 
+namespace sigc {
+    SIGC_FUNCTORS_DEDUCE_RESULT_TYPE_WITH_DECLTYPE
+}
+
 DialogProfile::DialogProfile(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& builder):
     Gtk::Window(cobject),
     m_builder(builder),
@@ -93,52 +97,68 @@ DialogProfile::DialogProfile(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Bu
     }
 }
 
-
+#include "glib/gthread.h"
 
 void DialogProfile::set_accounts(const std::vector<std::string>& accounts) {
     m_accounts = accounts;
     Gtk::ListBox* list = nullptr;
     m_builder->get_widget("profile_list", list);
     if (list) {
-        bool loaded = false;
-        for (auto acc : accounts) {
-            auto builder = Gtk::Builder::create_from_resource("/org/gtox/ui/list_item_profile.ui");
-            Gtk::ListBoxRow* row = nullptr;
-            builder->get_widget("pofile_list_item", row);
-            if (row) {
-                Gtk::Label* name = nullptr;
-                Gtk::Label* status = nullptr;
-                Gtk::Label* path = nullptr;
-                Gtk::Image* avatar = nullptr;
-                builder->get_widget("name", name);
-                builder->get_widget("status", status);
-                builder->get_widget("path", path);
-                builder->get_widget("avatar", avatar);
-                if (name && status && path && avatar) {
-                    avatar->set(Gdk::Pixbuf::create_from_resource("/org/gtox/icon/avatar.svg")->scale_simple(
-                                   72,
-                                   72,
-                                   Gdk::INTERP_BILINEAR));
-                    path->set_text(acc);
-                    //TRY TO LOAD TOX DATA
-                    try {
-                        Toxmm::instance().init(acc);
-                        name->set_text(Toxmm::instance().get_name_or_address());
-                        status->set_text(Toxmm::instance().get_status_message());
-                    } catch (...) {
-                        row->set_sensitive(false);
-                    }
-                    Toxmm::destroy();
+        m_thread = Glib::Thread::create([this, list, accounts](){
+            Glib::ustring tox_name;
+            Glib::ustring tox_status;
+            bool tox_okay = false;
+
+            for (auto acc : accounts) {
+                //TRY TO LOAD TOX DATA
+                try {
+                    Toxmm::instance().init(acc);
+                    tox_name = Toxmm::instance().get_name_or_address();
+                    tox_status = Toxmm::instance().get_status_message();
+                    tox_okay = true;
+                } catch (...) {
+                    tox_okay = false;
                 }
-                row->show();
-                list->add(*row);
+                Toxmm::destroy();
+
+                m_events.push_back(Glib::signal_idle().connect([list, tox_name, acc, tox_status, tox_okay](){
+                    auto builder = Gtk::Builder::create_from_resource("/org/gtox/ui/list_item_profile.ui");
+                    Gtk::ListBoxRow* row = nullptr;
+                    builder->get_widget("pofile_list_item", row);
+                    if (row) {
+                        Gtk::Label* name = nullptr;
+                        Gtk::Label* status = nullptr;
+                        Gtk::Label* path = nullptr;
+                        Gtk::Image* avatar = nullptr;
+                        builder->get_widget("name", name);
+                        builder->get_widget("status", status);
+                        builder->get_widget("path", path);
+                        builder->get_widget("avatar", avatar);
+                        if (name && status && path && avatar) {
+                            avatar->set(Gdk::Pixbuf::create_from_resource("/org/gtox/icon/avatar.svg")->scale_simple(
+                                           72,
+                                           72,
+                                           Gdk::INTERP_BILINEAR));
+                            path->set_text(acc);
+                            if (tox_okay) {
+                                name->set_text(tox_name);
+                                status->set_text(tox_status);
+                            } else {
+                                row->set_sensitive(false);
+                            }
+                        }
+                        row->show();
+                        list->add(*row);
+                    }
+
+                    return false;
+                }));
             }
-        }
-        if (accounts.size() == 1 && loaded) {
-            m_abort = false;
-            m_selected_path = m_accounts[0];
-            quit();
-        }
+
+            Gtk::Revealer* revealer;
+            m_builder->get_widget("revealer", revealer);
+            revealer->set_reveal_child(false);
+        }, true);
     }
 }
 
@@ -157,6 +177,10 @@ void DialogProfile::quit() {
 
 DialogProfile::~DialogProfile() {
     m_quited = true;
+    if (m_thread != nullptr) {
+        //wait for thread :D
+        m_thread->join();
+    }
 }
 
 bool DialogProfile::is_aborted() {

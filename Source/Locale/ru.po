@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-04-22 21:52+0200\n"
+"POT-Creation-Date: 2015-04-25 11:56+0200\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -36,7 +36,7 @@ msgstr "<i>This program comes with ABSOLUTELY NO WARRANTY</i>"
 msgid "ADD"
 msgstr "Добавить"
 
-#: gTox.cpp:36
+#: gTox.cpp:34
 msgid "APPLICATION_NAME"
 msgstr ""
 
@@ -138,15 +138,15 @@ msgstr ""
 msgid "EXIT"
 msgstr "Выход"
 
-#: Dialog/DialogContact.cpp:231
+#: Dialog/DialogContact.cpp:222
 msgid "FRIEND_REQUEST"
 msgstr ""
 
-#: Dialog/DialogContact.cpp:236
+#: Dialog/DialogContact.cpp:227
 msgid "IGNORE"
 msgstr ""
 
-#: Popover/PopoverAddContact.cpp:31 Widget/Settings/WidgetProfile.cpp:54
+#: Popover/PopoverAddContact.cpp:31 Widget/Settings/WidgetProfile.cpp:53
 msgid "MESSAGE"
 msgstr "Сообщение"
 
@@ -155,7 +155,7 @@ msgid "ONLINE"
 msgstr "Доступен"
 
 #. Exit the application, abort the profile selection
-#: Layout/dialog_profile.ui:26
+#: Layout/dialog_profile.ui:89
 msgid "PROFILE_ABORT"
 msgstr "Выход"
 
@@ -167,21 +167,26 @@ msgstr "Невозможно загрузить профиль"
 msgid "PROFILE_CORRUPTED_TITLE"
 msgstr "Повреждённый профиль"
 
+#. Text next to the spinner, while profiles are loading
+#: Layout/dialog_profile.ui:61
+msgid "PROFILE_LOADING"
+msgstr ""
+
 #. Button for creating a new profile
-#: Layout/dialog_profile.ui:38
+#: Layout/dialog_profile.ui:101
 msgid "PROFILE_NEW"
 msgstr "Новый"
 
 #. Button for loading the selected profile
-#: Layout/dialog_profile.ui:51
+#: Layout/dialog_profile.ui:114
 msgid "PROFILE_SELECT"
 msgstr "Выбрать"
 
-#: Dialog/DialogProfile.cpp:47
+#: Dialog/DialogProfile.cpp:44
 msgid "PROFILE_SUBTITLE"
 msgstr "Выбор профиля"
 
-#: Dialog/DialogProfile.cpp:38 Dialog/DialogProfile.cpp:46
+#: Dialog/DialogProfile.cpp:35 Dialog/DialogProfile.cpp:43
 msgid "PROFILE_TITLE"
 msgstr "gTox"
 
@@ -197,7 +202,7 @@ msgstr "Отправить"
 msgid "SETTINGS"
 msgstr "Настройки"
 
-#: Dialog/DialogSettings.cpp:77
+#: Dialog/DialogSettings.cpp:70
 msgid "SETTINGS_ABOUT"
 msgstr "О программе"
 
@@ -219,7 +224,7 @@ msgstr "История переписки очищена"
 msgid "SETTINGS_CACHE_CLEAN_LOG_TITLE"
 msgstr "Удалить всю историю ?"
 
-#: Dialog/DialogSettings.cpp:39
+#: Dialog/DialogSettings.cpp:32
 msgid "SETTINGS_TITLE"
 msgstr "Найтройка gTox"
 
@@ -486,7 +491,7 @@ msgstr ""
 "TOX_ERR_SET_TYPING_FRIEND_NOT_FOUND\n"
 "Неверный номер контакта."
 
-#: Popover/PopoverAddContact.cpp:30 Widget/Settings/WidgetProfile.cpp:57
+#: Popover/PopoverAddContact.cpp:30 Widget/Settings/WidgetProfile.cpp:56
 msgid "TOX_ID"
 msgstr "Tox ID"
 
@@ -494,7 +499,7 @@ msgstr "Tox ID"
 msgid "TRANSLATION_CHECKER"
 msgstr "Okay"
 
-#: Widget/Settings/WidgetProfile.cpp:50
+#: Widget/Settings/WidgetProfile.cpp:49
 msgid "USERNAME"
 msgstr "Имя"
 

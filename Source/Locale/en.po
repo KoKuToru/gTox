@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-04-22 21:52+0200\n"
+"POT-Creation-Date: 2015-04-25 11:56+0200\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: ENCODING\n"
@@ -32,7 +32,7 @@ msgstr "<i>This program comes with ABSOLUTELY NO WARRANTY</i>"
 msgid "ADD"
 msgstr "Add"
 
-#: gTox.cpp:36
+#: gTox.cpp:34
 msgid "APPLICATION_NAME"
 msgstr ""
 
@@ -132,15 +132,15 @@ msgstr ""
 msgid "EXIT"
 msgstr "Exit"
 
-#: Dialog/DialogContact.cpp:231
+#: Dialog/DialogContact.cpp:222
 msgid "FRIEND_REQUEST"
 msgstr ""
 
-#: Dialog/DialogContact.cpp:236
+#: Dialog/DialogContact.cpp:227
 msgid "IGNORE"
 msgstr ""
 
-#: Popover/PopoverAddContact.cpp:31 Widget/Settings/WidgetProfile.cpp:54
+#: Popover/PopoverAddContact.cpp:31 Widget/Settings/WidgetProfile.cpp:53
 msgid "MESSAGE"
 msgstr "Message"
 
@@ -149,7 +149,7 @@ msgid "ONLINE"
 msgstr "Online"
 
 #. Exit the application, abort the profile selection
-#: Layout/dialog_profile.ui:26
+#: Layout/dialog_profile.ui:89
 msgid "PROFILE_ABORT"
 msgstr "Abort"
 
@@ -161,21 +161,26 @@ msgstr "Profile couldn't be loaded"
 msgid "PROFILE_CORRUPTED_TITLE"
 msgstr "Corrupted profile"
 
+#. Text next to the spinner, while profiles are loading
+#: Layout/dialog_profile.ui:61
+msgid "PROFILE_LOADING"
+msgstr ""
+
 #. Button for creating a new profile
-#: Layout/dialog_profile.ui:38
+#: Layout/dialog_profile.ui:101
 msgid "PROFILE_NEW"
 msgstr "New"
 
 #. Button for loading the selected profile
-#: Layout/dialog_profile.ui:51
+#: Layout/dialog_profile.ui:114
 msgid "PROFILE_SELECT"
 msgstr "Select"
 
-#: Dialog/DialogProfile.cpp:47
+#: Dialog/DialogProfile.cpp:44
 msgid "PROFILE_SUBTITLE"
 msgstr "Select profile"
 
-#: Dialog/DialogProfile.cpp:38 Dialog/DialogProfile.cpp:46
+#: Dialog/DialogProfile.cpp:35 Dialog/DialogProfile.cpp:43
 msgid "PROFILE_TITLE"
 msgstr "gTox"
 
@@ -191,7 +196,7 @@ msgstr "Send"
 msgid "SETTINGS"
 msgstr "Settings"
 
-#: Dialog/DialogSettings.cpp:77
+#: Dialog/DialogSettings.cpp:70
 msgid "SETTINGS_ABOUT"
 msgstr "About"
 
@@ -213,7 +218,7 @@ msgstr "Logs removed"
 msgid "SETTINGS_CACHE_CLEAN_LOG_TITLE"
 msgstr "Delete all logs ?"
 
-#: Dialog/DialogSettings.cpp:39
+#: Dialog/DialogSettings.cpp:32
 msgid "SETTINGS_TITLE"
 msgstr "gTox settings"
 
@@ -479,7 +484,7 @@ msgstr ""
 "TOX_ERR_SET_TYPING_FRIEND_NOT_FOUND\n"
 "The friend number did not designate a valid friend."
 
-#: Popover/PopoverAddContact.cpp:30 Widget/Settings/WidgetProfile.cpp:57
+#: Popover/PopoverAddContact.cpp:30 Widget/Settings/WidgetProfile.cpp:56
 msgid "TOX_ID"
 msgstr "Tox ID"
 
@@ -487,7 +492,7 @@ msgstr "Tox ID"
 msgid "TRANSLATION_CHECKER"
 msgstr "Okay"
 
-#: Widget/Settings/WidgetProfile.cpp:50
+#: Widget/Settings/WidgetProfile.cpp:49
 msgid "USERNAME"
 msgstr "Username"
 

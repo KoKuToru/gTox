@@ -30,6 +30,8 @@ class DialogProfile : public Gtk::Window {
     bool m_abort;
     bool m_quited;
     std::string m_selected_path;
+    Glib::Thread* m_thread = nullptr;
+    std::list<sigc::connection> m_events;
 
     void quit();
 
