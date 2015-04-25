@@ -30,18 +30,15 @@
 #include "ToxDatabase.h"
 #include "ToxException.h"
 #include "ToxEvent.h"
+#include <fcntl.h>
+#include <stdlib.h>
+#include <unistd.h>
+
 /**
  * @brief Wraps the toxcore but also add features with a sqlitedb
  */
 class Toxmm {
   private:
-    /**
-     * @brief Protects toxcore with a mutex
-     *
-     * Probably not very important
-     */
-    static std::recursive_mutex m_mtx;
-
     /**
      * @brief Instance of Tox
      */

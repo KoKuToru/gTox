@@ -23,7 +23,6 @@
 #include <algorithm>
 #include "Generated/database.h"
 
-std::recursive_mutex Toxmm::m_mtx;
 Toxmm* Toxmm::m_instance = nullptr;
 
 Toxmm::Toxmm() : m_tox(nullptr) {
@@ -37,7 +36,6 @@ Toxmm::~Toxmm() {
 }
 
 Toxmm& Toxmm::instance() {
-    std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_instance == nullptr) {
         m_instance = new Toxmm;
     }
@@ -49,7 +47,6 @@ ToxDatabase& Toxmm::database() {
 }
 
 void Toxmm::destroy() {
-    std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_instance != nullptr) {
         delete m_instance;
         m_instance = nullptr;
@@ -57,7 +54,6 @@ void Toxmm::destroy() {
 }
 
 void Toxmm::init(const Glib::ustring& statefile, bool bootstrap) {
-    std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox != nullptr) {
         tox_kill(m_tox);
         m_tox = nullptr;
@@ -132,7 +128,6 @@ void Toxmm::init(const Glib::ustring& statefile, bool bootstrap) {
 }
 
 void Toxmm::save(const Glib::ustring& statefile) {
-    std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
         throw std::runtime_error("TOX_UNITIALIZED");
     }
@@ -147,7 +142,6 @@ void Toxmm::save(const Glib::ustring& statefile) {
 }
 
 int Toxmm::update_optimal_interval() {
-    std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
         throw std::runtime_error("TOX_UNITIALIZED");
     }
@@ -155,7 +149,6 @@ int Toxmm::update_optimal_interval() {
 }
 
 bool Toxmm::update(ToxEvent& ev) {
-    std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
         throw std::runtime_error("TOX_UNITIALIZED");
     }
@@ -169,7 +162,6 @@ bool Toxmm::update(ToxEvent& ev) {
 }
 
 std::vector<Toxmm::FriendNr> Toxmm::get_friendlist() {
-    std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
         throw std::runtime_error("TOX_UNITIALIZED");
     }
@@ -179,7 +171,6 @@ std::vector<Toxmm::FriendNr> Toxmm::get_friendlist() {
 }
 
 Toxmm::FriendAddr Toxmm::get_address() {
-    std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
         throw std::runtime_error("TOX_UNITIALIZED");
     }
@@ -190,7 +181,6 @@ Toxmm::FriendAddr Toxmm::get_address() {
 
 Toxmm::FriendNr Toxmm::add_friend(Toxmm::FriendAddr addr,
                               const Glib::ustring& message) {
-    std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
         throw std::runtime_error("TOX_UNITIALIZED");
     }
@@ -211,7 +201,6 @@ Toxmm::FriendNr Toxmm::add_friend(Toxmm::FriendAddr addr,
 }
 
 Toxmm::FriendNr Toxmm::add_friend_norequest(FriendAddr addr) {
-    std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
         throw std::runtime_error("TOX_UNITIALIZED");
     }
@@ -227,7 +216,6 @@ Toxmm::FriendNr Toxmm::add_friend_norequest(FriendAddr addr) {
 }
 
 Toxmm::FriendNr Toxmm::get_friend_number(Toxmm::FriendAddr addr) {
-    std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
         throw std::runtime_error("TOX_UNITIALIZED");
     }
@@ -243,7 +231,6 @@ Toxmm::FriendNr Toxmm::get_friend_number(Toxmm::FriendAddr addr) {
 }
 
 void Toxmm::del_friend(Toxmm::FriendNr nr) {
-    std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
         throw std::runtime_error("TOX_UNITIALIZED");
     }
@@ -264,7 +251,6 @@ Toxmm::ReceiptNr Toxmm::send_message(Toxmm::FriendNr nr,
         return send_action(nr, message);
     }
 
-    std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
         throw std::runtime_error("TOX_UNITIALIZED");
     }
@@ -292,7 +278,6 @@ Toxmm::ReceiptNr Toxmm::send_message(Toxmm::FriendNr nr,
 }
 
 Toxmm::ReceiptNr Toxmm::send_action(Toxmm::FriendNr nr, const Glib::ustring& action) {
-    std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
         throw std::runtime_error("TOX_UNITIALIZED");
     }
@@ -320,7 +305,6 @@ Toxmm::ReceiptNr Toxmm::send_action(Toxmm::FriendNr nr, const Glib::ustring& act
 }
 
 void Toxmm::set_name(const Glib::ustring& name) {
-    std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
         throw std::runtime_error("TOX_UNITIALIZED");
     }
@@ -339,7 +323,6 @@ void Toxmm::set_name(const Glib::ustring& name) {
 }
 
 Glib::ustring Toxmm::get_name() {
-    std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
         throw std::runtime_error("TOX_UNITIALIZED");
     }
@@ -349,7 +332,6 @@ Glib::ustring Toxmm::get_name() {
 }
 
 Glib::ustring Toxmm::get_name(Toxmm::FriendNr nr) {
-    std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
         throw std::runtime_error("TOX_UNITIALIZED");
     }
@@ -394,7 +376,6 @@ Glib::ustring Toxmm::get_name_or_address(Toxmm::FriendNr nr) {
 }
 
 Glib::ustring Toxmm::get_status_message() {
-    std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
         throw std::runtime_error("TOX_UNITIALIZED");
     }
@@ -405,7 +386,6 @@ Glib::ustring Toxmm::get_status_message() {
 }
 
 Glib::ustring Toxmm::get_status_message(FriendNr nr) {
-    std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
         throw std::runtime_error("TOX_UNITIALIZED");
     }
@@ -423,7 +403,6 @@ Glib::ustring Toxmm::get_status_message(FriendNr nr) {
 }
 
 void Toxmm::set_status_message(Glib::ustring msg) {
-    std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
         throw std::runtime_error("TOX_UNITIALIZED");
     }
@@ -441,7 +420,6 @@ void Toxmm::set_status_message(Glib::ustring msg) {
 }
 
 bool Toxmm::is_connected() {
-    std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
         throw std::runtime_error("TOX_UNITIALIZED");
     }
@@ -449,7 +427,6 @@ bool Toxmm::is_connected() {
 }
 
 Toxmm::EUSERSTATUS Toxmm::get_status() {
-    std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
         throw std::runtime_error("TOX_UNITIALIZED");
     }
@@ -462,7 +439,6 @@ Toxmm::EUSERSTATUS Toxmm::get_status() {
 }
 
 Toxmm::EUSERSTATUS Toxmm::get_status(FriendNr nr) {
-    std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
         throw std::runtime_error("TOX_UNITIALIZED");
     }
@@ -484,7 +460,6 @@ Toxmm::EUSERSTATUS Toxmm::get_status(FriendNr nr) {
 }
 
 void Toxmm::set_status(Toxmm::EUSERSTATUS value) {
-    std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
         throw std::runtime_error("TOX_UNITIALIZED");
     }
@@ -494,7 +469,6 @@ void Toxmm::set_status(Toxmm::EUSERSTATUS value) {
 }
 
 unsigned long long Toxmm::get_last_online(Toxmm::FriendNr nr) {
-    std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
         throw std::runtime_error("TOX_UNITIALIZED");
     }
@@ -507,7 +481,6 @@ unsigned long long Toxmm::get_last_online(Toxmm::FriendNr nr) {
 }
 
 void Toxmm::send_typing(FriendNr nr, bool is_typing) {
-    std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
         throw std::runtime_error("TOX_UNITIALIZED");
     }
@@ -522,7 +495,6 @@ void Toxmm::send_typing(FriendNr nr, bool is_typing) {
 }
 
 void Toxmm::inject_event(ToxEvent ev) {
-    std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
         throw std::runtime_error("TOX_UNITIALIZED");
     }
@@ -565,7 +537,6 @@ void Toxmm::inject_event(ToxEvent ev) {
 }
 
 std::vector<Toxmm::SLog> Toxmm::get_log(Toxmm::FriendNr nr, int offset, int limit) {
-    std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
         throw std::runtime_error("TOX_UNITIALIZED");
     }
@@ -684,7 +655,6 @@ void Toxmm::callback_connection_status(Tox*,
 }
 
 Toxmm::FriendAddr Toxmm::get_address(Toxmm::FriendNr nr) {
-    std::lock_guard<std::recursive_mutex> lg(m_mtx);
     if (m_tox == nullptr) {
         throw std::runtime_error("TOX_UNITIALIZED");
     }
