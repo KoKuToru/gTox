@@ -149,6 +149,15 @@ void DialogProfile::set_accounts(const std::vector<std::string>& accounts) {
                         }
                         row->show();
                         list->add(*row);
+
+                        //reveale profil
+                        Gtk::Revealer* revealer;
+                        builder->get_widget("revealer", revealer);
+                        revealer->reference();
+                        Glib::signal_idle().connect_once([revealer](){
+                            revealer->set_reveal_child(true);
+                            revealer->unreference();
+                        });
                     }
 
                     return false;
