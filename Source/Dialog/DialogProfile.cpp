@@ -180,6 +180,10 @@ DialogProfile::~DialogProfile() {
     if (m_thread != nullptr) {
         //wait for thread :D
         m_thread->join();
+
+        for (auto event : m_events) {
+            event.disconnect();
+        }
     }
 }
 
