@@ -84,7 +84,8 @@ set(SOURCES
     Tox/Toxmm.cpp
     Tox/ToxDatabase.cpp
     Tox/ToxEvent.cpp
-    Tox/ToxException.cpp)
+    Tox/ToxException.cpp
+    Tox/ToxProfile.cpp)
 SET_SOURCE_FILES_PROPERTIES(${GRESOURCE} PROPERTIES GENERATED 1)
 add_executable(${PROJECT_NAME}
     ${SOURCES}
