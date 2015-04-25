@@ -20,6 +20,7 @@
 #include "WidgetContactListItem.h"
 #include "Tox/Toxmm.h"
 #include "Dialog/DialogContact.h"
+#include "Helper/Canberra.h"
 
 WidgetContactListItem* WidgetContactListItem::create(Toxmm::FriendNr nr, bool for_notify) {
     auto builder = Gtk::Builder::create_from_resource(use_mini(for_notify)?
@@ -60,8 +61,14 @@ WidgetContactListItem::WidgetContactListItem(BaseObjectType* cobject, const Glib
             refresh();
         } else if ((ev.type() == typeid(Toxmm::EventFriendMessage) && ev.get<Toxmm::EventFriendMessage>().nr == m_friend_nr) ||
                    (ev.type() == typeid(Toxmm::EventFriendAction)  && ev.get<Toxmm::EventFriendAction>().nr == m_friend_nr)) {
-            if (!m_spin->property_active()) {
+            if (!m_spin->property_active() && (m_for_notify || !m_chat)) {
                 m_spin->start();
+            }
+            if (!m_for_notify && !m_chat) {
+                notify(Toxmm::instance().get_name_or_address(m_friend_nr),
+                       (ev.type() == typeid(Toxmm::EventFriendMessage)) ?
+                                   ev.get<Toxmm::EventFriendMessage>().message :
+                                   ev.get<Toxmm::EventFriendAction>().message);
             }
         } else if (ev.type() == typeid(EventStopSpin) && ev.get<EventStopSpin>().nr == m_friend_nr) {
             if (m_spin->property_active()) {
@@ -72,6 +79,14 @@ WidgetContactListItem::WidgetContactListItem(BaseObjectType* cobject, const Glib
             if (data.nr == m_friend_nr) {
                 if (!m_for_notify) {
                     if (!m_chat) {
+                        //Hide notification !
+                        if (m_notify) {
+                            try {
+                                m_notify->close();
+                            } catch (...) {
+                                //Ignore
+                            }
+                        }
                         m_chat = std::make_shared<DialogChat>(m_friend_nr);
                     }
                     m_chat->present();
@@ -188,4 +203,34 @@ void WidgetContactListItem::on_hide() {
     } else {
         Gtk::Widget::on_hide();
     }
+}
+
+void WidgetContactListItem::notify(const Glib::ustring& title, const Glib::ustring& message) {
+    //Notification
+    if (!m_notify) {
+        m_notify = std::make_shared<Notify::Notification>(title, message);
+        m_notify->set_image_from_pixbuf(Gdk::Pixbuf::create_from_resource("/org/gtox/icon/avatar.svg")
+                                        ->scale_simple(
+                                            64,
+                                            64,
+                                            Gdk::INTERP_BILINEAR));
+        m_notify->signal_closed().connect([this](){
+            //m_notify->get_closed_reason() ???
+            ToxEventCallback::notify(ToxEvent(EventActivated{m_friend_nr}));
+        });
+        try {
+            m_notify->show();
+        } catch (...) {
+            //ignore
+        }
+    } else {
+        m_notify->update(title, message);
+        try {
+            m_notify->show();
+        } catch (...) {
+            //ignore
+        }
+    }
+    //Sound:
+    Canberra::play("message-new-instant");
 }

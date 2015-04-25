@@ -24,6 +24,8 @@
 #include "Tox/Toxmm.h"
 #include "Widget/WidgetChat.h"
 #include "Helper/ToxEventCallback.h"
+#include <libnotifymm.h>
+#include <memory>
 
 // Single chat window
 class DialogChat : public Gtk::Window {
@@ -35,10 +37,14 @@ class DialogChat : public Gtk::Window {
     Gtk::Button m_btn_xxtach;
     Gtk::Box m_header_box;
 
+    std::shared_ptr<Notify::Notification> m_notify;
+
     WidgetChat m_chat;
     Gtk::Box m_chat_box;
 
     ToxEventCallback m_tox_callback;
+
+    void notify(const Glib::ustring& title, const Glib::ustring& message);
 
   public:
     DialogChat(Toxmm::FriendNr nr);

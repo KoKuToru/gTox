@@ -20,6 +20,7 @@
 #include "DialogChat.h"
 #include "DialogContact.h"
 #include "Widget/WidgetContactListItem.h"
+#include "Helper/Canberra.h"
 
 DialogChat::DialogChat(Toxmm::FriendNr nr)
     : m_in_window(false),
@@ -70,13 +71,23 @@ DialogChat::DialogChat(Toxmm::FriendNr nr)
             }
         } else if (ev.type() == typeid(Toxmm::EventFriendAction)) {
             auto data = ev.get<Toxmm::EventFriendAction>();
-            if (data.nr == nr && is_visible()) {
-                ToxEventCallback::notify(ToxEvent(WidgetContactListItem::EventStopSpin{nr}));
+            if (data.nr == nr) {
+                if (is_visible()) {
+                    ToxEventCallback::notify(ToxEvent(WidgetContactListItem::EventStopSpin{nr}));
+                } else {
+                    notify(Toxmm::instance().get_name_or_address(nr),
+                           data.message);
+                }
             }
         } else if (ev.type() == typeid(Toxmm::EventFriendMessage)) {
             auto data = ev.get<Toxmm::EventFriendMessage>();
-            if (data.nr == nr && is_visible()) {
-                ToxEventCallback::notify(ToxEvent(WidgetContactListItem::EventStopSpin{nr}));
+            if (data.nr == nr) {
+                if (is_visible()) {
+                    ToxEventCallback::notify(ToxEvent(WidgetContactListItem::EventStopSpin{nr}));
+                } else {
+                    notify(Toxmm::instance().get_name_or_address(nr),
+                           data.message);
+                }
             }
         }
     };
@@ -105,10 +116,10 @@ DialogChat::DialogChat(Toxmm::FriendNr nr)
     m_chat.property_expand() = true;
     m_chat.show_all();
     m_header.show_all();
-    ToxEventCallback::notify(ToxEvent(DialogContact::EventAttachWidget{
+    /*ToxEventCallback::notify(ToxEvent(DialogContact::EventAttachWidget{
                                           &m_header,
                                           &m_chat
-                                      }));
+                                      }));*/
 }
 
 DialogChat::~DialogChat() {
@@ -123,6 +134,13 @@ DialogChat::~DialogChat() {
                                               w,
                                               h
                                           }));
+    }
+    if (!m_notify) {
+        try  {
+            m_notify->close();
+        } catch (...){
+            //ignore
+        }
     }
 }
 
@@ -181,4 +199,34 @@ bool DialogChat::is_visible() {
     } else {
         return m_chat.get_mapped();
     }
+}
+
+void DialogChat::notify(const Glib::ustring& title, const Glib::ustring& message) {
+    //Notification
+    if (!m_notify) {
+        m_notify = std::make_shared<Notify::Notification>(title, message);
+        m_notify->set_image_from_pixbuf(Gdk::Pixbuf::create_from_resource("/org/gtox/icon/avatar.svg")
+                                        ->scale_simple(
+                                            64,
+                                            64,
+                                            Gdk::INTERP_BILINEAR));
+        m_notify->signal_closed().connect([this](){
+            //m_notify->get_closed_reason() ???
+            present();
+        });
+        try {
+            m_notify->show();
+        } catch (...) {
+            //ignore
+        }
+    } else {
+        m_notify->update(title, message);
+        try {
+            m_notify->show();
+        } catch (...) {
+            //ignore
+        }
+    }
+    //Sound:
+    Canberra::play("message-new-instant");
 }

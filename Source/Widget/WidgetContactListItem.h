@@ -24,6 +24,7 @@
 #include "Tox/Toxmm.h"
 #include "Helper/ToxEventCallback.h"
 #include "Dialog/DialogChat.h"
+#include <libnotifymm.h>
 
 class WidgetContact;
 class WidgetContactListItem : public Gtk::ListBoxRow {
@@ -33,18 +34,18 @@ class WidgetContactListItem : public Gtk::ListBoxRow {
     Gtk::Label* m_name;
     Gtk::Label* m_status_msg;
     Gtk::Image* m_status_icon;
+    Gtk::Spinner* m_spin;
+
+    std::shared_ptr<Notify::Notification> m_notify;
 
     Toxmm::FriendNr m_friend_nr;
     bool m_for_notify;
 
     ToxEventCallback m_tox_callback;
 
-    Glib::RefPtr<Gdk::PixbufAnimation> generate_animation(
-        const Glib::RefPtr<Gdk::Pixbuf>& icon);
-
-    bool spin;
-
     std::shared_ptr<DialogChat> m_chat;
+
+    void notify(const Glib::ustring& title, const Glib::ustring& message);
 
   public:
     WidgetContactListItem(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& builder);
