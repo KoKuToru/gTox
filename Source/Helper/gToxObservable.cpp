@@ -17,28 +17,28 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 **/
-#include "gToxInstance.h"
-#include "gToxChild.h"
+#include "gToxObservable.h"
+#include "gToxObserver.h"
 
-Toxmm& gToxInstance::tox() {
+Toxmm& gToxObservable::tox() {
     return m_tox;
 }
 
-gToxInstance::CallbackHandler gToxInstance::add_observer(EFunc callback) {
+gToxObservable::Handler gToxObservable::observer_add(EFunc callback) {
     return {this, callback};
 }
 
-void gToxInstance::install_observer(EFunc* func) {
+void gToxObservable::observer_install(EFunc* func) {
     m_callback_list.push_back(func);
 }
 
-void gToxInstance::uninstall_observer(EFunc* func) {
+void gToxObservable::observer_uninstall(EFunc* func) {
     m_callback_list.erase(std::find(m_callback_list.begin(),
                                     m_callback_list.end(),
                                     func));
 }
 
-void gToxInstance::notify_observer(const ToxEvent& data) {
+void gToxObservable::observer_notify(const ToxEvent& data) {
     // call everyone
     // 1. make a copy
     auto callback_cpy = m_callback_list;

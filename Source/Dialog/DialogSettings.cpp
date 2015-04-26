@@ -27,7 +27,7 @@
 #include "Widget/Settings/WidgetCache.h"
 #include "Widget/Settings/WidgetAudioVideo.h"
 
-DialogSettings::DialogSettings(gToxInstance* instance) {
+DialogSettings::DialogSettings(gToxObservable* instance) {
 
     set_title(_("SETTINGS_TITLE"));
     set_default_geometry(600, 300);

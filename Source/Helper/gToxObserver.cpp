@@ -17,29 +17,29 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 **/
-#include "gToxChild.h"
-#include "gToxInstance.h"
+#include "gToxObserver.h"
+#include "gToxObservable.h"
 #include <exception>
 
-Toxmm& gToxChild::tox() {
-    if (!m_tox_instance) {
+Toxmm& gToxObserver::tox() {
+    if (!m_observable) {
         throw std::runtime_error("gToxChild m_tox_instance == nullptr");
     }
-    return m_tox_instance->tox();
+    return m_observable->tox();
 }
 
-void gToxChild::set_instance(gToxInstance* tox_instance) {
-    m_tox_instance = tox_instance;
+void gToxObserver::set_observable(gToxObservable* observable) {
+    m_observable = observable;
 }
 
-gToxChild::gToxChild() {
+gToxObserver::gToxObserver() {
 
 }
 
-gToxChild::gToxChild(gToxInstance* tox_instance) {
-    set_instance(tox_instance);
+gToxObserver::gToxObserver(gToxObservable* observable) {
+    set_observable(observable);
 }
 
-gToxInstance* gToxChild::instance() {
-    return m_tox_instance;
+gToxObservable* gToxObserver::observable() {
+    return m_observable;
 }

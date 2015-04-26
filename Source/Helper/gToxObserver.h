@@ -20,32 +20,32 @@
 #ifndef H_GTOX_CHILD
 #define H_GTOX_CHILD
 #include "Tox/Toxmm.h"
-#include "gToxInstance.h"
-class gToxChild {
+#include "gToxObservable.h"
+class gToxObserver {
     private:
-        gToxInstance* m_tox_instance = nullptr;
+        gToxObservable* m_observable = nullptr;
 
     protected:
-        void set_instance(gToxInstance* tox_instance);
+        void set_observable(gToxObservable* observable);
 
     public:
-        gToxChild();
-        gToxChild(gToxInstance* tox_instance);
+        gToxObserver();
+        gToxObserver(gToxObservable* observable);
 
         Toxmm& tox();
-        gToxInstance* instance();
+        gToxObservable* observable();
 
         //proxy functions:
-        gToxInstance::CallbackHandler add_observer(gToxInstance::EFunc callback) {
-            return instance()->add_observer(callback);
+        gToxObservable::Handler observer_add(gToxObservable::EFunc callback) {
+            return observable()->observer_add(callback);
         }
 
         /**
          * @brief Call all installed callbacks with the event data
          * @param data
          */
-        void notify_observer(const ToxEvent& data) {
-            instance()->notify_observer(data);
+        void observer_notify(const ToxEvent& data) {
+            observable()->observer_notify(data);
         }
 };
 #endif

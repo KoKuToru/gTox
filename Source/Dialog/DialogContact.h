@@ -26,10 +26,10 @@
 #include "Popover/PopoverStatus.h"
 #include "Popover/PopoverSettings.h"
 #include "Popover/PopoverAddContact.h"
-#include "Helper/gToxInstance.h"
+#include "Helper/gToxObservable.h"
 
 // contact list with pinned chat
-class DialogContact : public Gtk::Window, public gToxInstance {
+class DialogContact : public Gtk::Window, public gToxObservable {
   private:
     const Glib::RefPtr<Gtk::Builder> m_builder;
 
@@ -52,7 +52,7 @@ class DialogContact : public Gtk::Window, public gToxInstance {
     std::shared_ptr<PopoverSettings> m_popover_settings;
     std::shared_ptr<PopoverAddContact> m_popover_add_contact;
 
-    gToxInstance::CallbackHandler m_tox_callback;
+    gToxObservable::Handler m_tox_callback;
 
     bool is_chat_open(Toxmm::FriendNr nr);
 

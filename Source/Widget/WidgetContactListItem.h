@@ -24,10 +24,10 @@
 #include "Tox/Toxmm.h"
 #include "Dialog/DialogChat.h"
 #include <libnotifymm.h>
-#include "Helper/gToxChild.h"
+#include "Helper/gToxObserver.h"
 
 class WidgetContact;
-class WidgetContactListItem : public Gtk::ListBoxRow, public gToxChild {
+class WidgetContactListItem : public Gtk::ListBoxRow, public gToxObserver {
   private:
     const Glib::RefPtr<Gtk::Builder> m_builder;
     Gtk::Image* m_avatar;
@@ -41,7 +41,7 @@ class WidgetContactListItem : public Gtk::ListBoxRow, public gToxChild {
     Toxmm::FriendNr m_friend_nr;
     bool m_for_notify;
 
-    gToxInstance::CallbackHandler m_tox_callback;
+    gToxObservable::Handler m_tox_callback;
 
     std::shared_ptr<DialogChat> m_chat;
 
@@ -49,7 +49,7 @@ class WidgetContactListItem : public Gtk::ListBoxRow, public gToxChild {
 
   public:
     WidgetContactListItem(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& builder);
-    static WidgetContactListItem* create(gToxInstance* instance, Toxmm::FriendNr nr, bool for_notify=false);
+    static WidgetContactListItem* create(gToxObservable* observable, Toxmm::FriendNr nr, bool for_notify=false);
 
     ~WidgetContactListItem();
 
@@ -76,7 +76,7 @@ class WidgetContactListItem : public Gtk::ListBoxRow, public gToxChild {
     void refresh();
     void set_contact(Toxmm::FriendNr nr);
     void set_for_notify(bool notify);
-    static bool use_mini(gToxChild* gchild, bool for_notify);
+    static bool use_mini(gToxObserver* gchild, bool for_notify);
     void on_show();
     void on_hide();
 };

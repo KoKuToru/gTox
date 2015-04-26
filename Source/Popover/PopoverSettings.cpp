@@ -22,7 +22,7 @@
 #include "Dialog/Debug/DialogCss.h"
 #include <glibmm/i18n.h>
 
-PopoverSettings::PopoverSettings(gToxInstance* instance, const Gtk::Widget& relative_to)
+PopoverSettings::PopoverSettings(gToxObservable* instance, const Gtk::Widget& relative_to)
     : Gtk::Popover(relative_to), m_profile(instance), m_settings(instance) {
     auto grid = Gtk::manage(new Gtk::Grid());
 

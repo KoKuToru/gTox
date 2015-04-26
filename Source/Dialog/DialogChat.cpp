@@ -21,10 +21,10 @@
 #include "Widget/WidgetContactListItem.h"
 #include "Helper/Canberra.h"
 
-DialogChat::DialogChat(gToxInstance* instance, Toxmm::FriendNr nr)
+DialogChat::DialogChat(gToxObservable* instance, Toxmm::FriendNr nr)
     : m_in_window(false),
       m_chat(instance, nr) {
-    set_instance(instance);
+    set_observable(instance);
     this->set_border_width(1);
     this->set_default_geometry(256, 256);
     this->set_position(Gtk::WindowPosition::WIN_POS_NONE);
@@ -54,11 +54,11 @@ DialogChat::DialogChat(gToxInstance* instance, Toxmm::FriendNr nr)
     btn_x->signal_clicked().connect([this, nr](){
         Gtk::Window::hide();
         Glib::signal_idle().connect_once([this, nr](){
-            notify_observer(ToxEvent(WidgetContactListItem::EventDestroyChat{nr}));
+            observer_notify(ToxEvent(WidgetContactListItem::EventDestroyChat{nr}));
         });
     });
 
-    m_tox_callback = add_observer([this, nr](const ToxEvent& ev) {
+    m_tox_callback = observer_add([this, nr](const ToxEvent& ev) {
         if (ev.type() == typeid(Toxmm::EventName))  {
             auto data = ev.get<Toxmm::EventName>();
             if (data.nr == nr) {
@@ -73,7 +73,7 @@ DialogChat::DialogChat(gToxInstance* instance, Toxmm::FriendNr nr)
             auto data = ev.get<Toxmm::EventFriendAction>();
             if (data.nr == nr) {
                 if (is_visible()) {
-                    notify_observer(ToxEvent(WidgetContactListItem::EventStopSpin{nr}));
+                    observer_notify(ToxEvent(WidgetContactListItem::EventStopSpin{nr}));
                 } else {
                     notify(tox().get_name_or_address(nr),
                            data.message);
@@ -83,7 +83,7 @@ DialogChat::DialogChat(gToxInstance* instance, Toxmm::FriendNr nr)
             auto data = ev.get<Toxmm::EventFriendMessage>();
             if (data.nr == nr) {
                 if (is_visible()) {
-                    notify_observer(ToxEvent(WidgetContactListItem::EventStopSpin{nr}));
+                    observer_notify(ToxEvent(WidgetContactListItem::EventStopSpin{nr}));
                 } else {
                     notify(tox().get_name_or_address(nr),
                            data.message);
@@ -125,7 +125,7 @@ DialogChat::DialogChat(gToxInstance* instance, Toxmm::FriendNr nr)
 DialogChat::~DialogChat() {
     if (!m_in_window) {
         int x,y,w,h;
-        notify_observer(ToxEvent(DialogContact::EventDetachWidget{
+        observer_notify(ToxEvent(DialogContact::EventDetachWidget{
                                      false,
                                      &m_header,
                                      &m_chat,
@@ -147,7 +147,7 @@ DialogChat::~DialogChat() {
 void DialogChat::show() {
     if (!m_in_window) {
         int x,y,w,h;
-        notify_observer(ToxEvent(DialogContact::EventDetachWidget{
+        observer_notify(ToxEvent(DialogContact::EventDetachWidget{
                                      true,
                                      &m_header,
                                      &m_chat,
@@ -172,7 +172,7 @@ void DialogChat::hide() {
         m_chat_box.remove(m_chat);
         m_in_window = false;
 
-        notify_observer(ToxEvent(DialogContact::EventAttachWidget{
+        observer_notify(ToxEvent(DialogContact::EventAttachWidget{
                                      &m_header,
                                      &m_chat
                                  }));
@@ -185,12 +185,12 @@ void DialogChat::present() {
     if (m_in_window) {
         Gtk::Window::present();
     } else {
-        notify_observer(ToxEvent(DialogContact::EventPresentWidget{
+        observer_notify(ToxEvent(DialogContact::EventPresentWidget{
                                      &m_header,
                                      &m_chat
                                  }));
     }
-    notify_observer(ToxEvent(WidgetContactListItem::EventStopSpin{m_chat.get_friend_nr()}));
+    observer_notify(ToxEvent(WidgetContactListItem::EventStopSpin{m_chat.get_friend_nr()}));
 }
 
 bool DialogChat::is_visible() {

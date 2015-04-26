@@ -22,9 +22,9 @@
 #include "Tox/Toxmm.h"
 #include "Dialog/DialogContact.h"
 
-WidgetProfile::WidgetProfile(gToxInstance* instance)
+WidgetProfile::WidgetProfile(gToxObservable* instance)
     : Glib::ObjectBase("WidgetProfile") {
-    set_instance(instance);
+    set_observable(instance);
 
     update();
 
@@ -72,14 +72,14 @@ WidgetProfile::WidgetProfile(gToxInstance* instance)
     show_all();
 
     m_username.signal_focus_out_event().connect_notify([this](GdkEventFocus*) {
-        notify_observer(ToxEvent(DialogContact::EventSetName{
+        observer_notify(ToxEvent(DialogContact::EventSetName{
                                      m_username.get_text(),
                                      m_status.get_text()
                                  }));
     });
 
     m_status.signal_focus_out_event().connect_notify([this](GdkEventFocus*) {
-        notify_observer(ToxEvent(DialogContact::EventSetName{
+        observer_notify(ToxEvent(DialogContact::EventSetName{
                                      m_username.get_text(),
                                      m_status.get_text()
                                  }));

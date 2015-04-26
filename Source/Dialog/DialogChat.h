@@ -28,7 +28,7 @@
 #include "Dialog/DialogContact.h"
 
 // Single chat window
-class DialogChat : public Gtk::Window, public gToxChild {
+class DialogChat : public Gtk::Window, public gToxObserver {
   private:
     bool m_in_window;
     Gtk::HeaderBar m_header;
@@ -42,12 +42,12 @@ class DialogChat : public Gtk::Window, public gToxChild {
     WidgetChat m_chat;
     Gtk::Box m_chat_box;
 
-    gToxInstance::CallbackHandler m_tox_callback;
+    gToxObservable::Handler m_tox_callback;
 
     void notify(const Glib::ustring& title, const Glib::ustring& message);
 
   public:
-    DialogChat(gToxInstance* instance, Toxmm::FriendNr nr);
+    DialogChat(gToxObservable* observable, Toxmm::FriendNr nr);
     ~DialogChat();
 
     void show();

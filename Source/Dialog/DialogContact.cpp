@@ -34,7 +34,7 @@ namespace sigc {
 
 DialogContact::DialogContact(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& builder)
     : Gtk::Window(cobject), m_builder(builder) {
-    m_tox_callback = add_observer([this](const ToxEvent& ev) { tox_event_handling(ev); });
+    m_tox_callback = observer_add([this](const ToxEvent& ev) { tox_event_handling(ev); });
 
     m_builder->get_widget("headerbar", m_headerbar);
     m_builder->get_widget("status_btn", m_btn_status);
@@ -111,7 +111,7 @@ DialogContact::DialogContact(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Bu
     auto activated = [this](Gtk::ListBoxRow* row) {
         //FORWARD SIGNAL TO THE ITEM
         auto item = dynamic_cast<WidgetContactListItem*>(row);
-        notify_observer(ToxEvent(WidgetContactListItem::EventActivated{item->get_friend_nr()}));
+        observer_notify(ToxEvent(WidgetContactListItem::EventActivated{item->get_friend_nr()}));
     };
     list->signal_row_activated().connect(activated);
     list_active_chat->signal_row_activated().connect(activated);
@@ -127,7 +127,7 @@ DialogContact::DialogContact(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Bu
         item->activated();
     });
 
-    notify_observer(ToxEvent(EventAddNotification{
+    observer_notify(ToxEvent(EventAddNotification{
                         true,
                         "pre-alpha Software",
                         "Not ready for daily usage",
@@ -206,7 +206,7 @@ bool DialogContact::update() {
 
     ToxEvent ev;
     while (tox().update(ev)) {
-        notify_observer(ev);
+        observer_notify(ev);
     }
 
     return true;
@@ -216,7 +216,7 @@ void DialogContact::tox_event_handling(const ToxEvent& ev) {
     if (ev.type() == typeid(Toxmm::EventFriendRequest)) {
         auto data = ev.get<Toxmm::EventFriendRequest>();
 
-        notify_observer(ToxEvent(EventAddNotification{
+        observer_notify(ToxEvent(EventAddNotification{
                                      true,
                                      Toxmm::to_hex(data.addr.data(), 32),
                                      Glib::ustring::compose(_("FRIEND_REQUEST"), data.message),
@@ -227,7 +227,7 @@ void DialogContact::tox_event_handling(const ToxEvent& ev) {
                                      {{_("IGNORE"), ToxEvent()}},
                                      ToxEvent(EventCallback{[this, data](){
                                                                 //todo dialog
-                                                                notify_observer(ToxEvent(EventAddContact{
+                                                                observer_notify(ToxEvent(EventAddContact{
                                                                     tox().add_friend_norequest(data.addr)
                                                                 }));
                                                                 tox().save();

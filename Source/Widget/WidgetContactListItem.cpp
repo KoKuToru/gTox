@@ -22,14 +22,14 @@
 #include "Dialog/DialogContact.h"
 #include "Helper/Canberra.h"
 
-WidgetContactListItem* WidgetContactListItem::create(gToxInstance* instance, Toxmm::FriendNr nr, bool for_notify) {
-    gToxChild dummy(instance);
+WidgetContactListItem* WidgetContactListItem::create(gToxObservable* instance, Toxmm::FriendNr nr, bool for_notify) {
+    gToxObserver dummy(instance);
     auto builder = Gtk::Builder::create_from_resource(use_mini(&dummy, for_notify)?
                                                           "/org/gtox/ui/list_item_contact_mini.ui":
                                                           "/org/gtox/ui/list_item_contact.ui");
     WidgetContactListItem* tmp = nullptr;
     builder->get_widget_derived("contact_list_item", tmp);
-    tmp->set_instance(instance);
+    tmp->set_observable(instance);
     tmp->set_contact(nr);
     tmp->set_for_notify(for_notify);
     if (!for_notify) {
@@ -41,7 +41,7 @@ WidgetContactListItem* WidgetContactListItem::create(gToxInstance* instance, Tox
 void WidgetContactListItem::set_contact(Toxmm::FriendNr nr) {
     m_friend_nr = nr;
 
-    m_tox_callback = add_observer([this](const ToxEvent& ev) {
+    m_tox_callback = observer_add([this](const ToxEvent& ev) {
         if ((ev.type() == typeid(Toxmm::EventName)          && ev.get<Toxmm::EventName>().nr == m_friend_nr) ||
             (ev.type() == typeid(Toxmm::EventStatusMessage) && ev.get<Toxmm::EventStatusMessage>().nr == m_friend_nr) ||
             (ev.type() == typeid(Toxmm::EventUserStatus)    && ev.get<Toxmm::EventUserStatus>().nr == m_friend_nr)) {
@@ -74,7 +74,7 @@ void WidgetContactListItem::set_contact(Toxmm::FriendNr nr) {
                                 //Ignore
                             }
                         }
-                        m_chat = std::make_shared<DialogChat>(instance(), m_friend_nr);
+                        m_chat = std::make_shared<DialogChat>(observable(), m_friend_nr);
                     }
                     m_chat->present();
                 } else {
@@ -184,7 +184,7 @@ void WidgetContactListItem::set_for_notify(bool notify) {
                                  // on font-scale settings
 }
 
-bool WidgetContactListItem::use_mini(gToxChild* gchild, bool for_notify) {
+bool WidgetContactListItem::use_mini(gToxObserver* gchild, bool for_notify) {
     return gchild->tox().database().config_get(for_notify?"VISUAL_CONTACT_NOTIFY":"VISUAL_CONTACT", for_notify?1:0);
 }
 
@@ -227,7 +227,7 @@ void WidgetContactListItem::notify(const Glib::ustring& title, const Glib::ustri
                                             Gdk::INTERP_BILINEAR));
         m_notify->signal_closed().connect([this](){
             //m_notify->get_closed_reason() ???
-            notify_observer(ToxEvent(EventActivated{m_friend_nr}));
+            observer_notify(ToxEvent(EventActivated{m_friend_nr}));
         });
         try {
             m_notify->show();

@@ -19,11 +19,11 @@
 **/
 #include "WidgetNotification.h"
 
-WidgetNotification* WidgetNotification::create(gToxInstance* instance, DialogContact::EventAddNotification event) {
+WidgetNotification* WidgetNotification::create(gToxObservable* instance, DialogContact::EventAddNotification event) {
     auto builder = Gtk::Builder::create_from_resource("/org/gtox/ui/list_item_notification.ui");
     WidgetNotification* tmp = nullptr;
     builder->get_widget_derived("contact_list_item", tmp);
-    tmp->set_instance(instance);
+    tmp->set_observable(instance);
     tmp->set_event(event);
     tmp->show();
     return tmp;
@@ -79,7 +79,7 @@ void WidgetNotification::set_event(DialogContact::EventAddNotification event) {
         m_notify->add_action(action.first, action.first, [this, action](const Glib::ustring&){
             //Who knows if notification events are on the same thread as gtk ?
             Glib::signal_idle().connect_once([this, action](){
-                notify_observer(action.second);
+                observer_notify(action.second);
                 Glib::signal_idle().connect_once([this](){
                     delete this;
                 });
@@ -87,7 +87,7 @@ void WidgetNotification::set_event(DialogContact::EventAddNotification event) {
         });
         auto action_btn = Gtk::manage(new Gtk::Button(action.first));
         action_btn->signal_clicked().connect([this, action](){
-            notify_observer(action.second);
+            observer_notify(action.second);
             Glib::signal_idle().connect_once([this](){
                 delete this;
             });
@@ -111,7 +111,7 @@ void WidgetNotification::set_event(DialogContact::EventAddNotification event) {
 }
 
 void WidgetNotification::activated() {
-    notify_observer(m_event.activated_action);
+    observer_notify(m_event.activated_action);
     Glib::signal_idle().connect_once([this](){
         delete this;
     });

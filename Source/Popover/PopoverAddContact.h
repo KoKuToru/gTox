@@ -19,15 +19,15 @@
 **/
 #ifndef POPOVERADDCONTACT_H
 #define POPOVERADDCONTACT_H
-#include <Helper/gToxChild.h>
+#include "Helper/gToxObserver.h"
 #include <gtkmm.h>
-class PopoverAddContact : public Gtk::Popover, public gToxChild {
+class PopoverAddContact : public Gtk::Popover, public gToxObserver {
   private:
     Gtk::Entry m_addr;
     Gtk::TextView m_msg;
 
   public:
-    PopoverAddContact(gToxInstance* instance, const Gtk::Widget& relative_to);
+    PopoverAddContact(gToxObservable* observable, const Gtk::Widget& relative_to);
     ~PopoverAddContact();
 
     void set_visible(bool v = true);

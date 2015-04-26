@@ -30,7 +30,7 @@ class PopoverSettings : public Gtk::Popover {
     DialogSettings m_settings;
 
   public:
-    PopoverSettings(gToxInstance* instance, const Gtk::Widget& relative_to);
+    PopoverSettings(gToxObservable* instance, const Gtk::Widget& relative_to);
     ~PopoverSettings();
 
     void set_visible(bool visible = true);

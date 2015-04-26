@@ -22,12 +22,12 @@
 #define DIALOGSETTINGS_H
 
 #include <gtkmm.h>
-#include "Helper/gToxInstance.h"
+#include "Helper/gToxObserver.h"
 
 class DialogSettings : public Gtk::Window {
   private:
   public:
-    DialogSettings(gToxInstance* instance);
+    DialogSettings(gToxObservable* instance);
     ~DialogSettings();
 
     Gtk::Stack m_stack;

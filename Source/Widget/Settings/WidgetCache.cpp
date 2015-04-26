@@ -22,14 +22,14 @@
 #include <Tox/Toxmm.h>
 #include <stdio.h>
 
-WidgetCache::WidgetCache(gToxInstance* instance)
+WidgetCache::WidgetCache(gToxObservable* observable)
     : Glib::ObjectBase("WidgetNetwork"),
       m_log(),
       m_file(),
       m_clean_log("Clean up logs"),
       m_clean_file("Clean up recieved files") {
 
-    set_instance(instance);
+    set_observable(observable);
 
     m_log.set_active(tox().database().config_get("LOG_CHAT", 1));
     m_file.set_active(tox().database().config_get("LOG_FILE", 1));

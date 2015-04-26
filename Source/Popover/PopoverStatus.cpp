@@ -21,11 +21,11 @@
 #include "Dialog/DialogContact.h"
 #include <glibmm/i18n.h>
 
-PopoverStatus::PopoverStatus(gToxInstance* instance, const Gtk::Widget& relative_to)
+PopoverStatus::PopoverStatus(gToxObservable* instance, const Gtk::Widget& relative_to)
     : Gtk::Popover(relative_to) {
     // add_label("Settings");
 
-    set_instance(instance);
+    set_observable(instance);
 
     m_listbox.add(create_item(Gdk::Pixbuf::create_from_resource("/org/gtox/icon/status_online.svg"), _("ONLINE")));
     m_listbox.add(create_item(Gdk::Pixbuf::create_from_resource("/org/gtox/icon/status_busy.svg"), _("BUSY")));

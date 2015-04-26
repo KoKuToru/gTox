@@ -22,14 +22,14 @@
 
 #include <string>
 #include <gtkmm.h>
-#include "Helper/gToxInstance.h"
+#include "Helper/gToxObservable.h"
 
 class WidgetChatBubbleRow {
     private:
         Gtk::Frame* m_frame_left;
         Gtk::Frame* m_frame_right;
     public:
-        gToxInstance::CallbackHandler tox_callback;
+        gToxObservable::Handler tox_callback;
         WidgetChatBubbleRow(Gtk::Grid &grid, int row, Gtk::Widget &left, Gtk::Widget& right);
         void set_class(const std::string& css_class);
         void set_class(bool is_top, bool is_bottom);

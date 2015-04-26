@@ -28,10 +28,10 @@ namespace sigc {
     SIGC_FUNCTORS_DEDUCE_RESULT_TYPE_WITH_DECLTYPE
 }
 
-WidgetChat::WidgetChat(gToxInstance* instance, Toxmm::FriendNr nr)
+WidgetChat::WidgetChat(gToxObservable* instance, Toxmm::FriendNr nr)
     : Glib::ObjectBase("WidgetChat"), m_nr(nr), m_autoscroll(true) {
 
-    set_instance(instance);
+    set_observable(instance);
 
     m_output.set_editable(false);
     m_scrolled.add(m_vbox);
@@ -265,7 +265,7 @@ WidgetChat::WidgetChat(gToxInstance* instance, Toxmm::FriendNr nr)
         }
     }
 
-    m_tox_callback = add_observer([this, nr](const ToxEvent& ev) {
+    m_tox_callback = observer_add([this, nr](const ToxEvent& ev) {
         if (ev.type() == typeid(Toxmm::EventFriendAction)) {
             auto data = ev.get<Toxmm::EventFriendAction>();
             if (nr == data.nr) {
@@ -363,7 +363,7 @@ void WidgetChat::add_line(bool left_side, WidgetChatLine::Line new_line) {
 
     if (!action) {
         // add new line
-        auto new_bubble = Gtk::manage(new WidgetChatLine(instance(), left_side));
+        auto new_bubble = Gtk::manage(new WidgetChatLine(observable(), left_side));
         new_bubble->add_line(new_line);
         new_bubble->show_all();
         m_vbox.pack_start(*new_bubble, false, false);

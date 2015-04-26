@@ -19,16 +19,16 @@
 **/
 #ifndef WIDGETPOPOVERSTATUS_H
 #define WIDGETPOPOVERSTATUS_H
-#include "Helper/gToxChild.h"
+#include "Helper/gToxObserver.h"
 #include <gtkmm.h>
-class PopoverStatus : public Gtk::Popover, public gToxChild {
+class PopoverStatus : public Gtk::Popover, public gToxObserver {
   private:
     Gtk::ListBoxRow& create_item(Glib::RefPtr<Gdk::Pixbuf> icon,
                                  Glib::ustring text);
     Gtk::ListBox m_listbox;
 
   public:
-    PopoverStatus(gToxInstance* instance, const Gtk::Widget& relative_to);
+    PopoverStatus(gToxObservable* observable, const Gtk::Widget& relative_to);
     ~PopoverStatus();
 
     void set_visible(bool visible = true);

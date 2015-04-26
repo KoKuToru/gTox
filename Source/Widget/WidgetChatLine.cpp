@@ -21,10 +21,10 @@
 #include "Chat/WidgetChatLabel.h"
 #include "Tox/Toxmm.h"
 
-WidgetChatLine::WidgetChatLine(gToxInstance* instance, bool left_side)
+WidgetChatLine::WidgetChatLine(gToxObservable* instance, bool left_side)
     : Glib::ObjectBase("WidgetChatLine"), m_side(left_side), m_row_count(0) {
 
-    set_instance(instance);
+    set_observable(instance);
 
     this->set_halign(m_side ? Gtk::Align::ALIGN_START : Gtk::Align::ALIGN_END);
 
@@ -115,7 +115,7 @@ void WidgetChatLine::add_line(Line new_line) {
         auto nr = new_line.nr;
         auto receipt = new_line.receipt;
         auto index = rows.size() - 1;
-        rows.back().tox_callback = add_observer([this, index, nr, receipt](const ToxEvent &ev) {
+        rows.back().tox_callback = observer_add([this, index, nr, receipt](const ToxEvent &ev) {
             //wait for receipt
             if (ev.type() == typeid(Toxmm::EventReadReceipt)) {
                 auto& row = rows[index];

@@ -19,9 +19,9 @@
 **/
 #ifndef WIDGETPROFILE_H
 #define WIDGETPROFILE_H
-#include "Helper/gToxChild.h"
+#include "Helper/gToxObserver.h"
 #include <gtkmm.h>
-class WidgetProfile : public Gtk::VBox, public gToxChild {
+class WidgetProfile : public Gtk::VBox, public gToxObserver {
   private:
     Gtk::Entry m_username;
     Gtk::Entry m_status;
@@ -30,7 +30,7 @@ class WidgetProfile : public Gtk::VBox, public gToxChild {
     Gtk::Image m_clipboard;
 
   public:
-    WidgetProfile(gToxInstance* instance);
+    WidgetProfile(gToxObservable* observable);
     ~WidgetProfile();
 
     void update();

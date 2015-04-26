@@ -54,8 +54,8 @@ add_custom_command(
 set(SOURCES
     main.cpp
     Helper/Canberra.cpp
-    Helper/gToxInstance.cpp
-    Helper/gToxChild.cpp
+    Helper/gToxObservable.cpp
+    Helper/gToxObserver.cpp
     gTox.cpp
     Dialog/DialogContact.cpp
     Dialog/DialogProfile.cpp
