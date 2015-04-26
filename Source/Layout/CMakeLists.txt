@@ -13,7 +13,8 @@ set(SRC
     list_item_notification.ui
     list_item_notification_mini.ui
     dialog_assistant.ui
-    dialog_contact.ui)
+    dialog_contact.ui
+    popover_settings.ui)
 
 set(LAYOUT ${SRC} PARENT_SCOPE)
 

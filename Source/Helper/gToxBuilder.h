@@ -1,0 +1,90 @@
+/**
+    gTox a GTK-based tox-client - https://github.com/KoKuToru/gTox.git
+
+    Copyright (C) 2015  Luca Béla Palkovics
+    Copyright (C) 2015  Maurice Mohlek
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>
+**/
+#ifndef H_GTOX_BUILDER
+#define H_GTOX_BUILDER
+
+#include <gtkmm.h>
+
+/**
+ * @brief Proxy class for Gtk::Builder
+ */
+class gToxBuilder {
+    private:
+        const Glib::RefPtr<Gtk::Builder> m_builder;
+    public:
+        gToxBuilder(const Glib::RefPtr<Gtk::Builder>& builder);
+        const Glib::RefPtr<Gtk::Builder> operator->();
+
+        template <class T_Widget, typename ...  T> inline
+        T_Widget* get_widget_derived(const Glib::ustring& name, T ... params) {
+            T_Widget* widget = nullptr;
+
+            // Get the widget from the GtkBuilder file.
+            typedef typename T_Widget::BaseObjectType cwidget_type;
+            cwidget_type* pCWidget = (cwidget_type*)get_cwidget(name);
+
+            if(!pCWidget) {
+                throw std::runtime_error("gToxBuilder - The error was already reported by get_cwidget().");
+            }
+
+            //Check whether there is already a C++ wrapper instance associated with this C instance:
+            auto pObjectBase = Glib::ObjectBase::_get_current_wrapper((GObject*)pCWidget);
+
+            //If there is already a C++ instance:
+            if(pObjectBase) {
+                widget = dynamic_cast<T_Widget*>( Glib::wrap((GtkWidget*)pCWidget) );
+                if (!widget) {
+                    throw std::runtime_error("gToxBuilder - C++ widget already exists, but different type ?");
+                }
+            }
+            else
+            {
+                //Create a new C++ instance to wrap the existing C instance:
+                m_builder->reference();
+                widget = new T_Widget(pCWidget, m_builder, params ...);
+            }
+
+            return widget;
+        }
+
+        template <class T_Widget>
+        T_Widget* get_widget(const Glib::ustring& name) {
+            T_Widget* widget = nullptr;
+            m_builder->get_widget(name, widget);
+            if (!widget) {
+                throw std::runtime_error("gToxBuilder - Couldn't find widget");
+            }
+            return widget;
+        }
+
+        template <class T_Widget>
+        void get_widget(const Glib::ustring& name, T_Widget*& widget) {
+            widget = nullptr;
+            m_builder->get_widget(name, widget);
+            if (!widget) {
+                throw std::runtime_error("gToxBuilder - Couldn't find widget");
+            }
+        }
+
+    protected:
+        GtkWidget* get_cwidget(const Glib::ustring& name);
+};
+
+#endif

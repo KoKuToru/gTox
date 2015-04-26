@@ -21,8 +21,9 @@
 #include "Tox/Toxmm.h"
 #include <glibmm/i18n.h>
 
-DialogProfileCreate::DialogProfileCreate(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& builder):
-    Gtk::Assistant(cobject), m_builder(builder), m_aborted(true) {
+DialogProfileCreate::DialogProfileCreate(BaseObjectType* cobject, gToxBuilder builder,
+                                         const Glib::ustring& path):
+    Gtk::Assistant(cobject), m_builder(builder), m_aborted(true), m_path(path) {
 
     property_resizable() = false;
     set_size_request(800, 600);
@@ -34,15 +35,14 @@ DialogProfileCreate::DialogProfileCreate(BaseObjectType* cobject, const Glib::Re
         icon->property_pixbuf() = Gdk::Pixbuf::create_from_resource("/org/gtox/icon/icon_128.svg");
     }
 
-    m_builder->get_widget("assistant_username", m_username);
-    m_builder->get_widget("assistant_statusmessage", m_status);
-    m_builder->get_widget("assistant_logging", m_logging);
-    m_builder->get_widget("assistant_file_tox", m_file_tox);
-    m_builder->get_widget("assistant_file_gtox", m_file_gtox);
+    m_builder.get_widget("assistant_username", m_username);
+    m_builder.get_widget("assistant_statusmessage", m_status);
+    m_builder.get_widget("assistant_logging", m_logging);
+    m_builder.get_widget("assistant_file_tox", m_file_tox);
+    m_builder.get_widget("assistant_file_gtox", m_file_gtox);
 
     if (m_username && m_file_tox && m_file_gtox) {
-        Gtk::Widget* w;
-        m_builder->get_widget("assistant_first_page", w);
+        auto w = m_builder.get_widget<Gtk::Widget>("assistant_first_page");
         m_username->signal_changed().connect([this, w]() {
             if (!m_username->get_text().empty()) {
                 int i = 0;
@@ -69,11 +69,8 @@ DialogProfileCreate::DialogProfileCreate(BaseObjectType* cobject, const Glib::Re
 }
 
 DialogProfileCreate* DialogProfileCreate::create(const Glib::ustring& path) {
-    auto builder = Gtk::Builder::create_from_resource("/org/gtox/ui/dialog_assistant.ui");
-    DialogProfileCreate* tmp = nullptr;
-    builder->get_widget_derived("dialog_assistant", tmp);
-    tmp->set_path(path);
-    return tmp;
+    return gToxBuilder(Gtk::Builder::create_from_resource("/org/gtox/ui/dialog_assistant.ui"))
+            .get_widget_derived<DialogProfileCreate>("dialog_assistant", path);
 }
 
 DialogProfileCreate::~DialogProfileCreate() {
@@ -112,8 +109,4 @@ bool DialogProfileCreate::is_aborted() {
 
 Glib::ustring DialogProfileCreate::get_path() {
     return m_path;
-}
-
-void DialogProfileCreate::set_path(const Glib::ustring& path) {
-    m_path = path;
 }

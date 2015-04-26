@@ -24,15 +24,18 @@
 #include "Dialog/DialogContact.h"
 #include <libnotifymm.h>
 #include "Helper/gToxObserver.h"
+#include "Helper/gToxBuilder.h"
 
 class WidgetNotification : public Gtk::ListBoxRow, public gToxObserver {
   private:
-    const Glib::RefPtr<Gtk::Builder> m_builder;
+    gToxBuilder m_builder;
     DialogContact::EventAddNotification m_event;
     std::shared_ptr<Notify::Notification> m_notify;
 
   public:
-    WidgetNotification(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& builder);
+    WidgetNotification(BaseObjectType* cobject, gToxBuilder builder,
+                       gToxObservable* observable,
+                       DialogContact::EventAddNotification event);
     static WidgetNotification* create(gToxObservable* observable, DialogContact::EventAddNotification event);
 
     ~WidgetNotification();

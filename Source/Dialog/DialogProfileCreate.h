@@ -22,10 +22,11 @@
 #define FIRSTSTARTASSISTANT_H
 
 #include <gtkmm.h>
+#include "Helper/gToxBuilder.h"
 
 class DialogProfileCreate : public Gtk::Assistant {
   private:
-    const Glib::RefPtr<Gtk::Builder> m_builder;
+    gToxBuilder m_builder;
     bool m_aborted;
     Glib::ustring m_path;
 
@@ -40,12 +41,12 @@ class DialogProfileCreate : public Gtk::Assistant {
     void on_close();
     void on_apply();
 
-    void set_path(const Glib::ustring& path);
-
   public:
     ~DialogProfileCreate();
 
-    DialogProfileCreate(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& builder);
+    DialogProfileCreate(BaseObjectType* cobject, gToxBuilder builder,
+                        const Glib::ustring& path);
+
     static DialogProfileCreate* create(const Glib::ustring& path);
 
     bool is_aborted();

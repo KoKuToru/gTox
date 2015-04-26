@@ -32,14 +32,16 @@ namespace sigc {
     SIGC_FUNCTORS_DEDUCE_RESULT_TYPE_WITH_DECLTYPE
 }
 
-DialogContact::DialogContact(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& builder)
+DialogContact::DialogContact(BaseObjectType* cobject, gToxBuilder builder, const Glib::ustring& file)
     : Gtk::Window(cobject), m_builder(builder) {
     m_tox_callback = observer_add([this](const ToxEvent& ev) { tox_event_handling(ev); });
 
-    m_builder->get_widget("headerbar", m_headerbar);
-    m_builder->get_widget("status_btn", m_btn_status);
-    m_builder->get_widget("stack_header", m_stack_header);
-    m_builder->get_widget("stack", m_stack);
+    tox().open(file);
+
+    m_builder.get_widget("headerbar", m_headerbar);
+    m_builder.get_widget("status_btn", m_btn_status);
+    m_builder.get_widget("stack_header", m_stack_header);
+    m_builder.get_widget("stack", m_stack);
 
     set_icon(Gdk::Pixbuf::create_from_resource("/org/gtox/icon/icon_128.svg"));
 
@@ -48,12 +50,12 @@ DialogContact::DialogContact(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Bu
     set_position(Gtk::WindowPosition::WIN_POS_CENTER);
 
     set_title("gTox");
+    m_headerbar->set_title(tox().get_name_or_address());
+    m_headerbar->set_subtitle(tox().get_status_message());
 
     //Connect the 2 paneds
-    Gtk::Paned* paned_top;
-    Gtk::Paned* paned_bottom;
-    m_builder->get_widget("paned_top", paned_top);
-    m_builder->get_widget("paned_bottom", paned_bottom);
+    auto paned_top = m_builder.get_widget<Gtk::Paned>("paned_top");
+    auto paned_bottom = m_builder.get_widget<Gtk::Paned>("paned_bottom");
 
     // Connect properties C++ version ?
     g_object_bind_property(
@@ -65,8 +67,8 @@ DialogContact::DialogContact(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Bu
                       G_BINDING_BIDIRECTIONAL |
                       G_BINDING_SYNC_CREATE));
 
-    m_builder->get_widget("headerbar", m_headerbar);
-    m_builder->get_widget("stack_header", m_stack_header);
+    m_builder.get_widget("headerbar", m_headerbar);
+    m_builder.get_widget("stack_header", m_stack_header);
 
     m_stack_header->signal_map().connect_notify([this](){
         m_headerbar->get_style_context()->add_class("gtox-headerbar-right");
@@ -84,8 +86,7 @@ DialogContact::DialogContact(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Bu
         m_popover_status->set_visible();
     });
 
-    Gtk::Button* add_contact_btn;
-    m_builder->get_widget("add_contact_btn", add_contact_btn);
+    auto add_contact_btn = m_builder.get_widget<Gtk::Button>("add_contact_btn");
     add_contact_btn->signal_clicked().connect([this, add_contact_btn]() {
         if (!m_popover_add_contact) {
             m_popover_add_contact = std::make_shared<PopoverAddContact>(this, *add_contact_btn);
@@ -93,8 +94,7 @@ DialogContact::DialogContact(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Bu
         m_popover_add_contact->set_visible();
     });
 
-    Gtk::Button* setting_btn;
-    m_builder->get_widget("setting_btn", setting_btn);
+    auto setting_btn = m_builder.get_widget<Gtk::Button>("setting_btn");
     setting_btn->signal_clicked().connect([this, setting_btn]() {
         if (!m_popover_settings) {
             m_popover_settings = std::make_shared<PopoverSettings>(this, *setting_btn);
@@ -102,12 +102,9 @@ DialogContact::DialogContact(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Bu
         m_popover_settings->set_visible();
     });
 
-    Gtk::ListBox* list;
-    Gtk::ListBox* list_active_chat;
-    Gtk::ListBox* list_notify;
-    m_builder->get_widget("list", list);
-    m_builder->get_widget("list_active_chat", list_active_chat);
-    m_builder->get_widget("list_notify", list_notify);
+    auto list = m_builder.get_widget<Gtk::ListBox>("list");
+    auto list_active_chat  = m_builder.get_widget<Gtk::ListBox>("list_active_chat");
+    auto list_notify  = m_builder.get_widget<Gtk::ListBox>("list_notify");
     auto activated = [this](Gtk::ListBoxRow* row) {
         //FORWARD SIGNAL TO THE ITEM
         auto item = dynamic_cast<WidgetContactListItem*>(row);
@@ -135,13 +132,6 @@ DialogContact::DialogContact(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Bu
                         {},
                         ToxEvent()
                     }));
-}
-
-void DialogContact::tox_setup(const Glib::ustring& path) {
-    tox().open(path);
-
-    m_headerbar->set_title(tox().get_name_or_address());
-    m_headerbar->set_subtitle(tox().get_status_message());
 
     set_status(Toxmm::OFFLINE);
     load_contacts();
@@ -151,19 +141,14 @@ void DialogContact::tox_setup(const Glib::ustring& path) {
         tox().update_optimal_interval());
 }
 
-DialogContact* DialogContact::create(Glib::ustring file) {
-    auto builder = Gtk::Builder::create_from_resource("/org/gtox/ui/dialog_contact.ui");
-    DialogContact* tmp = nullptr;
-    builder->get_widget_derived("dialog_contact", tmp);
-    tmp->tox_setup(file);
-    return tmp;
+DialogContact* DialogContact::create(const Glib::ustring& file) {
+    return gToxBuilder(Gtk::Builder::create_from_resource("/org/gtox/ui/dialog_contact.ui"))
+            .get_widget_derived<DialogContact>("dialog_contact", file);
 }
 
 void DialogContact::load_contacts() {
-    Gtk::ListBox* list;
-    Gtk::ListBox* list_active_chat;
-    m_builder->get_widget("list", list);
-    m_builder->get_widget("list_active_chat", list_active_chat);
+    auto list = m_builder.get_widget<Gtk::ListBox>("list");
+    auto list_active_chat = m_builder.get_widget<Gtk::ListBox>("list_active_chat");
     if (!list) {
         return;
     }
@@ -179,8 +164,7 @@ void DialogContact::load_contacts() {
             int min_height;
             int natural_height;
             item->get_preferred_height(min_height, natural_height);
-            Gtk::ScrolledWindow* scroll;
-            m_builder->get_widget("contact_scroll", scroll);
+            auto scroll = m_builder.get_widget<Gtk::ScrolledWindow>("contact_scroll");
             scroll->set_size_request(-1, min_height*7);
             scroll->queue_resize_no_redraw();
             Glib::signal_idle().connect_once([scroll](){

@@ -56,6 +56,7 @@ set(SOURCES
     Helper/Canberra.cpp
     Helper/gToxObservable.cpp
     Helper/gToxObserver.cpp
+    Helper/gToxBuilder.cpp
     gTox.cpp
     Dialog/DialogContact.cpp
     Dialog/DialogProfile.cpp

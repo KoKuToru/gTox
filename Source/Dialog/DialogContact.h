@@ -27,11 +27,12 @@
 #include "Popover/PopoverSettings.h"
 #include "Popover/PopoverAddContact.h"
 #include "Helper/gToxObservable.h"
+#include "Helper/gToxBuilder.h"
 
 // contact list with pinned chat
 class DialogContact : public Gtk::Window, public gToxObservable {
   private:
-    const Glib::RefPtr<Gtk::Builder> m_builder;
+    gToxBuilder m_builder;
 
     Glib::RefPtr<Gtk::StatusIcon> m_status_icon;
 
@@ -57,10 +58,11 @@ class DialogContact : public Gtk::Window, public gToxObservable {
     bool is_chat_open(Toxmm::FriendNr nr);
 
   public:
-    DialogContact(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& builder);
+    DialogContact(BaseObjectType* cobject, gToxBuilder builder,
+                  const Glib::ustring& file);
     ~DialogContact();
 
-    static DialogContact* create(Glib::ustring file);
+    static DialogContact* create(const Glib::ustring& file);
 
     void exit();
 
@@ -125,7 +127,6 @@ class DialogContact : public Gtk::Window, public gToxObservable {
 
     bool update();
     void tox_event_handling(const ToxEvent& event);
-    void tox_setup(const Glib::ustring& path);
 };
 
 #endif

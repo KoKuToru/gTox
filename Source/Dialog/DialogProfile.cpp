@@ -21,12 +21,13 @@
 #include <glibmm/i18n.h>
 #include <iostream>
 #include <Tox/Toxmm.h>
+#include "glib/gthread.h"
 
 namespace sigc {
     SIGC_FUNCTORS_DEDUCE_RESULT_TYPE_WITH_DECLTYPE
 }
 
-DialogProfile::DialogProfile(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& builder):
+DialogProfile::DialogProfile(BaseObjectType* cobject, gToxBuilder builder, const std::vector<std::string>& accounts):
     Gtk::Window(cobject),
     m_builder(builder),
     m_abort(true),
@@ -36,68 +37,52 @@ DialogProfile::DialogProfile(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Bu
     set_default_geometry(300, 300);
     set_position(Gtk::WindowPosition::WIN_POS_CENTER);
 
-    Gtk::HeaderBar* hbar = nullptr;
-    builder->get_widget("headerbar", hbar);
-    if (hbar) {
-        set_titlebar(*hbar);
-        hbar->set_title(_("PROFILE_TITLE"));
-        hbar->set_subtitle(_("PROFILE_SUBTITLE"));
-    }
+    auto hbar = m_builder.get_widget<Gtk::HeaderBar>("headerbar");
+    hbar->set_title(_("PROFILE_TITLE"));
+    hbar->set_subtitle(_("PROFILE_SUBTITLE"));
 
-    Gtk::ListBox* profile_list = nullptr;
-    Gtk::Button* profile_new = nullptr;
-    Gtk::Button* profile_select = nullptr;
-    Gtk::Button* profile_abort = nullptr;
-    builder->get_widget("profile_list", profile_list);
-    builder->get_widget("profile_new", profile_new);
-    builder->get_widget("profile_select", profile_select);
-    builder->get_widget("profile_abort", profile_abort);
+    Gtk::ListBox* profile_list   = builder.get_widget<Gtk::ListBox>("profile_list");
+    Gtk::Button*  profile_new    = builder.get_widget<Gtk::Button>("profile_new");
+    Gtk::Button*  profile_select = builder.get_widget<Gtk::Button>("profile_select");
+    Gtk::Button*  profile_abort  = builder.get_widget<Gtk::Button>("profile_abort");
 
-    if (profile_list) {
-        profile_list->signal_row_selected().connect([this, profile_select](Gtk::ListBoxRow* row) {
-                if (m_quited) {
-                    return;
-                }
-                if (profile_select) {
-                    profile_select->set_sensitive(row != nullptr);
-                }
-            });
-        profile_list->signal_row_activated().connect([this, profile_select](Gtk::ListBoxRow*) {
-            if (profile_select) {
-                profile_select->clicked();
+    profile_list->signal_row_selected().connect([this, profile_select](Gtk::ListBoxRow* row) {
+        if (m_quited) {
+            return;
+        }
+        if (profile_select) {
+            profile_select->set_sensitive(row != nullptr);
+        }
+    });
+    profile_list->signal_row_activated().connect([this, profile_select](Gtk::ListBoxRow*) {
+        if (profile_select) {
+            profile_select->clicked();
+        }
+    });
+
+    profile_new->signal_clicked().connect([this](){
+        m_abort = false;
+        quit();
+    });
+
+    profile_select->set_sensitive(false);
+    profile_select->signal_clicked().connect([this, profile_list](){
+        m_abort = false;
+        if (profile_list) {
+            auto row = profile_list->get_selected_row();
+            if (row) {
+                m_selected_path = m_accounts[row->get_index()];
             }
-        });
-    }
+        }
+        quit();
+    });
 
-    if (profile_new) {
-        profile_new->signal_clicked().connect([this](){
-            m_abort = false;
-            quit();
-        });
-    }
+    profile_abort->signal_clicked().connect([this](){
+        quit();
+    });
 
-    if (profile_select) {
-        profile_select->set_sensitive(false);
-        profile_select->signal_clicked().connect([this, profile_list](){
-            m_abort = false;
-            if (profile_list) {
-                auto row = profile_list->get_selected_row();
-                if (row) {
-                    m_selected_path = m_accounts[row->get_index()];
-                }
-            }
-            quit();
-        });
-    }
-
-    if (profile_abort) {
-        profile_abort->signal_clicked().connect([this](){
-            quit();
-        });
-    }
+    set_accounts(accounts);
 }
-
-#include "glib/gthread.h"
 
 void DialogProfile::set_accounts(const std::vector<std::string>& accounts) {
     m_accounts = accounts;
@@ -177,11 +162,8 @@ void DialogProfile::set_accounts(const std::vector<std::string>& accounts) {
 }
 
 DialogProfile* DialogProfile::create(const std::vector<std::string>& accounts) {
-    auto builder = Gtk::Builder::create_from_resource("/org/gtox/ui/dialog_profile.ui");
-    DialogProfile* tmp = nullptr;
-    builder->get_widget_derived("dialog_profile", tmp);
-    tmp->set_accounts(accounts);
-    return tmp;
+    return gToxBuilder(Gtk::Builder::create_from_resource("/org/gtox/ui/dialog_profile.ui"))
+            .get_widget_derived<DialogProfile>("dialog_profile", accounts);
 }
 
 void DialogProfile::quit() {

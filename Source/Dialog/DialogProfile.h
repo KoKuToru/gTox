@@ -21,11 +21,13 @@
 #define DIALOGPROFILE_H
 
 #include <gtkmm.h>
+#include "Helper/gToxBuilder.h"
 
 // Single chat window
 class DialogProfile : public Gtk::Window {
   private:
-    const Glib::RefPtr<Gtk::Builder> m_builder;
+    gToxBuilder m_builder;
+
     std::vector<std::string> m_accounts;
     bool m_abort;
     bool m_quited;
@@ -38,7 +40,9 @@ class DialogProfile : public Gtk::Window {
     void set_accounts(const std::vector<std::string>& accounts);
 
   public:
-    DialogProfile(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& builder);
+    DialogProfile(BaseObjectType* cobject, gToxBuilder builder,
+                  const std::vector<std::string>& accounts);
+
     static DialogProfile* create(const std::vector<std::string>& accounts);
 
     ~DialogProfile();

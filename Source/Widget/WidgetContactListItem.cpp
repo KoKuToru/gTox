@@ -27,89 +27,95 @@ WidgetContactListItem* WidgetContactListItem::create(gToxObservable* instance, T
     auto builder = Gtk::Builder::create_from_resource(use_mini(&dummy, for_notify)?
                                                           "/org/gtox/ui/list_item_contact_mini.ui":
                                                           "/org/gtox/ui/list_item_contact.ui");
-    WidgetContactListItem* tmp = nullptr;
-    builder->get_widget_derived("contact_list_item", tmp);
-    tmp->set_observable(instance);
-    tmp->set_contact(nr);
-    tmp->set_for_notify(for_notify);
-    if (!for_notify) {
-        tmp->show();
-    }
-    return tmp;
+    return gToxBuilder(builder)
+            .get_widget_derived<WidgetContactListItem>("contact_list_item",
+                                                       instance,
+                                                       nr,
+                                                       for_notify);
 }
 
-void WidgetContactListItem::set_contact(Toxmm::FriendNr nr) {
-    m_friend_nr = nr;
-
-    m_tox_callback = observer_add([this](const ToxEvent& ev) {
-        if ((ev.type() == typeid(Toxmm::EventName)          && ev.get<Toxmm::EventName>().nr == m_friend_nr) ||
+void WidgetContactListItem::observer_handle(const ToxEvent& ev) {
+    if ((ev.type() == typeid(Toxmm::EventName)          && ev.get<Toxmm::EventName>().nr == m_friend_nr) ||
             (ev.type() == typeid(Toxmm::EventStatusMessage) && ev.get<Toxmm::EventStatusMessage>().nr == m_friend_nr) ||
             (ev.type() == typeid(Toxmm::EventUserStatus)    && ev.get<Toxmm::EventUserStatus>().nr == m_friend_nr)) {
-            refresh();
-        } else if ((ev.type() == typeid(Toxmm::EventFriendMessage) && ev.get<Toxmm::EventFriendMessage>().nr == m_friend_nr) ||
-                   (ev.type() == typeid(Toxmm::EventFriendAction)  && ev.get<Toxmm::EventFriendAction>().nr == m_friend_nr)) {
-            if (!m_spin->property_active() && (m_for_notify || !m_chat)) {
-                m_spin->start();
-            }
-            if (!m_for_notify && !m_chat) {
-                notify(tox().get_name_or_address(m_friend_nr),
-                       (ev.type() == typeid(Toxmm::EventFriendMessage)) ?
-                                   ev.get<Toxmm::EventFriendMessage>().message :
-                                   ev.get<Toxmm::EventFriendAction>().message);
-            }
-        } else if (ev.type() == typeid(EventStopSpin) && ev.get<EventStopSpin>().nr == m_friend_nr) {
-            if (m_spin->property_active()) {
-                m_spin->stop();
-            }
-        } else if (ev.type() == typeid(EventActivated)) {
-            auto data = ev.get<EventActivated>();
-            if (data.nr == m_friend_nr) {
-                if (!m_for_notify) {
-                    if (!m_chat) {
-                        //Hide notification !
-                        if (m_notify) {
-                            try {
-                                m_notify->close();
-                            } catch (...) {
-                                //Ignore
-                            }
+        refresh();
+    } else if ((ev.type() == typeid(Toxmm::EventFriendMessage) && ev.get<Toxmm::EventFriendMessage>().nr == m_friend_nr) ||
+               (ev.type() == typeid(Toxmm::EventFriendAction)  && ev.get<Toxmm::EventFriendAction>().nr == m_friend_nr)) {
+        if (!m_spin->property_active() && (m_for_notify || !m_chat)) {
+            m_spin->start();
+        }
+        if (!m_for_notify && !m_chat) {
+            notify(tox().get_name_or_address(m_friend_nr),
+                   (ev.type() == typeid(Toxmm::EventFriendMessage)) ?
+                       ev.get<Toxmm::EventFriendMessage>().message :
+                       ev.get<Toxmm::EventFriendAction>().message);
+        }
+    } else if (ev.type() == typeid(EventStopSpin) && ev.get<EventStopSpin>().nr == m_friend_nr) {
+        if (m_spin->property_active()) {
+            m_spin->stop();
+        }
+    } else if (ev.type() == typeid(EventActivated)) {
+        auto data = ev.get<EventActivated>();
+        if (data.nr == m_friend_nr) {
+            if (!m_for_notify) {
+                if (!m_chat) {
+                    //Hide notification !
+                    if (m_notify) {
+                        try {
+                            m_notify->close();
+                        } catch (...) {
+                            //Ignore
                         }
-                        m_chat = std::make_shared<DialogChat>(observable(), m_friend_nr);
                     }
-                    m_chat->present();
-                } else {
-                    show();
+                    m_chat = std::make_shared<DialogChat>(observable(), m_friend_nr);
                 }
-                return;
+                m_chat->present();
+            } else {
+                show();
             }
-        } else if (ev.type() == typeid(EventDestroyChat)) {
-            auto data = ev.get<EventDestroyChat>();
-            if (data.nr == m_friend_nr) {
-                if (!m_for_notify) {
-                    if (m_chat) {
-                        m_chat.reset();
-                    }
-                } else {
-                    hide();
+            return;
+        }
+    } else if (ev.type() == typeid(EventDestroyChat)) {
+        auto data = ev.get<EventDestroyChat>();
+        if (data.nr == m_friend_nr) {
+            if (!m_for_notify) {
+                if (m_chat) {
+                    m_chat.reset();
                 }
+            } else {
+                hide();
             }
         }
-    });
-
-    refresh();
+    }
 }
 
-WidgetContactListItem::WidgetContactListItem(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& builder)
+WidgetContactListItem::WidgetContactListItem(BaseObjectType* cobject, gToxBuilder builder,
+                                             gToxObservable* observable,
+                                             Toxmm::FriendNr nr,
+                                             bool for_notify)
     : Gtk::ListBoxRow(cobject),
+      gToxObserver(observable),
       m_builder(builder),
-      m_friend_nr(0){
+      m_friend_nr(nr),
+      m_for_notify(for_notify) {
 
-    m_builder->get_widget("avatar", m_avatar);
-    m_builder->get_widget("name", m_name);
-    m_builder->get_widget("status", m_status_msg);
-    m_builder->get_widget("status_icon", m_status_icon);
-    m_builder->get_widget("spinner", m_spin);
+    m_builder.get_widget("avatar", m_avatar);
+    m_builder.get_widget("name", m_name);
+    m_builder.get_widget("status", m_status_msg);
+    m_builder.get_widget("status_icon", m_status_icon);
+    m_builder.get_widget("spinner", m_spin);
     m_spin->stop();
+
+    m_avatar->set(Gdk::Pixbuf::create_from_resource("/org/gtox/icon/avatar.svg")->scale_simple(
+        use_mini(this, m_for_notify)?32:64,
+        use_mini(this, m_for_notify)?32:64,
+        Gdk::INTERP_BILINEAR));
+
+    refresh();
+
+    if (!for_notify) {
+        show();
+    }
 }
 
 WidgetContactListItem::~WidgetContactListItem() {
@@ -172,16 +178,6 @@ int WidgetContactListItem::compare(WidgetContactListItem* other) {
         return 1;
     }
     return 0;
-}
-
-void WidgetContactListItem::set_for_notify(bool notify) {
-    m_for_notify = notify;
-
-    m_avatar->set(Gdk::Pixbuf::create_from_resource("/org/gtox/icon/avatar.svg")->scale_simple(
-        use_mini(this, m_for_notify)?32:64,
-        use_mini(this, m_for_notify)?32:64,
-        Gdk::INTERP_BILINEAR));  // i would like to resize this depending
-                                 // on font-scale settings
 }
 
 bool WidgetContactListItem::use_mini(gToxObserver* gchild, bool for_notify) {

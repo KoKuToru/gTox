@@ -20,19 +20,21 @@
 #include "WidgetNotification.h"
 
 WidgetNotification* WidgetNotification::create(gToxObservable* instance, DialogContact::EventAddNotification event) {
-    auto builder = Gtk::Builder::create_from_resource("/org/gtox/ui/list_item_notification.ui");
-    WidgetNotification* tmp = nullptr;
-    builder->get_widget_derived("contact_list_item", tmp);
-    tmp->set_observable(instance);
-    tmp->set_event(event);
-    tmp->show();
-    return tmp;
+    return gToxBuilder(Gtk::Builder::create_from_resource("/org/gtox/ui/list_item_notification.ui"))
+            .get_widget_derived<WidgetNotification>("contact_list_item",
+                                                    instance,
+                                                    event);
 }
 
-WidgetNotification::WidgetNotification(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& builder)
+WidgetNotification::WidgetNotification(BaseObjectType* cobject, gToxBuilder builder,
+                                       gToxObservable* observable,
+                                       DialogContact::EventAddNotification event)
     : Gtk::ListBoxRow(cobject),
+      gToxObserver(observable),
       m_builder(builder) {
 
+    set_event(event);
+    show();
 }
 
 WidgetNotification::~WidgetNotification() {
@@ -51,10 +53,10 @@ void WidgetNotification::set_event(DialogContact::EventAddNotification event) {
     Gtk::Image* image;
     Gtk::Image* icon;
 
-    m_builder->get_widget("title", title);
-    m_builder->get_widget("message", message);
-    m_builder->get_widget("image", image);
-    m_builder->get_widget("icon", icon);
+    m_builder.get_widget("title", title);
+    m_builder.get_widget("message", message);
+    m_builder.get_widget("image", image);
+    m_builder.get_widget("icon", icon);
 
     m_notify = std::make_shared<Notify::Notification>(m_event.title, m_event.message);
 
