@@ -54,7 +54,6 @@ add_custom_command(
 set(SOURCES
     main.cpp
     Helper/Canberra.cpp
-    Helper/ToxEventCallback.cpp
     Helper/gToxInstance.cpp
     Helper/gToxChild.cpp
     gTox.cpp

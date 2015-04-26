@@ -34,7 +34,7 @@ namespace sigc {
 
 DialogContact::DialogContact(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& builder)
     : Gtk::Window(cobject), m_builder(builder) {
-    m_tox_callback = [this](const ToxEvent& ev) { tox_event_handling(ev); };
+    m_tox_callback = add_observer([this](const ToxEvent& ev) { tox_event_handling(ev); });
 
     m_builder->get_widget("headerbar", m_headerbar);
     m_builder->get_widget("status_btn", m_btn_status);
@@ -111,7 +111,7 @@ DialogContact::DialogContact(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Bu
     auto activated = [this](Gtk::ListBoxRow* row) {
         //FORWARD SIGNAL TO THE ITEM
         auto item = dynamic_cast<WidgetContactListItem*>(row);
-        ToxEventCallback::notify(ToxEvent(WidgetContactListItem::EventActivated{item->get_friend_nr()}));
+        notify_observer(ToxEvent(WidgetContactListItem::EventActivated{item->get_friend_nr()}));
     };
     list->signal_row_activated().connect(activated);
     list_active_chat->signal_row_activated().connect(activated);
@@ -127,14 +127,14 @@ DialogContact::DialogContact(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Bu
         item->activated();
     });
 
-    ToxEventCallback::notify(ToxEvent(EventAddNotification{
-                                          true,
-                                          "pre-alpha Software",
-                                          "Not ready for daily usage",
-                                          Glib::RefPtr<Gdk::Pixbuf>(),
-                                          {},
-                                          ToxEvent()
-                                      }));
+    notify_observer(ToxEvent(EventAddNotification{
+                        true,
+                        "pre-alpha Software",
+                        "Not ready for daily usage",
+                        Glib::RefPtr<Gdk::Pixbuf>(),
+                        {},
+                        ToxEvent()
+                    }));
 }
 
 void DialogContact::tox_setup(const Glib::ustring& path) {
@@ -206,7 +206,7 @@ bool DialogContact::update() {
 
     ToxEvent ev;
     while (tox().update(ev)) {
-        ToxEventCallback::notify(ev);
+        notify_observer(ev);
     }
 
     return true;
@@ -216,23 +216,23 @@ void DialogContact::tox_event_handling(const ToxEvent& ev) {
     if (ev.type() == typeid(Toxmm::EventFriendRequest)) {
         auto data = ev.get<Toxmm::EventFriendRequest>();
 
-        ToxEventCallback::notify(ToxEvent(EventAddNotification{
-                                              true,
-                                              Toxmm::to_hex(data.addr.data(), 32),
-                                              Glib::ustring::compose(_("FRIEND_REQUEST"), data.message),
-                                              Gdk::Pixbuf::create_from_resource("/org/gtox/icon/avatar.svg")->scale_simple(
-                                              64,
-                                              64,
-                                              Gdk::INTERP_BILINEAR),
-                                              {{_("IGNORE"), ToxEvent()}},
-                                              ToxEvent(EventCallback{[this, data](){
-                                                                         //todo dialog
-                                                                         ToxEventCallback::notify(ToxEvent(EventAddContact{
-                                                                             tox().add_friend_norequest(data.addr)
-                                                                         }));
-                                                                         tox().save();
-                                                                     }})
-                                          }));
+        notify_observer(ToxEvent(EventAddNotification{
+                                     true,
+                                     Toxmm::to_hex(data.addr.data(), 32),
+                                     Glib::ustring::compose(_("FRIEND_REQUEST"), data.message),
+                                     Gdk::Pixbuf::create_from_resource("/org/gtox/icon/avatar.svg")->scale_simple(
+                                     64,
+                                     64,
+                                     Gdk::INTERP_BILINEAR),
+                                     {{_("IGNORE"), ToxEvent()}},
+                                     ToxEvent(EventCallback{[this, data](){
+                                                                //todo dialog
+                                                                notify_observer(ToxEvent(EventAddContact{
+                                                                    tox().add_friend_norequest(data.addr)
+                                                                }));
+                                                                tox().save();
+                                                            }})
+                                 }));
     } else if (ev.type() == typeid(EventAttachWidget)) {
         auto data = ev.get<EventAttachWidget>();
 
@@ -299,7 +299,7 @@ void DialogContact::tox_event_handling(const ToxEvent& ev) {
         //add to the list..
         Gtk::ListBox* list;
         m_builder->get_widget("list_notify", list);
-        list->add(*Gtk::manage(WidgetNotification::create(data)));
+        list->add(*Gtk::manage(WidgetNotification::create(this, data)));
     } else if (ev.type() == typeid(EventAddContact)) {
         auto data = ev.get<EventAddContact>();
 

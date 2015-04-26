@@ -22,7 +22,6 @@
 
 #include <gtkmm.h>
 #include "Tox/Toxmm.h"
-#include "Helper/ToxEventCallback.h"
 #include "Dialog/DialogChat.h"
 #include <libnotifymm.h>
 #include "Helper/gToxChild.h"
@@ -42,7 +41,7 @@ class WidgetContactListItem : public Gtk::ListBoxRow, public gToxChild {
     Toxmm::FriendNr m_friend_nr;
     bool m_for_notify;
 
-    ToxEventCallback m_tox_callback;
+    gToxInstance::CallbackHandler m_tox_callback;
 
     std::shared_ptr<DialogChat> m_chat;
 

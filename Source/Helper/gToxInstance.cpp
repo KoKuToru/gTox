@@ -28,12 +28,27 @@ gToxInstance::CallbackHandler gToxInstance::add_observer(EFunc callback) {
     return {this, callback};
 }
 
-void gToxInstance::install(EFunc* func) {
+void gToxInstance::install_observer(EFunc* func) {
     m_callback_list.push_back(func);
 }
 
-void gToxInstance::uninstall(EFunc* func) {
+void gToxInstance::uninstall_observer(EFunc* func) {
     m_callback_list.erase(std::find(m_callback_list.begin(),
                                     m_callback_list.end(),
                                     func));
+}
+
+void gToxInstance::notify_observer(const ToxEvent& data) {
+    // call everyone
+    // 1. make a copy
+    auto callback_cpy = m_callback_list;
+    // 2. iterate copy
+    for (auto func : callback_cpy) {
+        // 3. make sure it's still in the list
+        if (std::find(m_callback_list.begin(), m_callback_list.end(), func)
+            != m_callback_list.end()) {
+            // 4. call callback function
+            (*func)(data);
+        }
+    }
 }

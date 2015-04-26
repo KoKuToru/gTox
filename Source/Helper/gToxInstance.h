@@ -20,7 +20,6 @@
 #ifndef H_GTOX_INSTANCE
 #define H_GTOX_INSTANCE
 #include <Tox/Toxmm.h>
-#include "ToxEventCallback.h"
 
 class gToxChild;
 class gToxInstance {
@@ -37,32 +36,44 @@ class gToxInstance {
                 std::shared_ptr<CallbackHandlerPrivate> m_mem;
 
             public:
+                CallbackHandler() {}
                 CallbackHandler(gToxInstance* parent, EFunc func) {
                     m_mem = std::shared_ptr<CallbackHandlerPrivate>(new CallbackHandlerPrivate{parent, func},
                         //DELETER FUNCTION:
                         [](CallbackHandlerPrivate* m) {
-                            m->m_parent->uninstall(&(m->m_func));
+                            m->m_parent->uninstall_observer(&(m->m_func));
                             delete m;
                         });
 
-                    m_mem->m_parent->install(&(m_mem->m_func));
+                    m_mem->m_parent->install_observer(&(m_mem->m_func));
                 }
 
                 void operator()(const ToxEvent& e) {
-                    m_mem->m_func(e);
+                    if (m_mem) {
+                        m_mem->m_func(e);
+                    }
+                }
+
+                void reset() {
+                    m_mem.reset();
                 }
         };
 
         Toxmm& tox();
+
+        CallbackHandler add_observer(EFunc callback);
+        /**
+         * @brief Call all installed callbacks with the event data
+         * @param data
+         */
+        void notify_observer(const ToxEvent& data);
 
     private:
         Toxmm m_tox;
         std::vector<EFunc*> m_callback_list;
 
     protected:
-        CallbackHandler add_observer(EFunc callback);
-
-        void install(EFunc* func);
-        void uninstall(EFunc* func);
+        void install_observer(EFunc* func);
+        void uninstall_observer(EFunc* func);
 };
 #endif

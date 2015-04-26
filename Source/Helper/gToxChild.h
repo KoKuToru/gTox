@@ -20,8 +20,7 @@
 #ifndef H_GTOX_CHILD
 #define H_GTOX_CHILD
 #include "Tox/Toxmm.h"
-
-class gToxInstance;
+#include "gToxInstance.h"
 class gToxChild {
     private:
         gToxInstance* m_tox_instance = nullptr;
@@ -35,5 +34,18 @@ class gToxChild {
 
         Toxmm& tox();
         gToxInstance* instance();
+
+        //proxy functions:
+        gToxInstance::CallbackHandler add_observer(gToxInstance::EFunc callback) {
+            return instance()->add_observer(callback);
+        }
+
+        /**
+         * @brief Call all installed callbacks with the event data
+         * @param data
+         */
+        void notify_observer(const ToxEvent& data) {
+            instance()->notify_observer(data);
+        }
 };
 #endif

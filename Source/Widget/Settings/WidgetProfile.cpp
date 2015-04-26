@@ -72,17 +72,17 @@ WidgetProfile::WidgetProfile(gToxInstance* instance)
     show_all();
 
     m_username.signal_focus_out_event().connect_notify([this](GdkEventFocus*) {
-        ToxEventCallback::notify(ToxEvent(DialogContact::EventSetName{
-                                              m_username.get_text(),
-                                              m_status.get_text()
-                                          }));
+        notify_observer(ToxEvent(DialogContact::EventSetName{
+                                     m_username.get_text(),
+                                     m_status.get_text()
+                                 }));
     });
 
     m_status.signal_focus_out_event().connect_notify([this](GdkEventFocus*) {
-        ToxEventCallback::notify(ToxEvent(DialogContact::EventSetName{
-                                              m_username.get_text(),
-                                              m_status.get_text()
-                                          }));
+        notify_observer(ToxEvent(DialogContact::EventSetName{
+                                     m_username.get_text(),
+                                     m_status.get_text()
+                                 }));
     });
 
     cpy_btn->signal_clicked().connect([this]() {

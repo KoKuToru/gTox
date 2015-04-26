@@ -23,7 +23,6 @@
 #include <gtkmm.h>
 #include "Tox/Toxmm.h"
 #include "Widget/WidgetChat.h"
-#include "Helper/ToxEventCallback.h"
 #include <libnotifymm.h>
 #include <memory>
 #include "Dialog/DialogContact.h"
@@ -43,7 +42,7 @@ class DialogChat : public Gtk::Window, public gToxChild {
     WidgetChat m_chat;
     Gtk::Box m_chat_box;
 
-    ToxEventCallback m_tox_callback;
+    gToxInstance::CallbackHandler m_tox_callback;
 
     void notify(const Glib::ustring& title, const Glib::ustring& message);
 

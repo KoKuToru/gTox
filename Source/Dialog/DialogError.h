@@ -23,7 +23,6 @@
 #include <gtkmm.h>
 #include "Tox/Toxmm.h"
 #include "Widget/WidgetChat.h"
-#include "Helper/ToxEventCallback.h"
 
 // Single chat window
 class DialogError : public Gtk::MessageDialog {

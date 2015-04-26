@@ -41,22 +41,7 @@ WidgetContactListItem* WidgetContactListItem::create(gToxInstance* instance, Tox
 void WidgetContactListItem::set_contact(Toxmm::FriendNr nr) {
     m_friend_nr = nr;
 
-    refresh();
-}
-
-WidgetContactListItem::WidgetContactListItem(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& builder)
-    : Gtk::ListBoxRow(cobject),
-      m_builder(builder),
-      m_friend_nr(0){
-
-    m_builder->get_widget("avatar", m_avatar);
-    m_builder->get_widget("name", m_name);
-    m_builder->get_widget("status", m_status_msg);
-    m_builder->get_widget("status_icon", m_status_icon);
-    m_builder->get_widget("spinner", m_spin);
-    m_spin->stop();
-
-    m_tox_callback = [this](const ToxEvent& ev) {
+    m_tox_callback = add_observer([this](const ToxEvent& ev) {
         if ((ev.type() == typeid(Toxmm::EventName)          && ev.get<Toxmm::EventName>().nr == m_friend_nr) ||
             (ev.type() == typeid(Toxmm::EventStatusMessage) && ev.get<Toxmm::EventStatusMessage>().nr == m_friend_nr) ||
             (ev.type() == typeid(Toxmm::EventUserStatus)    && ev.get<Toxmm::EventUserStatus>().nr == m_friend_nr)) {
@@ -109,7 +94,22 @@ WidgetContactListItem::WidgetContactListItem(BaseObjectType* cobject, const Glib
                 }
             }
         }
-    };
+    });
+
+    refresh();
+}
+
+WidgetContactListItem::WidgetContactListItem(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& builder)
+    : Gtk::ListBoxRow(cobject),
+      m_builder(builder),
+      m_friend_nr(0){
+
+    m_builder->get_widget("avatar", m_avatar);
+    m_builder->get_widget("name", m_name);
+    m_builder->get_widget("status", m_status_msg);
+    m_builder->get_widget("status_icon", m_status_icon);
+    m_builder->get_widget("spinner", m_spin);
+    m_spin->stop();
 }
 
 WidgetContactListItem::~WidgetContactListItem() {
@@ -225,7 +225,7 @@ void WidgetContactListItem::notify(const Glib::ustring& title, const Glib::ustri
                                             Gdk::INTERP_BILINEAR));
         m_notify->signal_closed().connect([this](){
             //m_notify->get_closed_reason() ???
-            ToxEventCallback::notify(ToxEvent(EventActivated{m_friend_nr}));
+            notify_observer(ToxEvent(EventActivated{m_friend_nr}));
         });
         try {
             m_notify->show();

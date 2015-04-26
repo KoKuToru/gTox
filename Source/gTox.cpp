@@ -158,13 +158,6 @@ void gTox::on_open(const Gio::Application::type_vec_files& files,
                    const Glib::ustring& hint) {
     //open file !
     for (auto file : files) {
-        static bool TODO_ALLOW_MULTIINSTANCES = true;
-        if (!TODO_ALLOW_MULTIINSTANCES) {
-            std::cerr << "Can't have more than 1 instance right now.." << std::endl;
-            return;
-        }
-        TODO_ALLOW_MULTIINSTANCES = false;
-
         mark_busy();
         auto tmp = DialogContact::create(file->get_path());
         unmark_busy();
@@ -177,13 +170,6 @@ void gTox::on_open(const Gio::Application::type_vec_files& files,
 }
 
 int gTox::on_command_line(const Glib::RefPtr<Gio::ApplicationCommandLine>& command_line) {
-    /*static bool TODO_ALLOW_MULTIINSTANCES = true;
-    if (!TODO_ALLOW_MULTIINSTANCES) {
-        std::cerr << "Can't have more than 1 instance right now.." << std::endl;
-        return EXIT_FAILURE;
-    }
-    TODO_ALLOW_MULTIINSTANCES = false;*/
-
     int argc = 0;
     auto argv = command_line ? command_line->get_arguments(argc) : nullptr;
     std::vector<std::string> arguments;

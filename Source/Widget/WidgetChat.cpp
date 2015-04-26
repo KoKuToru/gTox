@@ -265,7 +265,7 @@ WidgetChat::WidgetChat(gToxInstance* instance, Toxmm::FriendNr nr)
         }
     }
 
-    m_tox_callback = [this, nr](const ToxEvent& ev) {
+    m_tox_callback = add_observer([this, nr](const ToxEvent& ev) {
         if (ev.type() == typeid(Toxmm::EventFriendAction)) {
             auto data = ev.get<Toxmm::EventFriendAction>();
             if (nr == data.nr) {
@@ -291,7 +291,7 @@ WidgetChat::WidgetChat(gToxInstance* instance, Toxmm::FriendNr nr)
                          });
             }
         }
-    };
+    });
 }
 
 WidgetChat::~WidgetChat() {
@@ -363,7 +363,7 @@ void WidgetChat::add_line(bool left_side, WidgetChatLine::Line new_line) {
 
     if (!action) {
         // add new line
-        auto new_bubble = Gtk::manage(new WidgetChatLine(left_side));
+        auto new_bubble = Gtk::manage(new WidgetChatLine(instance(), left_side));
         new_bubble->add_line(new_line);
         new_bubble->show_all();
         m_vbox.pack_start(*new_bubble, false, false);

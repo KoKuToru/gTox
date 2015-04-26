@@ -53,12 +53,12 @@ DialogChat::DialogChat(gToxInstance* instance, Toxmm::FriendNr nr)
 
     btn_x->signal_clicked().connect([this, nr](){
         Gtk::Window::hide();
-        Glib::signal_idle().connect_once([nr](){
-            ToxEventCallback::notify(ToxEvent(WidgetContactListItem::EventDestroyChat{nr}));
+        Glib::signal_idle().connect_once([this, nr](){
+            notify_observer(ToxEvent(WidgetContactListItem::EventDestroyChat{nr}));
         });
     });
 
-    m_tox_callback = [this, nr](const ToxEvent& ev) {
+    m_tox_callback = add_observer([this, nr](const ToxEvent& ev) {
         if (ev.type() == typeid(Toxmm::EventName))  {
             auto data = ev.get<Toxmm::EventName>();
             if (data.nr == nr) {
@@ -73,7 +73,7 @@ DialogChat::DialogChat(gToxInstance* instance, Toxmm::FriendNr nr)
             auto data = ev.get<Toxmm::EventFriendAction>();
             if (data.nr == nr) {
                 if (is_visible()) {
-                    ToxEventCallback::notify(ToxEvent(WidgetContactListItem::EventStopSpin{nr}));
+                    notify_observer(ToxEvent(WidgetContactListItem::EventStopSpin{nr}));
                 } else {
                     notify(tox().get_name_or_address(nr),
                            data.message);
@@ -83,14 +83,14 @@ DialogChat::DialogChat(gToxInstance* instance, Toxmm::FriendNr nr)
             auto data = ev.get<Toxmm::EventFriendMessage>();
             if (data.nr == nr) {
                 if (is_visible()) {
-                    ToxEventCallback::notify(ToxEvent(WidgetContactListItem::EventStopSpin{nr}));
+                    notify_observer(ToxEvent(WidgetContactListItem::EventStopSpin{nr}));
                 } else {
                     notify(tox().get_name_or_address(nr),
                            data.message);
                 }
             }
         }
-    };
+    });
 
     m_btn_xxtach.set_image_from_icon_name("chat-detach-symbolic");
 
@@ -125,15 +125,15 @@ DialogChat::DialogChat(gToxInstance* instance, Toxmm::FriendNr nr)
 DialogChat::~DialogChat() {
     if (!m_in_window) {
         int x,y,w,h;
-        ToxEventCallback::notify(ToxEvent(DialogContact::EventDetachWidget{
-                                              false,
-                                              &m_header,
-                                              &m_chat,
-                                              x,
-                                              y,
-                                              w,
-                                              h
-                                          }));
+        notify_observer(ToxEvent(DialogContact::EventDetachWidget{
+                                     false,
+                                     &m_header,
+                                     &m_chat,
+                                     x,
+                                     y,
+                                     w,
+                                     h
+                                 }));
     }
     if (m_notify) {
         try  {
@@ -147,15 +147,15 @@ DialogChat::~DialogChat() {
 void DialogChat::show() {
     if (!m_in_window) {
         int x,y,w,h;
-        ToxEventCallback::notify(ToxEvent(DialogContact::EventDetachWidget{
-                                              true,
-                                              &m_header,
-                                              &m_chat,
-                                              x,
-                                              y,
-                                              w,
-                                              h
-                                          }));
+        notify_observer(ToxEvent(DialogContact::EventDetachWidget{
+                                     true,
+                                     &m_header,
+                                     &m_chat,
+                                     x,
+                                     y,
+                                     w,
+                                     h
+                                 }));
         move(x, y);
         resize(w, h);
         m_header_box.add(m_header);
@@ -172,10 +172,10 @@ void DialogChat::hide() {
         m_chat_box.remove(m_chat);
         m_in_window = false;
 
-        ToxEventCallback::notify(ToxEvent(DialogContact::EventAttachWidget{
-                                              &m_header,
-                                              &m_chat
-                                          }));
+        notify_observer(ToxEvent(DialogContact::EventAttachWidget{
+                                     &m_header,
+                                     &m_chat
+                                 }));
         m_btn_xxtach.set_image_from_icon_name("chat-detach-symbolic");
     }
     Gtk::Window::hide();
@@ -185,12 +185,12 @@ void DialogChat::present() {
     if (m_in_window) {
         Gtk::Window::present();
     } else {
-        ToxEventCallback::notify(ToxEvent(DialogContact::EventPresentWidget{
-                                              &m_header,
-                                              &m_chat
-                                          }));
+        notify_observer(ToxEvent(DialogContact::EventPresentWidget{
+                                     &m_header,
+                                     &m_chat
+                                 }));
     }
-    ToxEventCallback::notify(ToxEvent(WidgetContactListItem::EventStopSpin{m_chat.get_friend_nr()}));
+    notify_observer(ToxEvent(WidgetContactListItem::EventStopSpin{m_chat.get_friend_nr()}));
 }
 
 bool DialogChat::is_visible() {

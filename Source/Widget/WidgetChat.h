@@ -24,7 +24,6 @@
 #include "Chat/WidgetChatEntry.h"
 #include "Tox/Toxmm.h"
 #include "Chat/WidgetChatLayout.h"
-#include "Helper/ToxEventCallback.h"
 #include "WidgetChatLine.h"
 #include "Dialog/DialogContact.h"
 #include "Helper/gToxChild.h"
@@ -45,7 +44,7 @@ class WidgetChat : public Gtk::VPaned, public gToxChild {
 
     bool m_autoscroll;
 
-    ToxEventCallback m_tox_callback;
+    gToxInstance::CallbackHandler m_tox_callback;
 
     void add_line(Glib::ustring text);
 

@@ -24,10 +24,11 @@
 #include "Chat/WidgetChatBubbleRow.h"
 #include <vector>
 #include "Tox/Toxmm.h"
+#include "Helper/gToxChild.h"
 
 class WidgetChatLabel;
 
-class WidgetChatLine : public Gtk::Box {
+class WidgetChatLine : public Gtk::Box, public gToxChild {
   private:
     bool m_side;
 
@@ -43,7 +44,7 @@ class WidgetChatLine : public Gtk::Box {
     std::vector<WidgetChatBubbleRow> rows;
 
   public:
-    WidgetChatLine(bool side);
+    WidgetChatLine(gToxInstance* instance, bool side);
     ~WidgetChatLine();
 
     bool get_side();
