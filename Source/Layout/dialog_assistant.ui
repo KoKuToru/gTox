@@ -215,7 +215,6 @@
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes" comments="Welcome text in profile creation, should warn about alpha-software">ASSISTANT_WELCOME_TEXT</property>
                     <property name="use_markup">True</property>
-                    <property name="ellipsize">start</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
