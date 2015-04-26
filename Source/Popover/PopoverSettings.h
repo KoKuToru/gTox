@@ -23,17 +23,23 @@
 #include <gtkmm.h>
 #include "Dialog/DialogSettings.h"
 #include "Widget/Settings/WidgetProfile.h"
+#include "Helper/gToxObserver.h"
+#include "Helper/gToxBuilder.h"
 
-class PopoverSettings : public Gtk::Popover {
-  private:
-    WidgetProfile m_profile;
-    DialogSettings m_settings;
+class PopoverSettings : public Gtk::Popover, public gToxObserver {
+    private:
+        gToxBuilder m_builder;
+        //DialogSettings m_settings;
 
-  public:
-    PopoverSettings(gToxObservable* instance, const Gtk::Widget& relative_to);
-    ~PopoverSettings();
+        Gtk::Entry* m_username;
+        Gtk::Entry* m_status;
 
-    void set_visible(bool visible = true);
+    public:
+        PopoverSettings(gToxObservable* observable,
+                        const Gtk::Widget& relative_to);
+        ~PopoverSettings();
+
+        void set_visible(bool visible = true);
 };
 
 #endif

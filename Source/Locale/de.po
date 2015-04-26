@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-04-25 13:59+0200\n"
+"POT-Creation-Date: 2015-04-26 17:28+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -11,6 +11,15 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 1.7.5\n"
+
+#: Layout/popover_settings.ui:129
+msgid ""
+"<span font_desc=\"mono\">DD5EFC02E70A0F6D\n"
+"032FB5904F956F1A\n"
+"B825F237BB4229CC\n"
+"22DAE84797EBF87C\n"
+"86DAA09C04DB</span>"
+msgstr ""
 
 #: Widget/Settings/WidgetAbout.cpp:43
 msgid "ABOUT_SOFTWARE_COPYRIGHT"
@@ -34,7 +43,7 @@ msgstr "<i>pre-alpha Version</i>"
 msgid "ABOUT_SOFTWARE_WARRANTY"
 msgstr "<i>Dieses Programm kommt OHNE JEDWEDE GARANTIE.</i>"
 
-#: Popover/PopoverAddContact.cpp:32
+#: Popover/PopoverAddContact.cpp:35
 msgid "ADD"
 msgstr "Hinzufügen"
 
@@ -79,7 +88,7 @@ msgstr ""
 #. Label for the profile statusmessage
 #: Layout/dialog_assistant.ui:65
 msgid "ASSISTANT_STATUSMESSAGE"
-msgstr "Status Nachricht"
+msgstr "Nachricht"
 
 #. Label for the profile username
 #: Layout/dialog_assistant.ui:39
@@ -98,23 +107,23 @@ msgstr ""
 "gTox sowie Tox ist eine alpha Software und der Sourcecode ändert sich "
 "täglich."
 
-#: Popover/PopoverStatus.cpp:30
+#: Popover/PopoverStatus.cpp:32
 msgid "AWAY"
 msgstr "Abwesend"
 
-#: Popover/PopoverStatus.cpp:29
+#: Popover/PopoverStatus.cpp:31
 msgid "BUSY"
 msgstr "Beschäftigt"
 
-#: Widget/WidgetChat.cpp:354
+#: Widget/WidgetChat.cpp:357
 msgid "DATE_FORMAT"
 msgstr "%A, %e. %B %Y"
 
-#: Popover/PopoverAddContact.cpp:64
+#: Popover/PopoverAddContact.cpp:67
 msgid "ERROR_ADD_CONTACT_ADDR_WRONG_SIZE"
 msgstr "Eine ID muss 76 Zeichen lang sein"
 
-#: Popover/PopoverAddContact.cpp:63
+#: Popover/PopoverAddContact.cpp:66
 msgid "ERROR_ADD_CONTACT_ADDR_WRONG_SIZE_TITLE"
 msgstr "Falsche ID länge"
 
@@ -139,23 +148,23 @@ msgstr ""
 "Sollten Sie die neusten gTox Version benützen, wären wir Ihnen sehr Dankbar "
 "wenn Sie uns diesen Fehler melden würden."
 
-#: Popover/PopoverStatus.cpp:31
+#: Popover/PopoverStatus.cpp:33
 msgid "EXIT"
 msgstr "Beenden"
 
-#: Dialog/DialogContact.cpp:222
+#: Dialog/DialogContact.cpp:206
 msgid "FRIEND_REQUEST"
 msgstr "%1"
 
-#: Dialog/DialogContact.cpp:227
+#: Dialog/DialogContact.cpp:211
 msgid "IGNORE"
 msgstr "Ignorieren"
 
-#: Popover/PopoverAddContact.cpp:31 Widget/Settings/WidgetProfile.cpp:53
+#: Popover/PopoverAddContact.cpp:34 Widget/Settings/WidgetProfile.cpp:55
 msgid "MESSAGE"
 msgstr "Nachricht"
 
-#: Popover/PopoverStatus.cpp:28
+#: Popover/PopoverStatus.cpp:30
 msgid "ONLINE"
 msgstr "Online"
 
@@ -182,50 +191,62 @@ msgstr "Profile werden geladen..."
 msgid "PROFILE_NEW"
 msgstr "Neu"
 
+#: Layout/popover_settings.ui:12
+msgid "PROFILE_OPEN_SETTINGS"
+msgstr "Einstellungen"
+
 #. Button for loading the selected profile
 #: Layout/dialog_profile.ui:114
 msgid "PROFILE_SELECT"
 msgstr "Auswählen"
 
-#: Dialog/DialogProfile.cpp:44
+#: Layout/popover_settings.ui:81
+msgid "PROFILE_STATUSMESSAGE"
+msgstr "Statusnachricht"
+
+#: Dialog/DialogProfile.cpp:42
 msgid "PROFILE_SUBTITLE"
 msgstr "Profil bitte auswählen"
 
-#: Dialog/DialogProfile.cpp:35 Dialog/DialogProfile.cpp:43
+#: Dialog/DialogProfile.cpp:36 Dialog/DialogProfile.cpp:41
 msgid "PROFILE_TITLE"
 msgstr "gTox"
+
+#: Layout/popover_settings.ui:94
+msgid "PROFILE_TOX_ID"
+msgstr "Tox-ID"
+
+#: Layout/popover_settings.ui:68
+msgid "PROFILE_USERNAME"
+msgstr "Tox-ID"
 
 #: Popover/PopoverContextContact.cpp:27
 msgid "REMOVE"
 msgstr "Entfernen"
 
-#: Widget/WidgetChat.cpp:41
+#: Widget/WidgetChat.cpp:44
 msgid "SEND"
 msgstr "Senden"
-
-#: Popover/PopoverSettings.cpp:29
-msgid "SETTINGS"
-msgstr "Einstellungen"
 
 #: Dialog/DialogSettings.cpp:70
 msgid "SETTINGS_ABOUT"
 msgstr "Über"
 
-#: Widget/Settings/WidgetCache.cpp:56
+#: Widget/Settings/WidgetCache.cpp:54
 msgid "SETTINGS_CACHE_CLEAN_LOG"
 msgstr ""
 "Diese Action wird alle Nachrichtenverläufe aller Kontakte löschen.\n"
 "Diese Aktion kann nicht rückgängig gemacht werden !"
 
-#: Widget/Settings/WidgetCache.cpp:66
+#: Widget/Settings/WidgetCache.cpp:64
 msgid "SETTINGS_CACHE_CLEAN_LOG_SUCCESS"
 msgstr "%1 Einträge wurden gelöscht"
 
-#: Widget/Settings/WidgetCache.cpp:60
+#: Widget/Settings/WidgetCache.cpp:58
 msgid "SETTINGS_CACHE_CLEAN_LOG_SUCCESS_TITLE"
 msgstr "Nachrichtenverlauf gelöscht"
 
-#: Widget/Settings/WidgetCache.cpp:51
+#: Widget/Settings/WidgetCache.cpp:49
 msgid "SETTINGS_CACHE_CLEAN_LOG_TITLE"
 msgstr "Nachrichtenverlauf löschen"
 
@@ -257,11 +278,11 @@ msgstr ""
 "A friend request has already been sent, or the address belongs to a friend "
 "that is already on the friend list."
 
-#: Popover/PopoverAddContact.cpp:96
+#: Popover/PopoverAddContact.cpp:99
 msgid "TOX_ERR_FRIEND_ADD_ALREADY_SENT_UI"
 msgstr "ID wurde bereits hinzugefügt."
 
-#: Popover/PopoverAddContact.cpp:95
+#: Popover/PopoverAddContact.cpp:98
 msgid "TOX_ERR_FRIEND_ADD_ALREADY_SENT_UI_TITLE"
 msgstr "Hinzufügen fehlgeschlagen"
 
@@ -271,11 +292,11 @@ msgstr ""
 "TOX_ERR_FRIEND_ADD_BAD_CHECKSUM\n"
 "The friend address checksum failed."
 
-#: Popover/PopoverAddContact.cpp:91
+#: Popover/PopoverAddContact.cpp:94
 msgid "TOX_ERR_FRIEND_ADD_BAD_CHECKSUM_UI"
 msgstr "Die ID ist fehlerhaft."
 
-#: Popover/PopoverAddContact.cpp:90
+#: Popover/PopoverAddContact.cpp:93
 msgid "TOX_ERR_FRIEND_ADD_BAD_CHECKSUM_UI_TITLE"
 msgstr "ID Checksum fehlgeschlagen"
 
@@ -292,11 +313,11 @@ msgstr ""
 "The friend request message was empty. This, and the TOO_LONG code will never "
 "be returned from tox_friend_add_norequest."
 
-#: Popover/PopoverAddContact.cpp:86
+#: Popover/PopoverAddContact.cpp:89
 msgid "TOX_ERR_FRIEND_ADD_NO_MESSAGE_UI"
 msgstr "Die Nachricht darf nicht leer sein."
 
-#: Popover/PopoverAddContact.cpp:85
+#: Popover/PopoverAddContact.cpp:88
 msgid "TOX_ERR_FRIEND_ADD_NO_MESSAGE_UI_TITLE"
 msgstr "Nachricht leer"
 
@@ -310,11 +331,11 @@ msgstr ""
 "TOX_ERR_FRIEND_ADD_OWN_KEY\n"
 "The friend address belongs to the sending client."
 
-#: Popover/PopoverAddContact.cpp:101
+#: Popover/PopoverAddContact.cpp:104
 msgid "TOX_ERR_FRIEND_ADD_OWN_KEY_UI"
 msgstr "Die eingebene ID gehört dir."
 
-#: Popover/PopoverAddContact.cpp:100
+#: Popover/PopoverAddContact.cpp:103
 msgid "TOX_ERR_FRIEND_ADD_OWN_KEY_UI_TITLE"
 msgstr "Hinzufügen fehlgeschlagen"
 
@@ -324,11 +345,11 @@ msgstr ""
 "TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM\n"
 "The friend was already there, but the nospam value was different."
 
-#: Popover/PopoverAddContact.cpp:106
+#: Popover/PopoverAddContact.cpp:109
 msgid "TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM_UI"
 msgstr "ID wurde bereits hinzugefügt der NOSPAM-Wert war aber anders."
 
-#: Popover/PopoverAddContact.cpp:105
+#: Popover/PopoverAddContact.cpp:108
 msgid "TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM_UI_TITLE"
 msgstr "Hinzufügen fehlgeschlagen"
 
@@ -339,11 +360,11 @@ msgstr ""
 "The length of the friend request message exceeded "
 "TOX_MAX_FRIEND_REQUEST_LENGTH."
 
-#: Popover/PopoverAddContact.cpp:111
+#: Popover/PopoverAddContact.cpp:114
 msgid "TOX_ERR_FRIEND_ADD_TOO_LONG_UI"
 msgstr "Die Nachricht ist länger als 1016 bytes."
 
-#: Popover/PopoverAddContact.cpp:110
+#: Popover/PopoverAddContact.cpp:113
 msgid "TOX_ERR_FRIEND_ADD_TOO_LONG_UI_TITLE"
 msgstr "Nachricht zulang"
 
@@ -493,7 +514,7 @@ msgstr ""
 "TOX_ERR_SET_TYPING_FRIEND_NOT_FOUND\n"
 "The friend number did not designate a valid friend."
 
-#: Popover/PopoverAddContact.cpp:30 Widget/Settings/WidgetProfile.cpp:56
+#: Popover/PopoverAddContact.cpp:33 Widget/Settings/WidgetProfile.cpp:58
 msgid "TOX_ID"
 msgstr "Tox ID"
 
@@ -501,9 +522,12 @@ msgstr "Tox ID"
 msgid "TRANSLATION_CHECKER"
 msgstr "Okay"
 
-#: Widget/Settings/WidgetProfile.cpp:49
+#: Widget/Settings/WidgetProfile.cpp:51
 msgid "USERNAME"
 msgstr "Name"
+
+#~ msgid "SETTINGS"
+#~ msgstr "Einstellungen"
 
 #~ msgid "QUIT_ASSISTANT_QUESTION"
 #~ msgstr "Möchten Sie den Assistenten wircklich beenden ?"

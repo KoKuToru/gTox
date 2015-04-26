@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-04-25 13:59+0200\n"
+"POT-Creation-Date: 2015-04-26 17:28+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -15,6 +15,15 @@ msgstr ""
 "X-Language: ru_RU\n"
 "X-Source-Language: C\n"
 "X-Generator: Poedit 1.7.5\n"
+
+#: Layout/popover_settings.ui:129
+msgid ""
+"<span font_desc=\"mono\">DD5EFC02E70A0F6D\n"
+"032FB5904F956F1A\n"
+"B825F237BB4229CC\n"
+"22DAE84797EBF87C\n"
+"86DAA09C04DB</span>"
+msgstr ""
 
 #: Widget/Settings/WidgetAbout.cpp:43
 msgid "ABOUT_SOFTWARE_COPYRIGHT"
@@ -38,7 +47,7 @@ msgstr "<i>pre-alpha version</i>"
 msgid "ABOUT_SOFTWARE_WARRANTY"
 msgstr "<i>This program comes with ABSOLUTELY NO WARRANTY</i>"
 
-#: Popover/PopoverAddContact.cpp:32
+#: Popover/PopoverAddContact.cpp:35
 msgid "ADD"
 msgstr "Добавить"
 
@@ -101,23 +110,23 @@ msgstr ""
 "gTox и Tox находят в стадии альфа-версии и кодовая база обоих проектом может "
 "меняться ежедневно."
 
-#: Popover/PopoverStatus.cpp:30
+#: Popover/PopoverStatus.cpp:32
 msgid "AWAY"
 msgstr "Ушёл"
 
-#: Popover/PopoverStatus.cpp:29
+#: Popover/PopoverStatus.cpp:31
 msgid "BUSY"
 msgstr "Занят"
 
-#: Widget/WidgetChat.cpp:354
+#: Widget/WidgetChat.cpp:357
 msgid "DATE_FORMAT"
 msgstr "%A, %e. %B %Y"
 
-#: Popover/PopoverAddContact.cpp:64
+#: Popover/PopoverAddContact.cpp:67
 msgid "ERROR_ADD_CONTACT_ADDR_WRONG_SIZE"
 msgstr "Длина Tox ID должны быть 76 символов"
 
-#: Popover/PopoverAddContact.cpp:63
+#: Popover/PopoverAddContact.cpp:66
 msgid "ERROR_ADD_CONTACT_ADDR_WRONG_SIZE_TITLE"
 msgstr "Неверная длина ID"
 
@@ -140,23 +149,23 @@ msgstr ""
 "Убедитесь, что вы используете последнюю версию gTox.\n"
 "Если это так, то дайте нам знать о случившейся ошибке программы."
 
-#: Popover/PopoverStatus.cpp:31
+#: Popover/PopoverStatus.cpp:33
 msgid "EXIT"
 msgstr "Выход"
 
-#: Dialog/DialogContact.cpp:222
+#: Dialog/DialogContact.cpp:206
 msgid "FRIEND_REQUEST"
 msgstr "%1"
 
-#: Dialog/DialogContact.cpp:227
+#: Dialog/DialogContact.cpp:211
 msgid "IGNORE"
 msgstr ""
 
-#: Popover/PopoverAddContact.cpp:31 Widget/Settings/WidgetProfile.cpp:53
+#: Popover/PopoverAddContact.cpp:34 Widget/Settings/WidgetProfile.cpp:55
 msgid "MESSAGE"
 msgstr "Сообщение"
 
-#: Popover/PopoverStatus.cpp:28
+#: Popover/PopoverStatus.cpp:30
 msgid "ONLINE"
 msgstr "Доступен"
 
@@ -183,50 +192,62 @@ msgstr ""
 msgid "PROFILE_NEW"
 msgstr "Новый"
 
+#: Layout/popover_settings.ui:12
+msgid "PROFILE_OPEN_SETTINGS"
+msgstr "Настройки"
+
 #. Button for loading the selected profile
 #: Layout/dialog_profile.ui:114
 msgid "PROFILE_SELECT"
 msgstr "Выбрать"
 
-#: Dialog/DialogProfile.cpp:44
+#: Layout/popover_settings.ui:81
+msgid "PROFILE_STATUSMESSAGE"
+msgstr "Статусное сообщение"
+
+#: Dialog/DialogProfile.cpp:42
 msgid "PROFILE_SUBTITLE"
 msgstr "Выбор профиля"
 
-#: Dialog/DialogProfile.cpp:35 Dialog/DialogProfile.cpp:43
+#: Dialog/DialogProfile.cpp:36 Dialog/DialogProfile.cpp:41
 msgid "PROFILE_TITLE"
 msgstr "gTox"
+
+#: Layout/popover_settings.ui:94
+msgid "PROFILE_TOX_ID"
+msgstr "Tox-ID"
+
+#: Layout/popover_settings.ui:68
+msgid "PROFILE_USERNAME"
+msgstr "Имя"
 
 #: Popover/PopoverContextContact.cpp:27
 msgid "REMOVE"
 msgstr "Удалить"
 
-#: Widget/WidgetChat.cpp:41
+#: Widget/WidgetChat.cpp:44
 msgid "SEND"
 msgstr "Отправить"
-
-#: Popover/PopoverSettings.cpp:29
-msgid "SETTINGS"
-msgstr "Настройки"
 
 #: Dialog/DialogSettings.cpp:70
 msgid "SETTINGS_ABOUT"
 msgstr "О программе"
 
-#: Widget/Settings/WidgetCache.cpp:56
+#: Widget/Settings/WidgetCache.cpp:54
 msgid "SETTINGS_CACHE_CLEAN_LOG"
 msgstr ""
 "Вы собираетесь удалить историю переписки со всеми контактами.\n"
 "В дальнейшем действие не может быть отменено! Продолжить?"
 
-#: Widget/Settings/WidgetCache.cpp:66
+#: Widget/Settings/WidgetCache.cpp:64
 msgid "SETTINGS_CACHE_CLEAN_LOG_SUCCESS"
 msgstr "%1 сообщений удалено"
 
-#: Widget/Settings/WidgetCache.cpp:60
+#: Widget/Settings/WidgetCache.cpp:58
 msgid "SETTINGS_CACHE_CLEAN_LOG_SUCCESS_TITLE"
 msgstr "История переписки очищена"
 
-#: Widget/Settings/WidgetCache.cpp:51
+#: Widget/Settings/WidgetCache.cpp:49
 msgid "SETTINGS_CACHE_CLEAN_LOG_TITLE"
 msgstr "Удалить всю историю ?"
 
@@ -258,13 +279,13 @@ msgstr ""
 "Запрос на добавление уже был отправлен или адрес уже присутствует в контакт-"
 "листе."
 
-#: Popover/PopoverAddContact.cpp:96
+#: Popover/PopoverAddContact.cpp:99
 msgid "TOX_ERR_FRIEND_ADD_ALREADY_SENT_UI"
 msgstr ""
 "Запрос на добавление уже был отправлен или адрес уже присутствует в контакт-"
 "листе."
 
-#: Popover/PopoverAddContact.cpp:95
+#: Popover/PopoverAddContact.cpp:98
 msgid "TOX_ERR_FRIEND_ADD_ALREADY_SENT_UI_TITLE"
 msgstr "Запрос на добавление уже отправлен"
 
@@ -274,11 +295,11 @@ msgstr ""
 "TOX_ERR_FRIEND_ADD_BAD_CHECKSUM\n"
 "Неверная контрольная сумма адреса контакта."
 
-#: Popover/PopoverAddContact.cpp:91
+#: Popover/PopoverAddContact.cpp:94
 msgid "TOX_ERR_FRIEND_ADD_BAD_CHECKSUM_UI"
 msgstr "Неверная контрольная сумма адреса контакта."
 
-#: Popover/PopoverAddContact.cpp:90
+#: Popover/PopoverAddContact.cpp:93
 msgid "TOX_ERR_FRIEND_ADD_BAD_CHECKSUM_UI_TITLE"
 msgstr "Неверная контрольная сумма"
 
@@ -295,11 +316,11 @@ msgstr ""
 "Текст запроса на добавление было пустым. Это сообщение и сообщение TOO_LONG "
 "code никогда не будет вызвано из функции tox_friend_add_norequest."
 
-#: Popover/PopoverAddContact.cpp:86
+#: Popover/PopoverAddContact.cpp:89
 msgid "TOX_ERR_FRIEND_ADD_NO_MESSAGE_UI"
 msgstr "Сообщение при запросе на добавление не должно быть пустым."
 
-#: Popover/PopoverAddContact.cpp:85
+#: Popover/PopoverAddContact.cpp:88
 msgid "TOX_ERR_FRIEND_ADD_NO_MESSAGE_UI_TITLE"
 msgstr "Пустое сообщение запроса на добавление"
 
@@ -313,11 +334,11 @@ msgstr ""
 "TOX_ERR_FRIEND_ADD_OWN_KEY\n"
 "Вы не можете добавить себя в свой же контакт-лист."
 
-#: Popover/PopoverAddContact.cpp:101
+#: Popover/PopoverAddContact.cpp:104
 msgid "TOX_ERR_FRIEND_ADD_OWN_KEY_UI"
 msgstr "Адрес контакта для добавления принадлежит вам"
 
-#: Popover/PopoverAddContact.cpp:100
+#: Popover/PopoverAddContact.cpp:103
 msgid "TOX_ERR_FRIEND_ADD_OWN_KEY_UI_TITLE"
 msgstr "Невозможно добавить контакт"
 
@@ -327,11 +348,11 @@ msgstr ""
 "TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM\n"
 "Контакт уже добавлен, но с другим значением nospam."
 
-#: Popover/PopoverAddContact.cpp:106
+#: Popover/PopoverAddContact.cpp:109
 msgid "TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM_UI"
 msgstr "Контакт уже добавлен, но с другим значением nospam."
 
-#: Popover/PopoverAddContact.cpp:105
+#: Popover/PopoverAddContact.cpp:108
 msgid "TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM_UI_TITLE"
 msgstr "Невозможно добавить контакт"
 
@@ -342,11 +363,11 @@ msgstr ""
 "Длина сообщения запроса на добавление привысила "
 "TOX_MAX_FRIEND_REQUEST_LENGTH."
 
-#: Popover/PopoverAddContact.cpp:111
+#: Popover/PopoverAddContact.cpp:114
 msgid "TOX_ERR_FRIEND_ADD_TOO_LONG_UI"
 msgstr "Длина сообщения запроса на добавление привысила 1016 байт."
 
-#: Popover/PopoverAddContact.cpp:110
+#: Popover/PopoverAddContact.cpp:113
 msgid "TOX_ERR_FRIEND_ADD_TOO_LONG_UI_TITLE"
 msgstr "Невозможно добавить контакт"
 
@@ -497,7 +518,7 @@ msgstr ""
 "TOX_ERR_SET_TYPING_FRIEND_NOT_FOUND\n"
 "Неверный номер контакта."
 
-#: Popover/PopoverAddContact.cpp:30 Widget/Settings/WidgetProfile.cpp:56
+#: Popover/PopoverAddContact.cpp:33 Widget/Settings/WidgetProfile.cpp:58
 msgid "TOX_ID"
 msgstr "Tox ID"
 
@@ -505,9 +526,12 @@ msgstr "Tox ID"
 msgid "TRANSLATION_CHECKER"
 msgstr "Okay"
 
-#: Widget/Settings/WidgetProfile.cpp:49
+#: Widget/Settings/WidgetProfile.cpp:51
 msgid "USERNAME"
 msgstr "Имя"
+
+#~ msgid "SETTINGS"
+#~ msgstr "Настройки"
 
 #~ msgid "QUIT_ASSISTANT_QUESTION"
 #~ msgstr "Вы хотите отменить создание нового профиля?"
