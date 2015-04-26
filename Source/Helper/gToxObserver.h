@@ -24,6 +24,7 @@
 class gToxObserver {
     private:
         gToxObservable* m_observable = nullptr;
+        gToxObservable::Handler m_virtual_handler;
 
     protected:
         void set_observable(gToxObservable* observable);
@@ -46,6 +47,10 @@ class gToxObserver {
          */
         void observer_notify(const ToxEvent& data) {
             observable()->observer_notify(data);
+        }
+
+        virtual void observer_handle(const ToxEvent&) {
+            //nothing
         }
 };
 #endif
