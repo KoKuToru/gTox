@@ -149,6 +149,8 @@ void WidgetContactListItem::refresh() {
         }
 
         m_status_icon->set_from_icon_name(status, Gtk::BuiltinIconSize::ICON_SIZE_LARGE_TOOLBAR);
+        m_status_icon->reset_style();
+        m_status_icon->queue_resize();
     } catch (...) {
     }
 }
