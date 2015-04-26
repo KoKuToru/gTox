@@ -110,6 +110,7 @@ void gTox::on_activate() {
     unmark_busy();
 
     add_window(*profile);
+    profile->present();
 
     if (profile->get_path().empty()) {
         profile->signal_hide().connect_notify([this, profile, config_path](){
@@ -124,7 +125,7 @@ void gTox::on_activate() {
 
                 add_window(*assistant);
 
-                assistant->show();
+                assistant->present();
 
                 assistant->signal_hide().connect_notify([this, assistant]() {
                     remove_window(*assistant);
