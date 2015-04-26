@@ -22,8 +22,8 @@
 #include "Dialog/Debug/DialogCss.h"
 #include <glibmm/i18n.h>
 
-PopoverSettings::PopoverSettings(const Gtk::Widget& relative_to)
-    : Gtk::Popover(relative_to) {
+PopoverSettings::PopoverSettings(gToxInstance* instance, const Gtk::Widget& relative_to)
+    : Gtk::Popover(relative_to), m_profile(instance), m_settings(instance) {
     auto grid = Gtk::manage(new Gtk::Grid());
 
     auto btn_settings = new Gtk::Button(_("SETTINGS"));

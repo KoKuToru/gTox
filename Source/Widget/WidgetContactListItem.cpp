@@ -22,12 +22,14 @@
 #include "Dialog/DialogContact.h"
 #include "Helper/Canberra.h"
 
-WidgetContactListItem* WidgetContactListItem::create(Toxmm::FriendNr nr, bool for_notify) {
-    auto builder = Gtk::Builder::create_from_resource(use_mini(for_notify)?
+WidgetContactListItem* WidgetContactListItem::create(gToxInstance* instance, Toxmm::FriendNr nr, bool for_notify) {
+    gToxChild dummy(instance);
+    auto builder = Gtk::Builder::create_from_resource(use_mini(&dummy, for_notify)?
                                                           "/org/gtox/ui/list_item_contact_mini.ui":
                                                           "/org/gtox/ui/list_item_contact.ui");
     WidgetContactListItem* tmp = nullptr;
     builder->get_widget_derived("contact_list_item", tmp);
+    tmp->set_instance(instance);
     tmp->set_contact(nr);
     tmp->set_for_notify(for_notify);
     if (!for_notify) {
@@ -65,7 +67,7 @@ WidgetContactListItem::WidgetContactListItem(BaseObjectType* cobject, const Glib
                 m_spin->start();
             }
             if (!m_for_notify && !m_chat) {
-                notify(Toxmm::instance().get_name_or_address(m_friend_nr),
+                notify(tox().get_name_or_address(m_friend_nr),
                        (ev.type() == typeid(Toxmm::EventFriendMessage)) ?
                                    ev.get<Toxmm::EventFriendMessage>().message :
                                    ev.get<Toxmm::EventFriendAction>().message);
@@ -87,7 +89,7 @@ WidgetContactListItem::WidgetContactListItem(BaseObjectType* cobject, const Glib
                                 //Ignore
                             }
                         }
-                        m_chat = std::make_shared<DialogChat>(m_friend_nr);
+                        m_chat = std::make_shared<DialogChat>(instance(), m_friend_nr);
                     }
                     m_chat->present();
                 } else {
@@ -126,12 +128,12 @@ Toxmm::FriendNr WidgetContactListItem::get_friend_nr() {
 
 void WidgetContactListItem::refresh() {
     try {
-        m_name->set_text(Toxmm::instance().get_name_or_address(m_friend_nr));
-        m_status_msg->set_text(Toxmm::instance().get_status_message(m_friend_nr));
+        m_name->set_text(tox().get_name_or_address(m_friend_nr));
+        m_status_msg->set_text(tox().get_status_message(m_friend_nr));
 
         const char* status;
 
-        switch (Toxmm::instance().get_status(m_friend_nr)) {
+        switch (tox().get_status(m_friend_nr)) {
             case Toxmm::EUSERSTATUS::BUSY:
                 status = "status_busy";
                 break;
@@ -174,14 +176,14 @@ void WidgetContactListItem::set_for_notify(bool notify) {
     m_for_notify = notify;
 
     m_avatar->set(Gdk::Pixbuf::create_from_resource("/org/gtox/icon/avatar.svg")->scale_simple(
-        use_mini(m_for_notify)?32:64,
-        use_mini(m_for_notify)?32:64,
+        use_mini(this, m_for_notify)?32:64,
+        use_mini(this, m_for_notify)?32:64,
         Gdk::INTERP_BILINEAR));  // i would like to resize this depending
                                  // on font-scale settings
 }
 
-bool WidgetContactListItem::use_mini(bool for_notify) {
-    return Toxmm::instance().database().config_get(for_notify?"VISUAL_CONTACT_NOTIFY":"VISUAL_CONTACT", for_notify?1:0);
+bool WidgetContactListItem::use_mini(gToxChild* gchild, bool for_notify) {
+    return gchild->tox().database().config_get(for_notify?"VISUAL_CONTACT_NOTIFY":"VISUAL_CONTACT", for_notify?1:0);
 }
 
 void WidgetContactListItem::on_show() {

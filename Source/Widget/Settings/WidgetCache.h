@@ -19,9 +19,9 @@
 **/
 #ifndef WIDGETCACHE_H
 #define WIDGETCACHE_H
-
+#include "Helper/gToxChild.h"
 #include <gtkmm.h>
-class WidgetCache : public Gtk::VBox {
+class WidgetCache : public Gtk::VBox, public gToxChild {
   private:
     Gtk::Switch m_log;
     Gtk::Switch m_file;
@@ -29,7 +29,7 @@ class WidgetCache : public Gtk::VBox {
     Gtk::Button m_clean_file;
 
   public:
-    WidgetCache();
+    WidgetCache(gToxInstance* instance);
     ~WidgetCache();
 };
 

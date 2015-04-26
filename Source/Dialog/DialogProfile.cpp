@@ -108,20 +108,23 @@ void DialogProfile::set_accounts(const std::vector<std::string>& accounts) {
             Glib::ustring tox_name;
             Glib::ustring tox_status;
             bool tox_okay = false;
+            bool can_write = false;
 
             for (auto acc : accounts) {
                 //TRY TO LOAD TOX DATA
                 try {
-                    Toxmm::instance().init(acc);
-                    tox_name = Toxmm::instance().get_name_or_address();
-                    tox_status = Toxmm::instance().get_status_message();
+                    Toxmm instance;
+                    instance.open(acc, false);
+
+                    tox_name = instance.get_name_or_address();
+                    tox_status = instance.get_status_message();
                     tox_okay = true;
+                    can_write = instance.profile().can_write();
                 } catch (...) {
                     tox_okay = false;
                 }
-                Toxmm::destroy();
 
-                m_events.push_back(Glib::signal_idle().connect([list, tox_name, acc, tox_status, tox_okay](){
+                m_events.push_back(Glib::signal_idle().connect([list, tox_name, acc, tox_status, tox_okay, can_write](){
                     auto builder = Gtk::Builder::create_from_resource("/org/gtox/ui/list_item_profile.ui");
                     Gtk::ListBoxRow* row = nullptr;
                     builder->get_widget("pofile_list_item", row);
@@ -140,11 +143,13 @@ void DialogProfile::set_accounts(const std::vector<std::string>& accounts) {
                                            72,
                                            Gdk::INTERP_BILINEAR));
                             path->set_text(acc);
+                            row->set_sensitive(false);
                             if (tox_okay) {
                                 name->set_text(tox_name);
                                 status->set_text(tox_status);
-                            } else {
-                                row->set_sensitive(false);
+                                if (can_write) {
+                                    row->set_sensitive(true);
+                                }
                             }
                         }
                         row->show();

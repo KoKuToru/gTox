@@ -22,28 +22,26 @@
 #include <Tox/Toxmm.h>
 #include <stdio.h>
 
-WidgetCache::WidgetCache()
+WidgetCache::WidgetCache(gToxInstance* instance)
     : Glib::ObjectBase("WidgetNetwork"),
       m_log(),
       m_file(),
       m_clean_log("Clean up logs"),
       m_clean_file("Clean up recieved files") {
 
-    m_log.set_active(Toxmm::instance().database().config_get("LOG_CHAT", 1));
-    m_file.set_active(Toxmm::instance().database().config_get("LOG_FILE", 1));
+    set_instance(instance);
+
+    m_log.set_active(tox().database().config_get("LOG_CHAT", 1));
+    m_file.set_active(tox().database().config_get("LOG_FILE", 1));
     m_log.set_halign(Gtk::Align::ALIGN_END);
     m_file.set_halign(Gtk::Align::ALIGN_END);
 
-#if (GTK_MAJOR_VERSION >= 3 && GTK_MINOR_VERSION >= 14)
-    m_log.signal_state_set().connect_notify([](bool state) {
-        Toxmm::instance().database().config_set("LOG_CHAT", state);
+    m_log.signal_state_set().connect_notify([this](bool state) {
+        tox().database().config_set("LOG_CHAT", state);
     });
-    m_file.signal_state_set().connect_notify([](bool state) {
-        Toxmm::instance().database().config_set("LOG_FILE", state);
+    m_file.signal_state_set().connect_notify([this](bool state) {
+        tox().database().config_set("LOG_FILE", state);
     });
-#else
-#warning "Without GTK 3.14+ signal_state_set() on Gtk::Switches wont work"
-#endif
 
     m_clean_log.signal_clicked().connect([this](){
         Gtk::Window& parent = dynamic_cast<Gtk::Window&>(*this->get_toplevel());
@@ -64,7 +62,7 @@ WidgetCache::WidgetCache()
             msg2.set_secondary_text(
                         Glib::ustring::compose(
                             _("SETTINGS_CACHE_CLEAN_LOG_SUCCESS"),
-                            Toxmm::instance().database().toxcore_log_cleanup()));
+                            tox().database().toxcore_log_cleanup()));
             msg2.run();
         }
     });

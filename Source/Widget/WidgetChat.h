@@ -26,8 +26,11 @@
 #include "Chat/WidgetChatLayout.h"
 #include "Helper/ToxEventCallback.h"
 #include "WidgetChatLine.h"
+#include "Dialog/DialogContact.h"
+#include "Helper/gToxChild.h"
+
 // Content of DialogChat
-class WidgetChat : public Gtk::VPaned {
+class WidgetChat : public Gtk::VPaned, public gToxChild {
   private:
     Gtk::TextView m_input;
     WidgetChatEntry m_output;
@@ -49,11 +52,13 @@ class WidgetChat : public Gtk::VPaned {
     void add_line(bool left_side, WidgetChatLine::Line new_line);
 
   public:
-    WidgetChat(Toxmm::FriendNr nr);
+    WidgetChat(gToxInstance* instance, Toxmm::FriendNr nr);
     ~WidgetChat();
 
     Toxmm::FriendNr get_friend_nr() const;
     void focus();
+
+
 };
 
 #endif

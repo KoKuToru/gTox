@@ -32,8 +32,6 @@ namespace sigc {
     SIGC_FUNCTORS_DEDUCE_RESULT_TYPE_WITH_DECLTYPE
 }
 
-DialogContact* DialogContact::m_instance = nullptr;
-
 DialogContact::DialogContact(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& builder)
     : Gtk::Window(cobject), m_builder(builder) {
     m_tox_callback = [this](const ToxEvent& ev) { tox_event_handling(ev); };
@@ -70,9 +68,6 @@ DialogContact::DialogContact(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Bu
     m_builder->get_widget("headerbar", m_headerbar);
     m_builder->get_widget("stack_header", m_stack_header);
 
-    m_headerbar->set_title(Toxmm::instance().get_name_or_address());
-    m_headerbar->set_subtitle(Toxmm::instance().get_status_message());
-
     m_stack_header->signal_map().connect_notify([this](){
         m_headerbar->get_style_context()->add_class("gtox-headerbar-right");
     });
@@ -84,7 +79,7 @@ DialogContact::DialogContact(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Bu
     m_btn_status->set_sensitive(false);
     m_btn_status->signal_clicked().connect([this]() {
         if (!m_popover_status) {
-            m_popover_status = std::make_shared<PopoverStatus>(*m_btn_status);
+            m_popover_status = std::make_shared<PopoverStatus>(this, *m_btn_status);
         }
         m_popover_status->set_visible();
     });
@@ -93,7 +88,7 @@ DialogContact::DialogContact(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Bu
     m_builder->get_widget("add_contact_btn", add_contact_btn);
     add_contact_btn->signal_clicked().connect([this, add_contact_btn]() {
         if (!m_popover_add_contact) {
-            m_popover_add_contact = std::make_shared<PopoverAddContact>(*add_contact_btn);
+            m_popover_add_contact = std::make_shared<PopoverAddContact>(this, *add_contact_btn);
         }
         m_popover_add_contact->set_visible();
     });
@@ -102,7 +97,7 @@ DialogContact::DialogContact(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Bu
     m_builder->get_widget("setting_btn", setting_btn);
     setting_btn->signal_clicked().connect([this, setting_btn]() {
         if (!m_popover_settings) {
-            m_popover_settings = std::make_shared<PopoverSettings>(*setting_btn);
+            m_popover_settings = std::make_shared<PopoverSettings>(this, *setting_btn);
         }
         m_popover_settings->set_visible();
     });
@@ -132,14 +127,6 @@ DialogContact::DialogContact(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Bu
         item->activated();
     });
 
-    load_contacts();
-
-    set_status(Toxmm::OFFLINE);
-
-    m_update_interval = Glib::signal_timeout().connect(
-        sigc::mem_fun(this, &DialogContact::update),
-        Toxmm::instance().update_optimal_interval());
-
     ToxEventCallback::notify(ToxEvent(EventAddNotification{
                                           true,
                                           "pre-alpha Software",
@@ -150,12 +137,25 @@ DialogContact::DialogContact(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Bu
                                       }));
 }
 
+void DialogContact::tox_setup(const Glib::ustring& path) {
+    tox().open(path);
+
+    m_headerbar->set_title(tox().get_name_or_address());
+    m_headerbar->set_subtitle(tox().get_status_message());
+
+    set_status(Toxmm::OFFLINE);
+    load_contacts();
+
+    m_update_interval = Glib::signal_timeout().connect(
+        sigc::mem_fun(this, &DialogContact::update),
+        tox().update_optimal_interval());
+}
+
 DialogContact* DialogContact::create(Glib::ustring file) {
-    Toxmm::instance().init(file);
     auto builder = Gtk::Builder::create_from_resource("/org/gtox/ui/dialog_contact.ui");
     DialogContact* tmp = nullptr;
     builder->get_widget_derived("dialog_contact", tmp);
-    tmp->m_instance = tmp;
+    tmp->tox_setup(file);
     return tmp;
 }
 
@@ -171,8 +171,8 @@ void DialogContact::load_contacts() {
         delete item;
     }
     bool first = true;
-    for (auto contact : Toxmm::instance().get_friendlist()) {
-        auto item = Gtk::manage(WidgetContactListItem::create(contact));
+    for (auto contact : tox().get_friendlist()) {
+        auto item = Gtk::manage(WidgetContactListItem::create(this, contact));
         list->add(*item);
         if (first) {
             //pixel perfect list size
@@ -188,24 +188,24 @@ void DialogContact::load_contacts() {
             });
             first = false;
         }
-        auto item_notify = Gtk::manage(WidgetContactListItem::create(contact, true));
+        auto item_notify = Gtk::manage(WidgetContactListItem::create(this, contact, true));
         list_active_chat->add(*item_notify);
     }
 }
 
 DialogContact::~DialogContact() {
     // save ?
-    Toxmm::instance().destroy();
+    tox().save();
 }
 
 bool DialogContact::update() {
-    if (!m_btn_status->get_sensitive() && Toxmm::instance().is_connected()) {
+    if (!m_btn_status->get_sensitive() && tox().is_connected()) {
         m_btn_status->set_sensitive(true);
-        set_status(Toxmm::instance().get_status());
+        set_status(tox().get_status());
     }
 
     ToxEvent ev;
-    while (Toxmm::instance().update(ev)) {
+    while (tox().update(ev)) {
         ToxEventCallback::notify(ev);
     }
 
@@ -228,9 +228,9 @@ void DialogContact::tox_event_handling(const ToxEvent& ev) {
                                               ToxEvent(EventCallback{[this, data](){
                                                                          //todo dialog
                                                                          ToxEventCallback::notify(ToxEvent(EventAddContact{
-                                                                             Toxmm::instance().add_friend_norequest(data.addr)
+                                                                             tox().add_friend_norequest(data.addr)
                                                                          }));
-                                                                         Toxmm::instance().save();
+                                                                         tox().save();
                                                                      }})
                                           }));
     } else if (ev.type() == typeid(EventAttachWidget)) {
@@ -263,11 +263,11 @@ void DialogContact::tox_event_handling(const ToxEvent& ev) {
     } else if (ev.type() == typeid(EventSetName)) {
         auto data = ev.get<EventSetName>();
 
-        Toxmm::instance().set_name(data.name);
-        Toxmm::instance().set_status_message(data.status);
-        m_headerbar->set_title(Toxmm::instance().get_name_or_address());
-        m_headerbar->set_subtitle(Toxmm::instance().get_status_message());
-        Toxmm::instance().save();
+        tox().set_name(data.name);
+        tox().set_status_message(data.status);
+        m_headerbar->set_title(tox().get_name_or_address());
+        m_headerbar->set_subtitle(tox().get_status_message());
+        tox().save();
     } else if (ev.type() == typeid(EventSetStatus)) {
         auto data = ev.get<EventSetStatus>();
         set_status(data.status_code);
@@ -307,9 +307,9 @@ void DialogContact::tox_event_handling(const ToxEvent& ev) {
         Gtk::ListBox* list_active_chat;
         m_builder->get_widget("list", list);
         m_builder->get_widget("list_active_chat", list_active_chat);
-        auto item = Gtk::manage(WidgetContactListItem::create(data.nr));
+        auto item = Gtk::manage(WidgetContactListItem::create(this, data.nr));
         list->add(*item);
-        auto item_notify = Gtk::manage(WidgetContactListItem::create(data.nr, true));
+        auto item_notify = Gtk::manage(WidgetContactListItem::create(this, data.nr, true));
         list_active_chat->add(*item_notify);
     } else if (ev.type() == typeid(EventCallback)) {
         auto data = ev.get<EventCallback>();
@@ -317,15 +317,8 @@ void DialogContact::tox_event_handling(const ToxEvent& ev) {
     }
 }
 
-DialogContact& DialogContact::instance() {
-    if (m_instance == nullptr) {
-        throw "Error";
-    }
-    return *m_instance;
-}
-
 void DialogContact::set_status(Toxmm::EUSERSTATUS status_code) {
-    Toxmm::instance().set_status(status_code);
+    tox().set_status(status_code);
     // TODO: implement a get_status_icon function
     switch (status_code) {
         case Toxmm::NONE:
@@ -361,11 +354,11 @@ void DialogContact::set_status(Toxmm::EUSERSTATUS status_code) {
     } else {
         m_status_icon->set(m_icon_status.property_pixbuf());
     }
-    Toxmm::instance().save();
+    tox().save();
 }
 
 void DialogContact::exit() {
-    Toxmm::instance().save();
+    tox().save();
     // TODO: ask for confirmation
     Gtk::Main::quit();
 }

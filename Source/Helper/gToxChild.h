@@ -1,8 +1,8 @@
 /**
     gTox a GTK-based tox-client - https://github.com/KoKuToru/gTox.git
 
-    Copyright (C) 2014  Luca Béla Palkovics
-    Copyright (C) 2014  Maurice Mohlek
+    Copyright (C) 2015  Luca Béla Palkovics
+    Copyright (C) 2015  Maurice Mohlek
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,20 +17,23 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 **/
-#ifndef POPOVERADDCONTACT_H
-#define POPOVERADDCONTACT_H
-#include <Helper/gToxChild.h>
-#include <gtkmm.h>
-class PopoverAddContact : public Gtk::Popover, public gToxChild {
-  private:
-    Gtk::Entry m_addr;
-    Gtk::TextView m_msg;
+#ifndef H_GTOX_CHILD
+#define H_GTOX_CHILD
+#include "Tox/Toxmm.h"
 
-  public:
-    PopoverAddContact(gToxInstance* instance, const Gtk::Widget& relative_to);
-    ~PopoverAddContact();
+class gToxInstance;
+class gToxChild {
+    private:
+        gToxInstance* m_tox_instance = nullptr;
 
-    void set_visible(bool v = true);
+    protected:
+        void set_instance(gToxInstance* tox_instance);
+
+    public:
+        gToxChild();
+        gToxChild(gToxInstance* tox_instance);
+
+        Toxmm& tox();
+        gToxInstance* instance();
 };
-
 #endif

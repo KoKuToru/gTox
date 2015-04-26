@@ -23,41 +23,20 @@
 #include <algorithm>
 #include "Generated/database.h"
 
-Toxmm* Toxmm::m_instance = nullptr;
+Toxmm::Toxmm() {
 
-Toxmm::Toxmm() : m_tox(nullptr) {
 }
 
-Toxmm::~Toxmm() {
-    if (m_tox != nullptr) {
-        tox_kill(m_tox);
-        m_tox = nullptr;
+void Toxmm::open(const Glib::ustring& profile_path, bool bootstrap) {
+    m_profile.open(profile_path);
+    /* load the toxcore profile */
+    if (!m_profile.can_read()) {
+        throw std::runtime_error("Couldn't read toxcore profile");
     }
-}
+    std::vector<unsigned char> state = m_profile.read();
+    /* try to open the db */
+    m_db.open(profile_path);
 
-Toxmm& Toxmm::instance() {
-    if (m_instance == nullptr) {
-        m_instance = new Toxmm;
-    }
-    return *m_instance;
-}
-
-ToxDatabase& Toxmm::database() {
-    return m_db;
-}
-
-void Toxmm::destroy() {
-    if (m_instance != nullptr) {
-        delete m_instance;
-        m_instance = nullptr;
-    }
-}
-
-void Toxmm::init(const Glib::ustring& statefile, bool bootstrap) {
-    if (m_tox != nullptr) {
-        tox_kill(m_tox);
-        m_tox = nullptr;
-    }
     TOX_ERR_OPTIONS_NEW nerror;
     auto options = std::shared_ptr<Tox_Options>(tox_options_new(&nerror),
                                                 [](Tox_Options* p) {
@@ -68,20 +47,9 @@ void Toxmm::init(const Glib::ustring& statefile, bool bootstrap) {
     }
 
     options->ipv6_enabled = true;
-    options->udp_enabled = true;
+    options->udp_enabled  = true;
 
-    m_db.close();
     // load state
-    std::vector<unsigned char> state;
-    bool okay = false;
-    if (statefile != "") {
-        /* try to open the db */
-        m_db.open(statefile);
-
-        //load the toxcore profile
-
-        state = m_db.toxcore_state_get(0);
-    }
     TOX_ERR_NEW error;
     m_tox = tox_new(options.get(), state.data(), state.size(), &error);
 
@@ -100,7 +68,9 @@ void Toxmm::init(const Glib::ustring& statefile, bool bootstrap) {
     tox_callback_friend_connection_status(m_tox, Toxmm::callback_connection_status, this);
 
     if (bootstrap) {
-        if (statefile != "") {
+        bool okay = true;
+
+        if (profile_path != "") {
             for (auto boots : m_db.toxcore_bootstrap_get()) {
                 if (boots.pub_key.size()%2 == 0) {
                     auto pub = from_hex(boots.pub_key);
@@ -128,18 +98,29 @@ void Toxmm::init(const Glib::ustring& statefile, bool bootstrap) {
     }
 }
 
-void Toxmm::save(const Glib::ustring& statefile) {
+Toxmm::~Toxmm() {
+    if (m_tox != nullptr) {
+        tox_kill(m_tox);
+        m_tox = nullptr;
+    }
+}
+
+ToxDatabase& Toxmm::database() {
+    return m_db;
+}
+
+ToxProfile& Toxmm::profile() {
+    return m_profile;
+}
+
+void Toxmm::save() {
     if (m_tox == nullptr) {
         throw std::runtime_error("TOX_UNITIALIZED");
     }
 
     std::vector<unsigned char> state(tox_get_savedata_size(m_tox));
     tox_get_savedata(m_tox, (unsigned char*)state.data());
-    m_db.toxcore_state_add(state);
-
-    if (statefile != "") {
-        m_db.move(statefile);
-    }
+    m_profile.write(state);
 }
 
 int Toxmm::update_optimal_interval() {

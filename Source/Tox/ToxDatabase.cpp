@@ -27,19 +27,17 @@
 
 void ToxDatabase::open(const std::string& path, bool init) {
     if (m_db) {
-        throw std::runtime_error("ERROR");
+        throw std::runtime_error("Database already open");
     }
-    m_path_db    = path + ".gtox";
-
-    std::string tox_save = "tox_save";
-    if (!(path.size() > tox_save.size()
-            && path.substr(path.size() - tox_save.size(),
-                    tox_save.size()) == tox_save) ||
-            (Glib::file_test(path + ".tox", Glib::FILE_TEST_IS_REGULAR))) {
-        m_path_state = path + ".tox";
-    } else {
-        m_path_state = path;
+    m_path_db    = path;
+    std::string state_ext = ".tox";
+    bool f_tox = (m_path_db.size() > state_ext.size()
+                  && m_path_db.substr(m_path_db.size() - state_ext.size(),
+                                      state_ext.size()) == state_ext);
+    if (f_tox) {
+        m_path_db = m_path_db.substr(0, m_path_db.size() - 4);
     }
+    m_path_db += ".gtox";
 
     if (!Glib::file_test(m_path_db, Glib::FILE_TEST_IS_REGULAR)) {
         //force init
@@ -68,7 +66,7 @@ void ToxDatabase::open(const std::string& path, bool init) {
                &DATABASE::version_7};
 
         if (version < 1 || version > (int)sizeof(upgrade_scripts)) {
-            throw std::runtime_error("ERROR");
+            throw std::runtime_error("Database not open !");
         }
 
         int version_max
@@ -78,9 +76,6 @@ void ToxDatabase::open(const std::string& path, bool init) {
             m_db->exec(*upgrade_scripts[version - 1]);
             config_set("version", version + 1);
         }
-
-        // clean up toxcore
-        toxcore_state_cleanup();
 
         m_db->exec("RELEASE SAVEPOINT try_load");
     } catch (...) {
@@ -104,7 +99,7 @@ void ToxDatabase::close() {
 
 void ToxDatabase::move(const std::string& path) {
     if (!m_db) {
-        throw std::runtime_error("ERROR");
+        throw std::runtime_error("Database not open !");
     }
 
     if (m_path_db == path + ".gtox") {
@@ -119,13 +114,13 @@ void ToxDatabase::move(const std::string& path) {
         if (Glib::file_test(m_path_db, Glib::FILE_TEST_IS_REGULAR)) {
             if (!Gio::File::create_for_path(m_path_db)
                     ->move(Gio::File::create_for_path(path + ".gtox"))) {
-                throw std::runtime_error("ERROR");
+                throw std::runtime_error("Database not open !");
             }
         }
         if (Glib::file_test(m_path_state, Glib::FILE_TEST_IS_REGULAR)) {
             if (!Gio::File::create_for_path(m_path_state)
                     ->move(Gio::File::create_for_path(path + ".tox"))) {
-                throw std::runtime_error("ERROR");
+                throw std::runtime_error("Database not open !");
             }
         }
         m_path_db    = path + ".gtox";
@@ -142,7 +137,7 @@ void ToxDatabase::move(const std::string& path) {
 std::string ToxDatabase::config_get(const std::string& name,
                                     const std::string& value = "") {
     if (!m_db) {
-        throw std::runtime_error("ERROR");
+        throw std::runtime_error("Database not open !");
     }
 
     auto selectq
@@ -158,7 +153,7 @@ std::string ToxDatabase::config_get(const std::string& name,
 void ToxDatabase::config_set(const std::string& name,
                              const std::string& value) {
     if (!m_db) {
-        throw std::runtime_error("ERROR");
+        throw std::runtime_error("Database not open !");
     }
 
     if (query("UPDATE config SET value=?2 WHERE cast(name as text)=cast(?1 as text)", name, value)->exec()
@@ -170,7 +165,7 @@ void ToxDatabase::config_set(const std::string& name,
 
 int ToxDatabase::config_get(const std::string& name, int value = 0) {
     if (!m_db) {
-        throw std::runtime_error("ERROR");
+        throw std::runtime_error("Database not open !");
     }
 
     auto selectq
@@ -188,132 +183,13 @@ int ToxDatabase::config_get(const std::string& name, int value = 0) {
 
 void ToxDatabase::config_set(const std::string& name, int value) {
     if (!m_db) {
-        throw std::runtime_error("ERROR");
+        throw std::runtime_error("Database not open !");
     }
 
     if (query("UPDATE config SET value=?2 WHERE cast(name as text)=cast(?1 as text)", name, value)->exec()
         < 1) {
         query("INSERT INTO config(name, value) VALUES (?1, ?2)", name, value)
             ->exec();
-    }
-}
-
-void ToxDatabase::toxcore_state_cleanup() {
-    if (!m_db) {
-        throw std::runtime_error("ERROR");
-    }
-
-    auto max_stmt = query(
-        "SELECT max(id), date(savetime) FROM toxcore"
-        " GROUP BY date(savetime) ORDER BY id DESC LIMIT 7,1");
-    if (max_stmt->executeStep()) {
-        int max_id = max_stmt->getColumn(0).getInt();
-        query("DELETE FROM toxcore WHERE id < ?1", max_id)->exec();
-    }
-}
-
-std::vector<unsigned char> ToxDatabase::toxcore_state_get(int nth) {
-    if (!m_db) {
-        throw std::runtime_error("ERROR");
-    }
-
-    //here we try to load the ".tox" file
-    if (Glib::file_test(m_path_state, Glib::FILE_TEST_IS_REGULAR) && nth == 0) {
-        std::string state = Glib::file_get_contents(m_path_state);
-        //try to load it
-        TOX_ERR_NEW error;
-        auto tox_tmp = tox_new(nullptr, (const unsigned char*)state.data(), state.size(), &error);
-        if (tox_tmp != nullptr) {
-            tox_kill(tox_tmp);
-        }
-        if (error == TOX_ERR_NEW_OK) {
-            //successfully loaded
-            std::vector<unsigned char> tmp(state.size());
-            std::copy((const unsigned char*)state.data(),
-                      (const unsigned char*)state.data() + state.size(),
-                      tmp.begin());
-            return tmp;
-        }
-        //if not .. use the one in gtox
-    }
-
-    try {
-        auto res = m_db->execAndGet(
-                       "SELECT state FROM toxcore ORDER BY id DESC"
-                       " LIMIT " + std::to_string(nth) + ", 1");
-        std::vector<unsigned char> tmp(res.getBytes());
-        unsigned char* raw = (unsigned char*)res.getBlob();
-        std::copy(raw, raw + tmp.size(), tmp.begin());
-        return tmp;
-    } catch (...) {
-        //ERROR HANDLING !
-        throw;
-    }
-}
-
-int ToxDatabase::toxcore_state_max_nth() {
-    if (!m_db) {
-        throw std::runtime_error("ERROR");
-    }
-
-    return m_db->execAndGet("SELECT count(*) FROM toxcore").getInt();
-}
-
-void ToxDatabase::toxcore_state_add(const std::vector<unsigned char>& state) {
-    if (!m_db) {
-        throw std::runtime_error("ERROR");
-    }
-
-    //save in tox
-    if (Glib::file_test(m_path_state, Glib::FILE_TEST_IS_REGULAR)) {
-        //copy a backup
-        if (!Gio::File::create_for_path(m_path_state)
-                ->copy(Gio::File::create_for_path(m_path_state + "~"), Gio::FileCopyFlags::FILE_COPY_OVERWRITE)) {
-            throw std::runtime_error("ERROR");
-        }
-    }
-    //write a tmp file
-    auto tmp_path = m_path_state + ".tmp";
-    std::ofstream o(tmp_path.c_str(), std::ios::trunc|std::ios::binary);
-    if (!o.is_open()) {
-        throw std::runtime_error("ERROR");
-    }
-    o.write((const char*)state.data(), state.size());
-    o.close();
-    //try to load
-    std::string state_tmp = Glib::file_get_contents(tmp_path);
-    TOX_ERR_NEW error;
-    auto tox_tmp = tox_new(nullptr, (const unsigned char*)state_tmp.data(), state_tmp.size(), &error);
-    if (tox_tmp != nullptr) {
-        tox_kill(tox_tmp);
-    }
-    if (error != TOX_ERR_NEW_OK) {
-        //FAILED ! Something went very wrong..
-        throw std::runtime_error("ERROR");
-    }
-    if (!Gio::File::create_for_path(tmp_path)
-            ->move(Gio::File::create_for_path(m_path_state), Gio::FileCopyFlags::FILE_COPY_OVERWRITE)) {
-        throw std::runtime_error("ERROR");
-    }
-    if (Glib::file_test(m_path_state + "~", Glib::FILE_TEST_IS_REGULAR)) {
-        //delete the backup
-        Gio::File::create_for_path(m_path_state + "~")->remove();
-    }
-
-
-    //save in gtox (just to be extra secure)
-    int runid = config_get("runid", 0);
-    if (query(
-            "UPDATE toxcore"
-            " SET savetime = CURRENT_TIMESTAMP, state = ?2, runid = ?1"
-            " WHERE runid=?1",
-            runid,
-            state)->exec() < 1) {
-        query(
-            "INSERT INTO toxcore(savetime, state, runid)"
-            " VALUES (CURRENT_TIMESTAMP, ?2, ?1)",
-            config_get("runid", 0),
-            state)->exec();
     }
 }
 

@@ -25,9 +25,10 @@
 #include "Helper/ToxEventCallback.h"
 #include "Dialog/DialogChat.h"
 #include <libnotifymm.h>
+#include "Helper/gToxChild.h"
 
 class WidgetContact;
-class WidgetContactListItem : public Gtk::ListBoxRow {
+class WidgetContactListItem : public Gtk::ListBoxRow, public gToxChild {
   private:
     const Glib::RefPtr<Gtk::Builder> m_builder;
     Gtk::Image* m_avatar;
@@ -49,7 +50,7 @@ class WidgetContactListItem : public Gtk::ListBoxRow {
 
   public:
     WidgetContactListItem(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& builder);
-    static WidgetContactListItem* create(Toxmm::FriendNr nr, bool for_notify=false);
+    static WidgetContactListItem* create(gToxInstance* instance, Toxmm::FriendNr nr, bool for_notify=false);
 
     ~WidgetContactListItem();
 
@@ -76,7 +77,7 @@ class WidgetContactListItem : public Gtk::ListBoxRow {
     void refresh();
     void set_contact(Toxmm::FriendNr nr);
     void set_for_notify(bool notify);
-    static bool use_mini(bool for_notify);
+    static bool use_mini(gToxChild* gchild, bool for_notify);
     void on_show();
     void on_hide();
 };

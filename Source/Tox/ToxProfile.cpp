@@ -18,20 +18,37 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 **/
 #include "ToxProfile.h"
+#include <sys/file.h>
 
-ToxProfile::ToxProfile(const Glib::ustring& path) {
+void ToxProfile::open(const Glib::ustring& path) {
+    if (can_read() || can_write()) {
+        throw std::runtime_error("Profile already loaded");
+    }
     m_path = path;
-    m_fd = open(m_path.c_str(), O_RDWR|O_CREAT|O_EXCL, 0444);
-    if (m_fd != -1) {
-        m_writeable = true;
+    m_fd = ::open(m_path.c_str(), O_RDWR|O_CREAT, 0600);
+    if (m_fd == -1) {
         return;
     }
-    //try read only
-    m_fd = open(m_path.c_str(), O_RDONLY);
+
+    if (flock(m_fd, LOCK_EX|LOCK_NB) == -1) {
+        if (errno == EWOULDBLOCK) {
+            m_writeable = false;
+            close(m_fd);
+            m_fd = ::open(m_path.c_str(), O_RDONLY);
+        } else {
+            throw std::runtime_error("Profile flock error");
+        }
+    } else {
+        m_writeable = true;
+    }
+    if (flock(m_fd, LOCK_SH) == -1) {
+        throw std::runtime_error("Profile flock error");
+    }
 }
 
 ToxProfile::~ToxProfile() {
     if (m_fd != -1) {
+        flock(m_fd, LOCK_UN);
         close(m_fd);
         m_fd = -1;
     }
@@ -50,7 +67,7 @@ void ToxProfile::write(const std::vector<unsigned char>& data) {
         throw std::runtime_error("ToxProfile::can_write() == false");
     }
     auto path_tmp = m_path + ".tmp";
-    int tmp = open(path_tmp.c_str(), O_RDWR|O_CREAT|O_EXCL, 0444);
+    int tmp = ::open(path_tmp.c_str(), O_RDWR|O_CREAT, 0600);
     if (tmp == -1) {
         throw std::runtime_error("Couldn't create tmp file for profile");
     }
@@ -60,6 +77,7 @@ void ToxProfile::write(const std::vector<unsigned char>& data) {
     close(tmp);
 
     //SWAP !
+    flock(m_fd, LOCK_UN);
     close(m_fd);
     m_fd = -1;
     if (rename(path_tmp.c_str(), m_path.c_str()) == -1) {
@@ -67,10 +85,27 @@ void ToxProfile::write(const std::vector<unsigned char>& data) {
     }
 
     //reopen
-    m_fd = open(m_path.c_str(), O_RDWR|O_CREAT|O_EXCL, 0444);
-    if (m_fd != -1) {
+    m_fd = ::open(m_path.c_str(), O_RDWR|O_CREAT, 0600);
+    if (m_fd == -1) {
         throw std::runtime_error("Couldn't reopen file !!");
     }
+    if (flock(m_fd, LOCK_SH) == -1) {
+        throw std::runtime_error("Profile flock error");
+    }
+}
+
+std::vector<unsigned char> ToxProfile::read() {
+    if (!can_read()) {
+        throw std::runtime_error("ToxProfile::can_read() == false");
+    }
+
+    auto size = lseek(m_fd, 0, SEEK_END);
+    lseek(m_fd, 0, SEEK_SET);
+
+    std::vector<unsigned char> tmp(size);
+    ::read(m_fd, tmp.data(), tmp.size());
+
+    return tmp;
 }
 
 void ToxProfile::move(const Glib::ustring& new_path) {
@@ -84,7 +119,7 @@ void ToxProfile::move(const Glib::ustring& new_path) {
     m_path = new_path;
 
     //reopen
-    m_fd = open(m_path.c_str(), O_RDWR|O_CREAT|O_EXCL, 0444);
+    m_fd = ::open(m_path.c_str(), O_RDWR|O_CREAT|O_EXCL, 0444);
     if (m_fd != -1) {
         throw std::runtime_error("Couldn't reopen file !!");
     }

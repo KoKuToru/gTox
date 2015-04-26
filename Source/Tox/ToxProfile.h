@@ -33,12 +33,13 @@ class ToxProfile {
         Glib::ustring m_path;
 
     public:
-        ToxProfile() {} //TODO: Remove this function when Toxmm rewrite is finished
-        ToxProfile(const Glib::ustring& path);
+        ToxProfile() {}
         ToxProfile(const ToxProfile& o) = delete;
         ~ToxProfile();
 
         void operator=(const ToxProfile& o) = delete;
+
+        void open(const Glib::ustring& path);
 
         bool can_write();
         bool can_read();

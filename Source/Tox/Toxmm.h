@@ -30,9 +30,7 @@
 #include "ToxDatabase.h"
 #include "ToxException.h"
 #include "ToxEvent.h"
-#include <fcntl.h>
-#include <stdlib.h>
-#include <unistd.h>
+#include "ToxProfile.h"
 
 /**
  * @brief Wraps the toxcore but also add features with a sqlitedb
@@ -40,21 +38,19 @@
 class Toxmm {
   private:
     /**
-     * @brief Instance of Tox
-     */
-    static Toxmm* m_instance;
-
-    Toxmm();
-
-    /**
      * @brief Instance of toxcore
      */
-    Tox* m_tox;
+    Tox* m_tox = nullptr;
 
     /**
      * @brief Database connection for the custom gTox save file
      */
     ToxDatabase m_db;
+
+    /**
+      * @brief Save/Load profile helper
+      */
+    ToxProfile m_profile;
 
   public:
     typedef uint32_t FriendNr;
@@ -155,56 +151,13 @@ class Toxmm {
         Glib::ustring data;
     };
 
-    /**
-     * @brief Get instance
-     *
-     * creates an instance if needed
-     *
-     * @return tox instance
-     */
-    static Toxmm& instance();
-
     ToxDatabase& database();
+    ToxProfile& profile();
 
-    /**
-     * @brief Destorys the actual instance
-     */
-    static void destroy();
+    Toxmm();
 
-    /**
-     * @brief Init/load toxcore
-     *
-     * If a something is already loaded
-     * it gets killed with tox_kill().
-     *
-     * Runs tox_new() and installs callbacks.
-     *
-     * Loads custom gTox save-file.
-     *
-     * If necessary update gTox save-file.
-     * Removes old toxcore savestates if older than 7 days.
-     *
-     * @throws Toxmm::Exception
-     * @throws SQLite::Exception
-     *
-     * @param statefile Path to the save-file, can be empty
-     * @param bootstrap
-     */
-    void init(const Glib::ustring& statefile, bool bootstrap = true);
-    void init() {
-        init("");
-    }
-
-    /**
-     * @brief Saves the custom gTox save-file.
-     *
-     * @throws Toxmm::Exception
-     * @throws SQLite::Exception
-     *
-     * @param statefile Path to the save-file, only works when never saved
-     *before !
-     */
-    void save(const Glib::ustring& statefile = "");
+    void open(const Glib::ustring& statefile, bool bootstrap = true);
+    void save();
 
     /**
      * @brief runs tox_kill if needed

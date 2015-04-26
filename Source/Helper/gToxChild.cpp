@@ -1,8 +1,8 @@
 /**
     gTox a GTK-based tox-client - https://github.com/KoKuToru/gTox.git
 
-    Copyright (C) 2014  Luca Béla Palkovics
-    Copyright (C) 2014  Maurice Mohlek
+    Copyright (C) 2015  Luca Béla Palkovics
+    Copyright (C) 2015  Maurice Mohlek
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,20 +17,29 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 **/
-#ifndef POPOVERADDCONTACT_H
-#define POPOVERADDCONTACT_H
-#include <Helper/gToxChild.h>
-#include <gtkmm.h>
-class PopoverAddContact : public Gtk::Popover, public gToxChild {
-  private:
-    Gtk::Entry m_addr;
-    Gtk::TextView m_msg;
+#include "gToxChild.h"
+#include "gToxInstance.h"
+#include <exception>
 
-  public:
-    PopoverAddContact(gToxInstance* instance, const Gtk::Widget& relative_to);
-    ~PopoverAddContact();
+Toxmm& gToxChild::tox() {
+    if (!m_tox_instance) {
+        throw std::runtime_error("gToxChild m_tox_instance == nullptr");
+    }
+    return m_tox_instance->tox();
+}
 
-    void set_visible(bool v = true);
-};
+void gToxChild::set_instance(gToxInstance* tox_instance) {
+    m_tox_instance = tox_instance;
+}
 
-#endif
+gToxChild::gToxChild() {
+
+}
+
+gToxChild::gToxChild(gToxInstance* tox_instance) {
+    set_instance(tox_instance);
+}
+
+gToxInstance* gToxChild::instance() {
+    return m_tox_instance;
+}

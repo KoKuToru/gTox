@@ -78,19 +78,15 @@ void gTox::on_activate() {
         accounts.begin(),
         std::remove_if(
             accounts.begin(), accounts.end(), [](const std::string& name) {
-                std::string state_ext = ".gtox";
-                bool f_gtox = !(name.size() > state_ext.size()
-                                && name.substr(name.size() - state_ext.size(),
-                                        state_ext.size()) == state_ext);
-                state_ext = ".tox";
+                std::string state_ext = ".tox";
                 bool f_tox = !(name.size() > state_ext.size()
                                && name.substr(name.size() - state_ext.size(),
                                         state_ext.size()) == state_ext);
                 bool f_old_tox = (name != "tox_save");
-                return f_gtox && f_tox && f_old_tox;
+                return f_tox && f_old_tox;
             })));
 
-    //filter files with same name .tox/.gtox
+    //filter files with same name .tox
     //1. remove extension
     std::transform(accounts.begin(), accounts.end(), accounts.begin(), [](std::string a) {
         auto a_p = a.find_last_of(".");
@@ -105,7 +101,7 @@ void gTox::on_activate() {
     accounts.erase(std::unique(accounts.begin(), accounts.end()), accounts.end());
     //4. make the full paths
     std::transform(accounts.begin(), accounts.end(), accounts.begin(), [&config_path](const std::string& name) {
-        return Glib::build_filename(config_path, name);
+        return Glib::build_filename(config_path, name + ".tox");
     });
 
     // start profile select
@@ -181,12 +177,12 @@ void gTox::on_open(const Gio::Application::type_vec_files& files,
 }
 
 int gTox::on_command_line(const Glib::RefPtr<Gio::ApplicationCommandLine>& command_line) {
-    static bool TODO_ALLOW_MULTIINSTANCES = true;
+    /*static bool TODO_ALLOW_MULTIINSTANCES = true;
     if (!TODO_ALLOW_MULTIINSTANCES) {
         std::cerr << "Can't have more than 1 instance right now.." << std::endl;
         return EXIT_FAILURE;
     }
-    TODO_ALLOW_MULTIINSTANCES = false;
+    TODO_ALLOW_MULTIINSTANCES = false;*/
 
     int argc = 0;
     auto argv = command_line ? command_line->get_arguments(argc) : nullptr;

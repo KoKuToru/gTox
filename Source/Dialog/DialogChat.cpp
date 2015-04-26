@@ -18,20 +18,20 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 **/
 #include "DialogChat.h"
-#include "DialogContact.h"
 #include "Widget/WidgetContactListItem.h"
 #include "Helper/Canberra.h"
 
-DialogChat::DialogChat(Toxmm::FriendNr nr)
+DialogChat::DialogChat(gToxInstance* instance, Toxmm::FriendNr nr)
     : m_in_window(false),
-      m_chat(nr) {
+      m_chat(instance, nr) {
+    set_instance(instance);
     this->set_border_width(1);
     this->set_default_geometry(256, 256);
     this->set_position(Gtk::WindowPosition::WIN_POS_NONE);
 
     // Setup titlebar
-    m_header.set_title(Toxmm::instance().get_name_or_address(nr));
-    m_header.set_subtitle(Toxmm::instance().get_status_message(nr));
+    m_header.set_title(tox().get_name_or_address(nr));
+    m_header.set_subtitle(tox().get_status_message(nr));
     m_header.property_hexpand() = true;
 
     // custom close button for chat
@@ -62,12 +62,12 @@ DialogChat::DialogChat(Toxmm::FriendNr nr)
         if (ev.type() == typeid(Toxmm::EventName))  {
             auto data = ev.get<Toxmm::EventName>();
             if (data.nr == nr) {
-                m_header.set_title(Toxmm::instance().get_name_or_address(nr));
+                m_header.set_title(tox().get_name_or_address(nr));
             }
         } else if (ev.type() == typeid(Toxmm::EventStatusMessage)) {
             auto data = ev.get<Toxmm::EventStatusMessage>();
             if (data.nr == nr) {
-                m_header.set_subtitle(Toxmm::instance().get_status_message(nr));
+                m_header.set_subtitle(tox().get_status_message(nr));
             }
         } else if (ev.type() == typeid(Toxmm::EventFriendAction)) {
             auto data = ev.get<Toxmm::EventFriendAction>();
@@ -75,7 +75,7 @@ DialogChat::DialogChat(Toxmm::FriendNr nr)
                 if (is_visible()) {
                     ToxEventCallback::notify(ToxEvent(WidgetContactListItem::EventStopSpin{nr}));
                 } else {
-                    notify(Toxmm::instance().get_name_or_address(nr),
+                    notify(tox().get_name_or_address(nr),
                            data.message);
                 }
             }
@@ -85,7 +85,7 @@ DialogChat::DialogChat(Toxmm::FriendNr nr)
                 if (is_visible()) {
                     ToxEventCallback::notify(ToxEvent(WidgetContactListItem::EventStopSpin{nr}));
                 } else {
-                    notify(Toxmm::instance().get_name_or_address(nr),
+                    notify(tox().get_name_or_address(nr),
                            data.message);
                 }
             }

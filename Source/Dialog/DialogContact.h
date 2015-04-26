@@ -27,12 +27,11 @@
 #include "Popover/PopoverSettings.h"
 #include "Popover/PopoverAddContact.h"
 #include "Helper/ToxEventCallback.h"
-#include "DialogChat.h"
+#include "Helper/gToxInstance.h"
 
 // contact list with pinned chat
-class DialogContact : public Gtk::Window {
+class DialogContact : public Gtk::Window, public gToxInstance {
   private:
-    static DialogContact* m_instance;
     const Glib::RefPtr<Gtk::Builder> m_builder;
 
     Glib::RefPtr<Gtk::StatusIcon> m_status_icon;
@@ -45,8 +44,6 @@ class DialogContact : public Gtk::Window {
     Gtk::Stack* m_stack;
 
     Gtk::Image m_icon_status;
-
-    std::vector<std::shared_ptr<DialogChat>> m_chat;
 
     sigc::connection m_update_interval;
 
@@ -65,8 +62,6 @@ class DialogContact : public Gtk::Window {
     ~DialogContact();
 
     static DialogContact* create(Glib::ustring file);
-
-    static DialogContact& instance();
 
     void exit();
 
@@ -131,8 +126,7 @@ class DialogContact : public Gtk::Window {
 
     bool update();
     void tox_event_handling(const ToxEvent& event);
-
-    WidgetChat* get_chat(Toxmm::FriendNr nr, DialogChat*& dialog);
+    void tox_setup(const Glib::ustring& path);
 };
 
 #endif

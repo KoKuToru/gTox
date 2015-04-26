@@ -53,14 +53,25 @@ add_custom_command(
 
 set(SOURCES
     main.cpp
+    Helper/Canberra.cpp
+    Helper/ToxEventCallback.cpp
+    Helper/gToxInstance.cpp
+    Helper/gToxChild.cpp
     gTox.cpp
-    Widget/WidgetChat.cpp
-    Widget/WidgetContactListItem.cpp
-    Widget/WidgetChatLine.cpp
+    Dialog/DialogContact.cpp
+    Dialog/DialogProfile.cpp
+    Dialog/DialogProfileCreate.cpp
+    Dialog/DialogChat.cpp
+    Dialog/DialogSettings.cpp
+    Dialog/DialogError.cpp
+    Dialog/Debug/DialogCss.cpp
     Popover/PopoverStatus.cpp
     Popover/PopoverSettings.cpp
     Popover/PopoverAddContact.cpp
     Popover/PopoverContextContact.cpp
+    Widget/WidgetChat.cpp
+    Widget/WidgetContactListItem.cpp
+    Widget/WidgetChatLine.cpp
     Widget/Chat/WidgetChatLabel.cpp
     Widget/Chat/WidgetChatEntry.cpp
     Widget/Chat/WidgetChatLayout.cpp
@@ -72,15 +83,6 @@ set(SOURCES
     Widget/Settings/WidgetAudioVideo.cpp
     Widget/WidgetNotification.cpp
     Widget/VideoPlayer.cpp
-    Dialog/DialogProfileCreate.cpp
-    Dialog/DialogChat.cpp
-    Dialog/DialogContact.cpp
-    Dialog/DialogSettings.cpp
-    Dialog/DialogError.cpp
-    Dialog/DialogProfile.cpp
-    Dialog/Debug/DialogCss.cpp
-    Helper/Canberra.cpp
-    Helper/ToxEventCallback.cpp
     Tox/Toxmm.cpp
     Tox/ToxDatabase.cpp
     Tox/ToxEvent.cpp

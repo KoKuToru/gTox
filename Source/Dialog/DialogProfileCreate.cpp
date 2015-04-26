@@ -91,13 +91,13 @@ void DialogProfileCreate::on_cancel() {
 
 void DialogProfileCreate::on_apply() {
     m_path = m_file_tox->get_text().substr(0, m_file_tox->get_text().find_last_of("."));
-    Toxmm::instance().init();
-    Toxmm::instance().set_name(m_username->get_text());
-    Toxmm::instance().set_status_message(m_status->get_text());
-    Toxmm::instance().database().open(m_path, true);
-    Toxmm::instance().database().config_set("LOG_CHAT", m_logging->get_active());
-    Toxmm::instance().save();
-    Toxmm::destroy();
+    Toxmm instance;
+    instance.open(m_path);
+    instance.set_name(m_username->get_text());
+    instance.set_status_message(m_status->get_text());
+    instance.database().open(m_path, true);
+    instance.database().config_set("LOG_CHAT", m_logging->get_active());
+    instance.save();
     m_aborted = false;
     hide();
 }

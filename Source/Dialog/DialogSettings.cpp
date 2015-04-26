@@ -27,7 +27,7 @@
 #include "Widget/Settings/WidgetCache.h"
 #include "Widget/Settings/WidgetAudioVideo.h"
 
-DialogSettings::DialogSettings() {
+DialogSettings::DialogSettings(gToxInstance* instance) {
 
     set_title(_("SETTINGS_TITLE"));
     set_default_geometry(600, 300);
@@ -50,11 +50,11 @@ DialogSettings::DialogSettings() {
     box->pack_start(*scroller_2, true, true);
     scroller_2->add(m_stack);
 
-    m_stack.add(*Gtk::manage(new WidgetProfile), "profile");
+    m_stack.add(*Gtk::manage(new WidgetProfile(instance)), "profile");
     // m_stack.add(*Gtk::manage(new Gtk::Label("Visual Settings")), "visual");
     /*m_stack.add(*Gtk::manage(new Gtk::Label("Emojis Settings, in future")),
                 "emojis");*/
-    m_stack.add(*Gtk::manage(new WidgetCache), "cache");
+    m_stack.add(*Gtk::manage(new WidgetCache(instance)), "cache");
     // m_stack.add(*Gtk::manage(new WidgetNetwork), "network");
     m_stack.add(*Gtk::manage(new WidgetAudioVideo), "av");
     m_stack.add(*Gtk::manage(new WidgetAbout), "about");

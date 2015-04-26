@@ -28,8 +28,11 @@ namespace sigc {
     SIGC_FUNCTORS_DEDUCE_RESULT_TYPE_WITH_DECLTYPE
 }
 
-WidgetChat::WidgetChat(Toxmm::FriendNr nr)
+WidgetChat::WidgetChat(gToxInstance* instance, Toxmm::FriendNr nr)
     : Glib::ObjectBase("WidgetChat"), m_nr(nr), m_autoscroll(true) {
+
+    set_instance(instance);
+
     m_output.set_editable(false);
     m_scrolled.add(m_vbox);
     m_vbox.set_spacing(5);
@@ -198,7 +201,7 @@ WidgetChat::WidgetChat(Toxmm::FriendNr nr)
             add_line(false, WidgetChatLine::Line{
                          false,
                          true,
-                         Toxmm::instance().send_message(get_friend_nr(), text),
+                         tox().send_message(get_friend_nr(), text),
                          0,
                          get_friend_nr(),
                          text
@@ -239,7 +242,7 @@ WidgetChat::WidgetChat(Toxmm::FriendNr nr)
     }
 
     // load log
-    auto log = Toxmm::instance().get_log(nr);
+    auto log = tox().get_log(nr);
     for (auto l : log) {
         if (l.sendtime != 0) {
             add_line(false, WidgetChatLine::Line{
@@ -368,8 +371,8 @@ void WidgetChat::add_line(bool left_side, WidgetChatLine::Line new_line) {
         // TODO add a WidgetChatLineMe ..
         // add new action line
         auto msg = Gtk::manage(new WidgetChatLabel() /*new Gtk::Label()*/);
-        auto name = left_side ? Toxmm::instance().get_name_or_address(m_nr)
-                              : Toxmm::instance().get_name_or_address();
+        auto name = left_side ? tox().get_name_or_address(m_nr)
+                              : tox().get_name_or_address();
         msg->set_text(name + new_line.message.substr(Glib::ustring("/me").size()));
         msg->set_name("ChatTime");
         msg->set_halign(Gtk::ALIGN_CENTER);

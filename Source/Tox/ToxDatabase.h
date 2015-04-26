@@ -213,40 +213,6 @@ class ToxDatabase {
     void config_set(const std::string& name, int value);
 
     /**
-     * @brief Removes old toxcore states
-     *
-     * @throws SQLite::Exception
-     *
-     */
-    void toxcore_state_cleanup();
-    /**
-     * @brief Get a toxcore state
-     *
-     * @throws SQLite::Exception
-     *
-     * @param nth 0 = newest, n = oldest
-     * @return toxcore state
-     */
-    std::vector<unsigned char> toxcore_state_get(int nth);
-    /**
-     * @brief Get the count of saved toxcore states
-     *
-     * @throws SQLite::Exception
-     *
-     * @return how many nth toxcore states
-     */
-    int toxcore_state_max_nth();
-    /**
-     * @brief Add a new toxcore state, will overwrite the old one if the same
-     *
-     * @throws SQLite::Exception
-     *
-     * session
-     * @param state toxcore state
-     */
-    void toxcore_state_add(const std::vector<unsigned char>& state);
-
-    /**
      * @brief Gets the bootstrap settings
      *
      * @throws SQLite::Exception

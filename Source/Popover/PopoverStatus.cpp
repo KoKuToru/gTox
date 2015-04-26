@@ -21,9 +21,11 @@
 #include "Dialog/DialogContact.h"
 #include <glibmm/i18n.h>
 
-PopoverStatus::PopoverStatus(const Gtk::Widget& relative_to)
+PopoverStatus::PopoverStatus(gToxInstance* instance, const Gtk::Widget& relative_to)
     : Gtk::Popover(relative_to) {
     // add_label("Settings");
+
+    set_instance(instance);
 
     m_listbox.add(create_item(Gdk::Pixbuf::create_from_resource("/org/gtox/icon/status_online.svg"), _("ONLINE")));
     m_listbox.add(create_item(Gdk::Pixbuf::create_from_resource("/org/gtox/icon/status_busy.svg"), _("BUSY")));
@@ -34,7 +36,7 @@ PopoverStatus::PopoverStatus(const Gtk::Widget& relative_to)
 
     // signal handling
     m_listbox.signal_row_activated().connect([this](Gtk::ListBoxRow* row) {
-        switch (row->get_index()) {
+        /*switch (row->get_index()) {
             case 0:
                 DialogContact::instance().set_status(Toxmm::NONE);
                 break;
@@ -47,7 +49,7 @@ PopoverStatus::PopoverStatus(const Gtk::Widget& relative_to)
             case 3:
                 DialogContact::instance().exit();
                 break;
-        }
+        }*/
         set_visible(false);
     });
 }
@@ -88,7 +90,7 @@ void PopoverStatus::set_visible(bool visible) {
     }
 
     int select = 3;
-    switch (Toxmm::instance().get_status()) {
+    switch (tox().get_status()) {
         case Toxmm::NONE:
             select = 0;
             break;
