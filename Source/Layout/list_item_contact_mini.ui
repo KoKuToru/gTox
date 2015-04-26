@@ -15,7 +15,6 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="valign">start</property>
-            <property name="resize_mode">immediate</property>
             <property name="label_xalign">0</property>
             <property name="shadow_type">none</property>
             <child>

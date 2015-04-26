@@ -33,6 +33,14 @@
 	padding-right: 6px;
 }
 
+.gtox-profile-spinner-wrapper {
+    padding: 10px;
+}
+
+.gtox-profile-spinner-label {
+    padding-left: 10px;
+}
+
 /**
     Popovers
 **/

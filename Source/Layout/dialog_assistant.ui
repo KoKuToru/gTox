@@ -37,7 +37,6 @@
                 <property name="halign">start</property>
                 <property name="hexpand">True</property>
                 <property name="label" translatable="yes" comments="Label for the profile username">ASSISTANT_USERNAME</property>
-                <property name="xalign">1</property>
               </object>
               <packing>
                 <property name="left_attach">0</property>
@@ -63,7 +62,6 @@
                 <property name="can_focus">False</property>
                 <property name="halign">start</property>
                 <property name="label" translatable="yes" comments="Label for the profile statusmessage">ASSISTANT_STATUSMESSAGE</property>
-                <property name="xalign">1</property>
               </object>
               <packing>
                 <property name="left_attach">0</property>
@@ -99,7 +97,6 @@
                 <property name="can_focus">False</property>
                 <property name="halign">start</property>
                 <property name="label" translatable="yes" comments="Lable for the log enable/disable switch">ASSISTANT_LOGGING</property>
-                <property name="xalign">1</property>
               </object>
               <packing>
                 <property name="left_attach">0</property>
@@ -150,7 +147,6 @@
                 <property name="can_focus">False</property>
                 <property name="halign">start</property>
                 <property name="label" translatable="yes" comments="Label for the toxcore profile save path">ASSISTANT_FILE_TOX</property>
-                <property name="xalign">1</property>
               </object>
               <packing>
                 <property name="left_attach">0</property>
@@ -163,7 +159,6 @@
                 <property name="can_focus">False</property>
                 <property name="halign">start</property>
                 <property name="label" translatable="yes" comments="Label for the gTox database path">ASSISTANT_FILE_GTOX</property>
-                <property name="xalign">1</property>
               </object>
               <packing>
                 <property name="left_attach">0</property>
@@ -220,10 +215,10 @@
                     <property name="can_focus">False</property>
                     <property name="label" translatable="yes" comments="Welcome text in profile creation, should warn about alpha-software">ASSISTANT_WELCOME_TEXT</property>
                     <property name="use_markup">True</property>
-                    <property name="xalign">0</property>
+                    <property name="ellipsize">start</property>
                   </object>
                   <packing>
-                    <property name="expand">True</property>
+                    <property name="expand">False</property>
                     <property name="fill">True</property>
                     <property name="position">0</property>
                   </packing>
@@ -236,11 +231,14 @@
                     <property name="can_focus">False</property>
                     <property name="halign">end</property>
                     <property name="valign">center</property>
-                    <property name="xalign">1</property>
+                    <property name="pixel_size">128</property>
+                    <property name="icon_name">icon_128</property>
+                    <property name="icon_size">0</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">True</property>
+                    <property name="pack_type">end</property>
                     <property name="position">1</property>
                   </packing>
                 </child>

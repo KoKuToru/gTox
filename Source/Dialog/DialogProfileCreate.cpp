@@ -29,12 +29,6 @@ DialogProfileCreate::DialogProfileCreate(BaseObjectType* cobject, gToxBuilder bu
     set_size_request(800, 600);
     set_position(Gtk::WindowPosition::WIN_POS_CENTER_ALWAYS);
 
-    Gtk::Image* icon = nullptr;
-    m_builder->get_widget("assistant_icon", icon);
-    if (icon) {
-        icon->property_pixbuf() = Gdk::Pixbuf::create_from_resource("/org/gtox/icon/icon_128.svg");
-    }
-
     m_builder.get_widget("assistant_username", m_username);
     m_builder.get_widget("assistant_statusmessage", m_status);
     m_builder.get_widget("assistant_logging", m_logging);

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-04-26 17:28+0200\n"
+"POT-Creation-Date: 2015-04-26 17:45+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 1.7.5\n"
 
-#: Layout/popover_settings.ui:129
+#: Layout/popover_settings.ui:128
 msgid ""
 "<span font_desc=\"mono\">DD5EFC02E70A0F6D\n"
 "032FB5904F956F1A\n"
@@ -52,12 +52,12 @@ msgid "APPLICATION_NAME"
 msgstr "gTox"
 
 #. Label for the gTox database path
-#: Layout/dialog_assistant.ui:165
+#: Layout/dialog_assistant.ui:161
 msgid "ASSISTANT_FILE_GTOX"
 msgstr "gTox file"
 
 #. Describes how to backup the tox profile
-#: Layout/dialog_assistant.ui:204
+#: Layout/dialog_assistant.ui:199
 msgid "ASSISTANT_FILE_TEXT"
 msgstr ""
 "<span size='x-small'><u>toxcore file</u> includes the profile and contact "
@@ -68,23 +68,23 @@ msgstr ""
 "b></span>"
 
 #. Label for the toxcore profile save path
-#: Layout/dialog_assistant.ui:152
+#: Layout/dialog_assistant.ui:149
 msgid "ASSISTANT_FILE_TOX"
 msgstr "toxcore file"
 
 #. Lable for the log enable/disable switch
-#: Layout/dialog_assistant.ui:101
+#: Layout/dialog_assistant.ui:99
 msgid "ASSISTANT_LOGGING"
 msgstr "Chat logging"
 
 #. Describes that gTox will log into a uncrypted sqlite db
-#: Layout/dialog_assistant.ui:137
+#: Layout/dialog_assistant.ui:134
 msgid "ASSISTANT_LOGGING_TEXT"
 msgstr ""
 "<span size='x-small'>gTox saves the log into a uncrypted SqliteDB</span>"
 
 #. Label for the profile statusmessage
-#: Layout/dialog_assistant.ui:65
+#: Layout/dialog_assistant.ui:64
 msgid "ASSISTANT_STATUSMESSAGE"
 msgstr "Status message"
 
@@ -94,7 +94,7 @@ msgid "ASSISTANT_USERNAME"
 msgstr "Name"
 
 #. Welcome text in profile creation, should warn about alpha-software
-#: Layout/dialog_assistant.ui:221
+#: Layout/dialog_assistant.ui:216
 msgid "ASSISTANT_WELCOME_TEXT"
 msgstr ""
 "Wellcome to gTox\n"
@@ -164,7 +164,7 @@ msgid "ONLINE"
 msgstr "Online"
 
 #. Exit the application, abort the profile selection
-#: Layout/dialog_profile.ui:89
+#: Layout/dialog_profile.ui:93
 msgid "PROFILE_ABORT"
 msgstr "Abort"
 
@@ -177,12 +177,12 @@ msgid "PROFILE_CORRUPTED_TITLE"
 msgstr "Corrupted profile"
 
 #. Text next to the spinner, while profiles are loading
-#: Layout/dialog_profile.ui:61
+#: Layout/dialog_profile.ui:62
 msgid "PROFILE_LOADING"
 msgstr "loading profiles..."
 
 #. Button for creating a new profile
-#: Layout/dialog_profile.ui:101
+#: Layout/dialog_profile.ui:105
 msgid "PROFILE_NEW"
 msgstr "New"
 
@@ -191,11 +191,11 @@ msgid "PROFILE_OPEN_SETTINGS"
 msgstr "Settings"
 
 #. Button for loading the selected profile
-#: Layout/dialog_profile.ui:114
+#: Layout/dialog_profile.ui:118
 msgid "PROFILE_SELECT"
 msgstr "Select"
 
-#: Layout/popover_settings.ui:81
+#: Layout/popover_settings.ui:80
 msgid "PROFILE_STATUSMESSAGE"
 msgstr "Message"
 
@@ -207,11 +207,11 @@ msgstr "Select profile"
 msgid "PROFILE_TITLE"
 msgstr "gTox"
 
-#: Layout/popover_settings.ui:94
+#: Layout/popover_settings.ui:93
 msgid "PROFILE_TOX_ID"
 msgstr "Tox-ID"
 
-#: Layout/popover_settings.ui:68
+#: Layout/popover_settings.ui:67
 msgid "PROFILE_USERNAME"
 msgstr "Username"
 

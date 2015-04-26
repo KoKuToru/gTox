@@ -37,15 +37,17 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="halign">center</property>
-                <property name="margin_left">10</property>
-                <property name="margin_right">10</property>
-                <property name="margin_top">10</property>
-                <property name="margin_bottom">10</property>
+                <style>
+                  <class name="gtox-profile-wrapper"/>
+                </style>
                 <child>
                   <object class="GtkSpinner" id="spinner1">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="active">True</property>
+                    <style>
+                      <class name="gtox-profile-spinner"/>
+                    </style>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -57,8 +59,10 @@
                   <object class="GtkLabel" id="label2">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="margin_left">10</property>
                     <property name="label" translatable="yes" comments="Text next to the spinner, while profiles are loading">PROFILE_LOADING</property>
+                    <style>
+                      <class name="gtox-profile-spinner-label"/>
+                    </style>
                   </object>
                   <packing>
                     <property name="expand">False</property>
