@@ -78,7 +78,8 @@ void Toxmm::init(const Glib::ustring& statefile, bool bootstrap) {
         /* try to open the db */
         m_db.open(statefile);
 
-        // take the last saved state
+        //load the toxcore profile
+
         state = m_db.toxcore_state_get(0);
     }
     TOX_ERR_NEW error;
@@ -89,14 +90,14 @@ void Toxmm::init(const Glib::ustring& statefile, bool bootstrap) {
     }
 
     // install callbacks
-    tox_callback_friend_request(m_tox, Toxmm::callback_friend_request, nullptr);
-    tox_callback_friend_message(m_tox, Toxmm::callback_friend_message, nullptr);
-    tox_callback_friend_name(m_tox, Toxmm::callback_name_change, nullptr);
-    tox_callback_friend_status_message(m_tox, Toxmm::callback_status_message, nullptr);
-    tox_callback_friend_status(m_tox, Toxmm::callback_user_status, nullptr);
-    tox_callback_friend_typing(m_tox, Toxmm::callback_typing_change, nullptr);
-    tox_callback_friend_read_receipt(m_tox, Toxmm::callback_read_receipt, nullptr);
-    tox_callback_friend_connection_status(m_tox, Toxmm::callback_connection_status, nullptr);
+    tox_callback_friend_request(m_tox, Toxmm::callback_friend_request, this);
+    tox_callback_friend_message(m_tox, Toxmm::callback_friend_message, this);
+    tox_callback_friend_name(m_tox, Toxmm::callback_name_change, this);
+    tox_callback_friend_status_message(m_tox, Toxmm::callback_status_message, this);
+    tox_callback_friend_status(m_tox, Toxmm::callback_user_status, this);
+    tox_callback_friend_typing(m_tox, Toxmm::callback_typing_change, this);
+    tox_callback_friend_read_receipt(m_tox, Toxmm::callback_read_receipt, this);
+    tox_callback_friend_connection_status(m_tox, Toxmm::callback_connection_status, this);
 
     if (bootstrap) {
         if (statefile != "") {
@@ -565,13 +566,13 @@ void Toxmm::callback_friend_request(Tox*,
                                   const unsigned char* addr,
                                   const unsigned char* data,
                                   size_t len,
-                                  void*) {
+                                  void* _this) {
     EventFriendRequest event;
     std::copy(addr,
               addr + event.addr.size(),
               event.addr.begin());
     event.message = std::string((const char*)data, len);
-    Toxmm::instance().inject_event(ToxEvent(event));
+    ((Toxmm*)_this)->inject_event(ToxEvent(event));
 }
 
 void Toxmm::callback_friend_message(Tox*,
@@ -579,12 +580,12 @@ void Toxmm::callback_friend_message(Tox*,
                                   TOX_MESSAGE_TYPE type,
                                   const unsigned char* data,
                                   size_t len,
-                                  void*) {
+                                  void* _this) {
     if (type == TOX_MESSAGE_TYPE::TOX_MESSAGE_TYPE_ACTION) {
         callback_friend_action(nullptr, nr, data, len, nullptr);
         return;
     }
-    Toxmm::instance().inject_event(ToxEvent(EventFriendMessage{
+    ((Toxmm*)_this)->inject_event(ToxEvent(EventFriendMessage{
                                               nr,
                                               std::string((const char*)data, len)
                                           }));
@@ -594,8 +595,8 @@ void Toxmm::callback_friend_action(Tox*,
                                  FriendNr nr,
                                  const unsigned char* data,
                                  size_t len,
-                                 void*) {
-    Toxmm::instance().inject_event(ToxEvent(EventFriendAction{
+                                 void* _this) {
+    ((Toxmm*)_this)->inject_event(ToxEvent(EventFriendAction{
                                               nr,
                                               std::string((const char*)data, len)
                                           }));
@@ -605,8 +606,8 @@ void Toxmm::callback_name_change(Tox*,
                                FriendNr nr,
                                const unsigned char* data,
                                size_t len,
-                               void*) {
-    Toxmm::instance().inject_event(ToxEvent(EventName{
+                               void* _this) {
+    ((Toxmm*)_this)->inject_event(ToxEvent(EventName{
                                               nr,
                                               std::string((const char*)data, len)
                                           }));
@@ -616,29 +617,29 @@ void Toxmm::callback_status_message(Tox*,
                                   FriendNr nr,
                                   const unsigned char* data,
                                   size_t len,
-                                  void*) {
-    Toxmm::instance().inject_event(ToxEvent(EventStatusMessage{
+                                  void* _this) {
+    ((Toxmm*)_this)->inject_event(ToxEvent(EventStatusMessage{
                                               nr,
                                               std::string((const char*)data, len)
                                           }));
 }
 
-void Toxmm::callback_user_status(Tox*, FriendNr nr, TOX_USER_STATUS, void*) {
-    Toxmm::instance().inject_event(ToxEvent(EventUserStatus{
+void Toxmm::callback_user_status(Tox*, FriendNr nr, TOX_USER_STATUS, void* _this) {
+    ((Toxmm*)_this)->inject_event(ToxEvent(EventUserStatus{
                                               nr,
-                                              Toxmm::instance().get_status(nr)
+                                              ((Toxmm*)_this)->get_status(nr)
                                           }));
 }
 
-void Toxmm::callback_typing_change(Tox*, FriendNr nr, bool data, void*) {
-    Toxmm::instance().inject_event(ToxEvent(EventTyping{
+void Toxmm::callback_typing_change(Tox*, FriendNr nr, bool data, void* _this) {
+    ((Toxmm*)_this)->inject_event(ToxEvent(EventTyping{
                                               nr,
                                               data
                                           }));
 }
 
-void Toxmm::callback_read_receipt(Tox*, FriendNr nr, unsigned data, void*) {
-    Toxmm::instance().inject_event(ToxEvent(EventReadReceipt{
+void Toxmm::callback_read_receipt(Tox*, FriendNr nr, unsigned data, void* _this) {
+    ((Toxmm*)_this)->inject_event(ToxEvent(EventReadReceipt{
                                               nr,
                                               data
                                           }));
@@ -647,10 +648,10 @@ void Toxmm::callback_read_receipt(Tox*, FriendNr nr, unsigned data, void*) {
 void Toxmm::callback_connection_status(Tox*,
                                      FriendNr nr,
                                      TOX_CONNECTION,
-                                     void*) {
-    Toxmm::instance().inject_event(ToxEvent(EventUserStatus{
+                                     void* _this) {
+    ((Toxmm*)_this)->inject_event(ToxEvent(EventUserStatus{
                                               nr,
-                                              Toxmm::instance().get_status(nr)
+                                              ((Toxmm*)_this)->get_status(nr)
                                           }));
 }
 
