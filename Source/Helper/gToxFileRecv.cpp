@@ -25,7 +25,9 @@ gToxFileRecv::gToxFileRecv(gToxObservable* observable,
     : gToxObserver(observable), m_file(file) {
     if (m_file.kind == TOX_FILE_KIND_AVATAR) {
         auto addr = tox().get_address(file.nr);
-        m_path = Glib::build_filename(Glib::get_user_config_dir(), "tox", Toxmm::to_hex(addr.data(), TOX_PUBLIC_KEY_SIZE) + ".png");
+        m_path = Glib::build_filename(Glib::get_user_config_dir(),
+                                      "tox", "avatars",
+                                      Toxmm::to_hex(addr.data(), TOX_PUBLIC_KEY_SIZE) + ".png");
     } else {
         m_path = Glib::build_filename(Glib::get_user_special_dir(GUserDirectory::G_USER_DIRECTORY_DOWNLOAD), m_file.filename);
     }

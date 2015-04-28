@@ -92,6 +92,7 @@ void DialogProfile::set_accounts(const std::vector<std::string>& accounts) {
         m_thread = Glib::Thread::create([this, list, accounts](){
             Glib::ustring tox_name;
             Glib::ustring tox_status;
+            Toxmm::FriendAddr tox_addr;
             bool tox_okay = false;
             bool can_write = false;
 
@@ -103,13 +104,14 @@ void DialogProfile::set_accounts(const std::vector<std::string>& accounts) {
 
                     tox_name = instance.get_name_or_address();
                     tox_status = instance.get_status_message();
+                    tox_addr = instance.get_address();
                     tox_okay = true;
                     can_write = instance.profile().can_write();
                 } catch (...) {
                     tox_okay = false;
                 }
 
-                m_events.push_back(Glib::signal_idle().connect([list, tox_name, acc, tox_status, tox_okay, can_write](){
+                m_events.push_back(Glib::signal_idle().connect([list, tox_name, acc, tox_status, tox_okay, can_write, tox_addr](){
                     auto builder = Gtk::Builder::create_from_resource("/org/gtox/ui/list_item_profile.ui");
                     Gtk::ListBoxRow* row = nullptr;
                     builder->get_widget("pofile_list_item", row);
@@ -123,10 +125,23 @@ void DialogProfile::set_accounts(const std::vector<std::string>& accounts) {
                         builder->get_widget("path", path);
                         builder->get_widget("avatar", avatar);
                         if (name && status && path && avatar) {
-                            avatar->set(Gdk::Pixbuf::create_from_resource("/org/gtox/icon/avatar.svg")->scale_simple(
-                                           72,
-                                           72,
-                                           Gdk::INTERP_BILINEAR));
+
+                            auto avatar_path = Glib::build_filename(Glib::get_user_config_dir(),
+                                                                    "tox", "avatars",
+                                                                    Toxmm::to_hex(tox_addr.data(), TOX_PUBLIC_KEY_SIZE) + ".png");
+
+                            if (!Glib::file_test(avatar_path, Glib::FILE_TEST_IS_REGULAR)) {
+                                avatar->set(Gdk::Pixbuf::create_from_resource("/org/gtox/icon/avatar.svg")->scale_simple(
+                                                72,
+                                                72,
+                                                Gdk::INTERP_BILINEAR));
+                            } else {
+                                avatar->set(Gdk::Pixbuf::create_from_file(avatar_path)->scale_simple(
+                                                72,
+                                                72,
+                                                Gdk::INTERP_BILINEAR));
+                            }
+
                             path->set_text(acc);
                             row->set_sensitive(false);
                             if (tox_okay) {
