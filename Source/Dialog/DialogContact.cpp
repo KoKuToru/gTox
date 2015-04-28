@@ -298,6 +298,15 @@ void DialogContact::tox_event_handling(const ToxEvent& ev) {
     } else if (ev.type() == typeid(EventCallback)) {
         auto data = ev.get<EventCallback>();
         data.callback();
+    } else if (ev.type() == typeid(Toxmm::EventFileRecv)) {
+        auto data = ev.get<Toxmm::EventFileRecv>();
+        //check if avatar
+        if (data.kind == TOX_FILE_KIND_AVATAR) {
+            //create a new download instance
+            gToxFileRecv avatar(this, data);
+            avatar.resume();
+            m_file_receivers.push_back(avatar);
+        }
     }
 }
 

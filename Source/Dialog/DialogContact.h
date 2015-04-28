@@ -28,6 +28,7 @@
 #include "Popover/PopoverAddContact.h"
 #include "Helper/gToxObservable.h"
 #include "Helper/gToxBuilder.h"
+#include "Helper/gToxFileRecv.h"
 
 // contact list with pinned chat
 class DialogContact : public Gtk::Window, public gToxObservable {
@@ -56,6 +57,8 @@ class DialogContact : public Gtk::Window, public gToxObservable {
     gToxObservable::Handler m_tox_callback;
 
     bool is_chat_open(Toxmm::FriendNr nr);
+
+    std::vector<gToxFileRecv> m_file_receivers;
 
   public:
     DialogContact(BaseObjectType* cobject, gToxBuilder builder,

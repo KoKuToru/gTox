@@ -57,6 +57,7 @@ set(SOURCES
     Helper/gToxObservable.cpp
     Helper/gToxObserver.cpp
     Helper/gToxBuilder.cpp
+    Helper/gToxFileRecv.cpp
     gTox.cpp
     Dialog/DialogContact.cpp
     Dialog/DialogProfile.cpp

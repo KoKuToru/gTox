@@ -47,3 +47,11 @@ gToxObserver::gToxObserver(gToxObservable* observable) {
 gToxObservable* gToxObserver::observable() {
     return m_observable;
 }
+
+gToxObserver::gToxObserver(const gToxObserver& o) {
+    set_observable(o.m_observable);
+}
+
+void gToxObserver::operator=(const gToxObserver& o) {
+    set_observable(o.m_observable);
+}

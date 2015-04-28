@@ -32,6 +32,8 @@ class gToxObserver {
     public:
         gToxObserver();
         gToxObserver(gToxObservable* observable);
+        gToxObserver(const gToxObserver& o);
+        void operator=(const gToxObserver& o);
 
         Toxmm& tox();
         gToxObservable* observable();
