@@ -56,6 +56,7 @@ class Toxmm {
     typedef uint32_t FriendNr;
     typedef unsigned ReceiptNr;
     typedef std::array<unsigned char, TOX_ADDRESS_SIZE> FriendAddr;
+    typedef std::array<unsigned char, TOX_FILE_ID_LENGTH> FileId;
 
     typedef ToxException Exception;
 
@@ -137,7 +138,24 @@ class Toxmm {
     class EventReadReceipt {
         public:
             FriendNr nr;
-            unsigned receipt;
+            uint32_t receipt;
+    };
+
+    class EventFileRecv {
+        public:
+            FriendNr nr;
+            uint32_t file_number;
+            TOX_FILE_KIND kind;
+            uint64_t file_size;
+            Glib::ustring filename;
+    };
+
+    class EventFileRecvChunk {
+        public:
+            FriendNr nr;
+            uint32_t file_number;
+            uint64_t file_position;
+            std::vector<unsigned char> file_data;
     };
 
     enum ELogType { LOGMSG = 1, LOGACTION = 2 };
@@ -434,6 +452,17 @@ class Toxmm {
      */
     std::vector<SLog> get_log(FriendNr nr, int offset = 0, int limit = 100);
 
+    /**
+     * @brief Sends a file control command to a friend for a given file transfer.
+     *
+     * @param nr The friend number of the friend the file is being transferred to or received from.
+     * @param file_nr The friend-specific identifier for the file transfer.
+     * @param control The control command to send.
+     *
+     * @throws Toxmm::Exception
+     */
+    void file_control(FriendNr nr, uint32_t file_nr, TOX_FILE_CONTROL control);
+
   protected:
     std::deque<ToxEvent> m_events;
 
@@ -476,6 +505,22 @@ class Toxmm {
                                            FriendNr nr,
                                            TOX_CONNECTION data,
                                            void*);
+
+    static void callback_file_recv(Tox*,
+                                   FriendNr nr,
+                                   uint32_t file_number,
+                                   uint32_t kind,
+                                   uint64_t file_size,
+                                   const unsigned char* filename,
+                                   size_t filename_length,
+                                   void*);
+    static void callback_file_recv_chunk(Tox*,
+                                         FriendNr nr,
+                                         uint32_t file_number,
+                                         uint64_t position,
+                                         const unsigned char* data,
+                                         size_t data_length,
+                                         void*);
 
     void inject_event(ToxEvent ev);
 };

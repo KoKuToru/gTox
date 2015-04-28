@@ -219,3 +219,22 @@ ToxException::ToxException(TOX_ERR_FRIEND_GET_LAST_ONLINE error):
         throw std::runtime_error("TOX_ERR_FRIEND_GET_LAST_ONLINE unknow error code " + std::to_string(error));
     }
 }
+
+ToxException::ToxException(TOX_ERR_FILE_CONTROL error):
+    m_type(typeid(error)) {
+    static std::map<decltype(error), std::string> enum2str =
+    {{TOX_ERR_FILE_CONTROL_FRIEND_NOT_FOUND, _("TOX_ERR_FILE_CONTROL_FRIEND_NOT_FOUND")},
+    {TOX_ERR_FILE_CONTROL_FRIEND_NOT_CONNECTED, _("TOX_ERR_FILE_CONTROL_FRIEND_NOT_CONNECTED")},
+    {TOX_ERR_FILE_CONTROL_NOT_FOUND, _("TOX_ERR_FILE_CONTROL_NOT_FOUND")},
+    {TOX_ERR_FILE_CONTROL_NOT_PAUSED, _("TOX_ERR_FILE_CONTROL_NOT_PAUSED")},
+    {TOX_ERR_FILE_CONTROL_DENIED, _("TOX_ERR_FILE_CONTROL_DENIED")},
+    {TOX_ERR_FILE_CONTROL_ALREADY_PAUSED, _("TOX_ERR_FILE_CONTROL_ALREADY_PAUSED")},
+    {TOX_ERR_FILE_CONTROL_SENDQ, _("TOX_ERR_FILE_CONTROL_SENDQ")}};
+    auto iter = enum2str.find(error);
+    if (iter != enum2str.end()) {
+        m_what = iter->second;
+        m_what_id = error;
+    } else {
+        throw std::runtime_error("TOX_ERR_FILE_CONTROL unknow error code " + std::to_string(error));
+    }
+}
