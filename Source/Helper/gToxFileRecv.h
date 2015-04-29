@@ -43,6 +43,7 @@ class gToxFileRecv: public gToxObserver {
 
         class EventFileProgress {
             public:
+                gToxFileRecv* receiver;
                 Toxmm::FriendNr nr;
                 uint32_t file_number;
                 uint64_t file_position;

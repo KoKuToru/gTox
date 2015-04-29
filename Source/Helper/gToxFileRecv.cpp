@@ -53,7 +53,21 @@ void gToxFileRecv::get_progress(uint64_t& position, uint64_t& size) {
 }
 
 void gToxFileRecv::resume() {
-    //tox().file_seek()
+    if (m_file.file_size == m_position) {
+        std::clog << "Friend " << m_file.nr <<
+                     " File " << m_file.file_number <<
+                     " " << m_position << "/" << m_file.file_size << std::endl;
+
+        observer_notify(ToxEvent(EventFileProgress{
+                                     this,
+                                     m_file.nr,
+                                     m_file.file_number,
+                                     m_position,
+                                     m_file.file_size
+                                 }));
+        return;
+    }
+    tox().file_seek(m_file.nr, m_file.file_number, m_position);
     tox().file_control(m_file.nr, m_file.file_number, TOX_FILE_CONTROL_RESUME);
 }
 
@@ -83,14 +97,17 @@ void gToxFileRecv::observer_handle(const ToxEvent& ev) {
 
     m_position += data.file_data.size();
 
+    std::clog << "Friend " << m_file.nr <<
+                 " File " << m_file.file_number <<
+                 " " << m_position << "/" << m_file.file_size << std::endl;
+
     observer_notify(ToxEvent(EventFileProgress{
+                                 this,
                                  m_file.nr,
                                  m_file.file_number,
                                  m_position,
                                  m_file.file_size
                              }));
-
-    //finish event ?
 }
 
 gToxFileRecv::gToxFileRecv(const gToxFileRecv& o)
