@@ -463,6 +463,18 @@ class Toxmm {
      */
     void file_control(FriendNr nr, uint32_t file_nr, TOX_FILE_CONTROL control);
 
+    /**
+     * @brief Sends a file seek control command to a friend for a given file transfer.
+     * This function can only be called to resume a file transfer right before
+     * TOX_FILE_CONTROL_RESUME is sent.
+     *
+     * @param nr The friend number of the friend the file is being
+     *   received from.
+     * @param file_nr The friend-specific identifier for the file transfer.
+     * @param postion The position that the file should be seeked to.
+     */
+    void file_seek(FriendNr nr, uint32_t file_nr, uint64_t position);
+
   protected:
     std::deque<ToxEvent> m_events;
 

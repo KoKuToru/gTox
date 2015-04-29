@@ -560,6 +560,21 @@ void Toxmm::file_control(FriendNr nr, uint32_t file_nr, TOX_FILE_CONTROL control
     }
 }
 
+void Toxmm::file_seek(FriendNr nr, uint32_t file_nr, uint64_t position) {
+    if (m_tox == nullptr) {
+        throw std::runtime_error("TOX_UNITIALIZED");
+    }
+
+    TOX_ERR_FILE_SEEK error;
+    auto res = tox_file_seek(m_tox, nr, file_nr, position, &error);
+    if (error != TOX_ERR_FILE_SEEK_OK) {
+        throw Exception(error);
+    }
+    if (!res) {
+        throw std::runtime_error("tox_file_seek unknow FALSE error");
+    }
+}
+
 void Toxmm::callback_friend_request(Tox*,
                                   const unsigned char* addr,
                                   const unsigned char* data,
