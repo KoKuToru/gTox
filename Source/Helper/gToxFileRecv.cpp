@@ -28,6 +28,28 @@ gToxFileRecv::gToxFileRecv(gToxObservable* observable,
         m_path = Glib::build_filename(Glib::get_user_config_dir(),
                                       "tox", "avatars",
                                       Toxmm::to_hex(addr.data(), TOX_PUBLIC_KEY_SIZE) + ".png");
+        //check if
+        m_fd = ::open(m_path.c_str(), O_RDONLY);
+        if (m_fd != -1) {
+            std::vector<uint8_t> data;
+
+            while(true) {
+                char buf[1024];
+                int r = ::read(m_fd, buf, 1024);
+                if (r <= 0) {
+                    break;
+                }
+                std::copy(buf, buf + r, std::back_inserter(data));
+            }
+            close(m_fd);
+
+            auto file_id_should = tox().hash(data);
+            auto file_id = tox().file_get_field_id(m_file.nr, m_file.file_number);
+            if (!std::equal(file_id.begin(), file_id.end(), file_id_should.begin())) {
+                //Remove avatar
+                unlink(m_path.c_str());
+            }
+        }
     } else {
         m_path = Glib::build_filename(Glib::get_user_special_dir(GUserDirectory::G_USER_DIRECTORY_DOWNLOAD), m_file.filename);
     }
