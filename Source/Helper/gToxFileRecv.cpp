@@ -23,43 +23,51 @@
 gToxFileRecv::gToxFileRecv(gToxObservable* observable,
                            Toxmm::EventFileRecv file)
     : gToxObserver(observable), m_file(file) {
-    if (m_file.kind == TOX_FILE_KIND_AVATAR) {
-        auto addr = tox().get_address(file.nr);
-        m_path = Glib::build_filename(Glib::get_user_config_dir(),
-                                      "tox", "avatars",
-                                      Toxmm::to_hex(addr.data(), TOX_PUBLIC_KEY_SIZE) + ".png");
-        //check if
-        m_fd = ::open(m_path.c_str(), O_RDONLY);
-        if (m_fd != -1) {
-            std::vector<uint8_t> data;
+    try {
+        if (m_file.kind == TOX_FILE_KIND_AVATAR) {
+            auto addr = tox().get_address(file.nr);
+            m_path = Glib::build_filename(Glib::get_user_config_dir(),
+                                          "tox", "avatars",
+                                          Toxmm::to_hex(addr.data(), TOX_PUBLIC_KEY_SIZE) + ".png");
+            //check if
+            m_fd = ::open(m_path.c_str(), O_RDONLY);
+            if (m_fd != -1) {
+                std::vector<uint8_t> data;
 
-            while(true) {
-                char buf[1024];
-                int r = ::read(m_fd, buf, 1024);
-                if (r <= 0) {
-                    break;
+                while(true) {
+                    char buf[1024];
+                    int r = ::read(m_fd, buf, 1024);
+                    if (r <= 0) {
+                        break;
+                    }
+                    std::copy(buf, buf + r, std::back_inserter(data));
                 }
-                std::copy(buf, buf + r, std::back_inserter(data));
-            }
-            close(m_fd);
+                close(m_fd);
 
-            auto file_id_should = tox().hash(data);
-            auto file_id = tox().file_get_field_id(m_file.nr, m_file.file_number);
-            if (!std::equal(file_id.begin(), file_id.end(), file_id_should.begin())) {
-                //Remove avatar
-                unlink(m_path.c_str());
+                auto file_id_should = tox().hash(data);
+                auto file_id = tox().file_get_field_id(m_file.nr, m_file.file_number);
+                if (!std::equal(file_id.begin(), file_id.end(), file_id_should.begin())) {
+                    //Remove avatar
+                    unlink(m_path.c_str());
+                }
             }
+        } else {
+            m_path = Glib::build_filename(Glib::get_user_special_dir(GUserDirectory::G_USER_DIRECTORY_DOWNLOAD), m_file.filename);
         }
-    } else {
-        m_path = Glib::build_filename(Glib::get_user_special_dir(GUserDirectory::G_USER_DIRECTORY_DOWNLOAD), m_file.filename);
+        std::clog << "Download " << m_path << std::endl;
+        m_fd = ::open(m_path.c_str(), O_RDWR|O_CREAT, 0600);
+        if (m_fd == -1) {
+            throw std::runtime_error("gToxFileRecv couldn't open file");
+        }
+        //read file size
+        m_position = lseek(m_fd, 0, SEEK_END);
+    } catch(const Toxmm::Exception& exp) {
+        //Ignore
+        if (m_fd != -1) {
+            ::close(m_fd);
+            m_fd = -1;
+        }
     }
-    std::clog << "Download " << m_path << std::endl;
-    m_fd = ::open(m_path.c_str(), O_RDWR|O_CREAT, 0600);
-    if (m_fd == -1) {
-        throw std::runtime_error("gToxFileRecv couldn't open file");
-    }
-    //read file size
-    m_position = lseek(m_fd, 0, SEEK_END);
 }
 
 gToxFileRecv::~gToxFileRecv() {
@@ -122,6 +130,10 @@ void gToxFileRecv::observer_handle(const ToxEvent& ev) {
     }
     auto data = ev.get<Toxmm::EventFileRecvChunk>();
     if (data.nr != m_file.nr && data.file_number != m_file.file_number) {
+        return;
+    }
+
+    if (m_fd == -1) {
         return;
     }
 
