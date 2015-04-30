@@ -45,6 +45,7 @@ class ToxException: public std::exception {
         ToxException(TOX_ERR_FRIEND_GET_LAST_ONLINE error);
         ToxException(TOX_ERR_FILE_CONTROL error);
         ToxException(TOX_ERR_FILE_SEEK error);
+        ToxException(TOX_ERR_FILE_GET error);
 
         virtual const char* what() const noexcept;
         virtual std::type_index type() const noexcept;

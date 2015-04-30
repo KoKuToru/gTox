@@ -575,6 +575,25 @@ void Toxmm::file_seek(FriendNr nr, uint32_t file_nr, uint64_t position) {
     }
 }
 
+Toxmm::FileId Toxmm::file_get_field_id(FriendNr nr, uint32_t file_nr) {
+    if (m_tox == nullptr) {
+        throw std::runtime_error("TOX_UNITIALIZED");
+    }
+
+    FileId id = {0};
+
+    TOX_ERR_FILE_GET error;
+    auto res = tox_file_get_file_id(m_tox, nr, file_nr, id.data(), &error);
+    if (error != TOX_ERR_FILE_GET_OK) {
+        throw Exception(error);
+    }
+    if (!res) {
+        throw std::runtime_error("file_get_field_id unknow FALSE error");
+    }
+
+    return id;
+}
+
 Toxmm::Hash Toxmm::hash(const std::vector<uint8_t>& data) {
     Hash res = {0};
     tox_hash(res.data(), data.data(), data.size());

@@ -476,6 +476,14 @@ class Toxmm {
      */
     void file_seek(FriendNr nr, uint32_t file_nr, uint64_t position);
 
+    /**
+     * @brief Gets the file id associated to the file transfer.
+     * @param nr The friend number of the friend the file is being
+     *   transferred to or received from.
+     * @param file_nr The friend-specific identifier for the file transfer.
+     */
+    FileId file_get_field_id(FriendNr nr, uint32_t file_nr);
+
 
     /**
      * Generates a cryptographic hash of the given data.
