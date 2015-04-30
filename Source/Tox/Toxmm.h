@@ -54,9 +54,10 @@ class Toxmm {
 
   public:
     typedef uint32_t FriendNr;
-    typedef unsigned ReceiptNr;
-    typedef std::array<unsigned char, TOX_ADDRESS_SIZE> FriendAddr;
-    typedef std::array<unsigned char, TOX_FILE_ID_LENGTH> FileId;
+    typedef uint32_t ReceiptNr;
+    typedef std::array<uint8_t, TOX_ADDRESS_SIZE> FriendAddr;
+    typedef std::array<uint8_t, TOX_FILE_ID_LENGTH> FileId;
+    typedef std::array<uint8_t, TOX_HASH_LENGTH> Hash;
 
     typedef ToxException Exception;
 
@@ -79,7 +80,7 @@ class Toxmm {
 
     struct SFriendInt {
         FriendNr nr;
-        unsigned data;
+        uint32_t data;
     };
 
     struct SFriendBool {
@@ -155,7 +156,7 @@ class Toxmm {
             FriendNr nr;
             uint32_t file_number;
             uint64_t file_position;
-            std::vector<unsigned char> file_data;
+            std::vector<uint8_t> file_data;
     };
 
     enum ELogType { LOGMSG = 1, LOGACTION = 2 };
@@ -163,8 +164,8 @@ class Toxmm {
     struct SLog {
         ELogType type;
 
-        unsigned long long sendtime;
-        unsigned long long recvtime;
+        uint64_t sendtime;
+        uint64_t recvtime;
 
         Glib::ustring data;
     };
@@ -396,7 +397,7 @@ class Toxmm {
      *
      * @return unixtimestamp of last friend seen online
      */
-    unsigned long long get_last_online(FriendNr nr);
+    uint64_t get_last_online(FriendNr nr);
 
     /**
      * @throws Toxmm::Exception
@@ -421,12 +422,12 @@ class Toxmm {
      *
      * @throws Toxmm::Exception
      *
-     * @param data unsigned char array
+     * @param data uint8_t array
      * @param len length of data
      *
      * @return hex-string
      */
-    static Glib::ustring to_hex(const unsigned char* data, size_t len);
+    static Glib::ustring to_hex(const uint8_t* data, size_t len);
 
     /**
      * @brief Helper function, convert hex-string to byte array
@@ -435,9 +436,9 @@ class Toxmm {
      *
      * @param data hex-string
      *
-     * @return unsigned char vector
+     * @return uint8_t vector
      */
-    static std::vector<unsigned char> from_hex(std::string data);
+    static std::vector<uint8_t> from_hex(std::string data);
 
     /**
      * @brief Get chat log
@@ -475,33 +476,46 @@ class Toxmm {
      */
     void file_seek(FriendNr nr, uint32_t file_nr, uint64_t position);
 
+
+    /**
+     * Generates a cryptographic hash of the given data.
+     *
+     * This function may be used by clients for any purpose, but is provided
+     * primarily for validating cached avatars. This use is highly recommended to
+     * avoid unnecessary avatar updates.
+     *
+     * @param data Data to be hashed
+     * @return hash of the given data
+     */
+    Hash hash(const std::vector<uint8_t>& data);
+
   protected:
     std::deque<ToxEvent> m_events;
 
     static void callback_friend_request(Tox*,
-                                        const unsigned char* addr,
-                                        const unsigned char* data,
+                                        const uint8_t* addr,
+                                        const uint8_t* data,
                                         size_t len,
                                         void*);
     static void callback_friend_message(Tox*,
                                         FriendNr nr,
                                         TOX_MESSAGE_TYPE type,
-                                        const unsigned char* data,
+                                        const uint8_t* data,
                                         size_t len,
                                         void*);
     static void callback_friend_action(Tox*,
                                        FriendNr nr,
-                                       const unsigned char* data,
+                                       const uint8_t* data,
                                        size_t len,
                                        void*);
     static void callback_name_change(Tox*,
                                      FriendNr nr,
-                                     const unsigned char* data,
+                                     const uint8_t* data,
                                      size_t len,
                                      void*);
     static void callback_status_message(Tox*,
                                         FriendNr nr,
-                                        const unsigned char* data,
+                                        const uint8_t* data,
                                         size_t len,
                                         void*);
     static void callback_user_status(Tox*,
@@ -512,7 +526,7 @@ class Toxmm {
                                        FriendNr nr,
                                        bool data,
                                        void*);
-    static void callback_read_receipt(Tox*, FriendNr nr, unsigned data, void*);
+    static void callback_read_receipt(Tox*, FriendNr nr, uint32_t data, void*);
     static void callback_connection_status(Tox*,
                                            FriendNr nr,
                                            TOX_CONNECTION data,
@@ -523,14 +537,14 @@ class Toxmm {
                                    uint32_t file_number,
                                    uint32_t kind,
                                    uint64_t file_size,
-                                   const unsigned char* filename,
+                                   const uint8_t* filename,
                                    size_t filename_length,
                                    void*);
     static void callback_file_recv_chunk(Tox*,
                                          FriendNr nr,
                                          uint32_t file_number,
                                          uint64_t position,
-                                         const unsigned char* data,
+                                         const uint8_t* data,
                                          size_t data_length,
                                          void*);
 

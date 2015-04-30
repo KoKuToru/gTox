@@ -452,7 +452,7 @@ void Toxmm::set_status(Toxmm::EUSERSTATUS value) {
     tox_self_set_status(m_tox, (TOX_USER_STATUS)value);
 }
 
-unsigned long long Toxmm::get_last_online(Toxmm::FriendNr nr) {
+uint64_t Toxmm::get_last_online(Toxmm::FriendNr nr) {
     if (m_tox == nullptr) {
         throw std::runtime_error("TOX_UNITIALIZED");
     }
@@ -573,6 +573,12 @@ void Toxmm::file_seek(FriendNr nr, uint32_t file_nr, uint64_t position) {
     if (!res) {
         throw std::runtime_error("tox_file_seek unknow FALSE error");
     }
+}
+
+Toxmm::Hash Toxmm::hash(const std::vector<uint8_t>& data) {
+    Hash res = {0};
+    tox_hash(res.data(), data.data(), data.size());
+    return res;
 }
 
 void Toxmm::callback_friend_request(Tox*,
