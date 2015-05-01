@@ -25,7 +25,7 @@ WidgetAvatar::WidgetAvatar(gToxObservable* observable,
                            Toxmm::FriendNr nr)
     : gToxObserver(observable),
       m_builder(Glib::RefPtr<Gtk::Builder>()),
-      m_nr(nr) {
+      m_path(get_avatar_path(observable, nr)) {
     //load image
     load();
     show();
@@ -37,7 +37,7 @@ WidgetAvatar::WidgetAvatar(BaseObjectType* cobject, gToxBuilder builder,
     : Gtk::Image(cobject),
       gToxObserver(observable),
       m_builder(builder),
-      m_nr(nr) {
+      m_path(get_avatar_path(observable, nr)) {
     //load image
     load();
     show();
@@ -48,20 +48,16 @@ WidgetAvatar::~WidgetAvatar() {
 
 void WidgetAvatar::observer_handle(const ToxEvent& ev) {
     //check if right type..
-    if (ev.type() != typeid(gToxFileRecv::EventFileProgress)) {
+    if (ev.type() != typeid(EventUpdateAvatar)) {
         return;
     }
-    auto data = ev.get<gToxFileRecv::EventFileProgress>();
+    auto data = ev.get<EventUpdateAvatar>();
     //check if we want it..
-    if (data.nr != m_nr || data.file_kind != TOX_FILE_KIND_AVATAR) {
-        return;
-    }
-    //check for progress..
-    if (data.file_position != data.file_size) {
+    if (data.path != m_path) {
         return;
     }
     //load image
-    load(true);
+    load();
 }
 
 void WidgetAvatar::load(bool force_reload) {
@@ -74,12 +70,7 @@ void WidgetAvatar::load(bool force_reload) {
     }
 
     //load avatar from disk !
-    auto addr = (m_nr != ~0u)?tox().get_address(m_nr):tox().get_address();
-    auto avatar_path = Glib::build_filename(Glib::get_user_config_dir(),
-                                            "tox", "avatars",
-                                            Toxmm::to_hex(addr.data(), TOX_PUBLIC_KEY_SIZE) + ".png");
-
-    auto pix = get_avatar(avatar_path, force_reload);
+    auto pix = get_avatar(m_path, force_reload);
 
     //calcualte size
     int w = pix->get_width();
@@ -103,7 +94,7 @@ void WidgetAvatar::set_size_request(int width, int height) {
     load();
 }
 
-Glib::RefPtr<Gdk::Pixbuf> WidgetAvatar::get_avatar(Glib::ustring path, bool force_reload) {
+Glib::RefPtr<Gdk::Pixbuf> WidgetAvatar::get_avatar(Glib::ustring path, bool force_reload, bool use_cache) {
     static auto pix_default = Gdk::Pixbuf::create_from_resource("/org/gtox/icon/avatar.svg");
     static std::map<std::string, Glib::RefPtr<Gdk::Pixbuf>> pix_cache;
 
@@ -145,7 +136,36 @@ Glib::RefPtr<Gdk::Pixbuf> WidgetAvatar::get_avatar(Glib::ustring path, bool forc
     pix = Gdk::Pixbuf::create_subpixbuf(pix, src_x, src_y, 128, 128);
 
     //add to cache
-    pix_cache.insert({path, pix});
+    if (use_cache) {
+        auto pix_iter = pix_cache.find(path);
+        if (pix_iter == pix_cache.end()) {
+            pix_cache.insert({path, pix});
+        } else {
+            pix_iter->second = pix;
+        }
+    }
 
     return pix;
+}
+
+void WidgetAvatar::set_avatar(gToxObservable* observable, Glib::ustring path, Glib::RefPtr<Gdk::Pixbuf> pix) {
+    unlink(path.c_str());
+    if (pix) {
+        pix->save(path, "png");
+    }
+    get_avatar(path, true);
+    observable->observer_notify(
+                ToxEvent(EventUpdateAvatar{
+                             path
+                         }));
+}
+
+Glib::ustring WidgetAvatar::get_avatar_path(gToxObservable* observable, Toxmm::FriendNr nr) {
+    //load avatar from disk !
+    auto addr = (nr != ~0u)?observable->tox().get_address(nr):observable->tox().get_address();
+    auto avatar_path = Glib::build_filename(
+                           Glib::get_user_config_dir(),
+                           "tox", "avatars",
+                           Toxmm::to_hex(addr.data(), TOX_PUBLIC_KEY_SIZE) + ".png");
+    return avatar_path;
 }

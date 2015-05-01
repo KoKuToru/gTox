@@ -19,6 +19,7 @@
 **/
 #include "gToxFileRecv.h"
 #include <iostream>
+#include "Widget/WidgetAvatar.h"
 
 uint64_t operator "" _kib(unsigned long long input) {
     return input*1024;
@@ -35,16 +36,14 @@ gToxFileRecv::gToxFileRecv(gToxObservable* observable,
                 return;
             }
 
-            auto addr = tox().get_address(file.nr);
-            m_path = Glib::build_filename(Glib::get_user_config_dir(),
-                                          "tox", "avatars",
-                                          Toxmm::to_hex(addr.data(), TOX_PUBLIC_KEY_SIZE) + ".png");
+            m_path = WidgetAvatar::get_avatar_path(observable, m_file.nr);
+
             //check if
             m_fd = ::open(m_path.c_str(), O_RDONLY);
             if (m_fd != -1) {
                 if (m_file.file_size == 0) {
                     //Remove avatar
-                    unlink(m_path.c_str());
+                    WidgetAvatar::set_avatar(observable, m_path, Glib::RefPtr<Gdk::Pixbuf>());
                     return;
                 }
                 std::vector<uint8_t> data;
@@ -64,7 +63,7 @@ gToxFileRecv::gToxFileRecv(gToxObservable* observable,
                 auto file_id = tox().file_get_field_id(m_file.nr, m_file.file_number);
                 if (!std::equal(file_id.begin(), file_id.end(), file_id_should.begin())) {
                     //Remove avatar, because it's wrong
-                    unlink(m_path.c_str());
+                    WidgetAvatar::set_avatar(observable, m_path, Glib::RefPtr<Gdk::Pixbuf>());
                 }
             }
         } else {
@@ -118,6 +117,13 @@ void gToxFileRecv::resume() {
                                      m_position,
                                      m_file.file_size
                                  }));
+
+        if (m_file.kind == TOX_FILE_KIND_AVATAR) {
+            WidgetAvatar::set_avatar(observable(),
+                                     m_path,
+                                     WidgetAvatar::get_avatar(m_path, true));
+        }
+
         return;
     }
     tox().file_seek(m_file.nr, m_file.file_number, m_position);

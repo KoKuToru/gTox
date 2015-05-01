@@ -25,6 +25,7 @@
 #include "Widget/Settings/WidgetProfile.h"
 #include "Helper/gToxObserver.h"
 #include "Helper/gToxBuilder.h"
+#include "Widget/WidgetAvatar.h"
 
 class PopoverSettings : public Gtk::Popover, public gToxObserver {
     private:
@@ -33,6 +34,7 @@ class PopoverSettings : public Gtk::Popover, public gToxObserver {
 
         Gtk::Entry* m_username;
         Gtk::Entry* m_status;
+        WidgetAvatar* m_avatar;
 
     public:
         PopoverSettings(gToxObservable* observable,

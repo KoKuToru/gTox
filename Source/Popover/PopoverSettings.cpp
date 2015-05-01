@@ -30,6 +30,7 @@ PopoverSettings::PopoverSettings(gToxObservable* observable,
 
     m_builder.get_widget("profile_username_entry", m_username);
     m_builder.get_widget("profile_statusmessage_entry", m_status);
+    m_avatar = m_builder.get_widget_derived<WidgetAvatar>("profile_avatar", observable, ~0u);
 
     add(*m_builder.get_widget<Gtk::Grid>("popover_settings"));
 
@@ -61,6 +62,45 @@ PopoverSettings::PopoverSettings(gToxObservable* observable,
                                      m_status->get_text()
                                  }));
     };
+
+    m_builder.get_widget<Gtk::Button>("profile_avatar_btn")
+            ->signal_clicked().connect([this, observable](){
+        Gtk::FileChooserDialog dialog(_("PROFILE_AVATAR_SELECT_TITLE"), Gtk::FILE_CHOOSER_ACTION_OPEN);
+        dialog.add_button (Gtk::Stock::OPEN,
+                               Gtk::RESPONSE_ACCEPT);
+        dialog.add_button (Gtk::Stock::CANCEL,
+                           Gtk::RESPONSE_CANCEL);
+
+        Glib::RefPtr<Gtk::FileFilter> filter = Gtk::FileFilter::create();
+        filter->add_pixbuf_formats();
+        filter->set_name(_("IMAGE"));
+        dialog.add_filter (filter);
+
+        Gtk::Image image;
+        image.set(WidgetAvatar::get_avatar(""));
+        dialog.set_preview_widget(image);
+
+        dialog.signal_update_preview().connect([&dialog, &image](){
+            auto uri = dialog.get_preview_uri();
+            if (uri.empty()) {
+                image.hide();
+                return;
+            }
+            if (Glib::str_has_prefix(uri, "file://")) {
+                image.set(WidgetAvatar::get_avatar(uri.substr(7), true, false));
+                image.show();
+            }
+        });
+
+        const int response = dialog.run();
+        if (response == Gtk::RESPONSE_ACCEPT) {
+            WidgetAvatar::set_avatar(observable,
+                                     WidgetAvatar::get_avatar_path(observable),
+                                     image.get_pixbuf());
+        }
+
+        dialog.hide();
+    });
 
     m_username->signal_focus_out_event().connect_notify(update);
     m_status  ->signal_focus_out_event().connect_notify(update);

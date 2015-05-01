@@ -27,7 +27,7 @@
 class WidgetAvatar : public Gtk::Image, public gToxObserver {
     private:
         gToxBuilder m_builder;
-        Toxmm::FriendNr m_nr;
+        Glib::ustring m_path;
 
         void load(bool force_reload=false);
 
@@ -42,10 +42,17 @@ class WidgetAvatar : public Gtk::Image, public gToxObserver {
 
         void set_size_request(int width =  -1, int height =  -1);
 
+        static Glib::RefPtr<Gdk::Pixbuf> get_avatar(Glib::ustring path, bool force_reload =  false, bool use_cache =  true);
+        static void set_avatar(gToxObservable* observable, Glib::ustring path, Glib::RefPtr<Gdk::Pixbuf> pix);
+        static Glib::ustring get_avatar_path(gToxObservable* observable, Toxmm::FriendNr nr =  ~0u);
+
+        class EventUpdateAvatar {
+            public:
+                Glib::ustring path;
+        };
+
     protected:
         void observer_handle(const ToxEvent&) override;
-
-        Glib::RefPtr<Gdk::Pixbuf> get_avatar(Glib::ustring path, bool force_reload=false);
 };
 
 #endif
