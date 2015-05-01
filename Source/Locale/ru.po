@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-04-26 17:45+0200\n"
+"POT-Creation-Date: 2015-05-01 16:19+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -16,7 +16,7 @@ msgstr ""
 "X-Source-Language: C\n"
 "X-Generator: Poedit 1.7.5\n"
 
-#: Layout/popover_settings.ui:128
+#: Layout/popover_settings.ui:130
 msgid ""
 "<span font_desc=\"mono\">DD5EFC02E70A0F6D\n"
 "032FB5904F956F1A\n"
@@ -161,6 +161,10 @@ msgstr "%1"
 msgid "IGNORE"
 msgstr ""
 
+#: Popover/PopoverSettings.cpp:76
+msgid "IMAGE"
+msgstr ""
+
 #: Popover/PopoverAddContact.cpp:34 Widget/Settings/WidgetProfile.cpp:55
 msgid "MESSAGE"
 msgstr "Сообщение"
@@ -173,6 +177,20 @@ msgstr "Доступен"
 #: Layout/dialog_profile.ui:93
 msgid "PROFILE_ABORT"
 msgstr "Выход"
+
+#. Click here to change avatar, right click to remove
+#: Layout/popover_settings.ui:51
+msgid "PROFILE_AVATAR_HELP"
+msgstr ""
+
+#: Popover/PopoverSettings.cpp:68
+msgid "PROFILE_AVATAR_SELECT_TITLE"
+msgstr ""
+
+#. Copies tox id into clipboard
+#: Layout/popover_settings.ui:107
+msgid "PROFILE_COPY_TOX_ID"
+msgstr ""
 
 #: Layout/list_item_profile.ui:62
 msgid "PROFILE_CORRUPTED"
@@ -201,7 +219,7 @@ msgstr "Настройки"
 msgid "PROFILE_SELECT"
 msgstr "Выбрать"
 
-#: Layout/popover_settings.ui:80
+#: Layout/popover_settings.ui:81
 msgid "PROFILE_STATUSMESSAGE"
 msgstr "Статусное сообщение"
 
@@ -213,11 +231,11 @@ msgstr "Выбор профиля"
 msgid "PROFILE_TITLE"
 msgstr "gTox"
 
-#: Layout/popover_settings.ui:93
+#: Layout/popover_settings.ui:94
 msgid "PROFILE_TOX_ID"
 msgstr "Tox-ID"
 
-#: Layout/popover_settings.ui:67
+#: Layout/popover_settings.ui:68
 msgid "PROFILE_USERNAME"
 msgstr "Имя"
 
@@ -271,6 +289,62 @@ msgstr ""
 #: Tox/ToxException.cpp:79
 msgid "TOX_ERR_BOOTSTRAP_NULL"
 msgstr "TOX_ERR_BOOTSTRAP_NULL"
+
+#: Tox/ToxException.cpp:231
+msgid "TOX_ERR_FILE_CONTROL_ALREADY_PAUSED"
+msgstr ""
+
+#: Tox/ToxException.cpp:230
+msgid "TOX_ERR_FILE_CONTROL_DENIED"
+msgstr ""
+
+#: Tox/ToxException.cpp:227
+msgid "TOX_ERR_FILE_CONTROL_FRIEND_NOT_CONNECTED"
+msgstr ""
+
+#: Tox/ToxException.cpp:226
+msgid "TOX_ERR_FILE_CONTROL_FRIEND_NOT_FOUND"
+msgstr ""
+
+#: Tox/ToxException.cpp:228
+msgid "TOX_ERR_FILE_CONTROL_NOT_FOUND"
+msgstr ""
+
+#: Tox/ToxException.cpp:229
+msgid "TOX_ERR_FILE_CONTROL_NOT_PAUSED"
+msgstr ""
+
+#: Tox/ToxException.cpp:232
+msgid "TOX_ERR_FILE_CONTROL_SENDQ"
+msgstr ""
+
+#: Tox/ToxException.cpp:262
+msgid "TOX_ERR_FILE_GET_FRIEND_NOT_FOUND"
+msgstr ""
+
+#: Tox/ToxException.cpp:263
+msgid "TOX_ERR_FILE_GET_NOT_FOUND"
+msgstr ""
+
+#: Tox/ToxException.cpp:248
+msgid "TOX_ERR_FILE_SEEK_DENIED"
+msgstr ""
+
+#: Tox/ToxException.cpp:246
+msgid "TOX_ERR_FILE_SEEK_FRIEND_NOT_CONNECTED"
+msgstr ""
+
+#: Tox/ToxException.cpp:245
+msgid "TOX_ERR_FILE_SEEK_FRIEND_NOT_FOUND"
+msgstr ""
+
+#: Tox/ToxException.cpp:249
+msgid "TOX_ERR_FILE_SEEK_INVALID_POSITION"
+msgstr ""
+
+#: Tox/ToxException.cpp:247
+msgid "TOX_ERR_FILE_SEEK_NOT_FOUND"
+msgstr ""
 
 #: Tox/ToxException.cpp:98
 msgid "TOX_ERR_FRIEND_ADD_ALREADY_SENT"
