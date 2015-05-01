@@ -43,6 +43,17 @@ WidgetAvatar::WidgetAvatar(BaseObjectType* cobject, gToxBuilder builder,
     show();
 }
 
+WidgetAvatar::WidgetAvatar(BaseObjectType* cobject, gToxBuilder builder,
+                           const Glib::ustring& path) :
+    Gtk::Image(cobject),
+    gToxObserver(nullptr),
+    m_builder(Glib::RefPtr<Gtk::Builder>()),
+    m_path(path) {
+    //load image
+    load();
+    show();
+}
+
 WidgetAvatar::~WidgetAvatar() {
 }
 
@@ -71,20 +82,6 @@ void WidgetAvatar::load(bool force_reload) {
 
     //load avatar from disk !
     auto pix = get_avatar(m_path, force_reload);
-
-    //calcualte size
-    int w = pix->get_width();
-    int h = pix->get_height();
-    if (w < h) {
-        h = h * widget_w / w;
-        w = widget_w;
-    } else {
-        w = w * widget_h / h;
-        h = widget_h;
-    }
-
-    //scale
-    pix = pix->scale_simple(w, h ,Gdk::INTERP_BILINEAR);
 
     set(pix);
 }
@@ -168,4 +165,90 @@ Glib::ustring WidgetAvatar::get_avatar_path(gToxObservable* observable, Toxmm::F
                            "tox", "avatars",
                            Toxmm::to_hex(addr.data(), TOX_PUBLIC_KEY_SIZE) + ".png");
     return avatar_path;
+}
+
+bool WidgetAvatar::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
+    Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
+
+    int w = get_allocated_width();
+    int h = get_allocated_height();
+
+    auto surface = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, w * get_scale_factor(), h * get_scale_factor());
+    auto tmp_cr = Cairo::Context::create(surface);
+    tmp_cr->scale(get_scale_factor(), get_scale_factor());
+
+    // Render image
+    Glib::RefPtr<Gdk::Pixbuf> pix = property_pixbuf();
+    if (pix) {
+        tmp_cr->save();
+        double pw = pix->get_width();
+        double ph = pix->get_height();
+        tmp_cr->scale(w/pw, h/ph);
+        Gdk::Cairo::set_source_pixbuf(tmp_cr, pix);
+        tmp_cr->paint();
+        tmp_cr->restore();
+    }
+
+    // Render the background
+    tmp_cr->set_operator(Cairo::OPERATOR_DEST_ATOP);
+    style->render_background(tmp_cr, 0, 0, w, h);
+
+    // Change to default operator
+    tmp_cr->set_operator(Cairo::OPERATOR_OVER);
+
+    // Render frame
+    style->render_frame(tmp_cr, 0, 0, w, h);
+
+    // Render to the right surface
+    cr->scale(1.0/get_scale_factor(), 1.0/get_scale_factor());
+    cr->set_source(surface, 0, 0);
+    cr->paint();
+
+    return false;
+}
+
+Gtk::SizeRequestMode WidgetAvatar::get_request_mode_vfunc() const {
+    return Gtk::SIZE_REQUEST_HEIGHT_FOR_WIDTH;
+}
+
+void WidgetAvatar::get_preferred_width_vfunc(int& minimum_width,
+                                             int& natural_width) const {
+    Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
+    auto padding = style->get_padding();
+
+    minimum_width = 0;
+    natural_width = 0;
+
+    Glib::RefPtr<Gdk::Pixbuf> pix = property_pixbuf();
+    if (pix) {
+        int ignore = 0;
+        get_size_request(minimum_width, ignore);
+        minimum_width = std::max(minimum_width, 0);
+        natural_width = minimum_width;
+
+    }
+
+    minimum_width += padding.get_left() + padding.get_right();
+    natural_width += padding.get_left() + padding.get_right();
+}
+
+void WidgetAvatar::get_preferred_height_vfunc(int& minimum_height,
+                                              int& natural_height) const {
+    Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
+    auto padding = style->get_padding();
+
+    minimum_height = 0;
+    natural_height = 0;
+
+    Glib::RefPtr<Gdk::Pixbuf> pix = property_pixbuf();
+    if (pix) {
+        int ignore = 0;
+        get_size_request(ignore, minimum_height);
+        minimum_height = std::max(minimum_height, 0);
+        natural_height = minimum_height;
+
+    }
+
+    minimum_height += padding.get_top() + padding.get_bottom();
+    natural_height += padding.get_top() + padding.get_bottom();
 }

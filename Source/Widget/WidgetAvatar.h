@@ -37,6 +37,8 @@ class WidgetAvatar : public Gtk::Image, public gToxObserver {
         WidgetAvatar(BaseObjectType* cobject, gToxBuilder builder,
                      gToxObservable* observable,
                      Toxmm::FriendNr nr);
+        WidgetAvatar(BaseObjectType* cobject, gToxBuilder builder,
+                     const Glib::ustring& path);
 
         ~WidgetAvatar();
 
@@ -53,6 +55,12 @@ class WidgetAvatar : public Gtk::Image, public gToxObserver {
 
     protected:
         void observer_handle(const ToxEvent&) override;
+        bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
+        Gtk::SizeRequestMode get_request_mode_vfunc() const override;
+        void get_preferred_width_vfunc(int& minimum_width,
+                                       int& natural_width) const override;
+        void get_preferred_height_vfunc(int& minimum_height,
+                                        int& natural_height) const override;
 };
 
 #endif
