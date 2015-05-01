@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-05-01 16:19+0200\n"
+"POT-Creation-Date: 2015-05-02 00:10+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -186,11 +186,11 @@ msgstr ""
 msgid "PROFILE_COPY_TOX_ID"
 msgstr ""
 
-#: Layout/list_item_profile.ui:62
+#: Layout/list_item_profile.ui:63
 msgid "PROFILE_CORRUPTED"
 msgstr "Profile couldn't be loaded"
 
-#: Layout/list_item_profile.ui:44
+#: Layout/list_item_profile.ui:45
 msgid "PROFILE_CORRUPTED_TITLE"
 msgstr "Corrupted profile"
 
@@ -217,11 +217,11 @@ msgstr "Select"
 msgid "PROFILE_STATUSMESSAGE"
 msgstr "Message"
 
-#: Dialog/DialogProfile.cpp:42
+#: Dialog/DialogProfile.cpp:43
 msgid "PROFILE_SUBTITLE"
 msgstr "Select profile"
 
-#: Dialog/DialogProfile.cpp:36 Dialog/DialogProfile.cpp:41
+#: Dialog/DialogProfile.cpp:37 Dialog/DialogProfile.cpp:42
 msgid "PROFILE_TITLE"
 msgstr "gTox"
 
