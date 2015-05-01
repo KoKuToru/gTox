@@ -363,7 +363,7 @@ void WidgetChat::add_line(bool left_side, WidgetChatLine::Line new_line) {
 
     if (!action) {
         // add new line
-        auto new_bubble = Gtk::manage(new WidgetChatLine(observable(), left_side));
+        auto new_bubble = Gtk::manage(new WidgetChatLine(observable(), left_side?m_nr:~0u, left_side));
         new_bubble->add_line(new_line);
         new_bubble->show_all();
         m_vbox.pack_start(*new_bubble, false, false);

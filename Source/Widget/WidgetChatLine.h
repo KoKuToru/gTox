@@ -25,6 +25,7 @@
 #include <vector>
 #include "Tox/Toxmm.h"
 #include "Helper/gToxObserver.h"
+#include "Widget/WidgetAvatar.h"
 
 class WidgetChatLabel;
 
@@ -37,14 +38,14 @@ class WidgetChatLine : public Gtk::Box, public gToxObserver {
     unsigned long long m_last_timestamp;
 
     Gtk::Grid m_grid;
-    Gtk::Image m_avatar;
+    WidgetAvatar m_avatar;
 
     void on_size_allocate(Gtk::Allocation& allocation);
 
     std::vector<WidgetChatBubbleRow> rows;
 
   public:
-    WidgetChatLine(gToxObservable* observable, bool side);
+    WidgetChatLine(gToxObservable* observable, Toxmm::FriendNr nr, bool side);
     ~WidgetChatLine();
 
     bool get_side();

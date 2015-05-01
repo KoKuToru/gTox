@@ -84,6 +84,7 @@ set(SOURCES
     Widget/Settings/WidgetAudioVideo.cpp
     Widget/WidgetNotification.cpp
     Widget/VideoPlayer.cpp
+    Widget/WidgetAvatar.cpp
     Tox/Toxmm.cpp
     Tox/ToxDatabase.cpp
     Tox/ToxEvent.cpp

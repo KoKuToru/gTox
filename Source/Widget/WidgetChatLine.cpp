@@ -21,8 +21,8 @@
 #include "Chat/WidgetChatLabel.h"
 #include "Tox/Toxmm.h"
 
-WidgetChatLine::WidgetChatLine(gToxObservable* instance, bool left_side)
-    : Glib::ObjectBase("WidgetChatLine"), m_side(left_side), m_row_count(0) {
+WidgetChatLine::WidgetChatLine(gToxObservable* instance, Toxmm::FriendNr nr, bool left_side)
+    : Glib::ObjectBase("WidgetChatLine"), m_side(left_side), m_row_count(0), m_avatar(instance, nr) {
 
     set_observable(instance);
 
@@ -45,7 +45,7 @@ WidgetChatLine::WidgetChatLine(gToxObservable* instance, bool left_side)
     frame->add(m_grid);
 
     m_avatar.set_name("Avatar");
-    m_avatar.set_size_request(64, 0);
+    m_avatar.set_size_request(0, 0);
     m_avatar.property_xalign() = m_side ? 1 : 0;
     m_avatar.property_yalign() = m_side ? 1 : 0;
 //    m_avatar.set_tooltip_text("TODO Display name here..");
@@ -159,26 +159,15 @@ void WidgetChatLine::add_line(Line new_line) {
 }
 
 void WidgetChatLine::on_size_allocate(Gtk::Allocation& allocation) {
-    int h = allocation.get_height() - 5 /*5px radius*/;
-    auto ic = Gdk::Pixbuf::create_from_resource("/org/gtox/icon/avatar.svg");
-    if (h < ic->get_height()) {
-        m_avatar.set_size_request(64, h);
-        m_avatar.clear();
-        m_avatar.property_pixbuf()
-            = Gdk::Pixbuf::create_from_resource("/org/gtox/icon/avatar.svg")
-                  ->scale_simple(h, h, Gdk::INTERP_BILINEAR);
-        // force allocation (is this a bug ? why do I need to do this =?
-        Gtk::Allocation al = m_avatar.get_allocation();
-        al.set_y(al.get_height() - h);
-        al.set_height(h);
-    } else {
-        // TODO check if already done..
-        h = ic->get_height();
-        m_avatar.set_size_request(64, h);
-        m_avatar.clear();
-        m_avatar.property_pixbuf() = Gdk::Pixbuf::create_from_resource("/org/gtox/icon/avatar.svg");
+    int w = std::min(64, allocation.get_height() - 5); //5px radius
+
+    //update widget size:
+    if (w != m_avatar.get_width()) {
+        Glib::signal_idle().connect_once([this, w](){
+            m_avatar.set_size_request(w, w);
+        });
     }
-    // Important to do last !
+
     Gtk::Box::on_size_allocate(allocation);
 }
 

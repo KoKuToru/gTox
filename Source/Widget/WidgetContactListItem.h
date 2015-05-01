@@ -25,12 +25,13 @@
 #include "Dialog/DialogChat.h"
 #include <libnotifymm.h>
 #include "Helper/gToxObserver.h"
+#include "Widget/WidgetAvatar.h"
 
 class WidgetContact;
 class WidgetContactListItem : public Gtk::ListBoxRow, public gToxObserver {
   private:
     gToxBuilder m_builder;
-    Gtk::Image* m_avatar;
+    WidgetAvatar* m_avatar;
     Gtk::Label* m_name;
     Gtk::Label* m_status_msg;
     Gtk::Image* m_status_icon;

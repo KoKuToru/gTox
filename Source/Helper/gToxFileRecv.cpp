@@ -20,11 +20,21 @@
 #include "gToxFileRecv.h"
 #include <iostream>
 
+uint64_t operator "" _kib(unsigned long long input) {
+    return input*1024;
+}
+
 gToxFileRecv::gToxFileRecv(gToxObservable* observable,
                            Toxmm::EventFileRecv file)
     : gToxObserver(observable), m_file(file) {
     try {
         if (m_file.kind == TOX_FILE_KIND_AVATAR) {
+            if (m_file.file_size > 65_kib) {
+                //ignore file !
+                cancel();
+                return;
+            }
+
             auto addr = tox().get_address(file.nr);
             m_path = Glib::build_filename(Glib::get_user_config_dir(),
                                           "tox", "avatars",
@@ -32,6 +42,11 @@ gToxFileRecv::gToxFileRecv(gToxObservable* observable,
             //check if
             m_fd = ::open(m_path.c_str(), O_RDONLY);
             if (m_fd != -1) {
+                if (m_file.file_size == 0) {
+                    //Remove avatar
+                    unlink(m_path.c_str());
+                    return;
+                }
                 std::vector<uint8_t> data;
 
                 while(true) {
@@ -43,11 +58,12 @@ gToxFileRecv::gToxFileRecv(gToxObservable* observable,
                     std::copy(buf, buf + r, std::back_inserter(data));
                 }
                 close(m_fd);
+                m_fd = -1;
 
                 auto file_id_should = tox().hash(data);
                 auto file_id = tox().file_get_field_id(m_file.nr, m_file.file_number);
                 if (!std::equal(file_id.begin(), file_id.end(), file_id_should.begin())) {
-                    //Remove avatar
+                    //Remove avatar, because it's wrong
                     unlink(m_path.c_str());
                 }
             }
@@ -86,9 +102,9 @@ void gToxFileRecv::resume() {
     if (m_state != PAUSED) {
         return;
     }
-    m_state = PAUSED;
+    m_state = RECVING;
     if (m_file.file_size == m_position) {
-        m_state = STOPPED;
+        cancel();
 
         std::clog << "Friend " << m_file.nr <<
                      " File " << m_file.file_number <<
@@ -120,7 +136,7 @@ void gToxFileRecv::pause() {
     if (m_state != RECVING) {
         return;
     }
-    m_state = RECVING;
+    m_state = PAUSED;
     tox().file_control(m_file.nr, m_file.file_number, TOX_FILE_CONTROL_PAUSE);
 }
 

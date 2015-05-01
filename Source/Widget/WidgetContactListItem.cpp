@@ -99,13 +99,15 @@ WidgetContactListItem::WidgetContactListItem(BaseObjectType* cobject, gToxBuilde
       m_friend_nr(nr),
       m_for_notify(for_notify) {
 
-    m_builder.get_widget("avatar", m_avatar);
+    //m_builder.get_widget("avatar", m_avatar);
+    m_avatar = m_builder.get_widget_derived<WidgetAvatar>("avatar", observable, nr);
     m_builder.get_widget("name", m_name);
     m_builder.get_widget("status", m_status_msg);
     m_builder.get_widget("status_icon", m_status_icon);
     m_builder.get_widget("spinner", m_spin);
     m_spin->stop();
 
+    /*
     auto addr = tox().get_address(nr);
     auto avatar_path = Glib::build_filename(Glib::get_user_config_dir(),
                                             "tox", "avatars",
@@ -120,7 +122,7 @@ WidgetContactListItem::WidgetContactListItem(BaseObjectType* cobject, gToxBuilde
                           use_mini(this, m_for_notify)?32:64,
                           use_mini(this, m_for_notify)?32:64,
                           Gdk::INTERP_BILINEAR));
-    }
+    }*/
     refresh();
 
     if (!for_notify) {
