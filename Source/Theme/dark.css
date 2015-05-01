@@ -13,6 +13,10 @@
     color: gray;
 }
 
+.gtox-contact-avatar, .gtox-profile-avatar {
+	background: rgba(50, 50, 50, 1);
+}
+
 .gtox-profile:selected {
     background-color: rgba(255,255,255,0.2);
 }
@@ -69,14 +73,21 @@
     background-color: rgba(0,0,0,0.2);
 }
 
-.gtox-bubble.gtox-left {
+.gtox-left .gtox-bubble {
     border-top-left-radius: 0;
 }
 
-.gtox-bubble.gtox-right {
+.gtox-right .gtox-bubble {
     border-bottom-right-radius: 0;
 }
 
+.gtox-right #Avatar {
+	background: rgba(50, 50, 50, 1);
+}
+
+.gtox-left #Avatar {
+	background: rgba(50, 50, 50, 1);
+}
 
 .message_receipt {
 	opacity: 1;

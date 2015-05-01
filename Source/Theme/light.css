@@ -13,6 +13,10 @@
     color: gray;
 }
 
+.gtox-contact-avatar, .gtox-profile-avatar {
+	background: rgba(240, 240, 240, 1);
+}
+
 .gtox-profile:selected {
     background-color: rgba(0,0,0,0.2);
     color: black;
@@ -75,27 +79,34 @@
     background-color: rgba(0,0,0,0.2);
 }
 
-.gtox-bubble.gtox-left {
+.gtox-left .gtox-bubble {
     border-top-left-radius: 0;
 }
 
-.gtox-bubble.gtox-right {
+.gtox-right .gtox-bubble {
     border-bottom-right-radius: 0;
 }
 
+.gtox-right #Avatar {
+	background: rgba(0, 0, 0, 0.2);
+}
+
+.gtox-left #Avatar {
+	background: rgba(0, 0, 0, 0.2);
+}
 
 .message_receipt {
 	opacity: 1;
 }
 
 .message_pending {
-    background: rgba(0,0,0,0.3);
+    background: rgba(240, 240, 240, 1);
 	opacity: 0.3;
 }
 
 .message_failed {
 	opacity: 0.3;
-	background: rgba(255,0,0,0.3);
+	background: rgba(240, 240, 240, 1);
 }
 
 .bubble_chat_line {

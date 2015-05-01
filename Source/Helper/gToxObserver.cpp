@@ -31,9 +31,11 @@ Toxmm& gToxObserver::tox() {
 void gToxObserver::set_observable(gToxObservable* observable) {
     m_observable = observable;
     //install myself
-    m_virtual_handler = observer_add([this](const ToxEvent& e){
-        observer_handle(e);
-    });
+    if (m_observable != nullptr) {
+        m_virtual_handler = observer_add([this](const ToxEvent& e){
+            observer_handle(e);
+        });
+    }
 }
 
 gToxObserver::gToxObserver() {

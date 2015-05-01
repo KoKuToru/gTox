@@ -30,7 +30,8 @@
                     <property name="can_focus">False</property>
                     <property name="halign">center</property>
                     <style>
-                      <class name="gtk-contact-avatar"/>
+                      <class name="frame"/>
+                      <class name="gtox-contact-avatar"/>
                     </style>
                   </object>
                   <packing>
