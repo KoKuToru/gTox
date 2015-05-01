@@ -107,22 +107,6 @@ WidgetContactListItem::WidgetContactListItem(BaseObjectType* cobject, gToxBuilde
     m_builder.get_widget("spinner", m_spin);
     m_spin->stop();
 
-    /*
-    auto addr = tox().get_address(nr);
-    auto avatar_path = Glib::build_filename(Glib::get_user_config_dir(),
-                                            "tox", "avatars",
-                                            Toxmm::to_hex(addr.data(), TOX_PUBLIC_KEY_SIZE) + ".png");
-    if (!Glib::file_test(avatar_path, Glib::FILE_TEST_IS_REGULAR)) {
-        m_avatar->set(Gdk::Pixbuf::create_from_resource("/org/gtox/icon/avatar.svg")->scale_simple(
-                          use_mini(this, m_for_notify)?32:64,
-                          use_mini(this, m_for_notify)?32:64,
-                          Gdk::INTERP_BILINEAR));
-    } else {
-        m_avatar->set(Gdk::Pixbuf::create_from_file(avatar_path)->scale_simple(
-                          use_mini(this, m_for_notify)?32:64,
-                          use_mini(this, m_for_notify)?32:64,
-                          Gdk::INTERP_BILINEAR));
-    }*/
     refresh();
 
     if (!for_notify) {
