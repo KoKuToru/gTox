@@ -155,8 +155,10 @@ void PopoverSettings::set_visible(bool visible) {
 }
 
 void PopoverSettings::add_contact() {
+    Gtk::Window& parent = dynamic_cast<Gtk::Window&>(*this->get_toplevel());
+
     if (m_add_contact.tox_id->get_text().length() != TOX_ADDRESS_SIZE * 2) {
-        DialogError(false,
+        DialogError(parent, false,
                     _("ERROR_ADD_CONTACT_ADDR_WRONG_SIZE_TITLE"),
                     _("ERROR_ADD_CONTACT_ADDR_WRONG_SIZE")).run();
         return;
@@ -178,32 +180,32 @@ void PopoverSettings::add_contact() {
         }
         switch(ex.what_id()) {
             case TOX_ERR_FRIEND_ADD_NO_MESSAGE:
-                DialogError(false,
+                DialogError(parent, false,
                             _("TOX_ERR_FRIEND_ADD_NO_MESSAGE_UI_TITLE"),
                             _("TOX_ERR_FRIEND_ADD_NO_MESSAGE_UI")).run();
                 break;
             case TOX_ERR_FRIEND_ADD_BAD_CHECKSUM:
-                DialogError(false,
+                DialogError(parent, false,
                             _("TOX_ERR_FRIEND_ADD_BAD_CHECKSUM_UI_TITLE"),
                             _("TOX_ERR_FRIEND_ADD_BAD_CHECKSUM_UI")).run();
                 break;
             case TOX_ERR_FRIEND_ADD_ALREADY_SENT:
-                DialogError(false,
+                DialogError(parent, false,
                             _("TOX_ERR_FRIEND_ADD_ALREADY_SENT_UI_TITLE"),
                             _("TOX_ERR_FRIEND_ADD_ALREADY_SENT_UI")).run();
                 break;
             case TOX_ERR_FRIEND_ADD_OWN_KEY:
-                DialogError(false,
+                DialogError(parent, false,
                             _("TOX_ERR_FRIEND_ADD_OWN_KEY_UI_TITLE"),
                             _("TOX_ERR_FRIEND_ADD_OWN_KEY_UI")).run();
                 break;
             case TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM:
-                DialogError(false,
+                DialogError(parent, false,
                             _("TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM_UI_TITLE"),
                             _("TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM_UI")).run();
                 break;
             case TOX_ERR_FRIEND_ADD_TOO_LONG:
-                DialogError(false,
+                DialogError(parent, false,
                             _("TOX_ERR_FRIEND_ADD_TOO_LONG_UI_TITLE"),
                             _("TOX_ERR_FRIEND_ADD_TOO_LONG_UI")).run();
                 break;

@@ -23,6 +23,18 @@
 #include <execinfo.h>
 #include <cxxabi.h>
 
+DialogError::DialogError(Gtk::Window& parent,bool fatal,std::string title, std::string message):
+    MessageDialog(parent, title, false, fatal?Gtk::MESSAGE_ERROR:Gtk::MESSAGE_WARNING, Gtk::BUTTONS_CLOSE, true) {
+    set_secondary_text(((fatal)?_("ERROR_REPORT_TEXT_INTRO"):"")
+                       + Glib::Markup::escape_text(message)
+                       + ((fatal)?(Glib::Markup::escape_text("\n\n" + get_stacktrace())
+                                   + _("ERROR_REPORT_TEXT_OUTRO")):""), true);
+
+    if (fatal) {
+        add_button(_("ERROR_REPORT_BTN"), 213);
+    }
+}
+
 DialogError::DialogError(bool fatal,std::string title, std::string message):
     MessageDialog(title, false, fatal?Gtk::MESSAGE_ERROR:Gtk::MESSAGE_WARNING, Gtk::BUTTONS_CLOSE, true) {
     set_secondary_text(((fatal)?_("ERROR_REPORT_TEXT_INTRO"):"")

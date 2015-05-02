@@ -30,6 +30,7 @@ class DialogError : public Gtk::MessageDialog {
     std::string get_stacktrace();
 
   public:
+    DialogError(Gtk::Window& parent, bool fatal, std::string title, std::string message);
     DialogError(bool fatal, std::string title, std::string message);
     ~DialogError();
 
