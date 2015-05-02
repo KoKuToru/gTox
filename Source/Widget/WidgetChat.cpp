@@ -39,6 +39,7 @@ WidgetChat::WidgetChat(gToxObservable* instance, Toxmm::FriendNr nr)
     auto frame = Gtk::manage(new Gtk::Frame());
     frame->add(m_scrolled);
     pack1(*frame, true, false);
+    frame->get_style_context()->remove_class("frame");
     // pack2(input, false, true);
 
     m_btn_send.set_label(_("SEND"));

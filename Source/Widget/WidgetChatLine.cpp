@@ -26,7 +26,8 @@ WidgetChatLine::WidgetChatLine(gToxObservable* instance, Toxmm::FriendNr nr, boo
 
     set_observable(instance);
 
-    this->set_halign(m_side ? Gtk::Align::ALIGN_START : Gtk::Align::ALIGN_END);
+    set_halign(m_side ? Gtk::Align::ALIGN_START : Gtk::Align::ALIGN_END);
+    get_style_context()->add_class(m_side ? "gtox-left" : "gtox-right");
 
     auto hbox = Gtk::manage(new Gtk::HBox());
     auto frame = Gtk::manage(new Gtk::Frame());
@@ -49,9 +50,9 @@ WidgetChatLine::WidgetChatLine(gToxObservable* instance, Toxmm::FriendNr nr, boo
     m_avatar.property_xalign() = m_side ? 1 : 0;
     m_avatar.property_yalign() = m_side ? 1 : 0;
 //    m_avatar.set_tooltip_text("TODO Display name here..");
+    m_avatar.get_style_context()->add_class("frame");
 
     frame->get_style_context()->add_class("gtox-bubble");
-    frame->get_style_context()->add_class(m_side ? "gtox-left" : "gtox-right");
 
     show_all();
 

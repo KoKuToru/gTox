@@ -41,6 +41,10 @@
     padding-left: 10px;
 }
 
+.gtox-contact-avatar, .gtox-profile-avatar {
+	border-radius: 5px;
+}
+
 /**
     Popovers
 **/
@@ -77,14 +81,23 @@ GtkListBoxRow {
     background-color: rgba(0,0,0,0.2);
 }
 
-.gtox-bubble.gtox-left {
+.gtox-left .gtox-bubble {
     border-top-left-radius: 0;
 }
 
-.gtox-bubble.gtox-right {
+.gtox-right .gtox-bubble {
     border-bottom-right-radius: 0;
 }
 
+.gtox-right #Avatar {
+	border-left: none;
+	border-radius: 0px 5px 5px 0px;
+}
+
+.gtox-left #Avatar {
+	border-right: none;
+	border-radius: 5px 0px 0px 5px;
+}
 
 .bubble_chat_line {
 	background: transparent;

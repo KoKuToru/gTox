@@ -22,6 +22,7 @@
 #include <iostream>
 #include <Tox/Toxmm.h>
 #include "glib/gthread.h"
+#include "Widget/WidgetAvatar.h"
 
 namespace sigc {
     SIGC_FUNCTORS_DEDUCE_RESULT_TYPE_WITH_DECLTYPE
@@ -111,37 +112,25 @@ void DialogProfile::set_accounts(const std::vector<std::string>& accounts) {
                     tox_okay = false;
                 }
 
-                m_events.push_back(Glib::signal_idle().connect([list, tox_name, acc, tox_status, tox_okay, can_write, tox_addr](){
-                    auto builder = Gtk::Builder::create_from_resource("/org/gtox/ui/list_item_profile.ui");
+                auto avatar_path = Glib::build_filename(Glib::get_user_config_dir(),
+                                                        "tox", "avatars",
+                                                        Toxmm::to_hex(tox_addr.data(), TOX_PUBLIC_KEY_SIZE) + ".png");
+
+                m_events.push_back(Glib::signal_idle().connect([list, tox_name, acc, tox_status, tox_okay, can_write, tox_addr, avatar_path](){
+                    gToxBuilder builder = Gtk::Builder::create_from_resource("/org/gtox/ui/list_item_profile.ui");
                     Gtk::ListBoxRow* row = nullptr;
                     builder->get_widget("pofile_list_item", row);
                     if (row) {
                         Gtk::Label* name = nullptr;
                         Gtk::Label* status = nullptr;
                         Gtk::Label* path = nullptr;
-                        Gtk::Image* avatar = nullptr;
-                        builder->get_widget("name", name);
-                        builder->get_widget("status", status);
-                        builder->get_widget("path", path);
-                        builder->get_widget("avatar", avatar);
+                        WidgetAvatar* avatar = nullptr;
+                        builder.get_widget("name", name);
+                        builder.get_widget("status", status);
+                        builder.get_widget("path", path);
+                        avatar = builder.get_widget_derived<WidgetAvatar>("avatar", avatar_path);
+
                         if (name && status && path && avatar) {
-
-                            auto avatar_path = Glib::build_filename(Glib::get_user_config_dir(),
-                                                                    "tox", "avatars",
-                                                                    Toxmm::to_hex(tox_addr.data(), TOX_PUBLIC_KEY_SIZE) + ".png");
-
-                            if (!Glib::file_test(avatar_path, Glib::FILE_TEST_IS_REGULAR)) {
-                                avatar->set(Gdk::Pixbuf::create_from_resource("/org/gtox/icon/avatar.svg")->scale_simple(
-                                                72,
-                                                72,
-                                                Gdk::INTERP_BILINEAR));
-                            } else {
-                                avatar->set(Gdk::Pixbuf::create_from_file(avatar_path)->scale_simple(
-                                                72,
-                                                72,
-                                                Gdk::INTERP_BILINEAR));
-                            }
-
                             path->set_text(acc);
                             row->set_sensitive(false);
                             if (tox_okay) {
