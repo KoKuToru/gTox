@@ -32,7 +32,8 @@ PopoverSettings::PopoverSettings(gToxObservable* observable,
     m_builder.get_widget("profile_statusmessage_entry", m_status);
     m_avatar = m_builder.get_widget_derived<WidgetAvatar>("profile_avatar", observable, ~0u);
 
-    add(*m_builder.get_widget<Gtk::Grid>("popover_settings"));
+    //add(*m_builder.get_widget<Gtk::Grid>("popover_settings"));
+    add(*m_builder.get_widget<Gtk::Stack>("popover_stack"));
 
     std::string hex = Toxmm::to_hex(tox().get_address().data(),
                                     tox().get_address().size());

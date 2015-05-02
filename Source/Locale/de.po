@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-05-02 00:10+0200\n"
+"POT-Creation-Date: 2015-05-02 13:04+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 1.7.5\n"
 
-#: Layout/popover_settings.ui:130
+#: Layout/popover_settings.ui:135
 msgid ""
 "<span font_desc=\"mono\">DD5EFC02E70A0F6D\n"
 "032FB5904F956F1A\n"
@@ -45,7 +45,15 @@ msgstr "<i>Dieses Programm kommt OHNE JEDWEDE GARANTIE.</i>"
 
 #: Popover/PopoverAddContact.cpp:35
 msgid "ADD"
-msgstr "Hinzufügen"
+msgstr ""
+
+#: Layout/popover_settings.ui:221
+msgid "ADD_CONTACT_MESSAGE"
+msgstr "Nachricht"
+
+#: Layout/popover_settings.ui:207
+msgid "ADD_CONTACT_TOX_ID"
+msgstr "TOX_ID"
 
 #: gTox.cpp:34
 msgid "APPLICATION_NAME"
@@ -115,7 +123,11 @@ msgstr "Abwesend"
 msgid "BUSY"
 msgstr "Beschäftigt"
 
-#: Widget/WidgetChat.cpp:357
+#: Layout/popover_settings.ui:265
+msgid "CONTACT_ADD"
+msgstr "Absenden"
+
+#: Widget/WidgetChat.cpp:358
 msgid "DATE_FORMAT"
 msgstr "%A, %e. %B %Y"
 
@@ -160,13 +172,13 @@ msgstr "%1"
 msgid "IGNORE"
 msgstr "Ignorieren"
 
-#: Popover/PopoverSettings.cpp:76
+#: Popover/PopoverSettings.cpp:77
 msgid "IMAGE"
 msgstr ""
 
 #: Popover/PopoverAddContact.cpp:34 Widget/Settings/WidgetProfile.cpp:55
 msgid "MESSAGE"
-msgstr "Nachricht"
+msgstr ""
 
 #: Popover/PopoverStatus.cpp:30
 msgid "ONLINE"
@@ -178,16 +190,16 @@ msgid "PROFILE_ABORT"
 msgstr "Abbrechen"
 
 #. Click here to change avatar, right click to remove
-#: Layout/popover_settings.ui:51
+#: Layout/popover_settings.ui:56
 msgid "PROFILE_AVATAR_HELP"
 msgstr ""
 
-#: Popover/PopoverSettings.cpp:68
+#: Popover/PopoverSettings.cpp:69
 msgid "PROFILE_AVATAR_SELECT_TITLE"
 msgstr ""
 
 #. Copies tox id into clipboard
-#: Layout/popover_settings.ui:107
+#: Layout/popover_settings.ui:112
 msgid "PROFILE_COPY_TOX_ID"
 msgstr ""
 
@@ -209,7 +221,7 @@ msgstr "Profile werden geladen..."
 msgid "PROFILE_NEW"
 msgstr "Neu"
 
-#: Layout/popover_settings.ui:12
+#: Layout/popover_settings.ui:17
 msgid "PROFILE_OPEN_SETTINGS"
 msgstr "Einstellungen"
 
@@ -218,7 +230,7 @@ msgstr "Einstellungen"
 msgid "PROFILE_SELECT"
 msgstr "Auswählen"
 
-#: Layout/popover_settings.ui:81
+#: Layout/popover_settings.ui:86
 msgid "PROFILE_STATUSMESSAGE"
 msgstr "Statusnachricht"
 
@@ -230,11 +242,11 @@ msgstr "Profil bitte auswählen"
 msgid "PROFILE_TITLE"
 msgstr "gTox"
 
-#: Layout/popover_settings.ui:94
+#: Layout/popover_settings.ui:99
 msgid "PROFILE_TOX_ID"
 msgstr "Tox-ID"
 
-#: Layout/popover_settings.ui:68
+#: Layout/popover_settings.ui:73
 msgid "PROFILE_USERNAME"
 msgstr "Tox-ID"
 
@@ -242,13 +254,18 @@ msgstr "Tox-ID"
 msgid "REMOVE"
 msgstr "Entfernen"
 
-#: Widget/WidgetChat.cpp:44
+#: Widget/WidgetChat.cpp:45
 msgid "SEND"
 msgstr "Senden"
 
 #: Dialog/DialogSettings.cpp:70
 msgid "SETTINGS_ABOUT"
 msgstr "Über"
+
+#. Button for adding a new contact
+#: Layout/popover_settings.ui:179 Layout/popover_settings.ui:278
+msgid "SETTINGS_ADD_CONTACT"
+msgstr "Kontakt hinzufügen"
 
 #: Widget/Settings/WidgetCache.cpp:54
 msgid "SETTINGS_CACHE_CLEAN_LOG"

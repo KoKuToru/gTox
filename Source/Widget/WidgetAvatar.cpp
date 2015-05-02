@@ -47,7 +47,7 @@ WidgetAvatar::WidgetAvatar(BaseObjectType* cobject, gToxBuilder builder,
                            const Glib::ustring& path) :
     Gtk::Image(cobject),
     gToxObserver(nullptr),
-    m_builder(Glib::RefPtr<Gtk::Builder>()),
+    m_builder(builder),
     m_path(path) {
     //load image
     load();
