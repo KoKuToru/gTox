@@ -86,14 +86,6 @@ DialogContact::DialogContact(BaseObjectType* cobject, gToxBuilder builder, const
         m_popover_status->set_visible();
     });
 
-    auto add_contact_btn = m_builder.get_widget<Gtk::Button>("add_contact_btn");
-    add_contact_btn->signal_clicked().connect([this, add_contact_btn]() {
-        if (!m_popover_add_contact) {
-            m_popover_add_contact = std::make_shared<PopoverAddContact>(this, *add_contact_btn);
-        }
-        m_popover_add_contact->set_visible();
-    });
-
     auto setting_btn = m_builder.get_widget<Gtk::Button>("setting_btn");
     setting_btn->signal_clicked().connect([this, setting_btn]() {
         if (!m_popover_settings) {
@@ -312,27 +304,26 @@ void DialogContact::tox_event_handling(const ToxEvent& ev) {
 
 void DialogContact::set_status(Toxmm::EUSERSTATUS status_code) {
     tox().set_status(status_code);
+
     // TODO: implement a get_status_icon function
+    const char* status;
     switch (status_code) {
-        case Toxmm::NONE:
-            m_icon_status.property_pixbuf()
-                = Gdk::Pixbuf::create_from_resource("/org/gtox/icon/status_online.svg");
+        case Toxmm::EUSERSTATUS::BUSY:
+            status = "status_busy";
             break;
-        case Toxmm::BUSY:
-            m_icon_status.property_pixbuf()
-                = Gdk::Pixbuf::create_from_resource("/org/gtox/icon/status_busy.svg");
+        case Toxmm::EUSERSTATUS::NONE:
+            status = "status_online";
             break;
-        case Toxmm::AWAY:
-            m_icon_status.property_pixbuf()
-                = Gdk::Pixbuf::create_from_resource("/org/gtox/icon/status_away.svg");
+        case Toxmm::EUSERSTATUS::AWAY:
+            status = "status_away";
             break;
         default:
-            m_icon_status.property_pixbuf()
-                = Gdk::Pixbuf::create_from_resource("/org/gtox/icon/status_offline.svg");
+            status = "status_offline";
             break;
     }
+    m_btn_status->set_image_from_icon_name(status);
     if (!m_status_icon) {
-        m_status_icon = Gtk::StatusIcon::create(m_icon_status.property_pixbuf());
+        m_status_icon = Gtk::StatusIcon::create(status);
         m_status_icon->set_visible(true);
         m_status_icon->set_name("gTox");
         m_status_icon->signal_activate().connect([this](){
@@ -345,7 +336,7 @@ void DialogContact::set_status(Toxmm::EUSERSTATUS status_code) {
             m_status_icon->popup_menu_at_position(*menu, btn, time);
         });
     } else {
-        m_status_icon->set(m_icon_status.property_pixbuf());
+        m_status_icon->set(status);
     }
     tox().save();
 }
