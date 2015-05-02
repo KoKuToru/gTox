@@ -31,10 +31,11 @@ PopoverSettings::PopoverSettings(gToxObservable* observable,
     m_builder.get_widget("profile_username_entry", m_username);
     m_builder.get_widget("profile_statusmessage_entry", m_status);
     m_avatar = m_builder.get_widget_derived<WidgetAvatar>("profile_avatar", observable, ~0u);
+    m_builder.get_widget("popover_stack", m_stack);
 
-    //add(*m_builder.get_widget<Gtk::Grid>("popover_settings"));
-    add(*m_builder.get_widget<Gtk::Stack>("popover_stack"));
+    add(*m_stack);
 
+    /* Tox-Id display */
     std::string hex = Toxmm::to_hex(tox().get_address().data(),
                                     tox().get_address().size());
     for (int i = 4; i > 0; --i) {
@@ -44,12 +45,6 @@ PopoverSettings::PopoverSettings(gToxObservable* observable,
     m_builder.get_widget<Gtk::Label>("profile_tox_hex_id")
             ->set_markup("<span font_desc=\"mono\">" + hex + "</span>");
 
-    m_builder.get_widget<Gtk::Button>("profile_open_settings")
-            ->signal_clicked().connect([this]() {
-        hide();
-        //m_settings.show();
-    });
-
     m_builder.get_widget<Gtk::Button>("profile_copy_tox_id")
             ->signal_clicked().connect([this]() {
         Gtk::Clipboard::get()->set_text(
@@ -57,13 +52,14 @@ PopoverSettings::PopoverSettings(gToxObservable* observable,
                                   tox().get_address().size()));
     });
 
-    auto update = [this](GdkEventFocus*) {
-        observer_notify(ToxEvent(DialogContact::EventSetName{
-                                     m_username->get_text(),
-                                     m_status->get_text()
-                                 }));
-    };
+    /* Open settings */
+    m_builder.get_widget<Gtk::Button>("profile_open_settings")
+            ->signal_clicked().connect([this]() {
+        hide();
+        //m_settings.show();
+    });
 
+    /* change avatar logic */
     m_builder.get_widget<Gtk::Button>("profile_avatar_btn")
             ->signal_clicked().connect([this, observable](){
         Gtk::FileChooserDialog dialog(_("PROFILE_AVATAR_SELECT_TITLE"), Gtk::FILE_CHOOSER_ACTION_OPEN);
@@ -103,6 +99,14 @@ PopoverSettings::PopoverSettings(gToxObservable* observable,
         dialog.hide();
     });
 
+    /* Updat name / status message logic */
+    auto update = [this](GdkEventFocus*) {
+        observer_notify(ToxEvent(DialogContact::EventSetName{
+                                     m_username->get_text(),
+                                     m_status->get_text()
+                                 }));
+    };
+
     m_username->signal_focus_out_event().connect_notify(update);
     m_status  ->signal_focus_out_event().connect_notify(update);
 }
@@ -117,6 +121,8 @@ void PopoverSettings::set_visible(bool visible) {
     if (!visible) {
         return;
     }
+
+    m_stack->set_visible_child("popover_profile", Gtk::STACK_TRANSITION_TYPE_NONE);
 
     m_username->set_text(tox().get_name());
     m_status->set_text(tox().get_status_message());

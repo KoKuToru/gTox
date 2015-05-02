@@ -36,6 +36,8 @@ class PopoverSettings : public Gtk::Popover, public gToxObserver {
         Gtk::Entry* m_status;
         WidgetAvatar* m_avatar;
 
+        Gtk::Stack* m_stack;
+
     public:
         PopoverSettings(gToxObservable* observable,
                         const Gtk::Widget& relative_to);

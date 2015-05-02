@@ -7,7 +7,7 @@
     <property name="can_focus">False</property>
     <property name="transition_type">slide-left-right</property>
     <child>
-      <object class="GtkGrid" id="popover_settings">
+      <object class="GtkGrid" id="popover_profile">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="row_spacing">5</property>
@@ -193,7 +193,7 @@ B825F237BB4229CC
         </child>
       </object>
       <packing>
-        <property name="name">popover_settings</property>
+        <property name="name">popover_profile</property>
       </packing>
     </child>
     <child>
@@ -284,7 +284,7 @@ B825F237BB4229CC
             <property name="inverted">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
-            <property name="menu-name">popover_settings</property>
+            <property name="menu-name">popover_profile</property>
           </object>
           <packing>
             <property name="left_attach">0</property>
