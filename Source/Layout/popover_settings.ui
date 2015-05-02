@@ -230,7 +230,7 @@ B825F237BB4229CC
           </packing>
         </child>
         <child>
-          <object class="GtkEntry" id="entry1">
+          <object class="GtkEntry" id="add_contact_tox_id">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
           </object>
@@ -249,7 +249,7 @@ B825F237BB4229CC
             <property name="label_xalign">0</property>
             <property name="shadow_type">none</property>
             <child>
-              <object class="GtkTextView" id="textview1">
+              <object class="GtkTextView" id="add_contact_message">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="wrap_mode">word-char</property>
@@ -265,7 +265,7 @@ B825F237BB4229CC
           </packing>
         </child>
         <child>
-          <object class="GtkModelButton" id="button1">
+          <object class="GtkModelButton" id="add_contact_submit">
             <property name="text" translatable="yes">CONTACT_ADD</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>

@@ -32,9 +32,16 @@ class PopoverSettings : public Gtk::Popover, public gToxObserver {
         gToxBuilder m_builder;
         //DialogSettings m_settings;
 
-        Gtk::Entry* m_username;
-        Gtk::Entry* m_status;
-        WidgetAvatar* m_avatar;
+        struct {
+            Gtk::Entry* username;
+            Gtk::Entry* status;
+            WidgetAvatar* avatar;
+        } m_profile;
+
+        struct {
+                Gtk::Entry* tox_id;
+                Gtk::TextView* message;
+        } m_add_contact;
 
         Gtk::Stack* m_stack;
 
@@ -44,6 +51,9 @@ class PopoverSettings : public Gtk::Popover, public gToxObserver {
         ~PopoverSettings();
 
         void set_visible(bool visible = true);
+
+    protected:
+        void add_contact();
 };
 
 #endif
