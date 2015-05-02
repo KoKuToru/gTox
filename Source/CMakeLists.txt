@@ -68,7 +68,6 @@ set(SOURCES
     Dialog/Debug/DialogCss.cpp
     Popover/PopoverStatus.cpp
     Popover/PopoverSettings.cpp
-    Popover/PopoverAddContact.cpp
     Popover/PopoverContextContact.cpp
     Widget/WidgetChat.cpp
     Widget/WidgetContactListItem.cpp

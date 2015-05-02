@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-05-02 17:51+0200\n"
+"POT-Creation-Date: 2015-05-02 18:45+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -46,10 +46,6 @@ msgstr "<i>pre-alpha version</i>"
 #: Widget/Settings/WidgetAbout.cpp
 msgid "ABOUT_SOFTWARE_WARRANTY"
 msgstr "<i>This program comes with ABSOLUTELY NO WARRANTY</i>"
-
-#: Popover/PopoverAddContact.cpp
-msgid "ADD"
-msgstr ""
 
 #: Layout/popover_settings.ui
 msgid "ADD_CONTACT_MESSAGE"
@@ -134,11 +130,11 @@ msgstr "Добавить"
 msgid "DATE_FORMAT"
 msgstr "%A, %e. %B %Y"
 
-#: Popover/PopoverAddContact.cpp
+#: Popover/PopoverSettings.cpp
 msgid "ERROR_ADD_CONTACT_ADDR_WRONG_SIZE"
 msgstr "Длина Tox ID должны быть 76 символов"
 
-#: Popover/PopoverAddContact.cpp
+#: Popover/PopoverSettings.cpp
 msgid "ERROR_ADD_CONTACT_ADDR_WRONG_SIZE_TITLE"
 msgstr "Неверная длина ID"
 
@@ -177,7 +173,7 @@ msgstr ""
 msgid "IMAGE"
 msgstr ""
 
-#: Popover/PopoverAddContact.cpp Widget/Settings/WidgetProfile.cpp
+#: Widget/Settings/WidgetProfile.cpp
 msgid "MESSAGE"
 msgstr ""
 
@@ -370,13 +366,13 @@ msgstr ""
 "Запрос на добавление уже был отправлен или адрес уже присутствует в контакт-"
 "листе."
 
-#: Popover/PopoverAddContact.cpp
+#: Popover/PopoverSettings.cpp
 msgid "TOX_ERR_FRIEND_ADD_ALREADY_SENT_UI"
 msgstr ""
 "Запрос на добавление уже был отправлен или адрес уже присутствует в контакт-"
 "листе."
 
-#: Popover/PopoverAddContact.cpp
+#: Popover/PopoverSettings.cpp
 msgid "TOX_ERR_FRIEND_ADD_ALREADY_SENT_UI_TITLE"
 msgstr "Запрос на добавление уже отправлен"
 
@@ -386,11 +382,11 @@ msgstr ""
 "TOX_ERR_FRIEND_ADD_BAD_CHECKSUM\n"
 "Неверная контрольная сумма адреса контакта."
 
-#: Popover/PopoverAddContact.cpp
+#: Popover/PopoverSettings.cpp
 msgid "TOX_ERR_FRIEND_ADD_BAD_CHECKSUM_UI"
 msgstr "Неверная контрольная сумма адреса контакта."
 
-#: Popover/PopoverAddContact.cpp
+#: Popover/PopoverSettings.cpp
 msgid "TOX_ERR_FRIEND_ADD_BAD_CHECKSUM_UI_TITLE"
 msgstr "Неверная контрольная сумма"
 
@@ -407,11 +403,11 @@ msgstr ""
 "Текст запроса на добавление было пустым. Это сообщение и сообщение TOO_LONG "
 "code никогда не будет вызвано из функции tox_friend_add_norequest."
 
-#: Popover/PopoverAddContact.cpp
+#: Popover/PopoverSettings.cpp
 msgid "TOX_ERR_FRIEND_ADD_NO_MESSAGE_UI"
 msgstr "Сообщение при запросе на добавление не должно быть пустым."
 
-#: Popover/PopoverAddContact.cpp
+#: Popover/PopoverSettings.cpp
 msgid "TOX_ERR_FRIEND_ADD_NO_MESSAGE_UI_TITLE"
 msgstr "Пустое сообщение запроса на добавление"
 
@@ -425,11 +421,11 @@ msgstr ""
 "TOX_ERR_FRIEND_ADD_OWN_KEY\n"
 "Вы не можете добавить себя в свой же контакт-лист."
 
-#: Popover/PopoverAddContact.cpp
+#: Popover/PopoverSettings.cpp
 msgid "TOX_ERR_FRIEND_ADD_OWN_KEY_UI"
 msgstr "Адрес контакта для добавления принадлежит вам"
 
-#: Popover/PopoverAddContact.cpp
+#: Popover/PopoverSettings.cpp
 msgid "TOX_ERR_FRIEND_ADD_OWN_KEY_UI_TITLE"
 msgstr "Невозможно добавить контакт"
 
@@ -439,11 +435,11 @@ msgstr ""
 "TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM\n"
 "Контакт уже добавлен, но с другим значением nospam."
 
-#: Popover/PopoverAddContact.cpp
+#: Popover/PopoverSettings.cpp
 msgid "TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM_UI"
 msgstr "Контакт уже добавлен, но с другим значением nospam."
 
-#: Popover/PopoverAddContact.cpp
+#: Popover/PopoverSettings.cpp
 msgid "TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM_UI_TITLE"
 msgstr "Невозможно добавить контакт"
 
@@ -454,11 +450,11 @@ msgstr ""
 "Длина сообщения запроса на добавление привысила "
 "TOX_MAX_FRIEND_REQUEST_LENGTH."
 
-#: Popover/PopoverAddContact.cpp
+#: Popover/PopoverSettings.cpp
 msgid "TOX_ERR_FRIEND_ADD_TOO_LONG_UI"
 msgstr "Длина сообщения запроса на добавление привысила 1016 байт."
 
-#: Popover/PopoverAddContact.cpp
+#: Popover/PopoverSettings.cpp
 msgid "TOX_ERR_FRIEND_ADD_TOO_LONG_UI_TITLE"
 msgstr "Невозможно добавить контакт"
 
@@ -609,7 +605,7 @@ msgstr ""
 "TOX_ERR_SET_TYPING_FRIEND_NOT_FOUND\n"
 "Неверный номер контакта."
 
-#: Popover/PopoverAddContact.cpp Widget/Settings/WidgetProfile.cpp
+#: Widget/Settings/WidgetProfile.cpp
 msgid "TOX_ID"
 msgstr "Tox ID"
 

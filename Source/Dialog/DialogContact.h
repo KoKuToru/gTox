@@ -25,7 +25,6 @@
 #include "Widget/WidgetChat.h"
 #include "Popover/PopoverStatus.h"
 #include "Popover/PopoverSettings.h"
-#include "Popover/PopoverAddContact.h"
 #include "Helper/gToxObservable.h"
 #include "Helper/gToxBuilder.h"
 #include "Helper/gToxFileRecv.h"
@@ -52,7 +51,6 @@ class DialogContact : public Gtk::Window, public gToxObservable {
 
     std::shared_ptr<PopoverStatus> m_popover_status;
     std::shared_ptr<PopoverSettings> m_popover_settings;
-    std::shared_ptr<PopoverAddContact> m_popover_add_contact;
 
     gToxObservable::Handler m_tox_callback;
 

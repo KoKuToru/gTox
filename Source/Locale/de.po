@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-05-02 17:51+0200\n"
+"POT-Creation-Date: 2015-05-02 18:45+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -42,10 +42,6 @@ msgstr "<i>pre-alpha Version</i>"
 #: Widget/Settings/WidgetAbout.cpp
 msgid "ABOUT_SOFTWARE_WARRANTY"
 msgstr "<i>Dieses Programm kommt OHNE JEDWEDE GARANTIE.</i>"
-
-#: Popover/PopoverAddContact.cpp
-msgid "ADD"
-msgstr ""
 
 #: Layout/popover_settings.ui
 msgid "ADD_CONTACT_MESSAGE"
@@ -131,11 +127,11 @@ msgstr "Absenden"
 msgid "DATE_FORMAT"
 msgstr "%A, %e. %B %Y"
 
-#: Popover/PopoverAddContact.cpp
+#: Popover/PopoverSettings.cpp
 msgid "ERROR_ADD_CONTACT_ADDR_WRONG_SIZE"
 msgstr "Eine ID muss 76 Zeichen lang sein"
 
-#: Popover/PopoverAddContact.cpp
+#: Popover/PopoverSettings.cpp
 msgid "ERROR_ADD_CONTACT_ADDR_WRONG_SIZE_TITLE"
 msgstr "Falsche ID länge"
 
@@ -176,7 +172,7 @@ msgstr "Ignorieren"
 msgid "IMAGE"
 msgstr ""
 
-#: Popover/PopoverAddContact.cpp Widget/Settings/WidgetProfile.cpp
+#: Widget/Settings/WidgetProfile.cpp
 msgid "MESSAGE"
 msgstr ""
 
@@ -369,11 +365,11 @@ msgstr ""
 "A friend request has already been sent, or the address belongs to a friend "
 "that is already on the friend list."
 
-#: Popover/PopoverAddContact.cpp
+#: Popover/PopoverSettings.cpp
 msgid "TOX_ERR_FRIEND_ADD_ALREADY_SENT_UI"
 msgstr "ID wurde bereits hinzugefügt."
 
-#: Popover/PopoverAddContact.cpp
+#: Popover/PopoverSettings.cpp
 msgid "TOX_ERR_FRIEND_ADD_ALREADY_SENT_UI_TITLE"
 msgstr "Hinzufügen fehlgeschlagen"
 
@@ -383,11 +379,11 @@ msgstr ""
 "TOX_ERR_FRIEND_ADD_BAD_CHECKSUM\n"
 "The friend address checksum failed."
 
-#: Popover/PopoverAddContact.cpp
+#: Popover/PopoverSettings.cpp
 msgid "TOX_ERR_FRIEND_ADD_BAD_CHECKSUM_UI"
 msgstr "Die ID ist fehlerhaft."
 
-#: Popover/PopoverAddContact.cpp
+#: Popover/PopoverSettings.cpp
 msgid "TOX_ERR_FRIEND_ADD_BAD_CHECKSUM_UI_TITLE"
 msgstr "ID Checksum fehlgeschlagen"
 
@@ -404,11 +400,11 @@ msgstr ""
 "The friend request message was empty. This, and the TOO_LONG code will never "
 "be returned from tox_friend_add_norequest."
 
-#: Popover/PopoverAddContact.cpp
+#: Popover/PopoverSettings.cpp
 msgid "TOX_ERR_FRIEND_ADD_NO_MESSAGE_UI"
 msgstr "Die Nachricht darf nicht leer sein."
 
-#: Popover/PopoverAddContact.cpp
+#: Popover/PopoverSettings.cpp
 msgid "TOX_ERR_FRIEND_ADD_NO_MESSAGE_UI_TITLE"
 msgstr "Nachricht leer"
 
@@ -422,11 +418,11 @@ msgstr ""
 "TOX_ERR_FRIEND_ADD_OWN_KEY\n"
 "The friend address belongs to the sending client."
 
-#: Popover/PopoverAddContact.cpp
+#: Popover/PopoverSettings.cpp
 msgid "TOX_ERR_FRIEND_ADD_OWN_KEY_UI"
 msgstr "Die eingebene ID gehört dir."
 
-#: Popover/PopoverAddContact.cpp
+#: Popover/PopoverSettings.cpp
 msgid "TOX_ERR_FRIEND_ADD_OWN_KEY_UI_TITLE"
 msgstr "Hinzufügen fehlgeschlagen"
 
@@ -436,11 +432,11 @@ msgstr ""
 "TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM\n"
 "The friend was already there, but the nospam value was different."
 
-#: Popover/PopoverAddContact.cpp
+#: Popover/PopoverSettings.cpp
 msgid "TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM_UI"
 msgstr "ID wurde bereits hinzugefügt der NOSPAM-Wert war aber anders."
 
-#: Popover/PopoverAddContact.cpp
+#: Popover/PopoverSettings.cpp
 msgid "TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM_UI_TITLE"
 msgstr "Hinzufügen fehlgeschlagen"
 
@@ -451,11 +447,11 @@ msgstr ""
 "The length of the friend request message exceeded "
 "TOX_MAX_FRIEND_REQUEST_LENGTH."
 
-#: Popover/PopoverAddContact.cpp
+#: Popover/PopoverSettings.cpp
 msgid "TOX_ERR_FRIEND_ADD_TOO_LONG_UI"
 msgstr "Die Nachricht ist länger als 1016 bytes."
 
-#: Popover/PopoverAddContact.cpp
+#: Popover/PopoverSettings.cpp
 msgid "TOX_ERR_FRIEND_ADD_TOO_LONG_UI_TITLE"
 msgstr "Nachricht zulang"
 
@@ -605,7 +601,7 @@ msgstr ""
 "TOX_ERR_SET_TYPING_FRIEND_NOT_FOUND\n"
 "The friend number did not designate a valid friend."
 
-#: Popover/PopoverAddContact.cpp Widget/Settings/WidgetProfile.cpp
+#: Widget/Settings/WidgetProfile.cpp
 msgid "TOX_ID"
 msgstr "Tox ID"
 
