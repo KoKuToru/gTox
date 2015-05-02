@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-05-01 16:19+0200\n"
+"POT-Creation-Date: 2015-05-02 17:59+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -16,7 +16,7 @@ msgstr ""
 "X-Source-Language: C\n"
 "X-Generator: Poedit 1.7.5\n"
 
-#: Layout/popover_settings.ui:130
+#: Layout/popover_settings.ui
 msgid ""
 "<span font_desc=\"mono\">DD5EFC02E70A0F6D\n"
 "032FB5904F956F1A\n"
@@ -25,43 +25,43 @@ msgid ""
 "86DAA09C04DB</span>"
 msgstr ""
 
-#: Widget/Settings/WidgetAbout.cpp:43
+#: Widget/Settings/WidgetAbout.cpp
 msgid "ABOUT_SOFTWARE_COPYRIGHT"
 msgstr "Copyright © 2014 - the gTox team"
 
-#: Widget/Settings/WidgetAbout.cpp:40
+#: Widget/Settings/WidgetAbout.cpp
 msgid "ABOUT_SOFTWARE_HOMEPAGE"
 msgstr ""
 "<a href=\"https://github.com/KoKuToru/gTox.git\">github.com/KoKuToru/gTox."
 "git</a>"
 
-#: Widget/Settings/WidgetAbout.cpp:29
+#: Widget/Settings/WidgetAbout.cpp
 msgid "ABOUT_SOFTWARE_NAME"
 msgstr "<b>gTox</b>"
 
-#: Widget/Settings/WidgetAbout.cpp:34
+#: Widget/Settings/WidgetAbout.cpp
 msgid "ABOUT_SOFTWARE_VERSION"
 msgstr "<i>pre-alpha version</i>"
 
-#: Widget/Settings/WidgetAbout.cpp:47
+#: Widget/Settings/WidgetAbout.cpp
 msgid "ABOUT_SOFTWARE_WARRANTY"
 msgstr "<i>This program comes with ABSOLUTELY NO WARRANTY</i>"
 
-#: Popover/PopoverAddContact.cpp:35
+#: Popover/PopoverAddContact.cpp
 msgid "ADD"
 msgstr "Добавить"
 
-#: gTox.cpp:34
+#: gTox.cpp
 msgid "APPLICATION_NAME"
 msgstr "gTox"
 
 #. Label for the gTox database path
-#: Layout/dialog_assistant.ui:161
+#: Layout/dialog_assistant.ui
 msgid "ASSISTANT_FILE_GTOX"
 msgstr "Файл gTox"
 
 #. Describes how to backup the tox profile
-#: Layout/dialog_assistant.ui:199
+#: Layout/dialog_assistant.ui
 msgid "ASSISTANT_FILE_TEXT"
 msgstr ""
 "<span size='x-small'><u>Файл toxcore</u> содержит профиль и список "
@@ -72,34 +72,34 @@ msgstr ""
 "сохраните <u>файл toxcore</u> !</b></span>"
 
 #. Label for the toxcore profile save path
-#: Layout/dialog_assistant.ui:149
+#: Layout/dialog_assistant.ui
 msgid "ASSISTANT_FILE_TOX"
 msgstr "файл toxcore"
 
 #. Lable for the log enable/disable switch
-#: Layout/dialog_assistant.ui:99
+#: Layout/dialog_assistant.ui
 msgid "ASSISTANT_LOGGING"
 msgstr "Хранить историю сообщений"
 
 #. Describes that gTox will log into a uncrypted sqlite db
-#: Layout/dialog_assistant.ui:134
+#: Layout/dialog_assistant.ui
 msgid "ASSISTANT_LOGGING_TEXT"
 msgstr ""
 "<span size='x-small'>gTox сохраняет историю в незашифрованную базу дынных "
 "Sqlite</span>"
 
 #. Label for the profile statusmessage
-#: Layout/dialog_assistant.ui:64
+#: Layout/dialog_assistant.ui
 msgid "ASSISTANT_STATUSMESSAGE"
 msgstr "Статусное сообщение"
 
 #. Label for the profile username
-#: Layout/dialog_assistant.ui:39
+#: Layout/dialog_assistant.ui
 msgid "ASSISTANT_USERNAME"
 msgstr "Имя"
 
 #. Welcome text in profile creation, should warn about alpha-software
-#: Layout/dialog_assistant.ui:216
+#: Layout/dialog_assistant.ui
 msgid "ASSISTANT_WELCOME_TEXT"
 msgstr ""
 "Добро пожаловать в gTox\n"
@@ -110,38 +110,38 @@ msgstr ""
 "gTox и Tox находят в стадии альфа-версии и кодовая база обоих проектом может "
 "меняться ежедневно."
 
-#: Popover/PopoverStatus.cpp:32
+#: Popover/PopoverStatus.cpp
 msgid "AWAY"
 msgstr "Ушёл"
 
-#: Popover/PopoverStatus.cpp:31
+#: Popover/PopoverStatus.cpp
 msgid "BUSY"
 msgstr "Занят"
 
-#: Widget/WidgetChat.cpp:357
+#: Widget/WidgetChat.cpp
 msgid "DATE_FORMAT"
 msgstr "%A, %e. %B %Y"
 
-#: Popover/PopoverAddContact.cpp:67
+#: Popover/PopoverAddContact.cpp
 msgid "ERROR_ADD_CONTACT_ADDR_WRONG_SIZE"
 msgstr "Длина Tox ID должны быть 76 символов"
 
-#: Popover/PopoverAddContact.cpp:66
+#: Popover/PopoverAddContact.cpp
 msgid "ERROR_ADD_CONTACT_ADDR_WRONG_SIZE_TITLE"
 msgstr "Неверная длина ID"
 
-#: Dialog/DialogError.cpp:34
+#: Dialog/DialogError.cpp
 msgid "ERROR_REPORT_BTN"
 msgstr "Сообщить разработчику"
 
-#: Dialog/DialogError.cpp:28
+#: Dialog/DialogError.cpp
 msgid "ERROR_REPORT_TEXT_INTRO"
 msgstr ""
 "Произошла фатальная ошибка в программе:\n"
 "\n"
 "<i><b>"
 
-#: Dialog/DialogError.cpp:31
+#: Dialog/DialogError.cpp
 msgid "ERROR_REPORT_TEXT_OUTRO"
 msgstr ""
 "</b></i>\n"
@@ -149,332 +149,332 @@ msgstr ""
 "Убедитесь, что вы используете последнюю версию gTox.\n"
 "Если это так, то дайте нам знать о случившейся ошибке программы."
 
-#: Popover/PopoverStatus.cpp:33
+#: Popover/PopoverStatus.cpp
 msgid "EXIT"
 msgstr "Выход"
 
-#: Dialog/DialogContact.cpp:206
+#: Dialog/DialogContact.cpp
 msgid "FRIEND_REQUEST"
 msgstr "%1"
 
-#: Dialog/DialogContact.cpp:211
+#: Dialog/DialogContact.cpp
 msgid "IGNORE"
 msgstr ""
 
-#: Popover/PopoverSettings.cpp:76
+#: Popover/PopoverSettings.cpp
 msgid "IMAGE"
 msgstr ""
 
-#: Popover/PopoverAddContact.cpp:34 Widget/Settings/WidgetProfile.cpp:55
+#: Popover/PopoverAddContact.cpp Widget/Settings/WidgetProfile.cpp
 msgid "MESSAGE"
 msgstr "Сообщение"
 
-#: Popover/PopoverStatus.cpp:30
+#: Popover/PopoverStatus.cpp
 msgid "ONLINE"
 msgstr "Доступен"
 
 #. Exit the application, abort the profile selection
-#: Layout/dialog_profile.ui:93
+#: Layout/dialog_profile.ui
 msgid "PROFILE_ABORT"
 msgstr "Выход"
 
 #. Click here to change avatar, right click to remove
-#: Layout/popover_settings.ui:51
+#: Layout/popover_settings.ui
 msgid "PROFILE_AVATAR_HELP"
 msgstr ""
 
-#: Popover/PopoverSettings.cpp:68
+#: Popover/PopoverSettings.cpp
 msgid "PROFILE_AVATAR_SELECT_TITLE"
 msgstr ""
 
 #. Copies tox id into clipboard
-#: Layout/popover_settings.ui:107
+#: Layout/popover_settings.ui
 msgid "PROFILE_COPY_TOX_ID"
 msgstr ""
 
-#: Layout/list_item_profile.ui:62
+#: Layout/list_item_profile.ui
 msgid "PROFILE_CORRUPTED"
 msgstr "Невозможно загрузить профиль"
 
-#: Layout/list_item_profile.ui:44
+#: Layout/list_item_profile.ui
 msgid "PROFILE_CORRUPTED_TITLE"
 msgstr "Повреждённый профиль"
 
 #. Text next to the spinner, while profiles are loading
-#: Layout/dialog_profile.ui:62
+#: Layout/dialog_profile.ui
 msgid "PROFILE_LOADING"
 msgstr ""
 
 #. Button for creating a new profile
-#: Layout/dialog_profile.ui:105
+#: Layout/dialog_profile.ui
 msgid "PROFILE_NEW"
 msgstr "Новый"
 
-#: Layout/popover_settings.ui:12
+#: Layout/popover_settings.ui
 msgid "PROFILE_OPEN_SETTINGS"
 msgstr "Настройки"
 
 #. Button for loading the selected profile
-#: Layout/dialog_profile.ui:118
+#: Layout/dialog_profile.ui
 msgid "PROFILE_SELECT"
 msgstr "Выбрать"
 
-#: Layout/popover_settings.ui:81
+#: Layout/popover_settings.ui
 msgid "PROFILE_STATUSMESSAGE"
 msgstr "Статусное сообщение"
 
-#: Dialog/DialogProfile.cpp:42
+#: Dialog/DialogProfile.cpp
 msgid "PROFILE_SUBTITLE"
 msgstr "Выбор профиля"
 
-#: Dialog/DialogProfile.cpp:36 Dialog/DialogProfile.cpp:41
+#: Dialog/DialogProfile.cpp
 msgid "PROFILE_TITLE"
 msgstr "gTox"
 
-#: Layout/popover_settings.ui:94
+#: Layout/popover_settings.ui
 msgid "PROFILE_TOX_ID"
 msgstr "Tox-ID"
 
-#: Layout/popover_settings.ui:68
+#: Layout/popover_settings.ui
 msgid "PROFILE_USERNAME"
 msgstr "Имя"
 
-#: Popover/PopoverContextContact.cpp:27
+#: Popover/PopoverContextContact.cpp
 msgid "REMOVE"
 msgstr "Удалить"
 
-#: Widget/WidgetChat.cpp:44
+#: Widget/WidgetChat.cpp
 msgid "SEND"
 msgstr "Отправить"
 
-#: Dialog/DialogSettings.cpp:70
+#: Dialog/DialogSettings.cpp
 msgid "SETTINGS_ABOUT"
 msgstr "О программе"
 
-#: Widget/Settings/WidgetCache.cpp:54
+#: Widget/Settings/WidgetCache.cpp
 msgid "SETTINGS_CACHE_CLEAN_LOG"
 msgstr ""
 "Вы собираетесь удалить историю переписки со всеми контактами.\n"
 "В дальнейшем действие не может быть отменено! Продолжить?"
 
-#: Widget/Settings/WidgetCache.cpp:64
+#: Widget/Settings/WidgetCache.cpp
 msgid "SETTINGS_CACHE_CLEAN_LOG_SUCCESS"
 msgstr "%1 сообщений удалено"
 
-#: Widget/Settings/WidgetCache.cpp:58
+#: Widget/Settings/WidgetCache.cpp
 msgid "SETTINGS_CACHE_CLEAN_LOG_SUCCESS_TITLE"
 msgstr "История переписки очищена"
 
-#: Widget/Settings/WidgetCache.cpp:49
+#: Widget/Settings/WidgetCache.cpp
 msgid "SETTINGS_CACHE_CLEAN_LOG_TITLE"
 msgstr "Удалить всю историю ?"
 
-#: Dialog/DialogSettings.cpp:32
+#: Dialog/DialogSettings.cpp
 msgid "SETTINGS_TITLE"
 msgstr "Найтройка gTox"
 
-#: Tox/ToxException.cpp:80
+#: Tox/ToxException.cpp
 msgid "TOX_ERR_BOOTSTRAP_BAD_HOST"
 msgstr ""
 "TOX_ERR_BOOTSTRAP_BAD_HOST\n"
 "Невозможно преобразовать имя сервера в IP-адрес, или был использован не "
 "верный IP-адрес."
 
-#: Tox/ToxException.cpp:81
+#: Tox/ToxException.cpp
 msgid "TOX_ERR_BOOTSTRAP_BAD_PORT"
 msgstr ""
 "TOX_ERR_BOOTSTRAP_BAD_PORT\n"
 "Неверный номер порта. Номер порта должен находиться в пределах от 1 до 65535."
 
-#: Tox/ToxException.cpp:79
+#: Tox/ToxException.cpp
 msgid "TOX_ERR_BOOTSTRAP_NULL"
 msgstr "TOX_ERR_BOOTSTRAP_NULL"
 
-#: Tox/ToxException.cpp:231
+#: Tox/ToxException.cpp
 msgid "TOX_ERR_FILE_CONTROL_ALREADY_PAUSED"
 msgstr ""
 
-#: Tox/ToxException.cpp:230
+#: Tox/ToxException.cpp
 msgid "TOX_ERR_FILE_CONTROL_DENIED"
 msgstr ""
 
-#: Tox/ToxException.cpp:227
+#: Tox/ToxException.cpp
 msgid "TOX_ERR_FILE_CONTROL_FRIEND_NOT_CONNECTED"
 msgstr ""
 
-#: Tox/ToxException.cpp:226
+#: Tox/ToxException.cpp
 msgid "TOX_ERR_FILE_CONTROL_FRIEND_NOT_FOUND"
 msgstr ""
 
-#: Tox/ToxException.cpp:228
+#: Tox/ToxException.cpp
 msgid "TOX_ERR_FILE_CONTROL_NOT_FOUND"
 msgstr ""
 
-#: Tox/ToxException.cpp:229
+#: Tox/ToxException.cpp
 msgid "TOX_ERR_FILE_CONTROL_NOT_PAUSED"
 msgstr ""
 
-#: Tox/ToxException.cpp:232
+#: Tox/ToxException.cpp
 msgid "TOX_ERR_FILE_CONTROL_SENDQ"
 msgstr ""
 
-#: Tox/ToxException.cpp:262
+#: Tox/ToxException.cpp
 msgid "TOX_ERR_FILE_GET_FRIEND_NOT_FOUND"
 msgstr ""
 
-#: Tox/ToxException.cpp:263
+#: Tox/ToxException.cpp
 msgid "TOX_ERR_FILE_GET_NOT_FOUND"
 msgstr ""
 
-#: Tox/ToxException.cpp:248
+#: Tox/ToxException.cpp
 msgid "TOX_ERR_FILE_SEEK_DENIED"
 msgstr ""
 
-#: Tox/ToxException.cpp:246
+#: Tox/ToxException.cpp
 msgid "TOX_ERR_FILE_SEEK_FRIEND_NOT_CONNECTED"
 msgstr ""
 
-#: Tox/ToxException.cpp:245
+#: Tox/ToxException.cpp
 msgid "TOX_ERR_FILE_SEEK_FRIEND_NOT_FOUND"
 msgstr ""
 
-#: Tox/ToxException.cpp:249
+#: Tox/ToxException.cpp
 msgid "TOX_ERR_FILE_SEEK_INVALID_POSITION"
 msgstr ""
 
-#: Tox/ToxException.cpp:247
+#: Tox/ToxException.cpp
 msgid "TOX_ERR_FILE_SEEK_NOT_FOUND"
 msgstr ""
 
-#: Tox/ToxException.cpp:98
+#: Tox/ToxException.cpp
 msgid "TOX_ERR_FRIEND_ADD_ALREADY_SENT"
 msgstr ""
 "TOX_ERR_FRIEND_ADD_ALREADY_SENT\n"
 "Запрос на добавление уже был отправлен или адрес уже присутствует в контакт-"
 "листе."
 
-#: Popover/PopoverAddContact.cpp:99
+#: Popover/PopoverAddContact.cpp
 msgid "TOX_ERR_FRIEND_ADD_ALREADY_SENT_UI"
 msgstr ""
 "Запрос на добавление уже был отправлен или адрес уже присутствует в контакт-"
 "листе."
 
-#: Popover/PopoverAddContact.cpp:98
+#: Popover/PopoverAddContact.cpp
 msgid "TOX_ERR_FRIEND_ADD_ALREADY_SENT_UI_TITLE"
 msgstr "Запрос на добавление уже отправлен"
 
-#: Tox/ToxException.cpp:99
+#: Tox/ToxException.cpp
 msgid "TOX_ERR_FRIEND_ADD_BAD_CHECKSUM"
 msgstr ""
 "TOX_ERR_FRIEND_ADD_BAD_CHECKSUM\n"
 "Неверная контрольная сумма адреса контакта."
 
-#: Popover/PopoverAddContact.cpp:94
+#: Popover/PopoverAddContact.cpp
 msgid "TOX_ERR_FRIEND_ADD_BAD_CHECKSUM_UI"
 msgstr "Неверная контрольная сумма адреса контакта."
 
-#: Popover/PopoverAddContact.cpp:93
+#: Popover/PopoverAddContact.cpp
 msgid "TOX_ERR_FRIEND_ADD_BAD_CHECKSUM_UI_TITLE"
 msgstr "Неверная контрольная сумма"
 
-#: Tox/ToxException.cpp:101
+#: Tox/ToxException.cpp
 msgid "TOX_ERR_FRIEND_ADD_MALLOC"
 msgstr ""
 "TOX_ERR_FRIEND_ADD_MALLOC\n"
 "Невозможно выделить память для добавления в контакт-лист."
 
-#: Tox/ToxException.cpp:96
+#: Tox/ToxException.cpp
 msgid "TOX_ERR_FRIEND_ADD_NO_MESSAGE"
 msgstr ""
 "TOX_ERR_FRIEND_ADD_NO_MESSAGE\n"
 "Текст запроса на добавление было пустым. Это сообщение и сообщение TOO_LONG "
 "code никогда не будет вызвано из функции tox_friend_add_norequest."
 
-#: Popover/PopoverAddContact.cpp:89
+#: Popover/PopoverAddContact.cpp
 msgid "TOX_ERR_FRIEND_ADD_NO_MESSAGE_UI"
 msgstr "Сообщение при запросе на добавление не должно быть пустым."
 
-#: Popover/PopoverAddContact.cpp:88
+#: Popover/PopoverAddContact.cpp
 msgid "TOX_ERR_FRIEND_ADD_NO_MESSAGE_UI_TITLE"
 msgstr "Пустое сообщение запроса на добавление"
 
-#: Tox/ToxException.cpp:94
+#: Tox/ToxException.cpp
 msgid "TOX_ERR_FRIEND_ADD_NULL"
 msgstr "TOX_ERR_FRIEND_ADD_NULL"
 
-#: Tox/ToxException.cpp:97
+#: Tox/ToxException.cpp
 msgid "TOX_ERR_FRIEND_ADD_OWN_KEY"
 msgstr ""
 "TOX_ERR_FRIEND_ADD_OWN_KEY\n"
 "Вы не можете добавить себя в свой же контакт-лист."
 
-#: Popover/PopoverAddContact.cpp:104
+#: Popover/PopoverAddContact.cpp
 msgid "TOX_ERR_FRIEND_ADD_OWN_KEY_UI"
 msgstr "Адрес контакта для добавления принадлежит вам"
 
-#: Popover/PopoverAddContact.cpp:103
+#: Popover/PopoverAddContact.cpp
 msgid "TOX_ERR_FRIEND_ADD_OWN_KEY_UI_TITLE"
 msgstr "Невозможно добавить контакт"
 
-#: Tox/ToxException.cpp:100
+#: Tox/ToxException.cpp
 msgid "TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM"
 msgstr ""
 "TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM\n"
 "Контакт уже добавлен, но с другим значением nospam."
 
-#: Popover/PopoverAddContact.cpp:109
+#: Popover/PopoverAddContact.cpp
 msgid "TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM_UI"
 msgstr "Контакт уже добавлен, но с другим значением nospam."
 
-#: Popover/PopoverAddContact.cpp:108
+#: Popover/PopoverAddContact.cpp
 msgid "TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM_UI_TITLE"
 msgstr "Невозможно добавить контакт"
 
-#: Tox/ToxException.cpp:95
+#: Tox/ToxException.cpp
 msgid "TOX_ERR_FRIEND_ADD_TOO_LONG"
 msgstr ""
 "TOX_ERR_FRIEND_ADD_TOO_LONG\n"
 "Длина сообщения запроса на добавление привысила "
 "TOX_MAX_FRIEND_REQUEST_LENGTH."
 
-#: Popover/PopoverAddContact.cpp:114
+#: Popover/PopoverAddContact.cpp
 msgid "TOX_ERR_FRIEND_ADD_TOO_LONG_UI"
 msgstr "Длина сообщения запроса на добавление привысила 1016 байт."
 
-#: Popover/PopoverAddContact.cpp:113
+#: Popover/PopoverAddContact.cpp
 msgid "TOX_ERR_FRIEND_ADD_TOO_LONG_UI_TITLE"
 msgstr "Невозможно добавить контакт"
 
-#: Tox/ToxException.cpp:115
+#: Tox/ToxException.cpp
 msgid "TOX_ERR_FRIEND_BY_PUBLIC_KEY_NOT_FOUND"
 msgstr ""
 "TOX_ERR_FRIEND_BY_PUBLIC_KEY_NOT_FOUND\n"
 "Контакт с данным публичным ключом отсутствут в контакт-листе."
 
-#: Tox/ToxException.cpp:114 Tox/ToxException.cpp:128
+#: Tox/ToxException.cpp
 msgid "TOX_ERR_FRIEND_BY_PUBLIC_KEY_NULL"
 msgstr "TOX_ERR_FRIEND_BY_PUBLIC_KEY_NULL"
 
-#: Tox/ToxException.cpp:213
+#: Tox/ToxException.cpp
 msgid "TOX_ERR_FRIEND_GET_LAST_ONLINE_FRIEND_NOT_FOUND"
 msgstr ""
 "TOX_ERR_FRIEND_GET_LAST_ONLINE_FRIEND_NOT_FOUND\n"
 "Контакт с данным номером отсутствует в контакт-листе."
 
-#: Tox/ToxException.cpp:200
+#: Tox/ToxException.cpp
 msgid "TOX_ERR_FRIEND_GET_PUBLIC_KEY_FRIEND_NOT_FOUND"
 msgstr ""
 "TOX_ERR_FRIEND_GET_PUBLIC_KEY_FRIEND_NOT_FOUND\n"
 "Клиент с данным номером отсутствует в контакт-листе."
 
-#: Tox/ToxException.cpp:174
+#: Tox/ToxException.cpp
 msgid "TOX_ERR_FRIEND_QUERY_FRIEND_NOT_FOUND"
 msgstr ""
 "TOX_ERR_FRIEND_QUERY_FRIEND_NOT_FOUND\n"
 "Номер контакта неверен."
 
 # Скорее всего автор оставил сообщение себе для тестирования.
-#: Tox/ToxException.cpp:173
+#: Tox/ToxException.cpp
 msgid "TOX_ERR_FRIEND_QUERY_NULL"
 msgstr ""
 "TOX_ERR_FRIEND_QUERY_NULL\n"
@@ -482,41 +482,41 @@ msgstr ""
 "Unlike the `_self_` variants of these functions, which have no effect when a "
 "parameter is NULL, these functions return an error in that case."
 
-#: Tox/ToxException.cpp:146
+#: Tox/ToxException.cpp
 msgid "TOX_ERR_FRIEND_SEND_MESSAGE_EMPTY"
 msgstr ""
 "TOX_ERR_FRIEND_SEND_MESSAGE_EMPTY\n"
 "Попытка отправить пустое сообщение."
 
-#: Tox/ToxException.cpp:143
+#: Tox/ToxException.cpp
 msgid "TOX_ERR_FRIEND_SEND_MESSAGE_FRIEND_NOT_CONNECTED"
 msgstr ""
 "TOX_ERR_FRIEND_SEND_MESSAGE_FRIEND_NOT_CONNECTED\n"
 "Нет связи с контактом."
 
-#: Tox/ToxException.cpp:142
+#: Tox/ToxException.cpp
 msgid "TOX_ERR_FRIEND_SEND_MESSAGE_FRIEND_NOT_FOUND"
 msgstr ""
 "TOX_ERR_FRIEND_SEND_MESSAGE_FRIEND_NOT_FOUND\n"
 "Номер контакта неверен."
 
-#: Tox/ToxException.cpp:141
+#: Tox/ToxException.cpp
 msgid "TOX_ERR_FRIEND_SEND_MESSAGE_NULL"
 msgstr "TOX_ERR_FRIEND_SEND_MESSAGE_NULL"
 
-#: Tox/ToxException.cpp:144
+#: Tox/ToxException.cpp
 msgid "TOX_ERR_FRIEND_SEND_MESSAGE_SENDQ"
 msgstr ""
 "TOX_ERR_FRIEND_SEND_MESSAGE_SENDQ\n"
 "Ошибка выделения памяти при увеличении размера очереди отправки."
 
-#: Tox/ToxException.cpp:145
+#: Tox/ToxException.cpp
 msgid "TOX_ERR_FRIEND_SEND_MESSAGE_TOO_LONG"
 msgstr ""
 "TOX_ERR_FRIEND_SEND_MESSAGE_TOO_LONG\n"
 "Длина сообщения не может привышать TOX_MAX_MESSAGE_LENGTH."
 
-#: Tox/ToxException.cpp:66
+#: Tox/ToxException.cpp
 msgid "TOX_ERR_NEW_LOAD_BAD_FORMAT"
 msgstr ""
 "TOX_ERR_NEW_LOAD_BAD_FORMAT\n"
@@ -525,24 +525,24 @@ msgstr ""
 "некоторая часть информации может быть загружена, а остальная часть "
 "отброшена. Также передача неверного параметра длины может вызвать эту ошибку."
 
-#: Tox/ToxException.cpp:65
+#: Tox/ToxException.cpp
 msgid "TOX_ERR_NEW_LOAD_ENCRYPTED"
 msgstr ""
 "TOX_ERR_NEW_LOAD_ENCRYPTED\n"
 "Массив данных для загрузки зашифрован."
 
-#: Tox/ToxException.cpp:59
+#: Tox/ToxException.cpp
 msgid "TOX_ERR_NEW_MALLOC"
 msgstr ""
 "TOX_ERR_NEW_MALLOC\n"
 "Функция не смогла выделить достаточно памяти для хранения внутренних "
 "структур Tox-объекта"
 
-#: Tox/ToxException.cpp:58
+#: Tox/ToxException.cpp
 msgid "TOX_ERR_NEW_NULL"
 msgstr "TOX_ERR_NEW_NULL"
 
-#: Tox/ToxException.cpp:60
+#: Tox/ToxException.cpp
 msgid "TOX_ERR_NEW_PORT_ALLOC"
 msgstr ""
 "TOX_ERR_NEW_PORT_ALLOC\n"
@@ -551,56 +551,56 @@ msgstr ""
 "запущенные экземпляры Tox. Вы можете получить больше информации из кода "
 "ошибки."
 
-#: Tox/ToxException.cpp:61 Tox/ToxException.cpp:62
+#: Tox/ToxException.cpp
 msgid "TOX_ERR_NEW_PROXY_BAD_HOST"
 msgstr ""
 "TOX_ERR_NEW_PROXY_BAD_HOST\n"
 "Правильный proxy_type, но proxy_host равен NULL или имеет неверный формат."
 
-#: Tox/ToxException.cpp:63
+#: Tox/ToxException.cpp
 msgid "TOX_ERR_NEW_PROXY_BAD_PORT"
 msgstr ""
 "TOX_ERR_NEW_PROXY_BAD_PORT\n"
 "Правильный proxy_type, но неверный proxy_port."
 
-#: Tox/ToxException.cpp:64
+#: Tox/ToxException.cpp
 msgid "TOX_ERR_NEW_PROXY_NOT_FOUND"
 msgstr ""
 "TOX_ERR_NEW_PROXY_NOT_FOUND\n"
 "Указанный адрес прокси-сервера не найден."
 
-#: Tox/ToxException.cpp:45
+#: Tox/ToxException.cpp
 msgid "TOX_ERR_OPTIONS_NEW_MALLOC"
 msgstr ""
 "TOX_ERR_OPTIONS_NEW_MALLOC\n"
 "Функция не смогла выделить достаточно памяти для внутренноего объекта "
 "настроек."
 
-#: Tox/ToxException.cpp:159
+#: Tox/ToxException.cpp
 msgid "TOX_ERR_SET_INFO_NULL"
 msgstr "TOX_ERR_SET_INFO_NULL"
 
-#: Tox/ToxException.cpp:160
+#: Tox/ToxException.cpp
 msgid "TOX_ERR_SET_INFO_TOO_LONG"
 msgstr ""
 "TOX_ERR_SET_INFO_TOO_LONG\n"
 "Превышена длина допустимого размера информации."
 
-#: Tox/ToxException.cpp:187
+#: Tox/ToxException.cpp
 msgid "TOX_ERR_SET_TYPING_FRIEND_NOT_FOUND"
 msgstr ""
 "TOX_ERR_SET_TYPING_FRIEND_NOT_FOUND\n"
 "Неверный номер контакта."
 
-#: Popover/PopoverAddContact.cpp:33 Widget/Settings/WidgetProfile.cpp:58
+#: Popover/PopoverAddContact.cpp Widget/Settings/WidgetProfile.cpp
 msgid "TOX_ID"
 msgstr "Tox ID"
 
-#: main.cpp:101
+#: main.cpp
 msgid "TRANSLATION_CHECKER"
 msgstr "Okay"
 
-#: Widget/Settings/WidgetProfile.cpp:51
+#: Widget/Settings/WidgetProfile.cpp
 msgid "USERNAME"
 msgstr "Имя"
 
