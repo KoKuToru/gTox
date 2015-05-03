@@ -37,9 +37,6 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="halign">center</property>
-                <style>
-                  <class name="gtox-profile-wrapper"/>
-                </style>
                 <child>
                   <object class="GtkSpinner" id="spinner1">
                     <property name="visible">True</property>
@@ -70,6 +67,9 @@
                     <property name="position">1</property>
                   </packing>
                 </child>
+                <style>
+                  <class name="gtox-profile-wrapper"/>
+                </style>
               </object>
             </child>
           </object>
@@ -89,12 +89,7 @@
         <property name="subtitle">PROFILE_SUBTITLE</property>
         <property name="show_close_button">True</property>
         <child>
-          <object class="GtkButton" id="profile_abort">
-            <property name="label" translatable="yes" comments="Exit the application, abort the profile selection">PROFILE_ABORT</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-          </object>
+          <placeholder/>
         </child>
         <child>
           <object class="GtkBox" id="box3">
