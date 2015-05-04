@@ -72,6 +72,11 @@ void gTox::on_activate() {
         Gio::File::create_for_path(config_path)->make_directory();
     }
 
+    std::string avatar_path = Glib::build_filename(config_path, "avatars");
+    if(!Glib::file_test(avatar_path, Glib::FILE_TEST_IS_DIR)) {
+        Gio::File::create_for_path(avatar_path)->make_directory();
+    }
+
     Glib::Dir dir(config_path);
     std::vector<std::string> accounts(dir.begin(), dir.end());
     accounts.resize(std::distance(
