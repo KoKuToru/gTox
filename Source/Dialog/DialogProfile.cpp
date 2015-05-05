@@ -45,7 +45,6 @@ DialogProfile::DialogProfile(BaseObjectType* cobject, gToxBuilder builder, const
     Gtk::ListBox* profile_list   = builder.get_widget<Gtk::ListBox>("profile_list");
     Gtk::Button*  profile_new    = builder.get_widget<Gtk::Button>("profile_new");
     Gtk::Button*  profile_select = builder.get_widget<Gtk::Button>("profile_select");
-    Gtk::Button*  profile_abort  = builder.get_widget<Gtk::Button>("profile_abort");
 
     profile_list->signal_row_selected().connect([this, profile_select](Gtk::ListBoxRow* row) {
         if (m_quited) {
@@ -75,10 +74,6 @@ DialogProfile::DialogProfile(BaseObjectType* cobject, gToxBuilder builder, const
                 m_selected_path = m_accounts[row->get_index()];
             }
         }
-        quit();
-    });
-
-    profile_abort->signal_clicked().connect([this](){
         quit();
     });
 

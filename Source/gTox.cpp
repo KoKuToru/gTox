@@ -30,8 +30,19 @@ Glib::RefPtr<gTox> gTox::m_instance;
 
 gTox::gTox()
     : Gtk::Application("org.gtox",
-                       Gio::ApplicationFlags(Gio::APPLICATION_HANDLES_OPEN | Gio::APPLICATION_HANDLES_COMMAND_LINE)) {
+                       Gio::ApplicationFlags(Gio::APPLICATION_HANDLES_OPEN | Gio::APPLICATION_HANDLES_COMMAND_LINE)),
+      m_config_path(Glib::build_filename(Glib::get_user_config_dir(), "tox")),
+      m_avatar_path(Glib::build_filename(m_config_path, "avatars")) {
+
     Glib::set_application_name(_("APPLICATION_NAME"));
+
+    if (!Glib::file_test(m_config_path, Glib::FILE_TEST_IS_DIR)) {
+        Gio::File::create_for_path(m_config_path)->make_directory();
+    }
+
+    if (!Glib::file_test(m_avatar_path, Glib::FILE_TEST_IS_DIR)) {
+        Gio::File::create_for_path(m_avatar_path)->make_directory();
+    }
 
     Gtk::IconTheme::get_default()
             ->add_resource_path("/org/gtox/icon");
@@ -66,13 +77,8 @@ Glib::RefPtr<gTox> gTox::create() {
 }
 
 void gTox::on_activate() {
-    std::string config_path
-            = Glib::build_filename(Glib::get_user_config_dir(), "tox");
-    if (!Glib::file_test(config_path, Glib::FILE_TEST_IS_DIR)) {
-        Gio::File::create_for_path(config_path)->make_directory();
-    }
 
-    Glib::Dir dir(config_path);
+    Glib::Dir dir(m_config_path);
     std::vector<std::string> accounts(dir.begin(), dir.end());
     accounts.resize(std::distance(
         accounts.begin(),
@@ -100,8 +106,8 @@ void gTox::on_activate() {
     //3. remove duplicates
     accounts.erase(std::unique(accounts.begin(), accounts.end()), accounts.end());
     //4. make the full paths
-    std::transform(accounts.begin(), accounts.end(), accounts.begin(), [&config_path](const std::string& name) {
-        return Glib::build_filename(config_path, name + ".tox");
+    std::transform(accounts.begin(), accounts.end(), accounts.begin(), [this](const std::string& name) {
+        return Glib::build_filename(m_config_path, name + ".tox");
     });
 
     // start profile select
@@ -113,14 +119,14 @@ void gTox::on_activate() {
     profile->present();
 
     if (profile->get_path().empty()) {
-        profile->signal_hide().connect_notify([this, profile, config_path](){
+        profile->signal_hide().connect_notify([this, profile](){
             remove_window(*profile);
 
             if (!profile->get_path().empty()) {
                 open(Gio::File::create_for_path(profile->get_path()));
             } else if (!profile->is_aborted()) {
                 mark_busy();
-                auto assistant = DialogProfileCreate::create(config_path);
+                auto assistant = DialogProfileCreate::create(m_config_path);
                 unmark_busy();
 
                 add_window(*assistant);
@@ -180,23 +186,16 @@ int gTox::on_command_line(const Glib::RefPtr<Gio::ApplicationCommandLine>& comma
 
     Gio::Application::type_vec_files files;
     std::vector<std::string> invites;
-    bool invite_next = false;
     for (auto value : arguments) {
-        if (invite_next) {
-            invite_next = false;
-            invites.push_back(value);
-            std::clog << "Invite: " << value << std::endl;
+        if (Glib::str_has_prefix(value, "tox://")) {
+            invites.push_back(value.substr(strlen("tox://")));
+            std::clog << "Invite: " << invites.back() << std::endl;
+        } else if (Glib::str_has_prefix(value, "tox:")) {
+            invites.push_back(value.substr(strlen("tox:")));
+            std::clog << "Invite: " << invites.back() << std::endl;
         } else {
-            if (value == "tox:") {
-                invite_next = true;
-            } else if (value.find("tox://") == 0) {
-                value = value.substr(strlen("tox://"));
-                invites.push_back(value);
-                std::clog << "Invite: " << value << std::endl;
-            } else {
-                files.push_back(Gio::File::create_for_path(value));
-                std::clog << "Open: " << value << std::endl;
-            }
+            files.push_back(Gio::File::create_for_path(value));
+            std::clog << "Open: " << value << std::endl;
         }
     }
 

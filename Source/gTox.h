@@ -26,6 +26,9 @@ class gTox : public Gtk::Application {
         gTox();
         static Glib::RefPtr<gTox> create();
 
+        const std::string m_config_path;
+        const std::string m_avatar_path;
+
     protected:
         void on_activate() override;
         void on_open(const Gio::Application::type_vec_files& files,
