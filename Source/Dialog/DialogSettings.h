@@ -16,23 +16,35 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>
- **/
-
+**/
 #ifndef DIALOGSETTINGS_H
 #define DIALOGSETTINGS_H
 
-#include <gtkmm.h>
+#include "Helper/gToxBuilder.h"
 #include "Helper/gToxObserver.h"
 
-class DialogSettings : public Gtk::Window {
+class DialogSettings : public Gtk::Window, public gToxObserver {
   private:
+        gToxBuilder m_builder;
+        bool m_in_window = false;
+
+        Gtk::HeaderBar* m_headerbar = nullptr;
+        Gtk::Box*       m_body = nullptr;
+
+        Gtk::Box m_headerbar_box;
+        Gtk::Box m_body_box;
+
+        Glib::RefPtr<Gtk::SizeGroup> m_size_group;
+
   public:
-    DialogSettings(gToxObservable* instance);
-    ~DialogSettings();
+        DialogSettings(gToxObservable* observable);
+        ~DialogSettings();
 
-    Gtk::Stack m_stack;
+        void show();
+        void hide();
+        void present();
 
-    void show();
+        bool is_visible();
 };
 
 #endif

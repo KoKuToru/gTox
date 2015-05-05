@@ -4,7 +4,7 @@
   <requires lib="gtk+" version="3.16"/>
   <object class="GtkListStore" id="liststore1">
     <columns>
-      <!-- column-name < Neue Spalte definieren >1 -->
+      <!-- column-name < -->
       <column type="&lt; Neue Spalte definieren &gt;"/>
       <!-- column-name ID -->
       <column type="gint"/>
@@ -853,8 +853,7 @@
                         <property name="shadow_type">in</property>
                         <child>
                           <object class="GtkDrawingArea" id="drawingarea1">
-                            <property name="width_request">640</property>
-                            <property name="height_request">480</property>
+                            <property name="height_request">240</property>
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                           </object>
@@ -1105,4 +1104,5 @@
       </packing>
     </child>
   </object>
+  <object class="GtkSizeGroup" id="sizegroup1"/>
 </interface>

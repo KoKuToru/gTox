@@ -21,6 +21,7 @@
 #include "Dialog/DialogContact.h"
 #include "Dialog/Debug/DialogCss.h"
 #include "Dialog/DialogError.h"
+#include "Dialog/DialogSettings.h"
 #include <glibmm/i18n.h>
 
 PopoverSettings::PopoverSettings(gToxObservable* observable,
@@ -59,9 +60,13 @@ PopoverSettings::PopoverSettings(gToxObservable* observable,
 
     /* Open settings */
     m_builder.get_widget<Gtk::Button>("profile_open_settings")
-            ->signal_clicked().connect([this]() {
+            ->signal_clicked().connect([this, observable]() {
         hide();
-        //m_settings.show();
+        auto s = new DialogSettings(observable);
+        s->signal_hide().connect_notify([s](){
+            delete s;
+        });
+        s->present();
     });
 
     /* change avatar logic */
