@@ -186,23 +186,16 @@ int gTox::on_command_line(const Glib::RefPtr<Gio::ApplicationCommandLine>& comma
 
     Gio::Application::type_vec_files files;
     std::vector<std::string> invites;
-    bool invite_next = false;
     for (auto value : arguments) {
-        if (invite_next) {
-            invite_next = false;
-            invites.push_back(value);
-            std::clog << "Invite: " << value << std::endl;
+        if (Glib::str_has_prefix(value, "tox://")) {
+            invites.push_back(value.substr(strlen("tox://")));
+            std::clog << "Invite: " << invites.back() << std::endl;
+        } else if (Glib::str_has_prefix(value, "tox:")) {
+            invites.push_back(value.substr(strlen("tox:")));
+            std::clog << "Invite: " << invites.back() << std::endl;
         } else {
-            if (value == "tox:") {
-                invite_next = true;
-            } else if (value.find("tox://") == 0) {
-                value = value.substr(strlen("tox://"));
-                invites.push_back(value);
-                std::clog << "Invite: " << value << std::endl;
-            } else {
-                files.push_back(Gio::File::create_for_path(value));
-                std::clog << "Open: " << value << std::endl;
-            }
+            files.push_back(Gio::File::create_for_path(value));
+            std::clog << "Open: " << value << std::endl;
         }
     }
 
