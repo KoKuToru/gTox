@@ -57,15 +57,11 @@ DialogContact::DialogContact(BaseObjectType* cobject, gToxBuilder builder, const
     auto paned_top = m_builder.get_widget<Gtk::Paned>("paned_top");
     auto paned_bottom = m_builder.get_widget<Gtk::Paned>("paned_bottom");
 
-    // Connect properties C++ version ?
-    g_object_bind_property(
-        paned_top->gobj(),
-        "position",
-        paned_bottom->gobj(),
-        "position",
-        GBindingFlags(G_BINDING_DEFAULT |
-                      G_BINDING_BIDIRECTIONAL |
-                      G_BINDING_SYNC_CREATE));
+    m_position_binding = Glib::Binding::bind_property(paned_top->property_position(),
+                                                      paned_bottom->property_position(),
+                                                      Glib::BINDING_DEFAULT |
+                                                      Glib::BINDING_BIDIRECTIONAL |
+                                                      Glib::BINDING_SYNC_CREATE);
 
     m_builder.get_widget("headerbar", m_headerbar);
     m_builder.get_widget("stack_header", m_stack_header);
