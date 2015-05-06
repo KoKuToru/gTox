@@ -58,6 +58,8 @@ class DialogContact : public Gtk::Window, public gToxObservable {
 
     std::vector<gToxFileRecv> m_file_receivers;
 
+    Glib::RefPtr<Glib::Binding> m_position_binding;
+
   public:
     DialogContact(BaseObjectType* cobject, gToxBuilder builder,
                   const Glib::ustring& file);
