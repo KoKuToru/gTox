@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: \n"
+"Project-Id-Version: gtox español\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-05-14 11:47+0200\n"
 "PO-Revision-Date: \n"
@@ -11,7 +11,9 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Language: es_ES\n"
-"X-Generator: Poedit 1.7.5\n"
+"X-Generator: Poedit 1.6.10\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-SourceCharset: UTF-8\n"
 
 #: Layout/popover_settings.ui
 msgid ""
@@ -24,7 +26,7 @@ msgstr ""
 
 #: Widget/Settings/WidgetAbout.cpp
 msgid "ABOUT_SOFTWARE_COPYRIGHT"
-msgstr "Copyright © 2014 - el equipo gTox"
+msgstr "Copyright © 2014 - El equipo gTox"
 
 #: Widget/Settings/WidgetAbout.cpp
 msgid "ABOUT_SOFTWARE_HOMEPAGE"
@@ -38,11 +40,11 @@ msgstr "<b>gTox</b>"
 
 #: Widget/Settings/WidgetAbout.cpp
 msgid "ABOUT_SOFTWARE_VERSION"
-msgstr "<i>pre-alpha version</i>"
+msgstr "<i>Versión pre-alpha</i>"
 
 #: Widget/Settings/WidgetAbout.cpp
 msgid "ABOUT_SOFTWARE_WARRANTY"
-msgstr "<i>This program comes with ABSOLUTELY NO WARRANTY</i>"
+msgstr "<i>Este programa viene ABSOLUTAMENTE SIN NINGUNA GARANTÍA</i>"
 
 #: Layout/popover_settings.ui
 msgid "ADD_CONTACT_MESSAGE"
@@ -65,12 +67,12 @@ msgstr "Archivo gTox"
 #: Layout/dialog_assistant.ui
 msgid "ASSISTANT_FILE_TEXT"
 msgstr ""
-"<span size='x-small'><u>Archivo toxcore</u> includes the profile and contact "
-"list,\n"
+"<span size='x-small'><u>Archivo toxcore</u> incluye el perfil y la lista de "
+"contactos,\n"
 "<u>Archivo gTox</u> incluye el registro de chat y la configuración de gTox.\n"
 "\n"
-"<b>Si usted desea hacer una copia de seguridad del perfil, en el primer lugar <u>Guarde el archivo toxcore</u> !</"
-"b></span>"
+"<b>Si usted desea hacer una copia de seguridad del perfil, en el primer "
+"lugar <u>Guarde el archivo toxcore</u> !</b></span>"
 
 #. Label for the toxcore profile save path
 #: Layout/dialog_assistant.ui
@@ -174,7 +176,7 @@ msgstr ""
 
 #: Popover/PopoverStatus.cpp
 msgid "ONLINE"
-msgstr "Online"
+msgstr "Disponible"
 
 #. Click here to change avatar, right click to remove
 #: Layout/popover_settings.ui
@@ -192,16 +194,16 @@ msgstr ""
 
 #: Layout/list_item_profile.ui
 msgid "PROFILE_CORRUPTED"
-msgstr "Profile couldn't be loaded"
+msgstr "Perfil no se pudo cargar"
 
 #: Layout/list_item_profile.ui
 msgid "PROFILE_CORRUPTED_TITLE"
-msgstr "Corrupted profile"
+msgstr "Perfil Corrupto"
 
 #. Text next to the spinner, while profiles are loading
 #: Layout/dialog_profile.ui
 msgid "PROFILE_LOADING"
-msgstr "loading profiles..."
+msgstr "Cargando perfiles..."
 
 #. Button for creating a new profile
 #: Layout/dialog_profile.ui
@@ -215,15 +217,15 @@ msgstr "Configuración"
 #. Button for loading the selected profile
 #: Layout/dialog_profile.ui
 msgid "PROFILE_SELECT"
-msgstr "Select"
+msgstr "Seleccionar"
 
 #: Layout/popover_settings.ui
 msgid "PROFILE_STATUSMESSAGE"
-msgstr "Message"
+msgstr "Mensaje"
 
 #: Dialog/DialogProfile.cpp
 msgid "PROFILE_SUBTITLE"
-msgstr "Seleccionar perfil"
+msgstr "Seleccionar Perfil"
 
 #: Dialog/DialogProfile.cpp
 msgid "PROFILE_TITLE"
@@ -235,11 +237,11 @@ msgstr "Tox-ID"
 
 #: Layout/popover_settings.ui
 msgid "PROFILE_USERNAME"
-msgstr "Nombre de Usuario"
+msgstr "Nombre"
 
 #: Popover/PopoverContextContact.cpp
 msgid "REMOVE"
-msgstr "Remove"
+msgstr "Eliminar"
 
 #: Widget/WidgetChat.cpp
 msgid "SEND"
@@ -247,7 +249,7 @@ msgstr "Enviar"
 
 #: Dialog/DialogSettings.cpp
 msgid "SETTINGS_ABOUT"
-msgstr "About"
+msgstr "Acerca de"
 
 #. Button for adding a new contact
 #: Layout/popover_settings.ui
@@ -266,15 +268,15 @@ msgstr "%1 log entries successfully removed"
 
 #: Widget/Settings/WidgetCache.cpp
 msgid "SETTINGS_CACHE_CLEAN_LOG_SUCCESS_TITLE"
-msgstr "Logs removed"
+msgstr "Historial eliminado."
 
 #: Widget/Settings/WidgetCache.cpp
 msgid "SETTINGS_CACHE_CLEAN_LOG_TITLE"
-msgstr "Delete all logs ?"
+msgstr "¿Desea eliminar todo el historial?"
 
 #: Dialog/DialogSettings.cpp
 msgid "SETTINGS_TITLE"
-msgstr "gTox settings"
+msgstr "Configuración gTox"
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_BOOTSTRAP_BAD_HOST"
@@ -364,7 +366,7 @@ msgstr ""
 
 #: Popover/PopoverSettings.cpp
 msgid "TOX_ERR_FRIEND_ADD_ALREADY_SENT_UI_TITLE"
-msgstr "Friend request failed"
+msgstr "Solicitud de amigo ha fallado"
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_FRIEND_ADD_BAD_CHECKSUM"
@@ -399,7 +401,7 @@ msgstr "The friend request message is not allowed to be empty."
 
 #: Popover/PopoverSettings.cpp
 msgid "TOX_ERR_FRIEND_ADD_NO_MESSAGE_UI_TITLE"
-msgstr "Empty message"
+msgstr "Mensaje vacío"
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_FRIEND_ADD_NULL"
@@ -417,7 +419,7 @@ msgstr "The friend address belongs to you"
 
 #: Popover/PopoverSettings.cpp
 msgid "TOX_ERR_FRIEND_ADD_OWN_KEY_UI_TITLE"
-msgstr "Friend request failed"
+msgstr "Solicitud de amigo ha fallado"
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM"
@@ -431,7 +433,7 @@ msgstr "The friend was already there, but the nospam value was different."
 
 #: Popover/PopoverSettings.cpp
 msgid "TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM_UI_TITLE"
-msgstr "Friend request failed"
+msgstr "Solicitud de amigo ha fallado"
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_FRIEND_ADD_TOO_LONG"
@@ -446,7 +448,7 @@ msgstr "The length of the friend request message exceeded 1016 bytes."
 
 #: Popover/PopoverSettings.cpp
 msgid "TOX_ERR_FRIEND_ADD_TOO_LONG_UI_TITLE"
-msgstr "Friend request failed"
+msgstr "Solicitud de amigo ha fallado"
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_FRIEND_BY_PUBLIC_KEY_NOT_FOUND"
@@ -549,34 +551,34 @@ msgstr "TOX_ERR_NEW_NULL"
 msgid "TOX_ERR_NEW_PORT_ALLOC"
 msgstr ""
 "TOX_ERR_NEW_PORT_ALLOC\n"
-"The function was unable to bind to a port. This may mean that all ports have "
-"already been bound, e.g. by other Tox instances, or it may mean a permission "
-"error. You may be able to gather more information from errno."
+"La función era incapaz de unirse a un puerto. Esto puede significar que "
+"todos los puertos ya se han unido, por ejemplo, por otras instancias Tox, o "
+"puede significar un error de permiso. Usted puede obtener más información en "
+"el código de error."
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_NEW_PROXY_BAD_HOST"
 msgstr ""
 "TOX_ERR_NEW_PROXY_BAD_HOST\n"
-"proxy_type was valid but the proxy_host passed had an invalid format or was "
-"NULL."
+"PROXY_TYPE correcta, pero proxy_host es NULL o es mal formado"
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_NEW_PROXY_BAD_PORT"
 msgstr ""
 "TOX_ERR_NEW_PROXY_BAD_PORT\n"
-"proxy_type was valid, but the proxy_port was invalid."
+"PROXY_TYPE correcta, pero proxy_port no valido."
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_NEW_PROXY_NOT_FOUND"
 msgstr ""
 "TOX_ERR_NEW_PROXY_NOT_FOUND\n"
-"The proxy host passed could not be resolved."
+"Esta dirección de servidor proxy no se encuentra."
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_OPTIONS_NEW_MALLOC"
 msgstr ""
 "TOX_ERR_OPTIONS_NEW_MALLOC\n"
-"The function failed to allocate enough memory for the options struct."
+"La función no pudo asignar suficiente memoria para la estructura opciones."
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_SET_INFO_NULL"
@@ -586,13 +588,13 @@ msgstr "TOX_ERR_SET_INFO_NULL"
 msgid "TOX_ERR_SET_INFO_TOO_LONG"
 msgstr ""
 "TOX_ERR_SET_INFO_TOO_LONG\n"
-"Information length exceeded maximum permissible size."
+"La longitud excede el tamaño máximo permitido."
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_SET_TYPING_FRIEND_NOT_FOUND"
 msgstr ""
 "TOX_ERR_SET_TYPING_FRIEND_NOT_FOUND\n"
-"The friend number did not designate a valid friend."
+"Número de PIN no válido."
 
 #: Widget/Settings/WidgetProfile.cpp
 msgid "TOX_ID"
@@ -604,7 +606,7 @@ msgstr "Okay"
 
 #: Widget/Settings/WidgetProfile.cpp
 msgid "USERNAME"
-msgstr "Nombre de Usuario"
+msgstr "Nombre"
 
 #~ msgid "PROFILE_ABORT"
 #~ msgstr "Cancelar"
@@ -616,4 +618,4 @@ msgstr "Nombre de Usuario"
 #~ msgstr "Do you really want to guit the assistant?"
 
 #~ msgid "LOADING_THEME_FAILED"
-#~ msgstr "Flallo al cargar el tema"
+#~ msgstr "Fallo al cargar el tema"
