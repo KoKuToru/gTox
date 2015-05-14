@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-05-03 14:56+0200\n"
+"POT-Creation-Date: 2015-05-14 11:47+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -46,7 +46,7 @@ msgstr "<i>This program comes with ABSOLUTELY NO WARRANTY</i>"
 
 #: Layout/popover_settings.ui
 msgid "ADD_CONTACT_MESSAGE"
-msgstr "Message"
+msgstr "Mensaje"
 
 #: Layout/popover_settings.ui
 msgid "ADD_CONTACT_TOX_ID"
@@ -65,11 +65,11 @@ msgstr "Archivo gTox"
 #: Layout/dialog_assistant.ui
 msgid "ASSISTANT_FILE_TEXT"
 msgstr ""
-"<span size='x-small'><u>toxcore file</u> includes the profile and contact "
+"<span size='x-small'><u>Archivo toxcore</u> includes the profile and contact "
 "list,\n"
-"<u>gTox file</u> includes the chat log and gTox specified settings.\n"
+"<u>Archivo gTox</u> incluye el registro de chat y la configuración de gTox.\n"
 "\n"
-"<b>If you do a backup you must at least backup the <u>toxcore file</u> !</"
+"<b>Si usted desea hacer una copia de seguridad del perfil, en el primer lugar <u>Guarde el archivo toxcore</u> !</"
 "b></span>"
 
 #. Label for the toxcore profile save path
@@ -80,13 +80,13 @@ msgstr "Archivo toxcore"
 #. Lable for the log enable/disable switch
 #: Layout/dialog_assistant.ui
 msgid "ASSISTANT_LOGGING"
-msgstr "Chat logging"
+msgstr "Mantener historial de mensajes"
 
 #. Describes that gTox will log into a uncrypted sqlite db
 #: Layout/dialog_assistant.ui
 msgid "ASSISTANT_LOGGING_TEXT"
 msgstr ""
-"<span size='x-small'>gTox saves the log into a uncrypted SqliteDB</span>"
+"<span size='x-small'>gTox guarda el registro en SqliteDB no cifrado</span>"
 
 #. Label for the profile statusmessage
 #: Layout/dialog_assistant.ui
@@ -104,21 +104,21 @@ msgid "ASSISTANT_WELCOME_TEXT"
 msgstr ""
 "Bienvenido a gTox\n"
 "\n"
-"gTox and Tox are by no means complete.\n"
-"We cannot guarantee what works today will work tomorrow.\n"
-"gTox and Tox are alpha software and code changes daily."
+"gTox y Tox estan de ninguna manera completos.\n"
+"No podemos garantizar que lo que funciona hoy funcionará mañana.\n"
+"gTox y Tox son software de código alfa y cambia todos los días."
 
 #: Popover/PopoverStatus.cpp
 msgid "AWAY"
-msgstr "Away"
+msgstr "Ausente"
 
 #: Popover/PopoverStatus.cpp
 msgid "BUSY"
-msgstr "Busy"
+msgstr "Ocupado"
 
 #: Layout/popover_settings.ui
 msgid "CONTACT_ADD"
-msgstr "Submit"
+msgstr "Enviar"
 
 #: Widget/WidgetChat.cpp
 msgid "DATE_FORMAT"
@@ -134,7 +134,7 @@ msgstr "Wrong ID length"
 
 #: Dialog/DialogError.cpp
 msgid "ERROR_REPORT_BTN"
-msgstr "Report"
+msgstr "Reportar"
 
 #: Dialog/DialogError.cpp
 msgid "ERROR_REPORT_TEXT_INTRO"
