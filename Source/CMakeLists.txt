@@ -115,6 +115,7 @@ endif()
 SET(TRANSLATIONS
     de
     en
+    es
     ru
 )
 
