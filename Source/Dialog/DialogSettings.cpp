@@ -16,71 +16,110 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>
- **/
-
+**/
 #include "DialogSettings.h"
-#include <glibmm/i18n.h>
-#include "Debug/DialogCss.h"
-#include "Widget/Settings/WidgetAbout.h"
-#include "Widget/Settings/WidgetProfile.h"
-#include "Widget/Settings/WidgetNetwork.h"
-#include "Widget/Settings/WidgetCache.h"
-#include "Widget/Settings/WidgetAudioVideo.h"
+#include "DialogContact.h"
 
-DialogSettings::DialogSettings(gToxObservable* instance) {
+DialogSettings::DialogSettings(gToxObservable* observable)
+    : gToxObserver(observable),
+      m_builder(Gtk::Builder::create_from_resource("/org/gtox/ui/dialog_settings.ui")) {
 
-    set_title(_("SETTINGS_TITLE"));
-    set_default_geometry(600, 300);
-    set_position(Gtk::WindowPosition::WIN_POS_CENTER);
+    set_titlebar(m_headerbar_box);
+    m_headerbar_box.property_hexpand() = true;
+    m_headerbar_box.show();
 
-    auto hbox = Gtk::manage(new Gtk::HBox());
-    auto sidebar = Gtk::manage(new Gtk::Box());
-    auto seperator = Gtk::manage(new Gtk::VSeparator());
-    auto box = Gtk::manage(new Gtk::Box());
-    auto listbox = Gtk::manage(new Gtk::ListBox());
-    auto scroller_1 = Gtk::manage(new Gtk::ScrolledWindow());
-    auto scroller_2 = Gtk::manage(new Gtk::ScrolledWindow());
+    add(m_body_box);
+    m_body_box.property_expand() = true;
+    m_body_box.show();
 
-    add(*hbox);
-    hbox->pack_start(*sidebar, false, false);
-    hbox->pack_start(*seperator, false, false);
-    hbox->add(*box);
-    sidebar->add(*scroller_1);
-    scroller_1->add(*listbox);
-    box->pack_start(*scroller_2, true, true);
-    scroller_2->add(m_stack);
+    m_builder.get_widget("settings_headerbar", m_headerbar);
+    m_builder.get_widget("settings_widget", m_body);
 
-    m_stack.add(*Gtk::manage(new WidgetProfile(instance)), "profile");
-    // m_stack.add(*Gtk::manage(new Gtk::Label("Visual Settings")), "visual");
-    /*m_stack.add(*Gtk::manage(new Gtk::Label("Emojis Settings, in future")),
-                "emojis");*/
-    m_stack.add(*Gtk::manage(new WidgetCache(instance)), "cache");
-    // m_stack.add(*Gtk::manage(new WidgetNetwork), "network");
-    m_stack.add(*Gtk::manage(new WidgetAudioVideo), "av");
-    m_stack.add(*Gtk::manage(new WidgetAbout), "about");
+    m_size_group = Gtk::SizeGroup::create(Gtk::SIZE_GROUP_HORIZONTAL);
+    m_size_group->add_widget(*m_body);
+    m_size_group->add_widget(*m_headerbar);
 
-    listbox->get_style_context()->add_class("settings");
-
-    listbox->add(*Gtk::manage(new Gtk::Label("Profile", 0, 0.5)));
-    // listbox->add(*Gtk::manage(new Gtk::Label("Visual", 0, 0.5)));
-    // listbox->add(*Gtk::manage(new Gtk::Label("Emojis", 0, 0.5)));
-    listbox->add(*Gtk::manage(new Gtk::Label("Cache", 0, 0.5)));
-    // listbox->add(*Gtk::manage(new Gtk::Label("Network", 0, 0.5)));
-    listbox->add(*Gtk::manage(new Gtk::Label("Audio/Video", 0, 0.5)));
-    listbox->add(*Gtk::manage(new Gtk::Label(_("SETTINGS_ABOUT"), 0, 0.5)));
-
-    // only scroll vertically
-    scroller_1->set_policy(Gtk::POLICY_NEVER, Gtk::POLICY_AUTOMATIC);
-    scroller_2->set_policy(Gtk::POLICY_NEVER, Gtk::POLICY_AUTOMATIC);
-
-    listbox->signal_row_activated().connect([this](Gtk::ListBoxRow* it) {
-        m_stack.set_visible_child(*m_stack.get_children().at(it->get_index()));
+    m_builder.get_widget<Gtk::Button>("close_btn")->signal_clicked().connect([this](){
+        hide();
     });
 }
 
 DialogSettings::~DialogSettings() {
+    if (!m_in_window) {
+        int x,y,w,h;
+        observer_notify(ToxEvent(DialogContact::EventDetachWidget{
+                                     false,
+                                     m_headerbar,
+                                     m_body,
+                                     x,
+                                     y,
+                                     w,
+                                     h
+                                 }));
+    }
 }
 
 void DialogSettings::show() {
-    show_all();
+    if (!m_in_window) {
+        int x,y,w,h;
+        observer_notify(ToxEvent(DialogContact::EventDetachWidget{
+                                     true,
+                                     m_headerbar,
+                                     m_body,
+                                     x,
+                                     y,
+                                     w,
+                                     h
+                                 }));
+        move(x, y);
+        resize(w, h);
+        m_headerbar_box.add(*m_headerbar);
+        m_body_box.add(*m_body);
+        m_in_window = true;
+    }
+    Gtk::Window::show();
+}
+
+void DialogSettings::hide() {
+    if (m_in_window) {
+        m_headerbar_box.remove(*m_headerbar);
+        m_body_box.remove(*m_body);
+        m_in_window = false;
+
+        observer_notify(ToxEvent(DialogContact::EventAttachWidget{
+                                     m_headerbar,
+                                     m_body
+                                 }));
+    } else {
+        int x,y,w,h;
+        observer_notify(ToxEvent(DialogContact::EventDetachWidget{
+                                     false,
+                                     m_headerbar,
+                                     m_body,
+                                     x,
+                                     y,
+                                     w,
+                                     h
+                                 }));
+    }
+    Gtk::Window::hide();
+}
+
+void DialogSettings::present() {
+    if (m_in_window) {
+        Gtk::Window::present();
+    } else {
+        observer_notify(ToxEvent(DialogContact::EventPresentWidget{
+                                     m_headerbar,
+                                     m_body
+                                 }));
+    }
+}
+
+bool DialogSettings::is_visible() {
+    if (m_in_window) {
+        return property_is_active();
+    } else {
+        return m_body_box.get_mapped();
+    }
 }

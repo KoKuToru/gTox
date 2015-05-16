@@ -254,7 +254,7 @@ void DialogContact::tox_event_handling(const ToxEvent& ev) {
         //present
         property_gravity() = Gdk::GRAVITY_NORTH_EAST;
         if (!m_stack_header->is_visible()) {
-            resize(600 + get_width(), get_height());
+            resize(800 + get_width(), get_height());
         }
 
         data.header->get_style_context()->add_class("gtox-headerbar-left");

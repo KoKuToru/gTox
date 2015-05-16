@@ -104,7 +104,7 @@
           </object>
           <packing>
             <property name="resize">True</property>
-            <property name="shrink">True</property>
+            <property name="shrink">False</property>
           </packing>
         </child>
       </object>
@@ -161,6 +161,7 @@
               </object>
               <packing>
                 <property name="pack_type">end</property>
+                <property name="position">1</property>
               </packing>
             </child>
           </object>

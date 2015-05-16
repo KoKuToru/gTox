@@ -22,7 +22,6 @@
 
 #include <gtkmm.h>
 #include "Dialog/DialogSettings.h"
-#include "Widget/Settings/WidgetProfile.h"
 #include "Helper/gToxObserver.h"
 #include "Helper/gToxBuilder.h"
 #include "Widget/WidgetAvatar.h"
