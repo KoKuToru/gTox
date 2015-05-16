@@ -76,11 +76,6 @@ set(SOURCES
     Widget/Chat/WidgetChatEntry.cpp
     Widget/Chat/WidgetChatLayout.cpp
     Widget/Chat/WidgetChatBubbleRow.cpp
-    Widget/Settings/WidgetAbout.cpp
-    Widget/Settings/WidgetProfile.cpp
-    Widget/Settings/WidgetNetwork.cpp
-    Widget/Settings/WidgetCache.cpp
-    Widget/Settings/WidgetAudioVideo.cpp
     Widget/WidgetNotification.cpp
     Widget/VideoPlayer.cpp
     Widget/WidgetAvatar.cpp
