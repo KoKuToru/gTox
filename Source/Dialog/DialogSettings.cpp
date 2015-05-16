@@ -38,6 +38,10 @@ DialogSettings::DialogSettings(gToxObservable* observable)
     m_size_group = Gtk::SizeGroup::create(Gtk::SIZE_GROUP_HORIZONTAL);
     m_size_group->add_widget(*m_body);
     m_size_group->add_widget(*m_headerbar);
+
+    m_builder.get_widget<Gtk::Button>("close_btn")->signal_clicked().connect([this](){
+        hide();
+    });
 }
 
 DialogSettings::~DialogSettings() {
@@ -85,6 +89,17 @@ void DialogSettings::hide() {
         observer_notify(ToxEvent(DialogContact::EventAttachWidget{
                                      m_headerbar,
                                      m_body
+                                 }));
+    } else {
+        int x,y,w,h;
+        observer_notify(ToxEvent(DialogContact::EventDetachWidget{
+                                     false,
+                                     m_headerbar,
+                                     m_body,
+                                     x,
+                                     y,
+                                     w,
+                                     h
                                  }));
     }
     Gtk::Window::hide();

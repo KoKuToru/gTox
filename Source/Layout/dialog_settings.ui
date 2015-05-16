@@ -1022,7 +1022,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkButton" id="button1">
+          <object class="GtkButton" id="close_btn">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
