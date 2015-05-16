@@ -85,7 +85,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
-                        <property name="label" translatable="yes">Systemtray</property>
+                        <property name="label" translatable="yes">SETTINGS_SYSTEMTRAY_TITLE</property>
                         <property name="use_markup">True</property>
                       </object>
                       <packing>
@@ -99,8 +99,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
-                        <property name="label" translatable="yes">Show in systemtray</property>
-                        <property name="use_markup">True</property>
+                        <property name="label" translatable="yes">SETTINGS_SYSTEMTRAY_VISIBLE</property>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
@@ -112,8 +111,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
-                        <property name="label" translatable="yes">Start in systemtray</property>
-                        <property name="use_markup">True</property>
+                        <property name="label" translatable="yes">SETTINGS_SYSTEMTRAY_ON_START</property>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
@@ -125,8 +123,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
-                        <property name="label" translatable="yes">Close to systemtray</property>
-                        <property name="use_markup">True</property>
+                        <property name="label" translatable="yes">SETTINGS_SYSTEMTRAY_ON_CLOSE</property>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
@@ -149,7 +146,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
-                        <property name="label" translatable="yes">Chat</property>
+                        <property name="label" translatable="yes">SETTINGS_CHAT_TITLE</property>
                         <property name="use_markup">True</property>
                       </object>
                       <packing>
@@ -163,8 +160,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
-                        <property name="label" translatable="yes">New message system notification</property>
-                        <property name="use_markup">True</property>
+                        <property name="label" translatable="yes">SETTINGS_CHAT_NOTIFICATION_ON_MESSAGE</property>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
@@ -176,8 +172,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
-                        <property name="label" translatable="yes">New Message audio notification</property>
-                        <property name="use_markup">True</property>
+                        <property name="label" translatable="yes">SETTINGS_CHAT_NOTIFICATION_WITH_AUDIO_ON_MESSSAGE</property>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
@@ -189,8 +184,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
-                        <property name="label" translatable="yes">Auto away</property>
-                        <property name="use_markup">True</property>
+                        <property name="label" translatable="yes">SETTINGS_CHAT_AUTO_AWAY</property>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
@@ -202,8 +196,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
-                        <property name="label" translatable="yes">Send typing notification</property>
-                        <property name="use_markup">True</property>
+                        <property name="label" translatable="yes">SETTINGS_CHAT_SEND_TYPING</property>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
@@ -226,7 +219,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
-                        <property name="label" translatable="yes">Filetransfer</property>
+                        <property name="label" translatable="yes">SETTINGS_FILETRANSFER_TITLE</property>
                         <property name="use_markup">True</property>
                       </object>
                       <packing>
@@ -240,8 +233,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
-                        <property name="label" translatable="yes">Save to</property>
-                        <property name="use_markup">True</property>
+                        <property name="label" translatable="yes">SETTINGS_FILETRANSFER_SAVE_TO</property>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
@@ -253,8 +245,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
-                        <property name="label" translatable="yes">Automaticaly accept</property>
-                        <property name="use_markup">True</property>
+                        <property name="label" translatable="yes">SETTINGS_FILETRANSFER_AUTO_ACCEPT</property>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
@@ -266,8 +257,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
-                        <property name="label" translatable="yes">Inline display</property>
-                        <property name="use_markup">True</property>
+                        <property name="label" translatable="yes">SETTINGS_FILETRANSFER_DISPLAY_INLINE</property>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
@@ -290,7 +280,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
-                        <property name="label" translatable="yes">Contactlist</property>
+                        <property name="label" translatable="yes">SETTINGS_CONTACTLIST_TITLE</property>
                         <property name="use_markup">True</property>
                       </object>
                       <packing>
@@ -304,8 +294,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
-                        <property name="label" translatable="yes">Compact list</property>
-                        <property name="use_markup">True</property>
+                        <property name="label" translatable="yes">SETTINGS_CONTACTLIST_USE_COMPACT</property>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
@@ -317,8 +306,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
-                        <property name="label" translatable="yes">Display active contacts</property>
-                        <property name="use_markup">True</property>
+                        <property name="label" translatable="yes">SETTINGS_CONTACTLIST_DISPLAY_ACTIVE</property>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
@@ -473,26 +461,11 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
-                        <property name="label" translatable="yes" comments="Lable for the log enable/disable switch">ASSISTANT_LOGGING</property>
+                        <property name="label" translatable="yes" comments="Lable for the log enable/disable switch">SETTINGS_CHAT_LOGGING</property>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
                         <property name="top_attach">10</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkLabel" id="assistant_logging_text">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="halign">start</property>
-                        <property name="label" translatable="yes" comments="Describes that gTox will log into a uncrypted sqlite db">ASSISTANT_LOGGING_TEXT</property>
-                        <property name="use_markup">True</property>
-                        <property name="angle">0.040000000000000001</property>
-                      </object>
-                      <packing>
-                        <property name="left_attach">0</property>
-                        <property name="top_attach">11</property>
-                        <property name="width">2</property>
                       </packing>
                     </child>
                     <child>
@@ -513,6 +486,9 @@
                         <property name="left_attach">1</property>
                         <property name="top_attach">8</property>
                       </packing>
+                    </child>
+                    <child>
+                      <placeholder/>
                     </child>
                   </object>
                 </child>
@@ -550,7 +526,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
-                        <property name="label" translatable="yes">Connection settings</property>
+                        <property name="label" translatable="yes">SETTINGS_CONNECTION_TITLE</property>
                         <property name="use_markup">True</property>
                       </object>
                       <packing>
@@ -564,8 +540,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
-                        <property name="label" translatable="yes">Enable UDP</property>
-                        <property name="use_markup">True</property>
+                        <property name="label" translatable="yes">SETTINGS_CONNECTION_UDP</property>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
@@ -577,8 +552,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
-                        <property name="label" translatable="yes">Enable TCP</property>
-                        <property name="use_markup">True</property>
+                        <property name="label" translatable="yes">SETTINGS_CONNECTION_TCP</property>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
@@ -590,8 +564,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
-                        <property name="label" translatable="yes">Proxy Type</property>
-                        <property name="use_markup">True</property>
+                        <property name="label" translatable="yes">SETTINGS_PROXY_TYPE</property>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
@@ -603,8 +576,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
-                        <property name="label" translatable="yes">Proxy Addresse</property>
-                        <property name="use_markup">True</property>
+                        <property name="label" translatable="yes">SETTINGS_PROXY_HOST</property>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
@@ -616,8 +588,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
-                        <property name="label" translatable="yes">Proxy Port</property>
-                        <property name="use_markup">True</property>
+                        <property name="label" translatable="yes">SETTINGS_PROXY_PORT</property>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
@@ -640,7 +611,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
-                        <property name="label" translatable="yes">Theme</property>
+                        <property name="label" translatable="yes">SETTINGS_THEME_TITLE</property>
                         <property name="use_markup">True</property>
                       </object>
                       <packing>
@@ -654,8 +625,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
-                        <property name="label" translatable="yes">Colors</property>
-                        <property name="use_markup">True</property>
+                        <property name="label" translatable="yes">SETTINGS_THEME_COLOR</property>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
@@ -678,7 +648,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
-                        <property name="label" translatable="yes">Profile</property>
+                        <property name="label" translatable="yes">SETTINGS_PROFILE_TITLE</property>
                         <property name="use_markup">True</property>
                       </object>
                       <packing>
@@ -692,8 +662,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
-                        <property name="label" translatable="yes">Remember last used profile</property>
-                        <property name="use_markup">True</property>
+                        <property name="label" translatable="yes">SETTINGS_PROFILE_REMEMBER</property>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
@@ -827,8 +796,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
-                        <property name="label" translatable="yes">Default device</property>
-                        <property name="use_markup">True</property>
+                        <property name="label" translatable="yes">SETTINGS_VIDEO_DEFAULT_DEVICE</property>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
