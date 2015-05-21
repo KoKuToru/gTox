@@ -111,6 +111,7 @@ SET(TRANSLATIONS
     de
     en
     es
+    it
     ru
 )
 
