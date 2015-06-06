@@ -81,6 +81,17 @@ DialogSettings::DialogSettings(gToxObservable* observable)
         }
     });
 
+    auto settings_theme_color = m_builder.get_widget<Gtk::ComboBox>("settings_theme_color");
+    settings_theme_color->signal_changed().connect([this, settings_theme_color](){
+        int value;
+        //This is pretty ugly, is there no nicer way to do this ?
+        settings_theme_color->get_active()->get_value(0, value);
+        bool use_dark = (value == 0);
+
+        Gtk::Settings::get_default()
+                ->property_gtk_application_prefer_dark_theme() = use_dark;
+    });
+
     m_builder.get_widget<Gtk::Button>("close_btn")->signal_clicked().connect([this](){
         hide();
     });
