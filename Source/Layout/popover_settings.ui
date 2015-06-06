@@ -136,7 +136,7 @@
                 <property name="halign">start</property>
                 <property name="valign">start</property>
                 <property name="margin_top">2</property>
-                <property name="label" translatable="yes">&lt;span font_desc="mono"&gt;DD5EFC02E70A0F6D
+                <property name="label">&lt;span font_desc="mono"&gt;DD5EFC02E70A0F6D
 032FB5904F956F1A
 B825F237BB4229CC
 22DAE84797EBF87C

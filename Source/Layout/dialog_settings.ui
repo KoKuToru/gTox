@@ -54,7 +54,7 @@
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <child>
-      <object class="GtkStack" id="stack1">
+      <object class="GtkStack" id="stack">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="transition_type">slide-left-right</property>
@@ -316,6 +316,7 @@
                     <child>
                       <object class="GtkSwitch" id="switch4">
                         <property name="visible">True</property>
+                        <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
                         <property name="halign">end</property>
                         <property name="active">True</property>
@@ -328,6 +329,7 @@
                     <child>
                       <object class="GtkSwitch" id="switch5">
                         <property name="visible">True</property>
+                        <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
                         <property name="halign">end</property>
                         <property name="active">True</property>
@@ -340,6 +342,7 @@
                     <child>
                       <object class="GtkSwitch" id="switch6">
                         <property name="visible">True</property>
+                        <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
                         <property name="halign">end</property>
                         <property name="active">True</property>
@@ -352,6 +355,7 @@
                     <child>
                       <object class="GtkSwitch" id="switch7">
                         <property name="visible">True</property>
+                        <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
                         <property name="halign">end</property>
                         <property name="active">True</property>
@@ -364,6 +368,7 @@
                     <child>
                       <object class="GtkSwitch" id="switch8">
                         <property name="visible">True</property>
+                        <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
                         <property name="halign">end</property>
                         <property name="active">True</property>
@@ -376,6 +381,7 @@
                     <child>
                       <object class="GtkSwitch" id="switch9">
                         <property name="visible">True</property>
+                        <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
                         <property name="halign">end</property>
                         <property name="active">True</property>
@@ -388,6 +394,7 @@
                     <child>
                       <object class="GtkSwitch" id="switch10">
                         <property name="visible">True</property>
+                        <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
                         <property name="halign">end</property>
                         <property name="active">True</property>
@@ -400,6 +407,7 @@
                     <child>
                       <object class="GtkSwitch" id="switch11">
                         <property name="visible">True</property>
+                        <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
                         <property name="halign">end</property>
                         <property name="active">True</property>
@@ -412,6 +420,7 @@
                     <child>
                       <object class="GtkSwitch" id="switch12">
                         <property name="visible">True</property>
+                        <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
                         <property name="halign">end</property>
                         <property name="active">True</property>
@@ -424,6 +433,7 @@
                     <child>
                       <object class="GtkSwitch" id="switch13">
                         <property name="visible">True</property>
+                        <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
                         <property name="halign">end</property>
                       </object>
@@ -435,6 +445,7 @@
                     <child>
                       <object class="GtkSwitch" id="switch14">
                         <property name="visible">True</property>
+                        <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
                         <property name="halign">end</property>
                         <property name="active">True</property>
@@ -447,6 +458,7 @@
                     <child>
                       <object class="GtkFileChooserButton" id="filechooserbutton1">
                         <property name="visible">True</property>
+                        <property name="sensitive">False</property>
                         <property name="can_focus">False</property>
                         <property name="halign">end</property>
                         <property name="action">select-folder</property>
@@ -471,6 +483,7 @@
                     <child>
                       <object class="GtkComboBox" id="combobox3">
                         <property name="visible">True</property>
+                        <property name="sensitive">False</property>
                         <property name="can_focus">False</property>
                         <property name="halign">end</property>
                         <property name="model">liststore1</property>
@@ -486,6 +499,9 @@
                         <property name="left_attach">1</property>
                         <property name="top_attach">8</property>
                       </packing>
+                    </child>
+                    <child>
+                      <placeholder/>
                     </child>
                     <child>
                       <placeholder/>
@@ -672,6 +688,7 @@
                     <child>
                       <object class="GtkSwitch" id="switch1">
                         <property name="visible">True</property>
+                        <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
                         <property name="halign">end</property>
                         <property name="active">True</property>
@@ -684,6 +701,7 @@
                     <child>
                       <object class="GtkSwitch" id="switch2">
                         <property name="visible">True</property>
+                        <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
                         <property name="halign">end</property>
                         <property name="active">True</property>
@@ -696,6 +714,7 @@
                     <child>
                       <object class="GtkSwitch" id="switch3">
                         <property name="visible">True</property>
+                        <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
                         <property name="halign">end</property>
                         <property name="active">True</property>
@@ -708,6 +727,7 @@
                     <child>
                       <object class="GtkComboBox" id="combobox1">
                         <property name="visible">True</property>
+                        <property name="sensitive">False</property>
                         <property name="can_focus">False</property>
                       </object>
                       <packing>
@@ -718,6 +738,7 @@
                     <child>
                       <object class="GtkEntry" id="entry1">
                         <property name="visible">True</property>
+                        <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
                       </object>
                       <packing>
@@ -728,6 +749,7 @@
                     <child>
                       <object class="GtkEntry" id="entry2">
                         <property name="visible">True</property>
+                        <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
                         <property name="input_purpose">number</property>
                       </object>
@@ -739,6 +761,7 @@
                     <child>
                       <object class="GtkComboBox" id="combobox2">
                         <property name="visible">True</property>
+                        <property name="sensitive">False</property>
                         <property name="can_focus">False</property>
                       </object>
                       <packing>
@@ -806,6 +829,7 @@
                     <child>
                       <object class="GtkComboBox" id="combobox4">
                         <property name="visible">True</property>
+                        <property name="sensitive">False</property>
                         <property name="can_focus">False</property>
                       </object>
                       <packing>
@@ -956,7 +980,7 @@
       <object class="GtkStackSidebar" id="stacksidebar1">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-        <property name="stack">stack1</property>
+        <property name="stack">stack</property>
       </object>
       <packing>
         <property name="expand">False</property>
@@ -1025,7 +1049,7 @@
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <child>
-          <object class="GtkButton" id="button2">
+          <object class="GtkButton" id="btn_prev">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
@@ -1044,8 +1068,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkButton" id="button3">
-            <property name="related_action"/>
+          <object class="GtkButton" id="btn_next">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
