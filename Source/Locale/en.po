@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-05-03 14:56+0200\n"
+"POT-Creation-Date: 2015-06-06 13:48+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -10,36 +10,27 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.7.5\n"
+"X-Generator: Poedit 1.8.1\n"
 
-#: Layout/popover_settings.ui
-msgid ""
-"<span font_desc=\"mono\">DD5EFC02E70A0F6D\n"
-"032FB5904F956F1A\n"
-"B825F237BB4229CC\n"
-"22DAE84797EBF87C\n"
-"86DAA09C04DB</span>"
-msgstr ""
-
-#: Widget/Settings/WidgetAbout.cpp
+#: Layout/dialog_settings.ui
 msgid "ABOUT_SOFTWARE_COPYRIGHT"
 msgstr "Copyright © 2014 - the gTox team"
 
-#: Widget/Settings/WidgetAbout.cpp
+#: Layout/dialog_settings.ui
 msgid "ABOUT_SOFTWARE_HOMEPAGE"
 msgstr ""
 "<a href=\"https://github.com/KoKuToru/gTox.git\">github.com/KoKuToru/gTox."
 "git</a>"
 
-#: Widget/Settings/WidgetAbout.cpp
+#: Layout/dialog_settings.ui
 msgid "ABOUT_SOFTWARE_NAME"
 msgstr "<b>gTox</b>"
 
-#: Widget/Settings/WidgetAbout.cpp
+#: Layout/dialog_settings.ui
 msgid "ABOUT_SOFTWARE_VERSION"
 msgstr "<i>pre-alpha version</i>"
 
-#: Widget/Settings/WidgetAbout.cpp
+#: Layout/dialog_settings.ui
 msgid "ABOUT_SOFTWARE_WARRANTY"
 msgstr "<i>This program comes with ABSOLUTELY NO WARRANTY</i>"
 
@@ -167,10 +158,6 @@ msgstr "Ignore"
 msgid "IMAGE"
 msgstr ""
 
-#: Widget/Settings/WidgetProfile.cpp
-msgid "MESSAGE"
-msgstr ""
-
 #: Popover/PopoverStatus.cpp
 msgid "ONLINE"
 msgstr "Online"
@@ -178,16 +165,16 @@ msgstr "Online"
 #. Click here to change avatar, right click to remove
 #: Layout/popover_settings.ui
 msgid "PROFILE_AVATAR_HELP"
-msgstr ""
+msgstr "Change avatar"
 
 #: Popover/PopoverSettings.cpp
 msgid "PROFILE_AVATAR_SELECT_TITLE"
-msgstr ""
+msgstr "Select new avatar"
 
 #. Copies tox id into clipboard
 #: Layout/popover_settings.ui
 msgid "PROFILE_COPY_TOX_ID"
-msgstr ""
+msgstr "Copy Tox-ID to clipboard"
 
 #: Layout/list_item_profile.ui
 msgid "PROFILE_CORRUPTED"
@@ -244,7 +231,7 @@ msgstr "Remove"
 msgid "SEND"
 msgstr "Send"
 
-#: Dialog/DialogSettings.cpp
+#: Layout/dialog_settings.ui
 msgid "SETTINGS_ABOUT"
 msgstr "About"
 
@@ -253,27 +240,130 @@ msgstr "About"
 msgid "SETTINGS_ADD_CONTACT"
 msgstr "Add contact"
 
-#: Widget/Settings/WidgetCache.cpp
-msgid "SETTINGS_CACHE_CLEAN_LOG"
-msgstr ""
-"You are about to remove all conversations logs of all contacts.\n"
-"This action cannot be undone !"
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_CHAT_AUTO_AWAY"
+msgstr "Automatically set status to away"
 
-#: Widget/Settings/WidgetCache.cpp
-msgid "SETTINGS_CACHE_CLEAN_LOG_SUCCESS"
-msgstr "%1 log entries successfully removed"
+#. Lable for the log enable/disable switch
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_CHAT_LOGGING"
+msgstr "Chat logging"
 
-#: Widget/Settings/WidgetCache.cpp
-msgid "SETTINGS_CACHE_CLEAN_LOG_SUCCESS_TITLE"
-msgstr "Logs removed"
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_CHAT_NOTIFICATION_ON_MESSAGE"
+msgstr "Notification on new message"
 
-#: Widget/Settings/WidgetCache.cpp
-msgid "SETTINGS_CACHE_CLEAN_LOG_TITLE"
-msgstr "Delete all logs ?"
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_CHAT_NOTIFICATION_WITH_AUDIO_ON_MESSSAGE"
+msgstr "Audio notification on new message"
 
-#: Dialog/DialogSettings.cpp
-msgid "SETTINGS_TITLE"
-msgstr "gTox settings"
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_CHAT_SEND_TYPING"
+msgstr "Send typing notification"
+
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_CHAT_TITLE"
+msgstr "<b>Chat</b>"
+
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_CONNECTION_TCP"
+msgstr "TCP"
+
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_CONNECTION_TITLE"
+msgstr "<b>Connection</b>"
+
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_CONNECTION_UDP"
+msgstr "UDP"
+
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_CONTACTLIST_DISPLAY_ACTIVE"
+msgstr "Show active chats"
+
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_CONTACTLIST_TITLE"
+msgstr "<b>Contacts</b>"
+
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_CONTACTLIST_USE_COMPACT"
+msgstr "Compact list"
+
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_FILETRANSFER_AUTO_ACCEPT"
+msgstr "Auto accept"
+
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_FILETRANSFER_DISPLAY_INLINE"
+msgstr "Display inline"
+
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_FILETRANSFER_SAVE_TO"
+msgstr "Save to"
+
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_FILETRANSFER_TITLE"
+msgstr "<b>Filetransfer</b>"
+
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_GLOBAL"
+msgstr "Global"
+
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_PROFILE"
+msgstr "Profile"
+
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_PROFILE_REMEMBER"
+msgstr "Remember last used profile"
+
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_PROFILE_TITLE"
+msgstr "<b>Profile</b>"
+
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_PROXY_HOST"
+msgstr "Proxy type"
+
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_PROXY_PORT"
+msgstr "Proxy host"
+
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_PROXY_TYPE"
+msgstr "Proxy port"
+
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_SYSTEMTRAY_ON_CLOSE"
+msgstr "Put into systemtray on close"
+
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_SYSTEMTRAY_ON_START"
+msgstr "Start in systemtray"
+
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_SYSTEMTRAY_TITLE"
+msgstr "<b>Systemtray</b>"
+
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_SYSTEMTRAY_VISIBLE"
+msgstr "Show in systemtray"
+
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_THEME_COLOR"
+msgstr "Color"
+
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_THEME_TITLE"
+msgstr "<b>Theme</b>"
+
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_VIDEO"
+msgstr "Video"
+
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_VIDEO_DEFAULT_DEVICE"
+msgstr "Default device"
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_BOOTSTRAP_BAD_HOST"
@@ -290,63 +380,89 @@ msgstr ""
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_BOOTSTRAP_NULL"
-msgstr "TOX_ERR_BOOTSTRAP_NULL"
+msgstr ""
+"TOX_ERR_BOOTSTRAP_NULL One of the arguments to the function was NULL when it "
+"was not expected."
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_FILE_CONTROL_ALREADY_PAUSED"
 msgstr ""
+"TOX_ERR_FILE_CONTROL_ALREADY_PAUSED A PAUSE control was sent, but the file "
+"transfer was already paused."
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_FILE_CONTROL_DENIED"
 msgstr ""
+"TOX_ERR_FILE_CONTROL_DENIED A RESUME control was sent, but the file transfer "
+"was paused by the other party. Only the party that paused the transfer can "
+"resume it."
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_FILE_CONTROL_FRIEND_NOT_CONNECTED"
 msgstr ""
+"TOX_ERR_FILE_CONTROL_FRIEND_NOT_CONNECTED This client is currently not "
+"connected to the friend."
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_FILE_CONTROL_FRIEND_NOT_FOUND"
 msgstr ""
+"TOX_ERR_FILE_CONTROL_FRIEND_NOT_FOUND The friend_number passed did not "
+"designate a valid friend."
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_FILE_CONTROL_NOT_FOUND"
 msgstr ""
+"TOX_ERR_FILE_CONTROL_NOT_FOUND No file transfer with the given file number "
+"was found for the given friend."
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_FILE_CONTROL_NOT_PAUSED"
 msgstr ""
+"TOX_ERR_FILE_CONTROL_NOT_PAUSED A RESUME control was sent, but the file "
+"transfer is running normally."
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_FILE_CONTROL_SENDQ"
-msgstr ""
+msgstr "TOX_ERR_FILE_CONTROL_SENDQ Packet queue is full."
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_FILE_GET_FRIEND_NOT_FOUND"
 msgstr ""
+"TOX_ERR_FILE_CONTROL_FRIEND_NOT_FOUND The friend_number passed did not "
+"designate a valid friend."
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_FILE_GET_NOT_FOUND"
 msgstr ""
+"TOX_ERR_FILE_GET_NOT_FOUND No file transfer with the given file number was "
+"found for the given friend."
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_FILE_SEEK_DENIED"
 msgstr ""
+"TOX_ERR_FILE_SEEK_DENIED File was not in a state where it could be seeked."
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_FILE_SEEK_FRIEND_NOT_CONNECTED"
 msgstr ""
+"TOX_ERR_FILE_SEEK_FRIEND_NOT_CONNECTED This client is currently not "
+"connected to the friend."
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_FILE_SEEK_FRIEND_NOT_FOUND"
 msgstr ""
+"TOX_ERR_FILE_SEEK_FRIEND_NOT_FOUND The friend_number passed did not "
+"designate a valid friend."
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_FILE_SEEK_INVALID_POSITION"
-msgstr ""
+msgstr "TOX_ERR_FILE_SEEK_INVALID_POSITION Seek position was invalid"
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_FILE_SEEK_NOT_FOUND"
 msgstr ""
+"TOX_ERR_FILE_SEEK_NOT_FOUND No file transfer with the given file number was "
+"found for the given friend."
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_FRIEND_ADD_ALREADY_SENT"
@@ -542,7 +658,9 @@ msgstr ""
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_NEW_NULL"
-msgstr "TOX_ERR_NEW_NULL"
+msgstr ""
+"TOX_ERR_NEW_NULL One of the arguments to the function was NULL when it was "
+"not expected."
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_NEW_PORT_ALLOC"
@@ -593,17 +711,68 @@ msgstr ""
 "TOX_ERR_SET_TYPING_FRIEND_NOT_FOUND\n"
 "The friend number did not designate a valid friend."
 
-#: Widget/Settings/WidgetProfile.cpp
-msgid "TOX_ID"
-msgstr "Tox ID"
-
 #: main.cpp
 msgid "TRANSLATION_CHECKER"
 msgstr "Okay"
 
-#: Widget/Settings/WidgetProfile.cpp
-msgid "USERNAME"
-msgstr "Username"
+#: Layout/dialog_settings.ui
+msgid "after 1 hour"
+msgstr ""
+
+#: Layout/dialog_settings.ui
+msgid "after 1 min"
+msgstr ""
+
+#: Layout/dialog_settings.ui
+msgid "after 10 min"
+msgstr ""
+
+#: Layout/dialog_settings.ui
+msgid "after 2 min"
+msgstr ""
+
+#: Layout/dialog_settings.ui
+msgid "after 20 min"
+msgstr ""
+
+#: Layout/dialog_settings.ui
+msgid "after 2hours"
+msgstr ""
+
+#: Layout/dialog_settings.ui
+msgid "after 30 min"
+msgstr ""
+
+#: Layout/dialog_settings.ui
+msgid "after 5 min"
+msgstr ""
+
+#: Layout/dialog_settings.ui
+msgid "never"
+msgstr ""
+
+#~ msgid "SETTINGS_CACHE_CLEAN_LOG"
+#~ msgstr ""
+#~ "You are about to remove all conversations logs of all contacts.\n"
+#~ "This action cannot be undone !"
+
+#~ msgid "SETTINGS_CACHE_CLEAN_LOG_SUCCESS"
+#~ msgstr "%1 log entries successfully removed"
+
+#~ msgid "SETTINGS_CACHE_CLEAN_LOG_SUCCESS_TITLE"
+#~ msgstr "Logs removed"
+
+#~ msgid "SETTINGS_CACHE_CLEAN_LOG_TITLE"
+#~ msgstr "Delete all logs ?"
+
+#~ msgid "SETTINGS_TITLE"
+#~ msgstr "gTox settings"
+
+#~ msgid "TOX_ID"
+#~ msgstr "Tox ID"
+
+#~ msgid "USERNAME"
+#~ msgstr "Username"
 
 #~ msgid "PROFILE_ABORT"
 #~ msgstr "Abort"
