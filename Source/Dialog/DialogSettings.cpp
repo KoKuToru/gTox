@@ -19,6 +19,7 @@
 **/
 #include "DialogSettings.h"
 #include "DialogContact.h"
+#include <glibmm/i18n.h>
 
 DialogSettings::DialogSettings(gToxObservable* observable)
     : gToxObserver(observable),
@@ -35,9 +36,50 @@ DialogSettings::DialogSettings(gToxObservable* observable)
     m_builder.get_widget("settings_headerbar", m_headerbar);
     m_builder.get_widget("settings_widget", m_body);
 
+    m_headerbar->set_title(_("SETTINGS_TITLE"));
+    m_headerbar->set_subtitle(_("SETTINGS_SUBTITLE"));
+
     m_size_group = Gtk::SizeGroup::create(Gtk::SIZE_GROUP_HORIZONTAL);
     m_size_group->add_widget(*m_body);
     m_size_group->add_widget(*m_headerbar);
+
+    auto stack = m_builder.get_widget<Gtk::Stack>("stack");
+    m_builder.get_widget<Gtk::Button>("btn_prev")->signal_clicked().connect([stack](){
+        auto c_visible = stack->get_visible_child();
+        decltype(c_visible) c_prev = nullptr;
+        for(auto c : stack->get_children()) {
+            if (c == c_visible) {
+                break;
+            }
+            c_prev = c;
+        }
+
+        if (c_prev == nullptr) {
+            //for now go to the last
+            stack->set_visible_child(*stack->get_children().back());
+        } else {
+            stack->set_visible_child(*c_prev);
+        }
+    });
+    m_builder.get_widget<Gtk::Button>("btn_next")->signal_clicked().connect([stack](){
+        auto c_visible = stack->get_visible_child();
+        decltype(c_visible) c_prev = nullptr;
+        decltype(c_visible) c_next = nullptr;
+        for(auto c : stack->get_children()) {
+            if (c_prev == c_visible) {
+                c_next = c;
+                break;
+            }
+            c_prev = c;
+        }
+
+        if (c_next == nullptr) {
+            //for now go to the first
+            stack->set_visible_child(*stack->get_children().front());
+        } else {
+            stack->set_visible_child(*c_next);
+        }
+    });
 
     m_builder.get_widget<Gtk::Button>("close_btn")->signal_clicked().connect([this](){
         hide();
