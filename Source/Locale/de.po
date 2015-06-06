@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-05-03 14:56+0200\n"
+"POT-Creation-Date: 2015-06-06 13:48+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -12,34 +12,25 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 1.7.5\n"
 
-#: Layout/popover_settings.ui
-msgid ""
-"<span font_desc=\"mono\">DD5EFC02E70A0F6D\n"
-"032FB5904F956F1A\n"
-"B825F237BB4229CC\n"
-"22DAE84797EBF87C\n"
-"86DAA09C04DB</span>"
-msgstr ""
-
-#: Widget/Settings/WidgetAbout.cpp
+#: Layout/dialog_settings.ui
 msgid "ABOUT_SOFTWARE_COPYRIGHT"
 msgstr "Copyright © 2014 - das gTox Team"
 
-#: Widget/Settings/WidgetAbout.cpp
+#: Layout/dialog_settings.ui
 msgid "ABOUT_SOFTWARE_HOMEPAGE"
 msgstr ""
 "<a href=\"https://github.com/KoKuToru/gTox.git\">github.com/KoKuToru/gTox."
 "git</a>"
 
-#: Widget/Settings/WidgetAbout.cpp
+#: Layout/dialog_settings.ui
 msgid "ABOUT_SOFTWARE_NAME"
 msgstr "<b>gTox</b>"
 
-#: Widget/Settings/WidgetAbout.cpp
+#: Layout/dialog_settings.ui
 msgid "ABOUT_SOFTWARE_VERSION"
 msgstr "<i>pre-alpha Version</i>"
 
-#: Widget/Settings/WidgetAbout.cpp
+#: Layout/dialog_settings.ui
 msgid "ABOUT_SOFTWARE_WARRANTY"
 msgstr "<i>Dieses Programm kommt OHNE JEDWEDE GARANTIE.</i>"
 
@@ -172,10 +163,6 @@ msgstr "Ignorieren"
 msgid "IMAGE"
 msgstr ""
 
-#: Widget/Settings/WidgetProfile.cpp
-msgid "MESSAGE"
-msgstr ""
-
 #: Popover/PopoverStatus.cpp
 msgid "ONLINE"
 msgstr "Online"
@@ -249,7 +236,7 @@ msgstr "Entfernen"
 msgid "SEND"
 msgstr "Senden"
 
-#: Dialog/DialogSettings.cpp
+#: Layout/dialog_settings.ui
 msgid "SETTINGS_ABOUT"
 msgstr "Über"
 
@@ -258,27 +245,130 @@ msgstr "Über"
 msgid "SETTINGS_ADD_CONTACT"
 msgstr "Kontakt hinzufügen"
 
-#: Widget/Settings/WidgetCache.cpp
-msgid "SETTINGS_CACHE_CLEAN_LOG"
-msgstr ""
-"Diese Action wird alle Nachrichtenverläufe aller Kontakte löschen.\n"
-"Diese Aktion kann nicht rückgängig gemacht werden !"
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_CHAT_AUTO_AWAY"
+msgstr "Automatically set status to away"
 
-#: Widget/Settings/WidgetCache.cpp
-msgid "SETTINGS_CACHE_CLEAN_LOG_SUCCESS"
-msgstr "%1 Einträge wurden gelöscht"
+#. Lable for the log enable/disable switch
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_CHAT_LOGGING"
+msgstr "Chat logging"
 
-#: Widget/Settings/WidgetCache.cpp
-msgid "SETTINGS_CACHE_CLEAN_LOG_SUCCESS_TITLE"
-msgstr "Nachrichtenverlauf gelöscht"
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_CHAT_NOTIFICATION_ON_MESSAGE"
+msgstr "Notification on new message"
 
-#: Widget/Settings/WidgetCache.cpp
-msgid "SETTINGS_CACHE_CLEAN_LOG_TITLE"
-msgstr "Nachrichtenverlauf löschen"
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_CHAT_NOTIFICATION_WITH_AUDIO_ON_MESSSAGE"
+msgstr "Audio notification on new message"
 
-#: Dialog/DialogSettings.cpp
-msgid "SETTINGS_TITLE"
-msgstr "gTox - Einstellungen"
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_CHAT_SEND_TYPING"
+msgstr "Send typing notification"
+
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_CHAT_TITLE"
+msgstr "<b>Chat</b>"
+
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_CONNECTION_TCP"
+msgstr "TCP"
+
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_CONNECTION_TITLE"
+msgstr "<b>Connection</b>"
+
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_CONNECTION_UDP"
+msgstr "UDP"
+
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_CONTACTLIST_DISPLAY_ACTIVE"
+msgstr "Show active chats"
+
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_CONTACTLIST_TITLE"
+msgstr "<b>Contacts</b>"
+
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_CONTACTLIST_USE_COMPACT"
+msgstr "Compact list"
+
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_FILETRANSFER_AUTO_ACCEPT"
+msgstr "Auto accept"
+
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_FILETRANSFER_DISPLAY_INLINE"
+msgstr "Display inline"
+
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_FILETRANSFER_SAVE_TO"
+msgstr "Save to"
+
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_FILETRANSFER_TITLE"
+msgstr "<b>Filetransfer</b>"
+
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_GLOBAL"
+msgstr "Global"
+
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_PROFILE"
+msgstr "Profile"
+
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_PROFILE_REMEMBER"
+msgstr "Remember last used profile"
+
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_PROFILE_TITLE"
+msgstr "<b>Profile</b>"
+
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_PROXY_HOST"
+msgstr "Proxy type"
+
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_PROXY_PORT"
+msgstr "Proxy host"
+
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_PROXY_TYPE"
+msgstr "Proxy port"
+
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_SYSTEMTRAY_ON_CLOSE"
+msgstr "Put into systemtray on close"
+
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_SYSTEMTRAY_ON_START"
+msgstr "Start in systemtray"
+
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_SYSTEMTRAY_TITLE"
+msgstr "<b>Systemtray</b>"
+
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_SYSTEMTRAY_VISIBLE"
+msgstr "Show in systemtray"
+
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_THEME_COLOR"
+msgstr "Color"
+
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_THEME_TITLE"
+msgstr "<b>Theme</b>"
+
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_VIDEO"
+msgstr "Video"
+
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_VIDEO_DEFAULT_DEVICE"
+msgstr "Default device"
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_BOOTSTRAP_BAD_HOST"
@@ -596,17 +686,68 @@ msgstr ""
 "TOX_ERR_SET_TYPING_FRIEND_NOT_FOUND\n"
 "The friend number did not designate a valid friend."
 
-#: Widget/Settings/WidgetProfile.cpp
-msgid "TOX_ID"
-msgstr "Tox ID"
-
 #: main.cpp
 msgid "TRANSLATION_CHECKER"
 msgstr "Okay"
 
-#: Widget/Settings/WidgetProfile.cpp
-msgid "USERNAME"
-msgstr "Name"
+#: Layout/dialog_settings.ui
+msgid "after 1 hour"
+msgstr ""
+
+#: Layout/dialog_settings.ui
+msgid "after 1 min"
+msgstr ""
+
+#: Layout/dialog_settings.ui
+msgid "after 10 min"
+msgstr ""
+
+#: Layout/dialog_settings.ui
+msgid "after 2 min"
+msgstr ""
+
+#: Layout/dialog_settings.ui
+msgid "after 20 min"
+msgstr ""
+
+#: Layout/dialog_settings.ui
+msgid "after 2hours"
+msgstr ""
+
+#: Layout/dialog_settings.ui
+msgid "after 30 min"
+msgstr ""
+
+#: Layout/dialog_settings.ui
+msgid "after 5 min"
+msgstr ""
+
+#: Layout/dialog_settings.ui
+msgid "never"
+msgstr ""
+
+#~ msgid "SETTINGS_CACHE_CLEAN_LOG"
+#~ msgstr ""
+#~ "Diese Action wird alle Nachrichtenverläufe aller Kontakte löschen.\n"
+#~ "Diese Aktion kann nicht rückgängig gemacht werden !"
+
+#~ msgid "SETTINGS_CACHE_CLEAN_LOG_SUCCESS"
+#~ msgstr "%1 Einträge wurden gelöscht"
+
+#~ msgid "SETTINGS_CACHE_CLEAN_LOG_SUCCESS_TITLE"
+#~ msgstr "Nachrichtenverlauf gelöscht"
+
+#~ msgid "SETTINGS_CACHE_CLEAN_LOG_TITLE"
+#~ msgstr "Nachrichtenverlauf löschen"
+
+#~ msgid "SETTINGS_TITLE"
+#~ msgstr "gTox - Einstellungen"
+
+#~ msgid "TOX_ID"
+#~ msgstr "Tox ID"
+
+#~ msgid "USERNAME"
+#~ msgstr "Name"
 
 #~ msgid "PROFILE_ABORT"
 #~ msgstr "Abbrechen"
