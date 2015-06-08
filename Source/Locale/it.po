@@ -6,10 +6,10 @@ msgstr ""
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
-"Language: it\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: it\n"
 "X-Generator: Poedit 1.7.5\n"
 
 #: Layout/dialog_settings.ui
@@ -169,16 +169,16 @@ msgstr "Online"
 #. Click here to change avatar, right click to remove
 #: Layout/popover_settings.ui
 msgid "PROFILE_AVATAR_HELP"
-msgstr ""
+msgstr "Cambia avatar"
 
 #: Popover/PopoverSettings.cpp
 msgid "PROFILE_AVATAR_SELECT_TITLE"
-msgstr ""
+msgstr "Seleziona nuovo avatar"
 
 #. Copies tox id into clipboard
 #: Layout/popover_settings.ui
 msgid "PROFILE_COPY_TOX_ID"
-msgstr ""
+msgstr "Copia Tox ID negli appunti"
 
 #: Layout/list_item_profile.ui
 msgid "PROFILE_CORRUPTED"
@@ -384,63 +384,63 @@ msgstr ""
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_BOOTSTRAP_NULL"
-msgstr "TOX_ERR_BOOTSTRAP_NULL"
+msgstr "TOX_ERR_BOOTSTRAP_NULL\nUn argomento della funzione è NULL quando non è previsto."
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_FILE_CONTROL_ALREADY_PAUSED"
-msgstr ""
+msgstr "TOX_ERR_FILE_CONTROL_ALREADY_PAUSED\nUn comando \"PAUSE\" è stato inviato, ma il trasferimento file è già in pausa."
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_FILE_CONTROL_DENIED"
-msgstr ""
+msgstr "TOX_ERR_FILE_CONTROL_DENIED\nUn comando \"RESUME\" è stato inviato, ma il trasferimento file è stato messo in pausa dall'altro utente. Solo chi ha messo in pausa il trasferimento può riavviarlo."
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_FILE_CONTROL_FRIEND_NOT_CONNECTED"
-msgstr ""
+msgstr "TOX_ERR_FILE_CONTROL_FRIEND_NOT_CONNECTED\nContatto offline."
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_FILE_CONTROL_FRIEND_NOT_FOUND"
-msgstr ""
+msgstr "TOX_ERR_FILE_CONTROL_FRIEND_NOT_FOUND\nIl valore \"friend_number\" passato alla funzione non rappresenta un contatto valido."
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_FILE_CONTROL_NOT_FOUND"
-msgstr ""
+msgstr "TOX_ERR_FILE_CONTROL_NOT_FOUND\nNessun trasferimento file con il valore \"file_number\" passato è stato trovato per questo contatto."
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_FILE_CONTROL_NOT_PAUSED"
-msgstr ""
+msgstr "TOX_ERR_FILE_CONTROL_NOT_PAUSED\nUn comando \"RESUME\" è stato inviato, ma il trasferimento file non era in pausa."
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_FILE_CONTROL_SENDQ"
-msgstr ""
+msgstr "TOX_ERR_FILE_CONTROL_SENDQ\nCoda dei pacchetti piena."
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_FILE_GET_FRIEND_NOT_FOUND"
-msgstr ""
+msgstr "TOX_ERR_FILE_GET_FRIEND_NOT_FOUND\nIl valore di \"friend_number\" passato non rappresenta un contatto valido."
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_FILE_GET_NOT_FOUND"
-msgstr ""
+msgstr "TOX_ERR_FILE_GET_NOT_FOUND\nNessun trasferimento file con il valore \"file_number\" passato è stato trovato per questo contatto."
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_FILE_SEEK_DENIED"
-msgstr ""
+msgstr "TOX_ERR_FILE_SEEK_DENIED\nIl file non è in uno stato tale per cui possa essere scorso."
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_FILE_SEEK_FRIEND_NOT_CONNECTED"
-msgstr ""
+msgstr "TOX_ERR_FILE_SEEK_FRIEND_NOT_CONNECTED\nContatto offline."
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_FILE_SEEK_FRIEND_NOT_FOUND"
-msgstr ""
+msgstr "TOX_ERR_FILE_SEEK_FRIEND_NOT_FOUND\nIl valore di \"friend_number\" passato non rappresenta un contatto valido."
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_FILE_SEEK_INVALID_POSITION"
-msgstr ""
+msgstr "TOX_ERR_FILE_SEEK_INVALID_POSITION\nPosizione non valida."
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_FILE_SEEK_NOT_FOUND"
-msgstr ""
+msgstr "TOX_ERR_FILE_SEEK_NOT_FOUND\nNessun trasferimento file con il valore \"file_number\" passato è stato trovato per questo contatto."
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_FRIEND_ADD_ALREADY_SENT"
@@ -703,71 +703,37 @@ msgstr "Okay"
 
 #: Layout/dialog_settings.ui
 msgid "after 1 hour"
-msgstr ""
+msgstr "dopo 1 ora"
 
 #: Layout/dialog_settings.ui
 msgid "after 1 min"
-msgstr ""
+msgstr "dopo 1 minuto"
 
 #: Layout/dialog_settings.ui
 msgid "after 10 min"
-msgstr ""
+msgstr "dopo 10 minuti"
 
 #: Layout/dialog_settings.ui
 msgid "after 2 min"
-msgstr ""
+msgstr "dopo 2 minuti"
 
 #: Layout/dialog_settings.ui
 msgid "after 20 min"
-msgstr ""
+msgstr "dopo 20 minuti"
 
 #: Layout/dialog_settings.ui
 msgid "after 2hours"
-msgstr ""
+msgstr "dopo 2 ore"
 
 #: Layout/dialog_settings.ui
 msgid "after 30 min"
-msgstr ""
+msgstr "dopo 30 minuti"
 
 #: Layout/dialog_settings.ui
 msgid "after 5 min"
-msgstr ""
+msgstr "dopo 5 minuti"
 
 #: Layout/dialog_settings.ui
 msgid "never"
-msgstr ""
+msgstr "mai"
 
-#~ msgid "SETTINGS_CACHE_CLEAN_LOG"
-#~ msgstr ""
-#~ "Stai per rimuovere la cronologia chat di tutti i contatti.\n"
-#~ "Questa azione non può essere annullata!"
-
-#~ msgid "SETTINGS_CACHE_CLEAN_LOG_SUCCESS"
-#~ msgstr "cronologia chat di %1 contatti rimosse con successo"
-
-#~ msgid "SETTINGS_CACHE_CLEAN_LOG_SUCCESS_TITLE"
-#~ msgstr "Cronologia chat rimosse"
-
-#~ msgid "SETTINGS_CACHE_CLEAN_LOG_TITLE"
-#~ msgstr "Eliminare la cronologia chat di tutti i contatti?"
-
-#~ msgid "SETTINGS_TITLE"
-#~ msgstr "Impostazioni gTox"
-
-#~ msgid "TOX_ID"
-#~ msgstr "Tox ID"
-
-#~ msgid "USERNAME"
-#~ msgstr "Nome"
-
-#~ msgid "PROFILE_ABORT"
-#~ msgstr "Annulla"
-
-#~ msgid "SETTINGS"
-#~ msgstr "Impostazioni"
-
-#~ msgid "QUIT_ASSISTANT_QUESTION"
-#~ msgstr "Sei sicuro di voler uscire dal percorso guidato?"
-
-#~ msgid "LOADING_THEME_FAILED"
-#~ msgstr "Errore nel caricare il tema"
