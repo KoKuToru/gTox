@@ -20,6 +20,7 @@
 #include "DialogSettings.h"
 #include "DialogContact.h"
 #include <glibmm/i18n.h>
+#include "gTox.h"
 
 DialogSettings::DialogSettings(gToxObservable* observable)
     : gToxObserver(observable),
@@ -82,6 +83,7 @@ DialogSettings::DialogSettings(gToxObservable* observable)
     });
 
     auto settings_theme_color = m_builder.get_widget<Gtk::ComboBox>("settings_theme_color");
+    settings_theme_color->set_active(gTox::instance()->database().config_get("SETTINGS_THEME_COLOR", 0));
     settings_theme_color->signal_changed().connect([this, settings_theme_color](){
         int value;
         //This is pretty ugly, is there no nicer way to do this ?
@@ -90,6 +92,8 @@ DialogSettings::DialogSettings(gToxObservable* observable)
 
         Gtk::Settings::get_default()
                 ->property_gtk_application_prefer_dark_theme() = use_dark;
+
+        gTox::instance()->database().config_set("SETTINGS_THEME_COLOR", value);
     });
 
     m_builder.get_widget<Gtk::Button>("close_btn")->signal_clicked().connect([this](){
