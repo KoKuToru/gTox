@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-06-06 13:48+0200\n"
+"POT-Creation-Date: 2015-06-13 19:59+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -333,6 +333,10 @@ msgstr "Proxy host"
 msgid "SETTINGS_PROXY_TYPE"
 msgstr "Proxy port"
 
+#: Dialog/DialogSettings.cpp
+msgid "SETTINGS_SUBTITLE"
+msgstr ""
+
 #: Layout/dialog_settings.ui
 msgid "SETTINGS_SYSTEMTRAY_ON_CLOSE"
 msgstr "Put into systemtray on close"
@@ -353,9 +357,23 @@ msgstr "Show in systemtray"
 msgid "SETTINGS_THEME_COLOR"
 msgstr "Color"
 
+#. Light theme
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_THEME_COLOR_BLACK_ON_WHITE"
+msgstr "black on white"
+
+#. dark theme
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_THEME_COLOR_WHITE_ON_BLACK"
+msgstr "white on black"
+
 #: Layout/dialog_settings.ui
 msgid "SETTINGS_THEME_TITLE"
 msgstr "<b>Theme</b>"
+
+#: Dialog/DialogSettings.cpp
+msgid "SETTINGS_TITLE"
+msgstr "gTox settings"
 
 #: Layout/dialog_settings.ui
 msgid "SETTINGS_VIDEO"
@@ -764,9 +782,6 @@ msgstr ""
 
 #~ msgid "SETTINGS_CACHE_CLEAN_LOG_TITLE"
 #~ msgstr "Delete all logs ?"
-
-#~ msgid "SETTINGS_TITLE"
-#~ msgstr "gTox settings"
 
 #~ msgid "TOX_ID"
 #~ msgstr "Tox ID"
