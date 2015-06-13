@@ -9,7 +9,6 @@ set(SRC
     dialog_profile.ui
     list_item_profile.ui
     list_item_contact.ui
-    list_item_contact_mini.ui
     list_item_notification.ui
     list_item_notification_mini.ui
     dialog_assistant.ui

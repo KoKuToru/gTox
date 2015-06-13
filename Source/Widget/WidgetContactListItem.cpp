@@ -21,12 +21,11 @@
 #include "Tox/Toxmm.h"
 #include "Dialog/DialogContact.h"
 #include "Helper/Canberra.h"
+#include "gTox.h"
 
 WidgetContactListItem* WidgetContactListItem::create(gToxObservable* instance, Toxmm::FriendNr nr, bool for_notify) {
     gToxObserver dummy(instance);
-    auto builder = Gtk::Builder::create_from_resource(use_mini(&dummy, for_notify)?
-                                                          "/org/gtox/ui/list_item_contact_mini.ui":
-                                                          "/org/gtox/ui/list_item_contact.ui");
+    auto builder = Gtk::Builder::create_from_resource("/org/gtox/ui/list_item_contact.ui");
     return gToxBuilder(builder)
             .get_widget_derived<WidgetContactListItem>("contact_list_item",
                                                        instance,
@@ -86,6 +85,17 @@ void WidgetContactListItem::observer_handle(const ToxEvent& ev) {
                 hide();
             }
         }
+    } else if (ev.type() == typeid(EventUpdateCompact)) {
+        auto data = ev.get<EventUpdateCompact>();
+        bool compact = data.compact;
+
+        if (compact || m_for_notify) {
+            m_builder.get_widget<Gtk::Widget>("contact_list_grid_mini")->show();
+            m_builder.get_widget<Gtk::Widget>("contact_list_grid")->hide();
+        } else {
+            m_builder.get_widget<Gtk::Widget>("contact_list_grid_mini")->hide();
+            m_builder.get_widget<Gtk::Widget>("contact_list_grid")->show();
+        }
     }
 }
 
@@ -105,9 +115,44 @@ WidgetContactListItem::WidgetContactListItem(BaseObjectType* cobject, gToxBuilde
     m_builder.get_widget("status", m_status_msg);
     m_builder.get_widget("status_icon", m_status_icon);
     m_builder.get_widget("spinner", m_spin);
+
+    m_avatar_mini = m_builder.get_widget_derived<WidgetAvatar>("avatar_mini", observable, nr);
+    m_builder.get_widget("name_mini", m_name_mini);
+    m_builder.get_widget("status_mini", m_status_msg_mini);
+    m_builder.get_widget("status_icon_mini", m_status_icon_mini);
+    m_builder.get_widget("spinner_mini", m_spin_mini);
+
+    m_bindings[0] = Glib::Binding::bind_property(m_name->property_label(),
+                                                 m_name_mini->property_label(),
+                                                 Glib::BINDING_DEFAULT |
+                                                 Glib::BINDING_BIDIRECTIONAL |
+                                                 Glib::BINDING_SYNC_CREATE);
+    m_bindings[1] = Glib::Binding::bind_property(m_status_msg->property_label(),
+                                                 m_status_msg_mini->property_label(),
+                                                 Glib::BINDING_DEFAULT |
+                                                 Glib::BINDING_BIDIRECTIONAL |
+                                                 Glib::BINDING_SYNC_CREATE);
+    m_bindings[2] = Glib::Binding::bind_property(m_status_icon->property_icon_name(),
+                                                 m_status_icon_mini->property_icon_name(),
+                                                 Glib::BINDING_DEFAULT |
+                                                 Glib::BINDING_BIDIRECTIONAL |
+                                                 Glib::BINDING_SYNC_CREATE);
+    m_bindings[3] = Glib::Binding::bind_property(m_status_icon->property_icon_size(),
+                                                 m_status_icon_mini->property_icon_size(),
+                                                 Glib::BINDING_DEFAULT |
+                                                 Glib::BINDING_BIDIRECTIONAL |
+                                                 Glib::BINDING_SYNC_CREATE);
+    m_bindings[4] = Glib::Binding::bind_property(m_spin->property_active(),
+                                                 m_spin_mini->property_active(),
+                                                 Glib::BINDING_DEFAULT |
+                                                 Glib::BINDING_BIDIRECTIONAL |
+                                                 Glib::BINDING_SYNC_CREATE);
     m_spin->stop();
 
     refresh();
+
+    bool compact = gTox::instance()->database().config_get("SETTINGS_CONTACTLIST_USE_COMPACT", false);
+    observer_handle(ToxEvent(EventUpdateCompact{compact}));
 
     if (!for_notify) {
         show();

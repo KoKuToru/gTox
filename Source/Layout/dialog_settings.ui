@@ -539,9 +539,8 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkSwitch" id="switch12">
+                      <object class="GtkSwitch" id="settings_contactlist_display_active">
                         <property name="visible">True</property>
-                        <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
                         <property name="halign">end</property>
                         <property name="active">True</property>
@@ -552,9 +551,8 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkSwitch" id="switch13">
+                      <object class="GtkSwitch" id="settings_contactlist_use_compact">
                         <property name="visible">True</property>
-                        <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
                         <property name="halign">end</property>
                       </object>

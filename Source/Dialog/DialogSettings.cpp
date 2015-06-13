@@ -21,6 +21,7 @@
 #include "DialogContact.h"
 #include <glibmm/i18n.h>
 #include "gTox.h"
+#include "Widget/WidgetContactListItem.h"
 
 DialogSettings::DialogSettings(gToxObservable* observable)
     : gToxObserver(observable),
@@ -95,6 +96,15 @@ DialogSettings::DialogSettings(gToxObservable* observable)
 
         gTox::instance()->database().config_set("SETTINGS_THEME_COLOR", value);
     });
+
+    auto settings_contactlist_use_compact = m_builder.get_widget<Gtk::Switch>("settings_contactlist_use_compact");
+    settings_contactlist_use_compact->set_active(gTox::instance()->database().config_get("SETTINGS_CONTACTLIST_USE_COMPACT", false));
+    settings_contactlist_use_compact->signal_state_set().connect_notify([this](bool state) {
+        gTox::instance()->database().config_get("SETTINGS_CONTACTLIST_USE_COMPACT", state);
+
+        observer_notify(ToxEvent(WidgetContactListItem::EventUpdateCompact{state}));
+    });
+
 
     m_builder.get_widget<Gtk::Button>("close_btn")->signal_clicked().connect([this](){
         hide();
