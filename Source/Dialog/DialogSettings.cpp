@@ -105,6 +105,13 @@ DialogSettings::DialogSettings(gToxObservable* observable)
         observer_notify(ToxEvent(WidgetContactListItem::EventUpdateCompact{state}));
     });
 
+    auto settings_contactlist_display_active = m_builder.get_widget<Gtk::Switch>("settings_contactlist_display_active");
+    settings_contactlist_display_active->set_active(gTox::instance()->database().config_get("SETTINGS_CONTACTLIST_DISPLAY_ACTIVE", true));
+    settings_contactlist_display_active->signal_state_set().connect_notify([this](bool state) {
+        gTox::instance()->database().config_get("SETTINGS_CONTACTLIST_DISPLAY_ACTIVE", state);
+
+        observer_notify(ToxEvent(WidgetContactListItem::EventUpdateDisplayActive{state}));
+    });
 
     m_builder.get_widget<Gtk::Button>("close_btn")->signal_clicked().connect([this](){
         hide();

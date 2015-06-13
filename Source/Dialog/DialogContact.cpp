@@ -27,6 +27,7 @@
 #include "Helper/Canberra.h"
 #include "Widget/WidgetContactListItem.h"
 #include "Widget/WidgetNotification.h"
+#include "gTox.h"
 
 namespace sigc {
     SIGC_FUNCTORS_DEDUCE_RESULT_TYPE_WITH_DECLTYPE
@@ -163,6 +164,9 @@ void DialogContact::load_contacts() {
         auto item_notify = Gtk::manage(WidgetContactListItem::create(this, contact, true));
         list_active_chat->add(*item_notify);
     }
+
+    bool display = gTox::instance()->database().config_get("SETTINGS_CONTACTLIST_DISPLAY_ACTIVE", true);
+    list_active_chat->set_visible(display);
 }
 
 DialogContact::~DialogContact() {
@@ -295,6 +299,9 @@ void DialogContact::tox_event_handling(const ToxEvent& ev) {
             avatar.resume();
             m_file_receivers.push_back(avatar);
         }
+    } else if (ev.type() == typeid(WidgetContactListItem::EventUpdateDisplayActive)) {
+        auto data = ev.get<WidgetContactListItem::EventUpdateDisplayActive>();
+        m_builder.get_widget<Gtk::Widget>("list_active_chat")->set_visible(data.display);
     }
 }
 

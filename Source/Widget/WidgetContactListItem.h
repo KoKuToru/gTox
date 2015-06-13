@@ -50,6 +50,7 @@ class WidgetContactListItem : public Gtk::ListBoxRow, public gToxObserver {
 
     Toxmm::FriendNr m_friend_nr;
     bool m_for_notify;
+    bool m_display_active;
 
     std::shared_ptr<DialogChat> m_chat;
 
@@ -87,6 +88,11 @@ class WidgetContactListItem : public Gtk::ListBoxRow, public gToxObserver {
     class EventUpdateCompact {
         public:
             bool compact;
+    };
+
+    class EventUpdateDisplayActive {
+        public:
+            bool display;
     };
 
     int compare(WidgetContactListItem* other);

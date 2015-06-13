@@ -40,7 +40,7 @@ void WidgetContactListItem::observer_handle(const ToxEvent& ev) {
         refresh();
     } else if ((ev.type() == typeid(Toxmm::EventFriendMessage) && ev.get<Toxmm::EventFriendMessage>().nr == m_friend_nr) ||
                (ev.type() == typeid(Toxmm::EventFriendAction)  && ev.get<Toxmm::EventFriendAction>().nr == m_friend_nr)) {
-        if (!m_spin->property_active() && (m_for_notify || !m_chat)) {
+        if (!m_spin->property_active() && !m_chat) {
             m_spin->start();
         }
         if (!m_for_notify && !m_chat) {
@@ -95,6 +95,17 @@ void WidgetContactListItem::observer_handle(const ToxEvent& ev) {
         } else {
             m_builder.get_widget<Gtk::Widget>("contact_list_grid_mini")->hide();
             m_builder.get_widget<Gtk::Widget>("contact_list_grid")->show();
+        }
+    } else if (ev.type() == typeid(EventUpdateDisplayActive)) {
+        auto data = ev.get<EventUpdateDisplayActive>();
+        m_display_active = data.display;
+
+        if (m_for_notify) {
+            m_spin->set_visible(m_display_active);
+            m_spin_mini->set_visible(m_display_active);
+        } else {
+            m_spin->set_visible(!m_display_active);
+            m_spin_mini->set_visible(!m_display_active);
         }
     }
 }
@@ -153,6 +164,9 @@ WidgetContactListItem::WidgetContactListItem(BaseObjectType* cobject, gToxBuilde
 
     bool compact = gTox::instance()->database().config_get("SETTINGS_CONTACTLIST_USE_COMPACT", false);
     observer_handle(ToxEvent(EventUpdateCompact{compact}));
+
+    bool display = gTox::instance()->database().config_get("SETTINGS_CONTACTLIST_DISPLAY_ACTIVE", true);
+    observer_handle(ToxEvent(EventUpdateDisplayActive{display}));
 
     if (!for_notify) {
         show();
