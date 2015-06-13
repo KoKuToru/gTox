@@ -36,7 +36,7 @@ For comparison https://wiki.tox.im/Client
 | Contact aliases | No | |
 | Contact blocking | No | |
 | Save file encryption | No | |
-| Multilingual | **Yes** | | *English / German / Russian*
+| Multilingual | **Yes** | | *English / German / Russian / Spanish / Italian*
 | Multiprofile | **Yes** | [#26](https://github.com/KoKuToru/gTox/issues/26) |
 | Typing notification | No | |
 | Audio notifications | **Yes** | | *When a message comes in*

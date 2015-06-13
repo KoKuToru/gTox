@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gtox español\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-06-06 13:48+0200\n"
+"POT-Creation-Date: 2015-06-13 20:26+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -168,16 +168,16 @@ msgstr "Disponible"
 #. Click here to change avatar, right click to remove
 #: Layout/popover_settings.ui
 msgid "PROFILE_AVATAR_HELP"
-msgstr ""
+msgstr "Change avatar"
 
 #: Popover/PopoverSettings.cpp
 msgid "PROFILE_AVATAR_SELECT_TITLE"
-msgstr ""
+msgstr "Select new avatar"
 
 #. Copies tox id into clipboard
 #: Layout/popover_settings.ui
 msgid "PROFILE_COPY_TOX_ID"
-msgstr ""
+msgstr "Copy Tox-ID to clipboard"
 
 #: Layout/list_item_profile.ui
 msgid "PROFILE_CORRUPTED"
@@ -336,6 +336,10 @@ msgstr "Proxy host"
 msgid "SETTINGS_PROXY_TYPE"
 msgstr "Proxy port"
 
+#: Dialog/DialogSettings.cpp
+msgid "SETTINGS_SUBTITLE"
+msgstr ""
+
 #: Layout/dialog_settings.ui
 msgid "SETTINGS_SYSTEMTRAY_ON_CLOSE"
 msgstr "Put into systemtray on close"
@@ -356,9 +360,23 @@ msgstr "Show in systemtray"
 msgid "SETTINGS_THEME_COLOR"
 msgstr "Color"
 
+#. Light theme
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_THEME_COLOR_BLACK_ON_WHITE"
+msgstr "black on white"
+
+#. dark theme
+#: Layout/dialog_settings.ui
+msgid "SETTINGS_THEME_COLOR_WHITE_ON_BLACK"
+msgstr "white on black"
+
 #: Layout/dialog_settings.ui
 msgid "SETTINGS_THEME_TITLE"
 msgstr "<b>Theme</b>"
+
+#: Dialog/DialogSettings.cpp
+msgid "SETTINGS_TITLE"
+msgstr "Configuración gTox"
 
 #: Layout/dialog_settings.ui
 msgid "SETTINGS_VIDEO"
@@ -388,58 +406,82 @@ msgstr "TOX_ERR_BOOTSTRAP_NULL"
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_FILE_CONTROL_ALREADY_PAUSED"
 msgstr ""
+"TOX_ERR_FILE_CONTROL_ALREADY_PAUSED A PAUSE control was sent, but the file "
+"transfer was already paused."
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_FILE_CONTROL_DENIED"
 msgstr ""
+"TOX_ERR_FILE_CONTROL_DENIED A RESUME control was sent, but the file transfer "
+"was paused by the other party. Only the party that paused the transfer can "
+"resume it."
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_FILE_CONTROL_FRIEND_NOT_CONNECTED"
 msgstr ""
+"TOX_ERR_FILE_CONTROL_FRIEND_NOT_CONNECTED This client is currently not "
+"connected to the friend."
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_FILE_CONTROL_FRIEND_NOT_FOUND"
 msgstr ""
+"TOX_ERR_FILE_CONTROL_FRIEND_NOT_FOUND The friend_number passed did not "
+"designate a valid friend."
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_FILE_CONTROL_NOT_FOUND"
 msgstr ""
+"TOX_ERR_FILE_CONTROL_NOT_FOUND No file transfer with the given file number "
+"was found for the given friend."
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_FILE_CONTROL_NOT_PAUSED"
 msgstr ""
+"TOX_ERR_FILE_CONTROL_NOT_PAUSED A RESUME control was sent, but the file "
+"transfer is running normally."
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_FILE_CONTROL_SENDQ"
-msgstr ""
+msgstr "TOX_ERR_FILE_CONTROL_SENDQ Packet queue is full."
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_FILE_GET_FRIEND_NOT_FOUND"
 msgstr ""
+"TOX_ERR_FILE_CONTROL_FRIEND_NOT_FOUND The friend_number passed did not "
+"designate a valid friend."
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_FILE_GET_NOT_FOUND"
 msgstr ""
+"TOX_ERR_FILE_GET_NOT_FOUND No file transfer with the given file number was "
+"found for the given friend."
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_FILE_SEEK_DENIED"
 msgstr ""
+"TOX_ERR_FILE_SEEK_DENIED File was not in a state where it could be seeked."
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_FILE_SEEK_FRIEND_NOT_CONNECTED"
 msgstr ""
+"TOX_ERR_FILE_SEEK_FRIEND_NOT_CONNECTED This client is currently not "
+"connected to the friend."
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_FILE_SEEK_FRIEND_NOT_FOUND"
 msgstr ""
+"TOX_ERR_FILE_SEEK_FRIEND_NOT_FOUND The friend_number passed did not "
+"designate a valid friend."
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_FILE_SEEK_INVALID_POSITION"
-msgstr ""
+msgstr "TOX_ERR_FILE_SEEK_INVALID_POSITION Seek position was invalid"
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_FILE_SEEK_NOT_FOUND"
 msgstr ""
+"TOX_ERR_FILE_SEEK_NOT_FOUND No file transfer with the given file number was "
+"found for the given friend."
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_FRIEND_ADD_ALREADY_SENT"
@@ -744,9 +786,6 @@ msgstr ""
 
 #~ msgid "SETTINGS_CACHE_CLEAN_LOG_TITLE"
 #~ msgstr "¿Desea eliminar todo el historial?"
-
-#~ msgid "SETTINGS_TITLE"
-#~ msgstr "Configuración gTox"
 
 #~ msgid "TOX_ID"
 #~ msgstr "Tox ID"
