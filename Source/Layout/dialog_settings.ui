@@ -4,8 +4,6 @@
   <requires lib="gtk+" version="3.16"/>
   <object class="GtkListStore" id="liststore1">
     <columns>
-      <!-- column-name < -->
-      <column type="&lt; Neue Spalte definieren &gt;"/>
       <!-- column-name ID -->
       <column type="gint"/>
       <!-- column-name gchararray1 -->
@@ -13,40 +11,163 @@
     </columns>
     <data>
       <row>
-        <col id="1">0</col>
-        <col id="2" translatable="yes">never</col>
+        <col id="0">0</col>
+        <col id="1" translatable="yes">never</col>
       </row>
       <row>
-        <col id="1">1</col>
-        <col id="2" translatable="yes">after 1 min</col>
+        <col id="0">1</col>
+        <col id="1" translatable="yes">after 1 min</col>
       </row>
       <row>
-        <col id="1">2</col>
-        <col id="2" translatable="yes">after 2 min</col>
+        <col id="0">2</col>
+        <col id="1" translatable="yes">after 2 min</col>
       </row>
       <row>
-        <col id="1">5</col>
-        <col id="2" translatable="yes">after 5 min</col>
+        <col id="0">5</col>
+        <col id="1" translatable="yes">after 5 min</col>
       </row>
       <row>
-        <col id="1">10</col>
-        <col id="2" translatable="yes">after 10 min</col>
+        <col id="0">10</col>
+        <col id="1" translatable="yes">after 10 min</col>
       </row>
       <row>
-        <col id="1">20</col>
-        <col id="2" translatable="yes">after 20 min</col>
+        <col id="0">20</col>
+        <col id="1" translatable="yes">after 20 min</col>
       </row>
       <row>
-        <col id="1">30</col>
-        <col id="2" translatable="yes">after 30 min</col>
+        <col id="0">30</col>
+        <col id="1" translatable="yes">after 30 min</col>
       </row>
       <row>
-        <col id="1">60</col>
-        <col id="2" translatable="yes">after 1 hour</col>
+        <col id="0">60</col>
+        <col id="1" translatable="yes">after 1 hour</col>
       </row>
       <row>
-        <col id="1">120</col>
-        <col id="2" translatable="yes">after 2hours</col>
+        <col id="0">120</col>
+        <col id="1" translatable="yes">after 2hours</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkHeaderBar" id="settings_headerbar">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="title">SETTINGS_TITLE</property>
+    <property name="subtitle">SETTINGS_SUBTITLE</property>
+    <child>
+      <object class="GtkBox" id="box1">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="has_tooltip">True</property>
+        <property name="spacing">6</property>
+        <child>
+          <object class="GtkSeparator" id="separator1">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="orientation">vertical</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="close_btn">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="valign">center</property>
+            <child>
+              <object class="GtkImage" id="image1">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="icon_name">window-close-symbolic</property>
+              </object>
+            </child>
+            <style>
+              <class name="titlebutton"/>
+            </style>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <style>
+          <class name="right"/>
+        </style>
+      </object>
+      <packing>
+        <property name="pack_type">end</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkBox" id="box4">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <child>
+          <object class="GtkButton" id="btn_prev">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <child>
+              <object class="GtkArrow" id="arrow2">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="arrow_type">left</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="btn_next">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <child>
+              <object class="GtkArrow" id="arrow1">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <style>
+          <class name="linked"/>
+        </style>
+      </object>
+      <packing>
+        <property name="pack_type">end</property>
+        <property name="position">1</property>
+      </packing>
+    </child>
+  </object>
+  <object class="GtkListStore" id="settings_theme_color_store">
+    <columns>
+      <!-- column-name id -->
+      <column type="gint"/>
+      <!-- column-name name -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0">0</col>
+        <col id="1" translatable="yes" comments="dark theme">SETTINGS_THEME_COLOR_WHITE_ON_BLACK</col>
+      </row>
+      <row>
+        <col id="0">1</col>
+        <col id="1" translatable="yes" comments="Light theme">SETTINGS_THEME_COLOR_BLACK_ON_WHITE</col>
       </row>
     </data>
   </object>
@@ -418,9 +539,8 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkSwitch" id="switch12">
+                      <object class="GtkSwitch" id="settings_contactlist_display_active">
                         <property name="visible">True</property>
-                        <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
                         <property name="halign">end</property>
                         <property name="active">True</property>
@@ -431,9 +551,8 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkSwitch" id="switch13">
+                      <object class="GtkSwitch" id="settings_contactlist_use_compact">
                         <property name="visible">True</property>
-                        <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
                         <property name="halign">end</property>
                       </object>
@@ -491,7 +610,7 @@
                         <child>
                           <object class="GtkCellRendererText" id="cellrenderertext1"/>
                           <attributes>
-                            <attribute name="text">2</attribute>
+                            <attribute name="text">1</attribute>
                           </attributes>
                         </child>
                       </object>
@@ -759,10 +878,18 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkComboBox" id="combobox2">
+                      <object class="GtkComboBox" id="settings_theme_color">
                         <property name="visible">True</property>
-                        <property name="sensitive">False</property>
                         <property name="can_focus">False</property>
+                        <property name="model">settings_theme_color_store</property>
+                        <property name="active">0</property>
+                        <property name="id_column">0</property>
+                        <child>
+                          <object class="GtkCellRendererText" id="cellrenderertext2"/>
+                          <attributes>
+                            <attribute name="text">1</attribute>
+                          </attributes>
+                        </child>
                       </object>
                       <packing>
                         <property name="left_attach">1</property>
@@ -985,111 +1112,6 @@
       <packing>
         <property name="expand">False</property>
         <property name="fill">True</property>
-        <property name="pack_type">end</property>
-        <property name="position">1</property>
-      </packing>
-    </child>
-  </object>
-  <object class="GtkHeaderBar" id="settings_headerbar">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="title">SETTINGS_TITLE</property>
-    <property name="subtitle">SETTINGS_SUBTITLE</property>
-    <child>
-      <object class="GtkBox" id="box1">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="has_tooltip">True</property>
-        <property name="spacing">6</property>
-        <child>
-          <object class="GtkSeparator" id="separator1">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="orientation">vertical</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkButton" id="close_btn">
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <property name="valign">center</property>
-            <child>
-              <object class="GtkImage" id="image1">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="icon_name">window-close-symbolic</property>
-              </object>
-            </child>
-            <style>
-              <class name="titlebutton"/>
-            </style>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">1</property>
-          </packing>
-        </child>
-        <style>
-          <class name="right"/>
-        </style>
-      </object>
-      <packing>
-        <property name="pack_type">end</property>
-      </packing>
-    </child>
-    <child>
-      <object class="GtkBox" id="box4">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <child>
-          <object class="GtkButton" id="btn_prev">
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <child>
-              <object class="GtkArrow" id="arrow2">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="arrow_type">left</property>
-              </object>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkButton" id="btn_next">
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <child>
-              <object class="GtkArrow" id="arrow1">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-              </object>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">1</property>
-          </packing>
-        </child>
-        <style>
-          <class name="linked"/>
-        </style>
-      </object>
-      <packing>
         <property name="pack_type">end</property>
         <property name="position">1</property>
       </packing>

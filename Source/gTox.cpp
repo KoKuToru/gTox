@@ -32,7 +32,8 @@ gTox::gTox()
     : Gtk::Application("org.gtox",
                        Gio::ApplicationFlags(Gio::APPLICATION_HANDLES_OPEN | Gio::APPLICATION_HANDLES_COMMAND_LINE)),
       m_config_path(Glib::build_filename(Glib::get_user_config_dir(), "tox")),
-      m_avatar_path(Glib::build_filename(m_config_path, "avatars")) {
+      m_avatar_path(Glib::build_filename(m_config_path, "avatars")),
+      m_config_global_path(Glib::build_filename(Glib::get_user_config_dir(), "gtox")) {
 
     Glib::set_application_name(_("APPLICATION_NAME"));
 
@@ -44,11 +45,17 @@ gTox::gTox()
         Gio::File::create_for_path(m_avatar_path)->make_directory();
     }
 
+    if (!Glib::file_test(m_config_global_path, Glib::FILE_TEST_IS_DIR)) {
+        Gio::File::create_for_path(m_config_global_path)->make_directory();
+    }
+
+    m_config.open(Glib::build_filename(m_config_global_path, "config.sqlite"));
+
     Gtk::IconTheme::get_default()
             ->add_resource_path("/org/gtox/icon");
 
     Gtk::Settings::get_default()
-            ->property_gtk_application_prefer_dark_theme() = true;
+            ->property_gtk_application_prefer_dark_theme() = database().config_get("SETTINGS_THEME_COLOR", 0) == 0;
 
     auto css = Gtk::CssProvider::create();
     auto screen = Gdk::Screen::get_default();
@@ -73,6 +80,10 @@ Glib::RefPtr<gTox> gTox::create() {
     if (!m_instance) {
         m_instance = Glib::RefPtr<gTox>( new gTox() );
     }
+    return m_instance;
+}
+
+Glib::RefPtr<gTox> gTox::instance() {
     return m_instance;
 }
 
@@ -222,4 +233,8 @@ int gTox::on_command_line(const Glib::RefPtr<Gio::ApplicationCommandLine>& comma
     }
 
     return EXIT_SUCCESS;
+}
+
+ToxDatabase& gTox::database() {
+    return m_config;
 }

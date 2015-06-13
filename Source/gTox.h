@@ -20,16 +20,23 @@
 #ifndef GTOX_APPLICATION
 
 #include <gtkmm.h>
+#include "Tox/ToxDatabase.h"
 
 class gTox : public Gtk::Application {
     public:
         gTox();
         static Glib::RefPtr<gTox> create();
+        static Glib::RefPtr<gTox> instance();
 
         const std::string m_config_path;
         const std::string m_avatar_path;
+        const std::string m_config_global_path;
+
+        ToxDatabase& database();
 
     protected:
+        ToxDatabase m_config;
+
         void on_activate() override;
         void on_open(const Gio::Application::type_vec_files& files,
                      const Glib::ustring& hint) override;

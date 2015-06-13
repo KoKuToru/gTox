@@ -32,15 +32,25 @@ class WidgetContactListItem : public Gtk::ListBoxRow, public gToxObserver {
   private:
     gToxBuilder m_builder;
     WidgetAvatar* m_avatar;
+    WidgetAvatar* m_avatar_mini;
+
     Gtk::Label* m_name;
     Gtk::Label* m_status_msg;
     Gtk::Image* m_status_icon;
     Gtk::Spinner* m_spin;
 
+    Gtk::Label* m_name_mini;
+    Gtk::Label* m_status_msg_mini;
+    Gtk::Image* m_status_icon_mini;
+    Gtk::Spinner* m_spin_mini;
+
+    Glib::RefPtr<Glib::Binding> m_bindings[5];
+
     std::shared_ptr<Notify::Notification> m_notify;
 
     Toxmm::FriendNr m_friend_nr;
     bool m_for_notify;
+    bool m_display_active;
 
     std::shared_ptr<DialogChat> m_chat;
 
@@ -73,6 +83,16 @@ class WidgetContactListItem : public Gtk::ListBoxRow, public gToxObserver {
     class EventActivated {
         public:
             Toxmm::FriendNr nr;
+    };
+
+    class EventUpdateCompact {
+        public:
+            bool compact;
+    };
+
+    class EventUpdateDisplayActive {
+        public:
+            bool display;
     };
 
     int compare(WidgetContactListItem* other);
