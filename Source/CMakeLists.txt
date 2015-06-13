@@ -107,6 +107,11 @@ if(NOT GETTEXT_MSGMERGE_EXECUTABLE)
     message(FATAL_ERROR "msgmerge not found")
 endif()
 
+find_program(GETTEXT_MSGATTRIB_EXECUTABLE msgattrib)
+if(NOT GETTEXT_MSGATTRIB_EXECUTABLE)
+    message(FATAL_ERROR "msgattrib not found")
+endif()
+
 SET(TRANSLATIONS
     de
     en
@@ -121,6 +126,7 @@ add_custom_command(
    TARGET ${PROJECT_NAME}
    POST_BUILD
    COMMAND mkdir -p Locale/${_trans}/LC_MESSAGES
+   COMMAND ${GETTEXT_MSGATTRIB_EXECUTABLE} --translated "${CMAKE_CURRENT_SOURCE_DIR}/Locale/${_trans}.po" -o "${CMAKE_CURRENT_SOURCE_DIR}/Locale/${_trans}.po"
    COMMAND ${GETTEXT_MSGMERGE_EXECUTABLE} --update --no-fuzzy-matching "${CMAKE_CURRENT_SOURCE_DIR}/Locale/${_trans}.po" "${CMAKE_CURRENT_SOURCE_DIR}/Locale/en.po"
    COMMAND ${GETTEXT_MSGMERGE_EXECUTABLE} --update --no-fuzzy-matching "${CMAKE_CURRENT_SOURCE_DIR}/Locale/${_trans}.po" "${CMAKE_CURRENT_SOURCE_DIR}/Locale/template.pot"
    COMMAND ${GETTEXT_MSGFMT_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/Locale/${_trans}.po" -o "${PROJECT_BINARY_DIR}/Locale/${_trans}/LC_MESSAGES/gTox.mo"
