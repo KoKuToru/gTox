@@ -22,13 +22,15 @@
 #include <gstreamermm/buffer.h>
 #include <gstreamermm/playbin.h>
 #include <gstreamermm/appsink.h>
-
+#include <glibmm.h>
 #include <iostream>
 #include <memory>
 
 namespace sigc {
     SIGC_FUNCTORS_DEDUCE_RESULT_TYPE_WITH_DECLTYPE
 }
+
+//TODO: Make this platform independent
 
 VideoPlayer::VideoPlayer() : Glib::ObjectBase("VideoPlayer"), m_state(STOP) {
     m_playbin = Gst::PlayBin::create("playbin");
@@ -119,6 +121,20 @@ bool VideoPlayer::set_uri(Glib::ustring uri) {
     return true;
 }
 
+bool VideoPlayer::set_device(Device uri) {
+    stop();
+    //m_playbin->property_source() = Glib::wrap(gst_device_create_element(uri.device, nullptr));
+
+    auto device_source = Glib::wrap(gst_device_create_element(uri.device, nullptr));
+    device_source->link(m_appsink);
+
+    m_lastimg.reset();
+    m_state = INIT;
+    device_source->set_state(Gst::STATE_PLAYING);
+    //m_playbin->set_state(Gst::STATE_PLAYING);
+    return true;
+}
+
 void VideoPlayer::play() {
     if (m_state == INIT) {
         throw std::runtime_error("NOT READY");
@@ -151,4 +167,28 @@ bool VideoPlayer::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
         cr->paint();
     }
     return true;
+}
+
+std::vector<VideoPlayer::Device> VideoPlayer::probe_devices(const char* classes) {
+    //INFO: There is no C++ - version of this..
+    //TODO: Memory Leak check ?
+    GstDeviceMonitor *monitor = gst_device_monitor_new();
+
+    //Filter
+    gst_device_monitor_add_filter(monitor, classes, nullptr);
+
+    //Get all devices
+    decltype(probe_devices()) result;
+    GList *list = gst_device_monitor_get_devices(monitor);
+    GList *it = list;
+    while (it != nullptr)
+    {
+        auto device = (GstDevice*)it->data;
+        auto device_name  = gst_device_get_display_name(device);
+        result.push_back(VideoPlayer::Device(device_name, device));
+        g_free(device_name);
+        it = it->next;
+    }
+
+    return result;
 }

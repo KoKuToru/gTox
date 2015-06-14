@@ -42,17 +42,46 @@ class VideoPlayer : public Gtk::DrawingArea {
 
         int m_videowidth;
         int m_videoheight;
+
     public:
+        class Device {
+            public:
+                Glib::ustring name;
+                GstDevice* device;
+
+                Device(const Glib::ustring& name, GstDevice* device): name(name), device((decltype(device))gst_object_ref(device)) {
+                }
+                Device(const Device& other): name(other.name), device((decltype(device))gst_object_ref(other.device)) {
+                }
+                void operator=(const Device& other) {
+                    name = other.name;
+                    auto tmp = device;
+                    device = (decltype(device))gst_object_ref(other.device);
+                    gst_object_unref(tmp);
+                }
+                ~Device() {
+                    gst_object_unref(device);
+                }
+        };
+
         VideoPlayer();
         virtual ~VideoPlayer();
 
         bool set_uri(Glib::ustring uri);
+        bool set_device(Device uri);
 
         void play();
         void pause();
         void stop();
 
         Glib::RefPtr<Gdk::Pixbuf> snapshot();
+
+        constexpr static const char* CLASS_VIDEO_INPUT = "Video/Source";
+        constexpr static const char* CLASS_AUDIO_INPUT = "Audio/Source";
+        constexpr static const char* CLASS_AUDIO_OUTPUT = "Audio/Sink";
+
+        static std::vector<Device> probe_devices(const char* classes = CLASS_VIDEO_INPUT);
+
     protected:
         virtual bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr);
 };
