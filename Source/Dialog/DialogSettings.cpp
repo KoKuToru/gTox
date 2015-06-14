@@ -22,6 +22,7 @@
 #include <glibmm/i18n.h>
 #include "gTox.h"
 #include "Widget/WidgetContactListItem.h"
+#include "Widget/VideoPlayer.h"
 
 DialogSettings::DialogSettings(gToxObservable* observable)
     : gToxObserver(observable),
@@ -111,6 +112,28 @@ DialogSettings::DialogSettings(gToxObservable* observable)
         gTox::instance()->database().config_get("SETTINGS_CONTACTLIST_DISPLAY_ACTIVE", state);
 
         observer_notify(ToxEvent(WidgetContactListItem::EventUpdateDisplayActive{state}));
+    });
+
+    auto settings_video_default_device_selected = gTox::instance()->database().config_get("SETTINGS_VIDEO_DEFAULT_DEVICE", "");
+    auto settings_video_default_device = m_builder.get_widget<Gtk::ComboBox>("settings_video_default_device");
+    auto settings_video_default_device_model_store = Glib::RefPtr<Gtk::ListStore>::cast_dynamic(settings_video_default_device->get_model());
+    for(auto device : VideoPlayer::probe_devices()) {
+        auto new_row = settings_video_default_device_model_store->append();
+        new_row->set_value(0, device.name);
+
+        if (settings_video_default_device_selected == device.name) {
+            settings_video_default_device->set_active(new_row);
+        }
+    }
+    if (!settings_video_default_device->get_active()) {
+        //select first device
+        settings_video_default_device->set_active(settings_video_default_device_model_store->children().begin());
+    }
+    settings_video_default_device->signal_changed().connect([this, settings_video_default_device](){
+        Glib::ustring value;
+        settings_video_default_device->get_active()->get_value(0, value);
+
+        gTox::instance()->database().config_set("SETTINGS_VIDEO_DEFAULT_DEVICE", value);
     });
 
     m_builder.get_widget<Gtk::Button>("close_btn")->signal_clicked().connect([this](){
