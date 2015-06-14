@@ -50,8 +50,11 @@ void Toxmm::open(const Glib::ustring& profile_path, bool bootstrap) {
     options->udp_enabled  = true;
 
     // load state
+    options->savedata_type   = TOX_SAVEDATA_TYPE_TOX_SAVE;
+    options->savedata_data   = state.data();
+    options->savedata_length = state.size();
     TOX_ERR_NEW error;
-    m_tox = tox_new(options.get(), state.data(), state.size(), &error);
+    m_tox = tox_new(options.get(), &error);
 
     if (error != TOX_ERR_NEW_OK) {
         throw Exception(error);
