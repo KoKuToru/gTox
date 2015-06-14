@@ -497,6 +497,15 @@ class Toxmm {
      */
     Hash hash(const std::vector<uint8_t>& data);
 
+    /**
+     * Replaces illegal UTF-8 Characters with U+FFFD replacement character
+     *
+     * @param input
+     * @param size
+     * @return valid utf-8 string
+     */
+    static Glib::ustring fix_utf8(const char* input, int size);
+
   protected:
     std::deque<ToxEvent> m_events;
 
