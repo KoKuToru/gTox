@@ -17,11 +17,11 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 **/
-#include "WidgetChatLine.h"
-#include "Chat/WidgetChatLabel.h"
+#include "WidgetChatBubble.h"
+#include "WidgetChatLabel.h"
 #include "Tox/Toxmm.h"
 
-WidgetChatLine::WidgetChatLine(gToxObservable* instance, Toxmm::FriendNr nr, Side left_side)
+WidgetChatBubble::WidgetChatBubble(gToxObservable* instance, Toxmm::FriendNr nr, Side left_side)
     : Glib::ObjectBase("WidgetChatLine"), m_side(left_side), m_row_count(0), m_avatar(instance, nr) {
 
     set_observable(instance);
@@ -62,14 +62,14 @@ WidgetChatLine::WidgetChatLine(gToxObservable* instance, Toxmm::FriendNr nr, Sid
     m_grid.show_all();
 }
 
-WidgetChatLine::~WidgetChatLine() {
+WidgetChatBubble::~WidgetChatBubble() {
 }
 
-WidgetChatLine::Side WidgetChatLine::get_side() {
+WidgetChatBubble::Side WidgetChatBubble::get_side() {
     return m_side;
 }
 
-void WidgetChatLine::add_message(Line new_line) {
+void WidgetChatBubble::add_message(Line new_line) {
     auto msg_time = Glib::DateTime::create_now_utc(new_line.timestamp);
     // remove seconds
     msg_time = Glib::DateTime::create_utc(msg_time.get_year(),
@@ -160,7 +160,7 @@ void WidgetChatLine::add_message(Line new_line) {
     }
 }
 
-void WidgetChatLine::on_size_allocate(Gtk::Allocation& allocation) {
+void WidgetChatBubble::on_size_allocate(Gtk::Allocation& allocation) {
     int w = std::min(64, allocation.get_height() - 5); //5px radius
 
     //update widget size:
@@ -173,6 +173,6 @@ void WidgetChatLine::on_size_allocate(Gtk::Allocation& allocation) {
     Gtk::Box::on_size_allocate(allocation);
 }
 
-unsigned long long WidgetChatLine::last_timestamp() {
+unsigned long long WidgetChatBubble::last_timestamp() {
     return m_last_timestamp;
 }

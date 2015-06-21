@@ -19,7 +19,7 @@
 **/
 #include "WidgetChatLayout.h"
 #include <pangomm/renderer.h>
-#include "Widget/WidgetChatLine.h"
+#include "Widget/Chat/WidgetChatBubble.h"
 #include "WidgetChatLabel.h"
 
 WidgetChatLayout::WidgetChatLayout() : Glib::ObjectBase("WidgetChatLayout") {

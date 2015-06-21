@@ -75,9 +75,9 @@ set(SOURCES
     Widget/Chat/WidgetChatTextView.cpp
     Widget/WidgetChat.cpp
     Widget/WidgetContactListItem.cpp
-    Widget/WidgetChatLine.cpp
     Widget/Chat/WidgetChatLabel.cpp
     Widget/Chat/WidgetChatLayout.cpp
+    Widget/Chat/WidgetChatBubble.cpp
     Widget/Chat/WidgetChatBubbleRow.cpp
     Widget/WidgetNotification.cpp
     Widget/VideoPlayer.cpp

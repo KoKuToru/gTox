@@ -19,7 +19,7 @@
 **/
 #include "WidgetChat.h"
 #include "Tox/Toxmm.h"
-#include "WidgetChatLine.h"
+#include "Chat/WidgetChatBubble.h"
 #include "Chat/WidgetChatLabel.h"
 #include <glibmm/i18n.h>
 #include <iostream>
@@ -76,7 +76,7 @@ WidgetChat::WidgetChat(gToxObservable* instance, Toxmm::FriendNr nr)
 
             // add to chat
             auto text = m_input.get_serialized_text();
-            add_message(WidgetChatLine::RIGHT, WidgetChatLine::Line{
+            add_message(WidgetChatBubble::RIGHT, WidgetChatBubble::Line{
                          false,
                          true,
                          tox().send_message(get_friend_nr(), text),
@@ -123,7 +123,7 @@ WidgetChat::WidgetChat(gToxObservable* instance, Toxmm::FriendNr nr)
     auto log = tox().get_log(nr);
     for (auto l : log) {
         if (l.sendtime != 0) {
-            add_message(WidgetChatLine::RIGHT, WidgetChatLine::Line{
+            add_message(WidgetChatBubble::RIGHT, WidgetChatBubble::Line{
                          false,
                          false,
                          0,
@@ -132,7 +132,7 @@ WidgetChat::WidgetChat(gToxObservable* instance, Toxmm::FriendNr nr)
                          l.data
                      });
         } else {
-            add_message(WidgetChatLine::LEFT, WidgetChatLine::Line{
+            add_message(WidgetChatBubble::LEFT, WidgetChatBubble::Line{
                          false,
                          false,
                          0,
@@ -147,7 +147,7 @@ WidgetChat::WidgetChat(gToxObservable* instance, Toxmm::FriendNr nr)
         if (ev.type() == typeid(Toxmm::EventFriendAction)) {
             auto data = ev.get<Toxmm::EventFriendAction>();
             if (nr == data.nr) {
-                add_message(WidgetChatLine::LEFT, WidgetChatLine::Line{
+                add_message(WidgetChatBubble::LEFT, WidgetChatBubble::Line{
                              false,
                              false,
                              0,
@@ -159,7 +159,7 @@ WidgetChat::WidgetChat(gToxObservable* instance, Toxmm::FriendNr nr)
         } else if (ev.type() == typeid(Toxmm::EventFriendMessage)) {
             auto data = ev.get<Toxmm::EventFriendMessage>();
             if (nr == data.nr) {
-                add_message(WidgetChatLine::LEFT, WidgetChatLine::Line{
+                add_message(WidgetChatBubble::LEFT, WidgetChatBubble::Line{
                              false,
                              false,
                              0,
@@ -183,7 +183,7 @@ Toxmm::FriendNr WidgetChat::get_friend_nr() const {
     return m_nr;
 }
 
-void WidgetChat::add_message(WidgetChatLine::Side side, WidgetChatLine::Line message) {
+void WidgetChat::add_message(WidgetChatBubble::Side side, WidgetChatBubble::Line message) {
     // check if time i set, if not we will give it actual time
     if (message.timestamp == 0) {
         message.timestamp = Glib::DateTime::create_now_utc().to_unix();
@@ -206,8 +206,8 @@ void WidgetChat::add_message(WidgetChatLine::Side side, WidgetChatLine::Line mes
 
         add_widget(*msg);
 
-        m_last_side = WidgetChatLine::NONE;
-        last_side   = WidgetChatLine::NONE;
+        m_last_side = WidgetChatBubble::NONE;
+        last_side   = WidgetChatBubble::NONE;
     }
 
     bool action = message.message.find("/me ") == 0;
@@ -215,7 +215,7 @@ void WidgetChat::add_message(WidgetChatLine::Side side, WidgetChatLine::Line mes
     if (!action && same_bubble(last_timestmap, last_side,
                                message.timestamp, side)) {
         //on same bubble !
-        WidgetChatLine* bubble = dynamic_cast<WidgetChatLine*>(m_vbox.get_children().back());
+        WidgetChatBubble* bubble = dynamic_cast<WidgetChatBubble*>(m_vbox.get_children().back());
         bubble->add_message(message);
         return;
     }
@@ -223,7 +223,7 @@ void WidgetChat::add_message(WidgetChatLine::Side side, WidgetChatLine::Line mes
     if (action) {
         // TODO new action line
         auto msg = Gtk::manage(new WidgetChatLabel());
-        auto name = (side == WidgetChatLine::LEFT)
+        auto name = (side == WidgetChatBubble::LEFT)
                     ? tox().get_name_or_address(m_nr)
                     : tox().get_name_or_address();
         msg->set_text(name + message.message.substr(Glib::ustring("/me").size()));
@@ -233,12 +233,12 @@ void WidgetChat::add_message(WidgetChatLine::Side side, WidgetChatLine::Line mes
 
         add_widget(*msg);
 
-        m_last_side = WidgetChatLine::NONE;
+        m_last_side = WidgetChatBubble::NONE;
         return;
     }
 
     //add new bubble
-    auto new_bubble = Gtk::manage(new WidgetChatLine(observable(), (side == WidgetChatLine::LEFT)?m_nr:~0u, side));
+    auto new_bubble = Gtk::manage(new WidgetChatBubble(observable(), (side == WidgetChatBubble::LEFT)?m_nr:~0u, side));
     new_bubble->add_message(message);
     new_bubble->show_all();
 
@@ -249,7 +249,7 @@ void WidgetChat::add_widget(Gtk::Widget& widget) {
     m_vbox.pack_start(widget, false, false);
 }
 
-bool WidgetChat::same_bubble(unsigned long long a_timestamp, WidgetChatLine::Side a_side, unsigned long long b_timestamp, WidgetChatLine::Side b_side) {
+bool WidgetChat::same_bubble(unsigned long long a_timestamp, WidgetChatBubble::Side a_side, unsigned long long b_timestamp, WidgetChatBubble::Side b_side) {
     return (a_side == b_side) && !need_date(a_timestamp, b_timestamp);
 }
 

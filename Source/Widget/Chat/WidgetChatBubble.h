@@ -21,7 +21,7 @@
 #define WIDGETCHATLINE_H
 
 #include <gtkmm.h>
-#include "Chat/WidgetChatBubbleRow.h"
+#include "WidgetChatBubbleRow.h"
 #include <vector>
 #include "Tox/Toxmm.h"
 #include "Helper/gToxObserver.h"
@@ -29,7 +29,7 @@
 
 class WidgetChatLabel;
 
-class WidgetChatLine : public Gtk::Box, public gToxObserver {
+class WidgetChatBubble : public Gtk::Box, public gToxObserver {
     public:
         enum Side {
             NONE,
@@ -37,8 +37,8 @@ class WidgetChatLine : public Gtk::Box, public gToxObserver {
             RIGHT
         };
 
-        WidgetChatLine(gToxObservable* observable, Toxmm::FriendNr nr, Side side);
-        ~WidgetChatLine();
+        WidgetChatBubble(gToxObservable* observable, Toxmm::FriendNr nr, Side side);
+        ~WidgetChatBubble();
 
         Side get_side();
 

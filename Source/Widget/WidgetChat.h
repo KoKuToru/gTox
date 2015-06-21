@@ -23,7 +23,7 @@
 #include <gtkmm.h>
 #include "Tox/Toxmm.h"
 #include "Chat/WidgetChatLayout.h"
-#include "WidgetChatLine.h"
+#include "Chat/WidgetChatBubble.h"
 #include "Dialog/DialogContact.h"
 #include "Helper/gToxObserver.h"
 #include "Chat/WidgetChatTextView.h"
@@ -46,12 +46,12 @@ class WidgetChat : public Gtk::VPaned, public gToxObserver {
     gToxObservable::Handler m_tox_callback;
 
     unsigned long long m_last_timestamp;
-    WidgetChatLine::Side m_last_side = WidgetChatLine::NONE;
+    WidgetChatBubble::Side m_last_side = WidgetChatBubble::NONE;
 
-    void add_message(WidgetChatLine::Side side, WidgetChatLine::Line message);
+    void add_message(WidgetChatBubble::Side side, WidgetChatBubble::Line message);
     void add_widget(Gtk::Widget& widget);
 
-    bool same_bubble(unsigned long long a_timestamp, WidgetChatLine::Side a_side, unsigned long long b_timestamp, WidgetChatLine::Side b_side);
+    bool same_bubble(unsigned long long a_timestamp, WidgetChatBubble::Side a_side, unsigned long long b_timestamp, WidgetChatBubble::Side b_side);
     bool need_date(unsigned long long a_timestamp, unsigned long long b_timestamp);
 
   public:
