@@ -50,8 +50,11 @@ void Toxmm::open(const Glib::ustring& profile_path, bool bootstrap) {
     options->udp_enabled  = true;
 
     // load state
+    options->savedata_type   = TOX_SAVEDATA_TYPE_TOX_SAVE;
+    options->savedata_data   = state.data();
+    options->savedata_length = state.size();
     TOX_ERR_NEW error;
-    m_tox = tox_new(options.get(), state.data(), state.size(), &error);
+    m_tox = tox_new(options.get(), &error);
 
     if (error != TOX_ERR_NEW_OK) {
         throw Exception(error);
@@ -312,7 +315,7 @@ Glib::ustring Toxmm::get_name() {
     }
     std::string name(tox_self_get_name_size(m_tox), 0);
     tox_self_get_name(m_tox, (unsigned char*)(name.data()));
-    return name;
+    return fix_utf8(name.c_str(), name.size());
 }
 
 Glib::ustring Toxmm::get_name(Toxmm::FriendNr nr) {
@@ -340,7 +343,7 @@ Glib::ustring Toxmm::get_name(Toxmm::FriendNr nr) {
         throw std::runtime_error("tox_friend_get_name unknow FALSE error");
     }
 
-    return name;
+    return fix_utf8(name.c_str(), name.size());
 }
 
 Glib::ustring Toxmm::get_name_or_address() {
@@ -366,7 +369,7 @@ Glib::ustring Toxmm::get_status_message() {
     auto size = tox_self_get_status_message_size(m_tox);
     std::string name(size, 0);
     tox_self_get_status_message(m_tox, (unsigned char*)name.data());
-    return name;
+    return fix_utf8(name.c_str(), name.size());
 }
 
 Glib::ustring Toxmm::get_status_message(FriendNr nr) {
@@ -383,7 +386,7 @@ Glib::ustring Toxmm::get_status_message(FriendNr nr) {
     if (error != TOX_ERR_FRIEND_QUERY_OK) {
         throw Exception(error);
     }
-    return name;
+    return fix_utf8(name.c_str(), name.size());
 }
 
 void Toxmm::set_status_message(Glib::ustring msg) {
@@ -609,7 +612,7 @@ void Toxmm::callback_friend_request(Tox*,
     std::copy(addr,
               addr + event.addr.size(),
               event.addr.begin());
-    event.message = std::string((const char*)data, len);
+    event.message = fix_utf8((const char*)data, len);
     ((Toxmm*)_this)->inject_event(ToxEvent(event));
 }
 
@@ -625,7 +628,7 @@ void Toxmm::callback_friend_message(Tox*,
     }
     ((Toxmm*)_this)->inject_event(ToxEvent(EventFriendMessage{
                                               nr,
-                                              std::string((const char*)data, len)
+                                              fix_utf8((const char*)data, len)
                                           }));
 }
 
@@ -636,7 +639,7 @@ void Toxmm::callback_friend_action(Tox*,
                                  void* _this) {
     ((Toxmm*)_this)->inject_event(ToxEvent(EventFriendAction{
                                               nr,
-                                              std::string((const char*)data, len)
+                                              fix_utf8((const char*)data, len)
                                           }));
 }
 
@@ -647,7 +650,7 @@ void Toxmm::callback_name_change(Tox*,
                                void* _this) {
     ((Toxmm*)_this)->inject_event(ToxEvent(EventName{
                                               nr,
-                                              std::string((const char*)data, len)
+                                              fix_utf8((const char*)data, len)
                                           }));
 }
 
@@ -658,7 +661,7 @@ void Toxmm::callback_status_message(Tox*,
                                   void* _this) {
     ((Toxmm*)_this)->inject_event(ToxEvent(EventStatusMessage{
                                               nr,
-                                              std::string((const char*)data, len)
+                                              fix_utf8((const char*)data, len)
                                           }));
 }
 
@@ -761,4 +764,19 @@ void Toxmm::callback_file_recv_chunk(Tox*,
                              position,
                              std::vector<unsigned char>(data, data+data_length)
                          }));
+}
+
+Glib::ustring Toxmm::fix_utf8(const char* input, int size) {
+    static const Glib::ustring uFFFD(1, gunichar(0xFFFD));
+    std::string fixed;
+    fixed.reserve(size);
+    const gchar* str = input;
+    const gchar* last_valid;
+    while(!g_utf8_validate(str, std::distance(str, input + size), &last_valid)) {
+        fixed.append(str, last_valid);
+        fixed.append(uFFFD.raw().begin(), uFFFD.raw().end());
+        str = last_valid + 1;
+    }
+    fixed.append(str, last_valid);
+    return fixed;
 }
