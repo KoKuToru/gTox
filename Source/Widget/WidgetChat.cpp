@@ -168,6 +168,11 @@ WidgetChat::WidgetChat(gToxObservable* instance, Toxmm::FriendNr nr)
                              data.message
                          });
             }
+        } else if (ev.type() == typeid(Toxmm::EventFileRecv)) {
+            auto data = ev.get<Toxmm::EventFileRecv>();
+            if (nr == data.nr && data.kind == TOX_FILE_KIND_DATA) {
+                add_filerecv(WidgetChatBubble::LEFT, data);
+            }
         }
     });
 }
@@ -240,6 +245,49 @@ void WidgetChat::add_message(WidgetChatBubble::Side side, WidgetChatBubble::Line
     //add new bubble
     auto new_bubble = Gtk::manage(new WidgetChatBubble(observable(), (side == WidgetChatBubble::LEFT)?m_nr:~0u, side));
     new_bubble->add_message(message);
+    new_bubble->show_all();
+
+    add_widget(*new_bubble);
+}
+
+void WidgetChat::add_filerecv(WidgetChatBubble::Side side, Toxmm::EventFileRecv file) {
+    //more or less the same as add_message..
+
+    // check if time i set, if not we will give it actual time
+    auto timestamp = Glib::DateTime::create_now_utc().to_unix();
+
+    auto last_timestmap = m_last_timestamp;
+    auto last_side = m_last_side;
+
+    m_last_timestamp = timestamp;
+    m_last_side = side;
+
+    if (need_date(last_timestmap, timestamp)) {
+        // add a date message
+        auto msg = Gtk::manage(new WidgetChatLabel());
+        msg->set_text(Glib::DateTime::create_now_local(timestamp)
+                          .format(_("DATE_FORMAT")));
+        msg->set_name("ChatTime");
+        msg->set_halign(Gtk::ALIGN_CENTER);
+        msg->show_all();
+
+        add_widget(*msg);
+
+        m_last_side = WidgetChatBubble::NONE;
+        last_side   = WidgetChatBubble::NONE;
+    }
+
+    if (same_bubble(last_timestmap, last_side,
+                    timestamp, side)) {
+        //on same bubble !
+        WidgetChatBubble* bubble = dynamic_cast<WidgetChatBubble*>(m_vbox.get_children().back());
+        bubble->add_filerecv(file);
+        return;
+    }
+
+    //add new bubble
+    auto new_bubble = Gtk::manage(new WidgetChatBubble(observable(), (side == WidgetChatBubble::LEFT)?m_nr:~0u, side));
+    new_bubble->add_filerecv(file);
     new_bubble->show_all();
 
     add_widget(*new_bubble);

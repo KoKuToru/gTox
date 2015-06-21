@@ -52,6 +52,7 @@ class WidgetChatBubble : public Gtk::Box, public gToxObserver {
         };
 
         void add_message(Line new_line);
+        void add_filerecv(Toxmm::EventFileRecv file);
 
         unsigned long long last_timestamp();
 

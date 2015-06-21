@@ -37,15 +37,15 @@ gToxFileRecv::gToxFileRecv(gToxObservable* observable,
             }
 
             m_path = WidgetAvatar::get_avatar_path(observable, m_file.nr);
+            if (m_file.file_size == 0) {
+                //Remove avatar
+                WidgetAvatar::set_avatar(observable, m_path, Glib::RefPtr<Gdk::Pixbuf>());
+                return;
+            }
 
             //check if
             m_fd = ::open(m_path.c_str(), O_RDONLY);
             if (m_fd != -1) {
-                if (m_file.file_size == 0) {
-                    //Remove avatar
-                    WidgetAvatar::set_avatar(observable, m_path, Glib::RefPtr<Gdk::Pixbuf>());
-                    return;
-                }
                 std::vector<uint8_t> data;
 
                 while(true) {
@@ -71,11 +71,14 @@ gToxFileRecv::gToxFileRecv(gToxObservable* observable,
         }
         std::clog << "Download " << m_path << std::endl;
         m_fd = ::open(m_path.c_str(), O_RDWR|O_CREAT, 0600);
+        std::clog << "Open fd " << m_fd << std::endl;
         if (m_fd == -1) {
             throw std::runtime_error("gToxFileRecv couldn't open file");
         }
         //read file size
         m_position = lseek(m_fd, 0, SEEK_END);
+
+        tox().file_seek(m_file.nr, m_file.file_number, m_position);
     } catch(const Toxmm::Exception& exp) {
         //Ignore
         if (m_fd != -1) {
@@ -87,6 +90,7 @@ gToxFileRecv::gToxFileRecv(gToxObservable* observable,
 
 gToxFileRecv::~gToxFileRecv() {
     if (m_fd != -1) {
+        std::clog << "Close fd " << m_fd << std::endl;
         close(m_fd);
         m_fd = -1;
     }
@@ -126,7 +130,6 @@ void gToxFileRecv::resume() {
 
         return;
     }
-    tox().file_seek(m_file.nr, m_file.file_number, m_position);
     tox().file_control(m_file.nr, m_file.file_number, TOX_FILE_CONTROL_RESUME);
 }
 
@@ -136,6 +139,7 @@ void gToxFileRecv::cancel() {
     }
     m_state = STOPPED;
     tox().file_control(m_file.nr, m_file.file_number, TOX_FILE_CONTROL_CANCEL);
+    //TODO: delete file
 }
 
 void gToxFileRecv::pause() {
@@ -160,6 +164,7 @@ void gToxFileRecv::observer_handle(const ToxEvent& ev) {
     }
 
     //Handle download
+    std::clog << "Recv fd " << m_fd << std::endl;
     auto ret = write(m_fd, data.file_data.data(), data.file_data.size());
     if (ret != ssize_t(data.file_data.size())) {
         std::clog << Glib::strerror(errno) << std::endl;
@@ -184,7 +189,12 @@ void gToxFileRecv::observer_handle(const ToxEvent& ev) {
 
 gToxFileRecv::gToxFileRecv(const gToxFileRecv& o)
     : gToxObserver(o) {
-    m_fd = dup(o.m_fd);
+    if (o.m_fd != -1) {
+        m_fd = dup(o.m_fd);
+    } else {
+        m_fd = -1;
+    }
+    std::clog << "Copy fd " << o.m_fd << " to " << m_fd << std::endl;
     m_file = o.m_file;
     m_path = o.m_path;
     m_position = o.m_position;
@@ -192,7 +202,14 @@ gToxFileRecv::gToxFileRecv(const gToxFileRecv& o)
 
 void gToxFileRecv::operator=(const gToxFileRecv& o) {
     gToxObserver::operator=(o);
-    m_fd = dup(o.m_fd);
+    int old_fd = m_fd;
+    if (o.m_fd != -1) {
+        m_fd = dup(o.m_fd);
+    } else {
+        m_fd = -1;
+    }
+    close(old_fd);
+    std::clog << "Copy fd " << o.m_fd << " to " << m_fd << std::endl;
     m_file = o.m_file;
     m_path = o.m_path;
     m_position = o.m_position;

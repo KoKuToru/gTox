@@ -79,6 +79,7 @@ set(SOURCES
     Widget/Chat/WidgetChatLayout.cpp
     Widget/Chat/WidgetChatBubble.cpp
     Widget/Chat/WidgetChatBubbleRow.cpp
+    Widget/Chat/WidgetChatFileRecv.cpp
     Widget/WidgetNotification.cpp
     Widget/VideoPlayer.cpp
     Widget/WidgetAvatar.cpp
