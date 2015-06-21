@@ -21,7 +21,6 @@
 #define WIDGETCHAT_H
 
 #include <gtkmm.h>
-#include "Chat/WidgetChatEntry.h"
 #include "Tox/Toxmm.h"
 #include "Chat/WidgetChatLayout.h"
 #include "WidgetChatLine.h"
@@ -33,7 +32,6 @@
 class WidgetChat : public Gtk::VPaned, public gToxObserver {
   private:
     WidgetChatTextView m_input;
-    WidgetChatEntry m_output;
 
     Gtk::HBox m_hbox;
     Gtk::Button m_btn_send;
@@ -46,8 +44,6 @@ class WidgetChat : public Gtk::VPaned, public gToxObserver {
     bool m_autoscroll;
 
     gToxObservable::Handler m_tox_callback;
-
-    void add_line(Glib::ustring text);
 
     void add_line(bool left_side, WidgetChatLine::Line new_line);
 

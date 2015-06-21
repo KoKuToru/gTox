@@ -33,7 +33,6 @@ WidgetChat::WidgetChat(gToxObservable* instance, Toxmm::FriendNr nr)
 
     set_observable(instance);
 
-    m_output.set_editable(false);
     m_scrolled.add(m_vbox);
     m_vbox.set_spacing(5);
     auto frame = Gtk::manage(new Gtk::Frame());
@@ -182,11 +181,6 @@ void WidgetChat::focus() {
 
 Toxmm::FriendNr WidgetChat::get_friend_nr() const {
     return m_nr;
-}
-
-void WidgetChat::add_line(Glib::ustring text) {
-    //what does this do ?
-    m_output.add_line(text);
 }
 
 void WidgetChat::add_line(bool left_side, WidgetChatLine::Line new_line) {
