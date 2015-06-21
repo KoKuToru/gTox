@@ -22,6 +22,7 @@
 #include "Dialog/DialogContact.h"
 #include "Helper/Canberra.h"
 #include "gTox.h"
+#include <glibmm/i18n.h>
 
 WidgetContactListItem* WidgetContactListItem::create(gToxObservable* instance, Toxmm::FriendNr nr, bool for_notify) {
     gToxObserver dummy(instance);
@@ -48,6 +49,20 @@ void WidgetContactListItem::observer_handle(const ToxEvent& ev) {
                    (ev.type() == typeid(Toxmm::EventFriendMessage)) ?
                        ev.get<Toxmm::EventFriendMessage>().message :
                        ev.get<Toxmm::EventFriendAction>().message);
+        }
+    } else if (ev.type() == typeid(Toxmm::EventFileRecv)) {
+        auto data = ev.get<Toxmm::EventFileRecv>();
+        if (data.nr != m_friend_nr || data.kind != TOX_FILE_KIND_DATA) {
+            return;
+        }
+        if (!m_spin->property_active() && !m_chat) {
+            m_spin->start();
+        }
+        if (!m_for_notify && !m_chat) {
+            notify(tox().get_name_or_address(m_friend_nr),
+                   Glib::ustring::compose(_("FRIEND_NEW_FILE_RECV"),
+                                          data.filename,
+                                          data.file_size));
         }
     } else if (ev.type() == typeid(EventStopSpin) && ev.get<EventStopSpin>().nr == m_friend_nr) {
         if (m_spin->property_active()) {
@@ -100,13 +115,8 @@ void WidgetContactListItem::observer_handle(const ToxEvent& ev) {
         auto data = ev.get<EventUpdateDisplayActive>();
         m_display_active = data.display;
 
-        if (m_for_notify) {
-            m_spin->set_visible(m_display_active);
-            m_spin_mini->set_visible(m_display_active);
-        } else {
-            m_spin->set_visible(!m_display_active);
-            m_spin_mini->set_visible(!m_display_active);
-        }
+        m_spin->set_visible(m_display_active);
+        m_spin_mini->set_visible(m_display_active);
     }
 }
 
@@ -277,8 +287,11 @@ void WidgetContactListItem::notify(const Glib::ustring& title, const Glib::ustri
                                             64,
                                             Gdk::INTERP_BILINEAR));
         m_notify->signal_closed().connect([this](){
-            //m_notify->get_closed_reason() ???
-            observer_notify(ToxEvent(EventActivated{m_friend_nr}));
+            //auto res = m_notify->get_closed_reason();
+            //Broken in GNOME 3.16
+            //gives reason 2 onclick and on window activation
+            //sucks
+            //observer_notify(ToxEvent(EventActivated{m_friend_nr}));
         });
         try {
             m_notify->show();
