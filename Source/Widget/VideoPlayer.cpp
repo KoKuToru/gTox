@@ -18,126 +18,120 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 **/
 #include "VideoPlayer.h"
+#include <gstreamermm/bus.h>
 #include <gstreamermm/caps.h>
 #include <gstreamermm/buffer.h>
 #include <gstreamermm/playbin.h>
 #include <gstreamermm/appsink.h>
-
+#include <gstreamermm/elementfactory.h>
+#include <glibmm.h>
 #include <iostream>
 #include <memory>
+#include <mutex>
+#include <thread>
 
 namespace sigc {
     SIGC_FUNCTORS_DEDUCE_RESULT_TYPE_WITH_DECLTYPE
 }
 
-VideoPlayer::VideoPlayer() : Glib::ObjectBase("VideoPlayer"), m_state(STOP) {
-    m_playbin = Gst::PlayBin::create("playbin");
+void VideoPlayer::init() {
+    m_playing = false;
 
-    //setup pipeline
-    m_appsink = Gst::AppSink::create();
-    m_appsink->property_caps() = Gst::Caps::create_from_string("video/x-raw,format=RGB,pixel-aspect-ratio=1/1");
-    m_appsink->property_max_buffers() = 3;
-    m_appsink->property_drop() = true;
-    m_playbin->property_video_sink() = m_appsink; //overwrite sink
+    signal_unmap().connect_notify([this](){
+        m_signal_connection.disconnect();
+        m_error_connection.disconnect();
+        m_streamer.reset();
+    });
 
-    //events
-    m_appsink->property_emit_signals() = true;
-    m_appsink->signal_new_sample().connect_notify([this](){
-        auto sample = m_appsink->pull_sample();
-        if (!sample) {
-            return;
+    signal_map().connect_notify([this](){
+        if (!m_uri.empty()) {
+            bool playing = m_playing;
+            set_uri(m_uri);
+            if (playing) {
+                play();
+            }
         }
-        //switch to GTK-Mainloop
-        m_signal_helper = Glib::signal_idle().connect([this, sample](){
-            auto state = m_state;
-            if (state == INIT) {
-                auto caps = sample->get_caps();
-
-                if (!caps) {
-                    return false;
-                }
-
-                if (caps->empty()) {
-                    return false;
-                }
-
-                auto struc = caps->get_structure(0);
-                if (!(struc.get_field("width", m_videowidth) &&
-                      struc.get_field("height", m_videoheight))) {
-                    return false;
-                }
-
-                set_size_request(m_videowidth, m_videoheight);
-                queue_resize();
-
-                m_state = STOP;
-                m_playbin->set_state(Gst::STATE_NULL);
-            }
-            if (state == PLAY || state == INIT) {
-                auto buffer = sample->get_buffer();
-                if (!buffer) {
-                    return false;
-                }
-
-                auto map = Glib::RefPtr<Gst::MapInfo>(new Gst::MapInfo);
-                if (!buffer->map(map, Gst::MAP_READ)) {
-                    return false;
-                }
-
-                //convert to pixbuf
-                m_lastimg = Gdk::Pixbuf::create_from_data(map->get_data(),
-                                                          Gdk::COLORSPACE_RGB,
-                                                          false,
-                                                          8,
-                                                          m_videowidth,
-                                                          m_videoheight,
-                                                          GST_ROUND_UP_4( m_videowidth*3 ),
-                                                          [sample, buffer, map](const guint8*){
-                            //free memory
-                            buffer->unmap(map);
-                });
-
-                queue_draw();
-            }
-            return false;
-        });
     });
 }
 
-VideoPlayer::~VideoPlayer() {
-    stop();
+VideoPlayer::VideoPlayer(BaseObjectType* cobject, gToxBuilder): Gtk::DrawingArea(cobject) {
+    init();
 }
+
+VideoPlayer::VideoPlayer() : Glib::ObjectBase("VideoPlayer") {
+    init();
+}
+
+VideoPlayer::~VideoPlayer() {
+    m_signal_connection.disconnect();
+    m_streamer.reset();
+}
+
+static gStreamerHelper streamer;
 
 bool VideoPlayer::set_uri(Glib::ustring uri) {
     stop();
-    m_playbin->property_uri() = uri;
 
-    //Get first frame:
-    m_lastimg.reset();
-    m_state = INIT;
-    m_playbin->set_state(Gst::STATE_PLAYING);
+    m_uri = uri;
+
+    m_last_error.clear();
+
+    m_signal_connection.disconnect();
+    m_error_connection.disconnect();
+
+    m_streamer = streamer.create(uri);
+
+    m_signal_connection = m_streamer->signal_update().connect([this](int w, int h, const std::vector<unsigned char>& frame) {
+        m_lastimg_data = frame;
+        m_lastimg = Gdk::Pixbuf::create_from_data(m_lastimg_data.data(),
+                                                  Gdk::COLORSPACE_RGB,
+                                                  false,
+                                                  8,
+                                                  w,
+                                                  h,
+                                                  GST_ROUND_UP_4( w*3 ));
+
+        if (m_w != w || m_h != h) {
+            set_size_request(w, h);
+            queue_resize();
+            m_w = w;
+            m_h = h;
+        }
+        queue_draw();
+    });
+
+    m_error_connection = m_streamer->signal_error().connect([this](std::string error) {
+        m_last_error = error;
+        queue_draw();
+    });
+
+    queue_draw();
+    m_streamer->emit_update_signal();
+
     return true;
 }
 
 void VideoPlayer::play() {
-    if (m_state == INIT) {
-        throw std::runtime_error("NOT READY");
+    m_playing = true;
+    if (get_mapped()) {
+        if (m_streamer) {
+            m_streamer->play();
+        }
     }
-    m_state = PLAY;
-    m_playbin->set_state(Gst::STATE_PLAYING);
 }
 
 void VideoPlayer::pause() {
-    if (m_state == INIT) {
-        throw std::runtime_error("NOT READY");
+    m_playing = false;
+    if (m_streamer) {
+        m_streamer->pause();
     }
-    m_state = PAUSE;
-    m_playbin->set_state(Gst::STATE_PAUSED);
 }
 
 void VideoPlayer::stop() {
-    m_state = STOP;
-    m_playbin->set_state(Gst::STATE_NULL);
+    m_playing = false;
+    if (m_streamer) {
+        m_streamer->stop();
+    }
 }
 
 Glib::RefPtr<Gdk::Pixbuf> VideoPlayer::snapshot() {
@@ -147,8 +141,42 @@ Glib::RefPtr<Gdk::Pixbuf> VideoPlayer::snapshot() {
 bool VideoPlayer::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
     auto img = snapshot();
     if (img) {
-        Gdk::Cairo::set_source_pixbuf(cr, img, 0, 0);
+        cr->save();
+        Gdk::Cairo::set_source_pixbuf(cr, img,
+                                      (m_w - get_width()) / 2,
+                                      (m_h - get_height()) / 2);
         cr->paint();
+        cr->restore();
+    }
+    if (!m_last_error.empty()) {
+        //render text
+        cr->save();
+
+        Gdk::RGBA color;
+
+        color.set_rgba(0.0, 0.0, 0.0, 0.7);
+        Gdk::Cairo::set_source_rgba(cr, color);
+
+        Cairo::TextExtents extents;
+        cr->get_text_extents(m_last_error, extents);
+
+        if (m_w < 320 || m_w < (extents.width + 10) || m_h < 240) {
+            m_w = std::max(320, (int)extents.width + 10);
+            m_h = 240;
+            set_size_request(m_w, m_h);
+            queue_resize();
+            return true;
+        }
+
+        cr->translate((get_width() - extents.width) / 2, (get_height() + extents.height) / 2);
+        cr->rectangle(-5, 5, extents.width + 10, -(extents.height + 10));
+        cr->fill();
+
+        color.set_rgba(1.0, 1.0, 1.0, 1.0);
+        Gdk::Cairo::set_source_rgba(cr, color);
+        cr->show_text(m_last_error);
+
+        cr->restore();
     }
     return true;
 }

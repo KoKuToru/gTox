@@ -58,6 +58,8 @@ set(SOURCES
     Helper/gToxObserver.cpp
     Helper/gToxBuilder.cpp
     Helper/gToxFileRecv.cpp
+    Helper/gStreamerHelper.cpp
+    Helper/Video/gStreamerVideo.cpp
     gTox.cpp
     Dialog/DialogContact.cpp
     Dialog/DialogProfile.cpp

@@ -22,28 +22,30 @@
 
 #include <gtkmm.h>
 #include <glibmm.h>
-#include <gstreamermm/playbin.h>
-#include <gstreamermm/appsink.h>
+#include "Helper/gStreamerHelper.h"
+#include "Helper/gToxBuilder.h"
+
 class VideoPlayer : public Gtk::DrawingArea {
     private:
-        enum State {
-            INIT,
-            PLAY,
-            PAUSE,
-            STOP
-        };
+        std::vector<unsigned char>  m_lastimg_data;
+        Glib::RefPtr<Gdk::Pixbuf>   m_lastimg;
+        bool m_playing;
 
-        Glib::RefPtr<Gst::PlayBin> m_playbin;
-        Glib::RefPtr<Gst::AppSink> m_appsink;
-        Glib::RefPtr<Gdk::Pixbuf>  m_lastimg;
-        State                      m_state;
+        int m_w = 1;
+        int m_h = 1;
 
-        sigc::connection m_signal_helper;
+        std::shared_ptr<gStreamerVideo> m_streamer;
+        sigc::connection m_signal_connection;
+        sigc::connection m_error_connection;
 
-        int m_videowidth;
-        int m_videoheight;
+        Glib::ustring m_uri;
+        Glib::ustring m_last_error;
+
+        void init();
+
     public:
         VideoPlayer();
+        VideoPlayer(BaseObjectType* cobject, gToxBuilder builder);
         virtual ~VideoPlayer();
 
         bool set_uri(Glib::ustring uri);
@@ -53,6 +55,7 @@ class VideoPlayer : public Gtk::DrawingArea {
         void stop();
 
         Glib::RefPtr<Gdk::Pixbuf> snapshot();
+
     protected:
         virtual bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr);
 };
