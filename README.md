@@ -49,7 +49,7 @@ For comparison https://wiki.tox.im/Client
 | Message splitting | No | | 
 | Changing nospam | No | |
 | tox: URI | No | [#93](https://github.com/KoKuToru/gTox/issues/93) |
-| Avatars | No | [#27](https://github.com/KoKuToru/gTox/issues/27) | 
+| Avatars | Yes/No | [#27](https://github.com/KoKuToru/gTox/issues/27) | only receiving
 
 Special to gTox:
 * Markup support bold(crtl+b), italic (crtl+i), underline (crtl+u)
