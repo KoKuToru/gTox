@@ -22,65 +22,37 @@
 
 #include <gtkmm.h>
 #include <glibmm.h>
-#include <gstreamermm/playbin.h>
-#include <gstreamermm/appsink.h>
+#include "Helper/gStreamerHelper.h"
+#include "Helper/gToxBuilder.h"
+
 class VideoPlayer : public Gtk::DrawingArea {
     private:
-        enum State {
-            INIT,
-            PLAY,
-            PAUSE,
-            STOP
-        };
+        std::vector<unsigned char>  m_lastimg_data;
+        Glib::RefPtr<Gdk::Pixbuf>   m_lastimg;
+        bool m_playing;
 
-        Glib::RefPtr<Gst::PlayBin> m_playbin;
-        Glib::RefPtr<Gst::AppSink> m_appsink;
-        Glib::RefPtr<Gdk::Pixbuf>  m_lastimg;
-        State                      m_state;
+        int m_w = 1;
+        int m_h = 1;
 
-        sigc::connection m_signal_helper;
+        std::shared_ptr<gStreamerVideo> m_streamer;
+        sigc::connection m_signal_connection;
 
-        int m_videowidth;
-        int m_videoheight;
+        Glib::ustring m_uri;
+
+        void init();
 
     public:
-        class Device {
-            public:
-                Glib::ustring name;
-                GstDevice* device;
-
-                Device(const Glib::ustring& name, GstDevice* device): name(name), device((decltype(device))gst_object_ref(device)) {
-                }
-                Device(const Device& other): name(other.name), device((decltype(device))gst_object_ref(other.device)) {
-                }
-                void operator=(const Device& other) {
-                    name = other.name;
-                    auto tmp = device;
-                    device = (decltype(device))gst_object_ref(other.device);
-                    gst_object_unref(tmp);
-                }
-                ~Device() {
-                    gst_object_unref(device);
-                }
-        };
-
         VideoPlayer();
+        VideoPlayer(BaseObjectType* cobject, gToxBuilder builder);
         virtual ~VideoPlayer();
 
         bool set_uri(Glib::ustring uri);
-        bool set_device(Device uri);
 
         void play();
         void pause();
         void stop();
 
         Glib::RefPtr<Gdk::Pixbuf> snapshot();
-
-        constexpr static const char* CLASS_VIDEO_INPUT = "Video/Source";
-        constexpr static const char* CLASS_AUDIO_INPUT = "Audio/Source";
-        constexpr static const char* CLASS_AUDIO_OUTPUT = "Audio/Sink";
-
-        static std::vector<Device> probe_devices(const char* classes = CLASS_VIDEO_INPUT);
 
     protected:
         virtual bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr);
