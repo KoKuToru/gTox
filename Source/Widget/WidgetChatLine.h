@@ -30,38 +30,44 @@
 class WidgetChatLabel;
 
 class WidgetChatLine : public Gtk::Box, public gToxObserver {
-  private:
-    bool m_side;
+    public:
+        enum Side {
+            NONE,
+            LEFT,
+            RIGHT
+        };
 
-    int m_row_count;
+        WidgetChatLine(gToxObservable* observable, Toxmm::FriendNr nr, Side side);
+        ~WidgetChatLine();
 
-    unsigned long long m_last_timestamp;
+        Side get_side();
 
-    Gtk::Grid m_grid;
-    WidgetAvatar m_avatar;
+        struct Line {
+                bool error;
+                bool wait_for_receipt;
+                Toxmm::ReceiptNr receipt;
+                unsigned long long timestamp;
+                Toxmm::FriendNr nr;
+                Glib::ustring message;
+        };
 
-    void on_size_allocate(Gtk::Allocation& allocation);
+        void add_message(Line new_line);
 
-    std::vector<WidgetChatBubbleRow> rows;
+        unsigned long long last_timestamp();
 
-  public:
-    WidgetChatLine(gToxObservable* observable, Toxmm::FriendNr nr, bool side);
-    ~WidgetChatLine();
+    private:
+      Side m_side;
 
-    bool get_side();
+      int m_row_count;
 
-    struct Line {
-            bool error;
-            bool wait_for_receipt;
-            Toxmm::ReceiptNr receipt;
-            unsigned long long timestamp;
-            Toxmm::FriendNr nr;
-            Glib::ustring message;
-    };
+      unsigned long long m_last_timestamp;
 
-    void add_line(Line new_line);
+      Gtk::Grid m_grid;
+      WidgetAvatar m_avatar;
 
-    unsigned long long last_timestamp();
+      void on_size_allocate(Gtk::Allocation& allocation);
+
+      std::vector<WidgetChatBubbleRow> rows;
 };
 
 #endif

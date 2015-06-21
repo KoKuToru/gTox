@@ -45,7 +45,14 @@ class WidgetChat : public Gtk::VPaned, public gToxObserver {
 
     gToxObservable::Handler m_tox_callback;
 
-    void add_line(bool left_side, WidgetChatLine::Line new_line);
+    unsigned long long m_last_timestamp;
+    WidgetChatLine::Side m_last_side = WidgetChatLine::NONE;
+
+    void add_message(WidgetChatLine::Side side, WidgetChatLine::Line message);
+    void add_widget(Gtk::Widget& widget);
+
+    bool same_bubble(unsigned long long a_timestamp, WidgetChatLine::Side a_side, unsigned long long b_timestamp, WidgetChatLine::Side b_side);
+    bool need_date(unsigned long long a_timestamp, unsigned long long b_timestamp);
 
   public:
     WidgetChat(gToxObservable* observable, Toxmm::FriendNr nr);

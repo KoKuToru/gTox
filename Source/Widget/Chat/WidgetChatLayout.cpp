@@ -173,3 +173,4 @@ bool WidgetChatLayout::on_key_press_event(GdkEventKey* event) {
     Gtk::Clipboard::get()->set_text(data);
     return true;
 }
+

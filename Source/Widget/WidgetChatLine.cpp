@@ -21,24 +21,24 @@
 #include "Chat/WidgetChatLabel.h"
 #include "Tox/Toxmm.h"
 
-WidgetChatLine::WidgetChatLine(gToxObservable* instance, Toxmm::FriendNr nr, bool left_side)
+WidgetChatLine::WidgetChatLine(gToxObservable* instance, Toxmm::FriendNr nr, Side left_side)
     : Glib::ObjectBase("WidgetChatLine"), m_side(left_side), m_row_count(0), m_avatar(instance, nr) {
 
     set_observable(instance);
 
-    set_halign(m_side ? Gtk::Align::ALIGN_START : Gtk::Align::ALIGN_END);
-    get_style_context()->add_class(m_side ? "gtox-left" : "gtox-right");
+    set_halign((m_side == LEFT) ? Gtk::Align::ALIGN_START : Gtk::Align::ALIGN_END);
+    get_style_context()->add_class((m_side == LEFT) ? "gtox-left" : "gtox-right");
 
     auto hbox = Gtk::manage(new Gtk::HBox());
     auto frame = Gtk::manage(new Gtk::Frame());
     add(*hbox);
-    if (m_side) {
+    if (m_side == LEFT) {
         hbox->pack_start(m_avatar);
         m_avatar.set_valign(Gtk::ALIGN_START);
         m_avatar.set_halign(Gtk::ALIGN_END);
     }
     hbox->add(*frame);
-    if (!m_side) {
+    if (m_side == RIGHT) {
         hbox->pack_end(m_avatar);
         m_avatar.set_valign(Gtk::ALIGN_END);
         m_avatar.set_halign(Gtk::ALIGN_START);
@@ -47,8 +47,9 @@ WidgetChatLine::WidgetChatLine(gToxObservable* instance, Toxmm::FriendNr nr, boo
 
     m_avatar.set_name("Avatar");
     m_avatar.set_size_request(0, 0);
-    m_avatar.property_xalign() = m_side ? 1 : 0;
-    m_avatar.property_yalign() = m_side ? 1 : 0;
+    //TODO: replace this, it's deprecated
+    m_avatar.property_xalign() = (m_side == LEFT) ? 1 : 0;
+    m_avatar.property_yalign() = (m_side == LEFT) ? 1 : 0;
 //    m_avatar.set_tooltip_text("TODO Display name here..");
     m_avatar.get_style_context()->add_class("frame");
 
@@ -64,11 +65,11 @@ WidgetChatLine::WidgetChatLine(gToxObservable* instance, Toxmm::FriendNr nr, boo
 WidgetChatLine::~WidgetChatLine() {
 }
 
-bool WidgetChatLine::get_side() {
+WidgetChatLine::Side WidgetChatLine::get_side() {
     return m_side;
 }
 
-void WidgetChatLine::add_line(Line new_line) {
+void WidgetChatLine::add_message(Line new_line) {
     auto msg_time = Glib::DateTime::create_now_utc(new_line.timestamp);
     // remove seconds
     msg_time = Glib::DateTime::create_utc(msg_time.get_year(),
@@ -105,7 +106,7 @@ void WidgetChatLine::add_line(Line new_line) {
     msg->set_text(new_line.message);
 
     // add to grid
-    if (m_side == 0) {
+    if (m_side == RIGHT) {
         rows.emplace_back(m_grid, m_row_count, *msg, *time);
     } else {
         rows.emplace_back(m_grid, m_row_count, *time, *msg);
