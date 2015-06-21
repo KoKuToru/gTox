@@ -36,8 +36,10 @@ class VideoPlayer : public Gtk::DrawingArea {
 
         std::shared_ptr<gStreamerVideo> m_streamer;
         sigc::connection m_signal_connection;
+        sigc::connection m_error_connection;
 
         Glib::ustring m_uri;
+        Glib::ustring m_last_error;
 
         void init();
 

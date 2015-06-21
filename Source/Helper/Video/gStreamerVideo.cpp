@@ -7,6 +7,7 @@
 #include <gstreamermm/appsink.h>
 #include <gstreamermm/elementfactory.h>
 #include <cstring>
+#include <glibmm/i18n.h>
 
 namespace sigc {
     SIGC_FUNCTORS_DEDUCE_RESULT_TYPE_WITH_DECLTYPE
@@ -107,7 +108,9 @@ void gStreamerVideo::init_bus(Glib::RefPtr<Gst::Bus> bus) {
             case Gst::MESSAGE_ERROR:
                 error = Glib::RefPtr<Gst::MessageError>::cast_static(message);
                 if (error) {
-                    m_error = error->parse().what();
+                    m_error.emit(error->parse().what());
+                } else {
+                    m_error.emit(_("GST_VIDEO_ERROR_UNKNOW"));
                 }
                 m_state = STOP;
                 set_state(Gst::STATE_NULL);

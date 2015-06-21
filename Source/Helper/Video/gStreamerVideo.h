@@ -22,6 +22,10 @@ class gStreamerVideo {
         type_signal_update signal_update() {
             return m_update;
         }
+        typedef sigc::signal<void, std::string> type_signal_error;
+        type_signal_error signal_error() {
+            return m_error;
+        }
 
         gStreamerVideo(std::string uri);
 
@@ -48,14 +52,13 @@ class gStreamerVideo {
 
         State m_state = STOP;
 
-        std::string m_error;
-
         void init();
         void init_bus(Glib::RefPtr<Gst::Bus> bus);
         void set_state(Gst::State state);
 
     protected:
         type_signal_update m_update;
+        type_signal_error m_error;
 
 };
 

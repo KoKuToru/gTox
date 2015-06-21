@@ -39,6 +39,7 @@ void VideoPlayer::init() {
 
     signal_unmap().connect_notify([this](){
         m_signal_connection.disconnect();
+        m_error_connection.disconnect();
         m_streamer.reset();
     });
 
@@ -73,7 +74,11 @@ bool VideoPlayer::set_uri(Glib::ustring uri) {
 
     m_uri = uri;
 
+    m_last_error.clear();
+
     m_signal_connection.disconnect();
+    m_error_connection.disconnect();
+
     m_streamer = streamer.create(uri);
 
     m_signal_connection = m_streamer->signal_update().connect([this](int w, int h, const std::vector<unsigned char>& frame) {
@@ -95,6 +100,12 @@ bool VideoPlayer::set_uri(Glib::ustring uri) {
         queue_draw();
     });
 
+    m_error_connection = m_streamer->signal_error().connect([this](std::string error) {
+        m_last_error = error;
+        queue_draw();
+    });
+
+    queue_draw();
     m_streamer->emit_update_signal();
 
     return true;
@@ -135,6 +146,36 @@ bool VideoPlayer::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
                                       (m_w - get_width()) / 2,
                                       (m_h - get_height()) / 2);
         cr->paint();
+        cr->restore();
+    }
+    if (!m_last_error.empty()) {
+        //render text
+        cr->save();
+
+        Gdk::RGBA color;
+
+        color.set_rgba(0.0, 0.0, 0.0, 0.7);
+        Gdk::Cairo::set_source_rgba(cr, color);
+
+        Cairo::TextExtents extents;
+        cr->get_text_extents(m_last_error, extents);
+
+        if (m_w < 320 || m_w < (extents.width + 10) || m_h < 240) {
+            m_w = std::max(320, (int)extents.width + 10);
+            m_h = 240;
+            set_size_request(m_w, m_h);
+            queue_resize();
+            return true;
+        }
+
+        cr->translate((get_width() - extents.width) / 2, (get_height() + extents.height) / 2);
+        cr->rectangle(-5, 5, extents.width + 10, -(extents.height + 10));
+        cr->fill();
+
+        color.set_rgba(1.0, 1.0, 1.0, 1.0);
+        Gdk::Cairo::set_source_rgba(cr, color);
+        cr->show_text(m_last_error);
+
         cr->restore();
     }
     return true;
