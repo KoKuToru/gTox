@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-06-13 20:26+0200\n"
+"POT-Creation-Date: 2015-06-21 13:25+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -153,6 +153,10 @@ msgstr "Esci"
 #: Dialog/DialogContact.cpp
 msgid "FRIEND_REQUEST"
 msgstr "%1"
+
+#: Helper/Video/gStreamerVideo.cpp
+msgid "GST_VIDEO_ERROR_UNKNOW"
+msgstr "unknown video error !"
 
 #: Dialog/DialogContact.cpp
 msgid "IGNORE"
