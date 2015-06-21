@@ -171,6 +171,12 @@
       </row>
     </data>
   </object>
+  <object class="GtkListStore" id="settings_video_default_device_store">
+    <columns>
+      <!-- column-name name -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
   <object class="GtkBox" id="settings_widget">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -954,10 +960,17 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkComboBox" id="combobox4">
+                      <object class="GtkComboBox" id="settings_video_default_device">
                         <property name="visible">True</property>
-                        <property name="sensitive">False</property>
                         <property name="can_focus">False</property>
+                        <property name="model">settings_video_default_device_store</property>
+                        <property name="id_column">0</property>
+                        <child>
+                          <object class="GtkCellRendererText" id="cellrenderertext3"/>
+                          <attributes>
+                            <attribute name="text">0</attribute>
+                          </attributes>
+                        </child>
                       </object>
                       <packing>
                         <property name="left_attach">1</property>
@@ -968,10 +981,11 @@
                       <object class="GtkFrame" id="frame1">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="halign">center</property>
                         <property name="label_xalign">0</property>
                         <property name="shadow_type">in</property>
                         <child>
-                          <object class="GtkDrawingArea" id="drawingarea1">
+                          <object class="GtkDrawingArea" id="settings_video_player">
                             <property name="height_request">240</property>
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
