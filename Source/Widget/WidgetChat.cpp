@@ -53,18 +53,9 @@ WidgetChat::WidgetChat(gToxObservable* instance, Toxmm::FriendNr nr)
     // set_position(400);
     m_hbox.set_size_request(-1, 80);
 
-    auto text_buffer = m_input.get_buffer();
-
-    auto bold = text_buffer->create_tag("bold");
-    auto italic = text_buffer->create_tag("italic");
-    auto underline = text_buffer->create_tag("underline");
-
-    bold->property_weight() = Pango::WEIGHT_BOLD;
-    italic->property_style() = Pango::STYLE_ITALIC;
-    underline->property_underline() = Pango::UNDERLINE_SINGLE;
-
     m_input.signal_key_press_event().connect(
-        [this, text_buffer, bold, italic, underline](GdkEventKey* event) {
+        [this](GdkEventKey* event) {
+            auto text_buffer = m_input.get_buffer();
             if (event->keyval == GDK_KEY_Return
                 && !(event->state & GDK_SHIFT_MASK)) {
                 if (text_buffer->begin() != text_buffer->end()) {
@@ -72,133 +63,20 @@ WidgetChat::WidgetChat(gToxObservable* instance, Toxmm::FriendNr nr)
                     return true;
                 }
             }
-            // text formating
-            Gtk::TextBuffer::iterator begin;
-            Gtk::TextBuffer::iterator end;
-            if (text_buffer->get_selection_bounds(begin, end) && begin != end
-                && event->state & GDK_CONTROL_MASK) {
-                auto mode = bold;
-                switch (event->keyval) {
-                    case 'b':
-                        // default
-                        break;
-                    case 'i':
-                        mode = italic;
-                        break;
-                    case 'u':
-                        mode = underline;
-                        break;
-                    default:
-                        return false;
-                }
-                // toggle text
-                while (begin < end) {
-                    if (begin.has_tag(mode)) {
-                        // remove
-                        auto tag_end = begin;
-                        tag_end.forward_to_tag_toggle(mode);
-                        if (tag_end > end) {
-                            tag_end = end;
-                        }
-                        text_buffer->remove_tag(mode, begin, tag_end);
-                        begin = tag_end;
-                    } else {
-                        // add
-                        auto tag_start = begin;
-                        do {
-                            if (!tag_start.forward_to_tag_toggle(mode)) {
-                                tag_start = end;
-                                break;
-                            }
-                        } while (!tag_start.begins_tag(mode));
-                        if (tag_start > end) {
-                            tag_start = end;
-                        }
-                        text_buffer->apply_tag(mode, begin, tag_start);
-                        begin = tag_start;
-                    }
-                }
-            }
+
             return false;
         },
         false);
 
-    m_btn_send.signal_clicked().connect([this, bold, italic, underline]() {
+    m_btn_send.signal_clicked().connect([this]() {
         try {
             bool allow_send = m_input.get_buffer()->get_text().find_first_not_of(" \t\n\v\f\r") != std::string::npos;
 
             if(!allow_send)
                 return;
 
-            Glib::ustring text;
-            auto begin = m_input.get_buffer()->begin();
-            auto end = m_input.get_buffer()->end();
-
-            bool b_open = false;
-            bool i_open = false;
-            bool u_open = false;
-
-            for (; begin != end; begin++) {
-                // open
-                if (begin.begins_tag(bold)) {
-                    text += gunichar(0xFDD0);
-                    text += "**";
-                    text += gunichar(0xFDD1);
-                    b_open = true;
-                }
-                if (begin.begins_tag(italic)) {
-                    text += gunichar(0xFDD0);
-                    text += "*";
-                    text += gunichar(0xFDD1);
-                    i_open = true;
-                }
-                if (begin.begins_tag(underline)) {
-                    text += gunichar(0xFDD0);
-                    text += "_";
-                    text += gunichar(0xFDD1);
-                    u_open = true;
-                }
-                // close
-                if (begin.ends_tag(underline)) {
-                    text += gunichar(0xFDD1);
-                    text += "_";
-                    text += gunichar(0xFDD0);
-                    u_open = false;
-                }
-                if (begin.ends_tag(italic)) {
-                    text += gunichar(0xFDD1);
-                    text += "*";
-                    text += gunichar(0xFDD0);
-                    i_open = false;
-                }
-                if (begin.ends_tag(bold)) {
-                    text += gunichar(0xFDD1);
-                    text += "**";
-                    text += gunichar(0xFDD0);
-                    b_open = false;
-                }
-
-                // add text
-                text += begin.get_char();
-            }
-
-            if (u_open) {
-                text += gunichar(0xFDD1);
-                text += "_";
-                text += gunichar(0xFDD0);
-            }
-            if (i_open) {
-                text += gunichar(0xFDD0);
-                text += "*";
-                text += gunichar(0xFDD1);
-            }
-            if (b_open) {
-                text += gunichar(0xFDD1);
-                text += "**";
-                text += gunichar(0xFDD0);
-            }
-
             // add to chat
+            auto text = m_input.get_serialized_text();
             add_line(false, WidgetChatLine::Line{
                          false,
                          true,

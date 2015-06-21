@@ -71,6 +71,8 @@ set(SOURCES
     Popover/PopoverStatus.cpp
     Popover/PopoverSettings.cpp
     Popover/PopoverContextContact.cpp
+
+    Widget/Chat/WidgetChatTextView.cpp
     Widget/WidgetChat.cpp
     Widget/WidgetContactListItem.cpp
     Widget/WidgetChatLine.cpp
@@ -81,6 +83,7 @@ set(SOURCES
     Widget/WidgetNotification.cpp
     Widget/VideoPlayer.cpp
     Widget/WidgetAvatar.cpp
+
     Tox/Toxmm.cpp
     Tox/ToxDatabase.cpp
     Tox/ToxEvent.cpp

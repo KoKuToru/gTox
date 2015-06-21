@@ -27,11 +27,12 @@
 #include "WidgetChatLine.h"
 #include "Dialog/DialogContact.h"
 #include "Helper/gToxObserver.h"
+#include "Chat/WidgetChatTextView.h"
 
 // Content of DialogChat
 class WidgetChat : public Gtk::VPaned, public gToxObserver {
   private:
-    Gtk::TextView m_input;
+    WidgetChatTextView m_input;
     WidgetChatEntry m_output;
 
     Gtk::HBox m_hbox;
