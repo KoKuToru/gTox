@@ -120,7 +120,6 @@ void gToxFileRecv::resume() {
                                      m_path,
                                      WidgetAvatar::get_avatar(m_path, true));
         }
-
         return;
     }
     tox().file_control(m_file.nr, m_file.file_number, TOX_FILE_CONTROL_RESUME);
@@ -132,7 +131,7 @@ void gToxFileRecv::cancel() {
     }
     m_state = STOPPED;
     tox().file_control(m_file.nr, m_file.file_number, TOX_FILE_CONTROL_CANCEL);
-    //TODO: delete file
+    //TODO: delete file ?
 }
 
 void gToxFileRecv::pause() {

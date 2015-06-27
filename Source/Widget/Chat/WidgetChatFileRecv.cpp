@@ -64,7 +64,10 @@ WidgetChatFileRecv::WidgetChatFileRecv(BaseObjectType* cobject,
             }
             m_file_speed->show();
             m_file_time->show();
+            m_file_resume->set_sensitive(false);
             m_recv.resume();
+        } else {
+            m_file_resume->set_sensitive(true);
         }
     });
     m_file_cancel->signal_toggled().connect([this](){
@@ -78,8 +81,11 @@ WidgetChatFileRecv::WidgetChatFileRecv(BaseObjectType* cobject,
             m_recv.cancel();
             m_builder.get_widget<Gtk::Widget>("file_info_box_1")->hide();
             m_builder.get_widget<Gtk::Widget>("file_info_box_2")->hide();
+            m_file_cancel->set_sensitive(false);
             m_update_interval.disconnect();
             m_file_progress->hide();
+        } else {
+            m_file_cancel->set_sensitive(true);
         }
     });
     m_file_pause->signal_toggled().connect([this](){
@@ -92,18 +98,20 @@ WidgetChatFileRecv::WidgetChatFileRecv(BaseObjectType* cobject,
             }
             m_file_speed->hide();
             m_file_time->hide();
+            m_file_pause->set_sensitive(false);
             m_recv.pause();
+        } else {
+            m_file_pause->set_sensitive(true);
         }
     });
 
     m_builder.get_widget("file_progress", m_file_progress);
 
     m_builder.get_widget<Gtk::Revealer>("revealer_download")->set_reveal_child(true);
-    m_builder.get_widget<Gtk::Revealer>("revealer_preview")->set_reveal_child(false);
 
     m_set_image_connection = signal_set_image().connect([this](Glib::RefPtr<Gdk::Pixbuf> image) {
         m_builder.get_widget<Gtk::Image>("image")->property_pixbuf() = image;
-        m_builder.get_widget<Gtk::Revealer>("revealer_loading")->set_reveal_child(false);
+        m_builder.get_widget<Gtk::Widget>("spinner")->hide();
         m_builder.get_widget<Gtk::Revealer>("revealer_image")->set_reveal_child(true);
     });
 
@@ -149,6 +157,22 @@ WidgetChatFileRecv::WidgetChatFileRecv(BaseObjectType* cobject,
         return true;
     }, 500);
 
+    m_builder.get_widget<Gtk::Button>("file_dir")->signal_clicked().connect([this](){
+        try {
+            Gio::AppInfo::get_default_for_type("inode/directory", true)->launch_uri("file://"+m_recv.get_path());
+        } catch (...) {
+            //TODO: display error !
+        }
+    });
+
+    m_builder.get_widget<Gtk::Button>("file_open")->signal_clicked().connect([this](){
+        try {
+            Gio::AppInfo::launch_default_for_uri("file://"+m_recv.get_path());
+        } catch (...) {
+            //TODO: display error !
+        }
+    });
+
     //auto start TODO:check in config
     if (file.file_size < 1024*1024) {
         m_file_resume->clicked();
@@ -169,19 +193,27 @@ void WidgetChatFileRecv::observer_handle(const ToxEvent& event) {
         if (data.file_position == data.file_size) {
             //finish !
             m_update_interval.disconnect();
+
+            //display
+            m_builder.get_widget<Gtk::Widget>("spinner")->show();
+            m_builder.get_widget<Gtk::Revealer>("revealer_download")->set_reveal_child(false);
+            m_builder.get_widget<Gtk::Widget>("file_open_bar")->show();
+
+            //try load file
             m_thread = Glib::Thread::create([this](){
                 //TODO:check for filesize
+                auto target_size = 512;
                 //try image;
                 try {
                     auto image = Gdk::Pixbuf::create_from_file(m_recv.get_path());
-                    if (image->get_width() > 256 || image->get_height() > 256) {
+                    if (image->get_width() > target_size || image->get_height() > target_size) {
                         int w, h;
                         if (image->get_width() > image->get_height()) {
-                            w = 256;
-                            h = image->get_height()*256/image->get_width();
+                            w = target_size;
+                            h = image->get_height()*target_size/image->get_width();
                         } else {
-                            h = 256;
-                            w = image->get_width()*256/image->get_height();
+                            h = target_size;
+                            w = image->get_width()*target_size/image->get_height();
                         }
                         image = image->scale_simple(w, h, Gdk::InterpType::INTERP_BILINEAR);
                     }
@@ -195,10 +227,6 @@ void WidgetChatFileRecv::observer_handle(const ToxEvent& event) {
 
                 //try video
             });
-
-            //display
-            m_builder.get_widget<Gtk::Revealer>("revealer_download")->set_reveal_child(false);
-            m_builder.get_widget<Gtk::Revealer>("revealer_preview")->set_reveal_child(true);
         }
     }
 }
