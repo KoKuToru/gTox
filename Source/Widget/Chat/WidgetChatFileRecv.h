@@ -37,6 +37,9 @@ class WidgetChatFileRecv: public Gtk::Frame, public gToxObserver {
 
         Gtk::ProgressBar* m_file_progress;
 
+        Gtk::Label* m_file_speed;
+        Gtk::Label* m_file_time;
+
         Glib::Thread* m_thread;
         std::mutex m_mutex;
 
@@ -46,6 +49,9 @@ class WidgetChatFileRecv: public Gtk::Frame, public gToxObserver {
         }
 
         sigc::connection m_set_image_connection;
+        sigc::connection m_update_interval;
+
+        size_t m_last_position;
 
     public:
         WidgetChatFileRecv(BaseObjectType* cobject,

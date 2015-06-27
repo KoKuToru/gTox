@@ -292,10 +292,9 @@
                     </child>
                     <child>
                       <object class="GtkLabel" id="file_speed">
-                        <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">end</property>
-                        <property name="label">2,00 MiB/s</property>
+                        <property name="label">0,00 Bytes/s</property>
                       </object>
                       <packing>
                         <property name="expand">True</property>
@@ -323,6 +322,7 @@
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
+                            <property name="tooltip_text" translatable="yes" comments="Starts the download">FILE_RECV_START</property>
                             <child>
                               <object class="GtkImage" id="image2">
                                 <property name="visible">True</property>
@@ -342,6 +342,7 @@
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
+                            <property name="tooltip_text" translatable="yes" comments="Pauses the download">FILE_RECV_PAUSE</property>
                             <property name="yalign">0.51999998092651367</property>
                             <child>
                               <object class="GtkImage" id="image3">
@@ -362,6 +363,7 @@
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
+                            <property name="tooltip_text" translatable="yes" comments="Stop/Remove the download">FILE_RECV_STOP</property>
                             <child>
                               <object class="GtkImage" id="image4">
                                 <property name="visible">True</property>
@@ -388,7 +390,6 @@
                     </child>
                     <child>
                       <object class="GtkLabel" id="file_time">
-                        <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">end</property>
                         <property name="label">34 s</property>

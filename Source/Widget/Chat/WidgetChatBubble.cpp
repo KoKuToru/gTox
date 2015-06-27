@@ -154,8 +154,8 @@ void WidgetChatBubble::add_message(Line new_line) {
     msg->set_halign(Gtk::ALIGN_START);
     msg->set_valign(Gtk::ALIGN_CENTER);
 
-    msg->show_all();
-    time->show_all();
+    msg->show();
+    time->show();
     time->set_no_show_all();
     if (!display_time) {
         time->hide();
@@ -228,11 +228,12 @@ void WidgetChatBubble::add_filerecv(Toxmm::EventFileRecv file) {
     time->set_valign(Gtk::ALIGN_START);
     time->get_style_context()->add_class("bubble_chat_line_time");
 
-    msg->set_halign(Gtk::ALIGN_START);
+    msg->set_halign(Gtk::ALIGN_FILL);
     msg->set_valign(Gtk::ALIGN_CENTER);
 
-    msg->show_all();
-    time->show_all();
+    msg->show();
+    msg->set_no_show_all();
+    time->show();
     time->set_no_show_all();
     if (!display_time) {
         time->hide();
