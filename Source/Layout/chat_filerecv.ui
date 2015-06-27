@@ -328,10 +328,11 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <child>
-                          <object class="GtkToggleButton" id="togglebutton4">
+                          <object class="GtkToggleButton" id="file_recv_video_play">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
+                            <property name="valign">center</property>
                             <child>
                               <object class="GtkImage" id="image5">
                                 <property name="visible">True</property>
@@ -347,11 +348,12 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkToggleButton" id="togglebutton5">
+                          <object class="GtkToggleButton" id="file_recv_video_pause">
                             <property name="visible">True</property>
                             <property name="sensitive">False</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
+                            <property name="valign">center</property>
                             <child>
                               <object class="GtkImage" id="image6">
                                 <property name="visible">True</property>
@@ -367,11 +369,12 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkToggleButton" id="togglebutton6">
+                          <object class="GtkToggleButton" id="file_recv_video_stop">
                             <property name="visible">True</property>
                             <property name="sensitive">False</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
+                            <property name="valign">center</property>
                             <child>
                               <object class="GtkImage" id="image7">
                                 <property name="visible">True</property>

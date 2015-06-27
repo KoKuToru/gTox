@@ -56,6 +56,8 @@ class VideoPlayer : public Gtk::DrawingArea {
 
         Glib::RefPtr<Gdk::Pixbuf> snapshot();
 
+        std::shared_ptr<gStreamerVideo> get_streamer();
+
     protected:
         virtual bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr);
 };

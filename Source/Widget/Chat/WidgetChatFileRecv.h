@@ -23,6 +23,7 @@
 #include "Helper/gToxObserver.h"
 #include "Helper/gToxBuilder.h"
 #include "Helper/gToxFileRecv.h"
+#include "../VideoPlayer.h"
 
 class WidgetChatFileRecv: public Gtk::Frame, public gToxObserver {
     private:
@@ -34,6 +35,10 @@ class WidgetChatFileRecv: public Gtk::Frame, public gToxObserver {
         Gtk::ToggleButton* m_file_resume;
         Gtk::ToggleButton* m_file_cancel;
         Gtk::ToggleButton* m_file_pause;
+
+        Gtk::ToggleButton* m_file_video_play;
+        Gtk::ToggleButton* m_file_video_stop;
+        Gtk::ToggleButton* m_file_video_pause;
 
         Gtk::ProgressBar* m_file_progress;
 
@@ -47,9 +52,16 @@ class WidgetChatFileRecv: public Gtk::Frame, public gToxObserver {
         type_signal_set_image signal_set_image() {
             return m_signal_set_image;
         }
+        typedef sigc::signal<void> type_signal_try_video;
+        type_signal_try_video signal_try_video() {
+            return m_signal_try_video;
+        }
 
         sigc::connection m_set_image_connection;
+        sigc::connection m_try_video;
         sigc::connection m_update_interval;
+
+        VideoPlayer* m_player;
 
         size_t m_last_position;
 
@@ -68,6 +80,7 @@ class WidgetChatFileRecv: public Gtk::Frame, public gToxObserver {
 
     protected:
         type_signal_set_image m_signal_set_image;
+        type_signal_try_video m_signal_try_video;
 };
 
 #endif

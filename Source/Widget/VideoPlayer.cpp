@@ -92,8 +92,6 @@ bool VideoPlayer::set_uri(Glib::ustring uri) {
                                                   GST_ROUND_UP_4( w*3 ));
 
         if (m_w != w || m_h != h) {
-            set_size_request(w, h);
-            queue_resize();
             m_w = w;
             m_h = h;
         }
@@ -142,9 +140,23 @@ bool VideoPlayer::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
     auto img = snapshot();
     if (img) {
         cr->save();
-        Gdk::Cairo::set_source_pixbuf(cr, img,
-                                      (m_w - get_width()) / 2,
-                                      (m_h - get_height()) / 2);
+
+        double w_scaled;
+        double h_scaled;
+
+        int max_size = std::max(512, std::min(get_width(), get_height()));
+
+        if (m_w > m_h) {
+            w_scaled = max_size;
+            h_scaled = m_h * max_size / m_w;
+        } else {
+            h_scaled = get_height();
+            w_scaled = m_w * max_size / m_h;
+        }
+        set_size_request(w_scaled, h_scaled);
+        cr->scale(w_scaled / m_w, h_scaled / m_h);
+
+        Gdk::Cairo::set_source_pixbuf(cr, img);
         cr->paint();
         cr->restore();
     }
@@ -179,4 +191,8 @@ bool VideoPlayer::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
         cr->restore();
     }
     return true;
+}
+
+std::shared_ptr<gStreamerVideo> VideoPlayer::get_streamer() {
+    return m_streamer;
 }

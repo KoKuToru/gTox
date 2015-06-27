@@ -115,6 +115,20 @@ WidgetChatFileRecv::WidgetChatFileRecv(BaseObjectType* cobject,
         m_builder.get_widget<Gtk::Revealer>("revealer_image")->set_reveal_child(true);
     });
 
+    m_player = m_builder.get_widget_derived<VideoPlayer>("video");
+    m_try_video = signal_try_video().connect([this]() {
+        m_player->set_uri("file://"+m_recv.get_path());
+        m_player->get_streamer()->signal_error().connect([this](std::string) {
+            //not okay
+            m_builder.get_widget<Gtk::Widget>("spinner")->hide();
+        });
+        m_player->get_streamer()->signal_update().connect([this](int,int,const std::vector<unsigned char>&){
+            m_builder.get_widget<Gtk::Widget>("spinner")->hide();
+            m_builder.get_widget<Gtk::Revealer>("revealer_video")->set_reveal_child(true);
+        });
+        m_player->get_streamer()->emit_update_signal();
+    });
+
     m_builder.get_widget("file_speed", m_file_speed);
     m_builder.get_widget("file_time", m_file_time);
     size_t dummy;
@@ -173,6 +187,55 @@ WidgetChatFileRecv::WidgetChatFileRecv(BaseObjectType* cobject,
         }
     });
 
+    m_builder.get_widget("file_recv_video_play", m_file_video_play);
+    m_builder.get_widget("file_recv_video_pause", m_file_video_pause);
+    m_builder.get_widget("file_recv_video_stop", m_file_video_stop);
+    m_file_video_play->signal_toggled().connect([this](){
+        if (m_file_video_play->get_active()) {
+            if (m_file_video_stop->get_active()) {
+                m_file_video_stop->set_active(false);
+            }
+            if (m_file_video_pause->get_active()) {
+                m_file_video_pause->set_active(false);
+            }
+            m_file_video_pause->set_sensitive(true);
+            m_file_video_play->set_sensitive(false);
+            m_player->play();
+        } else {
+            m_file_video_play->set_sensitive(true);
+        }
+    });
+    m_file_video_stop->signal_toggled().connect([this](){
+        if (m_file_video_stop->get_active()) {
+            if (m_file_video_play->get_active()) {
+                m_file_video_play->set_active(false);
+            }
+            if (m_file_video_pause->get_active()) {
+                m_file_video_pause->set_active(false);
+            }
+            m_file_video_pause->set_sensitive(false);
+            m_file_video_stop->set_sensitive(false);
+            m_player->stop();
+        } else {
+            m_file_video_stop->set_sensitive(true);
+        }
+    });
+    m_file_video_pause->signal_toggled().connect([this](){
+        if (m_file_video_pause->get_active()) {
+            if (m_file_video_stop->get_active()) {
+                m_file_video_stop->set_active(false);
+            }
+            if (m_file_video_play->get_active()) {
+                m_file_video_play->set_active(false);
+            }
+            m_file_video_pause->set_sensitive(false);
+            m_player->pause();
+        } else {
+            m_file_video_pause->set_sensitive(true);
+        }
+    });
+    m_file_video_stop->set_active(true);
+
     //auto start TODO:check in config
     if (file.file_size < 1024*1024) {
         m_file_resume->clicked();
@@ -222,10 +285,11 @@ void WidgetChatFileRecv::observer_handle(const ToxEvent& event) {
                         m_signal_set_image.emit(image);
                         return;
                     }
-                }
-                catch (...) {}
+                } catch (...) {}
 
                 //try video
+                std::lock_guard<std::mutex> lg(m_mutex);
+                m_signal_try_video.emit();
             });
         }
     }
@@ -248,4 +312,5 @@ WidgetChatFileRecv::~WidgetChatFileRecv() {
         //wait for thread
         m_thread->join();
     }
+    m_player->stop();
 }
