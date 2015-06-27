@@ -17,13 +17,13 @@ For comparison https://wiki.tox.im/Client
 | ------------- |:-------------:|:------:|-------|
 | **Interface** | Desktop GUI   |        |
 | Linux         | **Yes**       |        |
-| Windows       | Maybe         |        | *If you can build Gtk+..*
-| OS X          | Maybe         |        | *If you can build Gtk+..*
-| BSD-like      | Maybe         |        | *If you can build Gtk+..*
+| Windows       | Maybe         |        |
+| OS X          | Maybe         |        |
+| BSD-like      | Maybe         |        |
 | Android       | No            |        |
 | iOS           | No            |        |
 | 1v1 messaging | **Yes** | |
-| File transfer | No | [#55](https://github.com/KoKuToru/gTox/issues/55) |
+| File transfer | Yes/No | [#55](https://github.com/KoKuToru/gTox/issues/55) | only receiving working
 | Group chat | No | |
 | Group audio | No | |
 | Audio | No | |
@@ -49,7 +49,7 @@ For comparison https://wiki.tox.im/Client
 | Message splitting | No | | 
 | Changing nospam | No | |
 | tox: URI | No | [#93](https://github.com/KoKuToru/gTox/issues/93) |
-| Avatars | Yes/No | [#27](https://github.com/KoKuToru/gTox/issues/27) | only receiving
+| Avatars | Yes/No | [#27](https://github.com/KoKuToru/gTox/issues/27) | only receiving working
 
 Special to gTox:
 * Markup support bold(crtl+b), italic (crtl+i), underline (crtl+u)
