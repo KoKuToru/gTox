@@ -69,9 +69,7 @@ gToxFileRecv::gToxFileRecv(gToxObservable* observable,
         } else {
             m_path = Glib::build_filename(Glib::get_user_special_dir(GUserDirectory::G_USER_DIRECTORY_DOWNLOAD), m_file.filename);
         }
-        std::clog << "Download " << m_path << std::endl;
         m_fd = ::open(m_path.c_str(), O_RDWR|O_CREAT, 0600);
-        std::clog << "Open fd " << m_fd << std::endl;
         if (m_fd == -1) {
             throw std::runtime_error("gToxFileRecv couldn't open file");
         }
@@ -90,7 +88,6 @@ gToxFileRecv::gToxFileRecv(gToxObservable* observable,
 
 gToxFileRecv::~gToxFileRecv() {
     if (m_fd != -1) {
-        std::clog << "Close fd " << m_fd << std::endl;
         close(m_fd);
         m_fd = -1;
     }
@@ -108,10 +105,6 @@ void gToxFileRecv::resume() {
     m_state = RECVING;
     if (m_file.file_size == m_position) {
         cancel();
-
-        std::clog << "Friend " << m_file.nr <<
-                     " File " << m_file.file_number <<
-                     " " << m_position << "/" << m_file.file_size << std::endl;
 
         observer_notify(ToxEvent(EventFileProgress{
                                      this,
@@ -164,10 +157,8 @@ void gToxFileRecv::observer_handle(const ToxEvent& ev) {
     }
 
     //Handle download
-    std::clog << "Recv fd " << m_fd << std::endl;
     auto ret = write(m_fd, data.file_data.data(), data.file_data.size());
     if (ret != ssize_t(data.file_data.size())) {
-        std::clog << Glib::strerror(errno) << std::endl;
         throw std::runtime_error("gToxFileRecv couldn't write file");
     }
 
@@ -177,10 +168,6 @@ void gToxFileRecv::observer_handle(const ToxEvent& ev) {
         close(m_fd);
         m_fd = -1;
     }
-
-    std::clog << "Friend " << m_file.nr <<
-                 " File " << m_file.file_number <<
-                 " " << m_position << "/" << m_file.file_size << std::endl;
 
     observer_notify(ToxEvent(EventFileProgress{
                                  this,
@@ -203,7 +190,6 @@ gToxFileRecv::gToxFileRecv(const gToxFileRecv& o)
     } else {
         m_fd = -1;
     }
-    std::clog << "Copy fd " << o.m_fd << " to " << m_fd << std::endl;
     m_file = o.m_file;
     m_path = o.m_path;
     m_position = o.m_position;
@@ -218,7 +204,6 @@ void gToxFileRecv::operator=(const gToxFileRecv& o) {
         m_fd = -1;
     }
     close(old_fd);
-    std::clog << "Copy fd " << o.m_fd << " to " << m_fd << std::endl;
     m_file = o.m_file;
     m_path = o.m_path;
     m_position = o.m_position;
