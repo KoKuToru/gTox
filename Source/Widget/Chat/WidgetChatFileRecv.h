@@ -37,6 +37,16 @@ class WidgetChatFileRecv: public Gtk::Frame, public gToxObserver {
 
         Gtk::ProgressBar* m_file_progress;
 
+        Glib::Thread* m_thread;
+        std::mutex m_mutex;
+
+        typedef sigc::signal<void, Glib::RefPtr<Gdk::Pixbuf>> type_signal_set_image;
+        type_signal_set_image signal_set_image() {
+            return m_signal_set_image;
+        }
+
+        sigc::connection m_set_image_connection;
+
     public:
         WidgetChatFileRecv(BaseObjectType* cobject,
                            gToxBuilder builder,
@@ -47,6 +57,11 @@ class WidgetChatFileRecv: public Gtk::Frame, public gToxObserver {
                                           Toxmm::EventFileRecv file);
 
         void observer_handle(const ToxEvent&) override;
+
+        ~WidgetChatFileRecv();
+
+    protected:
+        type_signal_set_image m_signal_set_image;
 };
 
 #endif

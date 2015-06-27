@@ -155,7 +155,7 @@ void gToxFileRecv::observer_handle(const ToxEvent& ev) {
         return;
     }
     auto data = ev.get<Toxmm::EventFileRecvChunk>();
-    if (data.nr != m_file.nr && data.file_number != m_file.file_number) {
+    if (data.nr != m_file.nr || data.file_number != m_file.file_number) {
         return;
     }
 
@@ -173,6 +173,11 @@ void gToxFileRecv::observer_handle(const ToxEvent& ev) {
 
     m_position += data.file_data.size();
 
+    if (m_position == m_file.file_size) {
+        close(m_fd);
+        m_fd = -1;
+    }
+
     std::clog << "Friend " << m_file.nr <<
                  " File " << m_file.file_number <<
                  " " << m_position << "/" << m_file.file_size << std::endl;
@@ -185,6 +190,10 @@ void gToxFileRecv::observer_handle(const ToxEvent& ev) {
                                  m_position,
                                  m_file.file_size
                              }));
+}
+
+Glib::ustring gToxFileRecv::get_path() {
+    return m_path;
 }
 
 gToxFileRecv::gToxFileRecv(const gToxFileRecv& o)

@@ -18,7 +18,7 @@
         <property name="can_focus">False</property>
         <property name="orientation">vertical</property>
         <child>
-          <object class="GtkRevealer" id="revealer1">
+          <object class="GtkRevealer" id="revealer_preview">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <child>
@@ -27,12 +27,18 @@
                 <property name="can_focus">False</property>
                 <property name="orientation">vertical</property>
                 <child>
-                  <object class="GtkImage" id="image1">
-                    <property name="width_request">320</property>
-                    <property name="height_request">128</property>
+                  <object class="GtkRevealer" id="revealer_loading">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="stock">gtk-missing-image</property>
+                    <property name="reveal_child">True</property>
+                    <child>
+                      <object class="GtkSpinner" id="spinner">
+                        <property name="height_request">52</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="active">True</property>
+                      </object>
+                    </child>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -41,108 +47,24 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkBox" id="box4">
+                  <object class="GtkRevealer" id="revealer_video">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="orientation">vertical</property>
                     <child>
-                      <object class="GtkDrawingArea" id="drawingarea1">
-                        <property name="width_request">320</property>
-                        <property name="height_request">128</property>
+                      <object class="GtkBox" id="video_control">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">0</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkScale" id="scale1">
-                        <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="adjustment">adjustment1</property>
-                        <property name="restrict_to_fill_level">False</property>
-                        <property name="fill_level">1</property>
-                        <property name="round_digits">0</property>
-                        <property name="draw_value">False</property>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">1</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkBox" id="box6">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
+                        <property name="orientation">vertical</property>
                         <child>
-                          <object class="GtkBox" id="box5">
+                          <object class="GtkDrawingArea" id="video">
+                            <property name="width_request">320</property>
+                            <property name="height_request">128</property>
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="border_width">5</property>
-                            <child>
-                              <object class="GtkToggleButton" id="togglebutton4">
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">True</property>
-                                <child>
-                                  <object class="GtkImage" id="image5">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="icon_name">media-playback-start-symbolic</property>
-                                  </object>
-                                </child>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">True</property>
-                                <property name="position">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkToggleButton" id="togglebutton5">
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">True</property>
-                                <child>
-                                  <object class="GtkImage" id="image6">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="icon_name">media-playback-pause-symbolic</property>
-                                  </object>
-                                </child>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">True</property>
-                                <property name="position">1</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkToggleButton" id="togglebutton6">
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">True</property>
-                                <child>
-                                  <object class="GtkImage" id="image7">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="icon_name">media-playback-stop-symbolic</property>
-                                  </object>
-                                </child>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">True</property>
-                                <property name="position">2</property>
-                              </packing>
-                            </child>
-                            <style>
-                              <class name="linked"/>
-                            </style>
+                            <property name="margin_left">5</property>
+                            <property name="margin_right">5</property>
+                            <property name="margin_top">5</property>
+                            <property name="margin_bottom">5</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -151,18 +73,89 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkBox" id="box7">
+                          <object class="GtkScale" id="scale1">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="adjustment">adjustment1</property>
+                            <property name="restrict_to_fill_level">False</property>
+                            <property name="fill_level">1</property>
+                            <property name="draw_value">False</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkBox" id="box6">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="halign">end</property>
-                            <property name="hexpand">True</property>
-                            <property name="border_width">5</property>
-                            <property name="spacing">5</property>
                             <child>
-                              <object class="GtkLabel" id="label3">
+                              <object class="GtkBox" id="box5">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="label">00:00:12</property>
+                                <property name="border_width">5</property>
+                                <child>
+                                  <object class="GtkToggleButton" id="togglebutton4">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <child>
+                                      <object class="GtkImage" id="image5">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="icon_name">media-playback-start-symbolic</property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkToggleButton" id="togglebutton5">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <child>
+                                      <object class="GtkImage" id="image6">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="icon_name">media-playback-pause-symbolic</property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkToggleButton" id="togglebutton6">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <child>
+                                      <object class="GtkImage" id="image7">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="icon_name">media-playback-stop-symbolic</property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">2</property>
+                                  </packing>
+                                </child>
+                                <style>
+                                  <class name="linked"/>
+                                </style>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
@@ -171,10 +164,49 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkLabel" id="label9">
+                              <object class="GtkBox" id="box7">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="label">/</property>
+                                <property name="halign">end</property>
+                                <property name="hexpand">True</property>
+                                <property name="border_width">5</property>
+                                <property name="spacing">5</property>
+                                <child>
+                                  <object class="GtkLabel" id="label3">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="label">00:00:12</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="label9">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="label">/</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="label10">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="label">00:01:32</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">2</property>
+                                  </packing>
+                                </child>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
@@ -182,37 +214,43 @@
                                 <property name="position">1</property>
                               </packing>
                             </child>
-                            <child>
-                              <object class="GtkLabel" id="label10">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="label">00:01:32</property>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">True</property>
-                                <property name="position">2</property>
-                              </packing>
-                            </child>
                           </object>
                           <packing>
                             <property name="expand">False</property>
                             <property name="fill">True</property>
-                            <property name="position">1</property>
+                            <property name="position">2</property>
                           </packing>
                         </child>
                       </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">2</property>
-                      </packing>
                     </child>
                   </object>
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">True</property>
                     <property name="position">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkRevealer" id="revealer_image">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <child>
+                      <object class="GtkImage" id="image">
+                        <property name="width_request">320</property>
+                        <property name="height_request">128</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="margin_left">5</property>
+                        <property name="margin_right">5</property>
+                        <property name="margin_top">5</property>
+                        <property name="margin_bottom">5</property>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">2</property>
                   </packing>
                 </child>
               </object>
@@ -225,10 +263,9 @@
           </packing>
         </child>
         <child>
-          <object class="GtkRevealer" id="revealer2">
+          <object class="GtkRevealer" id="revealer_download">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="reveal_child">True</property>
             <child>
               <object class="GtkBox" id="box3">
                 <property name="visible">True</property>
@@ -236,21 +273,6 @@
                 <property name="border_width">5</property>
                 <property name="orientation">vertical</property>
                 <property name="spacing">5</property>
-                <child>
-                  <object class="GtkLabel" id="file_name">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="halign">start</property>
-                    <property name="label">Filename abc.txt</property>
-                    <property name="ellipsize">end</property>
-                    <property name="single_line_mode">True</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
                 <child>
                   <object class="GtkBox" id="file_info_box_1">
                     <property name="visible">True</property>
@@ -406,8 +428,15 @@
         </child>
       </object>
     </child>
-    <child type="label_item">
-      <placeholder/>
+    <child type="label">
+      <object class="GtkLabel" id="file_name">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="halign">start</property>
+        <property name="label">Filename abc.txt</property>
+        <property name="ellipsize">end</property>
+        <property name="single_line_mode">True</property>
+      </object>
     </child>
   </object>
 </interface>

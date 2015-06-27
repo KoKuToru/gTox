@@ -89,6 +89,20 @@ WidgetChatFileRecv::WidgetChatFileRecv(BaseObjectType* cobject,
 
     //wee wee
     show_all();
+
+    m_builder.get_widget<Gtk::Revealer>("revealer_download")->set_reveal_child(true);
+    m_builder.get_widget<Gtk::Revealer>("revealer_preview")->set_reveal_child(false);
+
+    m_set_image_connection = signal_set_image().connect([this](Glib::RefPtr<Gdk::Pixbuf> image) {
+        m_builder.get_widget<Gtk::Image>("image")->property_pixbuf() = image;
+        m_builder.get_widget<Gtk::Revealer>("revealer_loading")->set_reveal_child(false);
+        m_builder.get_widget<Gtk::Revealer>("revealer_image")->set_reveal_child(true);
+    });
+
+    //auto start TODO:check in config
+    if (file.file_size < 1024*1024) {
+        m_file_resume->clicked();
+    }
 }
 
 void WidgetChatFileRecv::observer_handle(const ToxEvent& event) {
@@ -101,6 +115,39 @@ void WidgetChatFileRecv::observer_handle(const ToxEvent& event) {
         }
 
         m_file_progress->set_fraction(data.file_position / (double)data.file_size);
+
+        if (data.file_position == data.file_size) {
+            //finish !
+            m_thread = Glib::Thread::create([this](){
+                //try image;
+                try {
+                    auto image = Gdk::Pixbuf::create_from_file(m_recv.get_path());
+                    if (image->get_width() > 256 || image->get_height() > 256) {
+                        int w, h;
+                        if (image->get_width() > image->get_height()) {
+                            w = 256;
+                            h = image->get_height()*256/image->get_width();
+                        } else {
+                            h = 256;
+                            w = image->get_width()*256/image->get_height();
+                        }
+                        image = image->scale_simple(w, h, Gdk::InterpType::INTERP_BILINEAR);
+                    }
+                    if (image) {
+                        std::lock_guard<std::mutex> lg(m_mutex);
+                        m_signal_set_image.emit(image);
+                        return;
+                    }
+                }
+                catch (...) {}
+
+                //try video
+            });
+
+            //display
+            m_builder.get_widget<Gtk::Revealer>("revealer_download")->set_reveal_child(false);
+            m_builder.get_widget<Gtk::Revealer>("revealer_preview")->set_reveal_child(true);
+        }
     }
 }
 
@@ -110,4 +157,15 @@ WidgetChatFileRecv* WidgetChatFileRecv::create(gToxObservable* instance, Toxmm::
             .get_widget_derived<WidgetChatFileRecv>("chat_filerecv",
                                                     instance,
                                                     file);
+}
+
+WidgetChatFileRecv::~WidgetChatFileRecv() {
+    {
+        std::lock_guard<std::mutex> lg(m_mutex);
+        m_set_image_connection.disconnect();
+    }
+    if (m_thread != nullptr) {
+        //wait for thread
+        m_thread->join();
+    }
 }

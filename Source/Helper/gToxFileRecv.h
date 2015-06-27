@@ -41,6 +41,7 @@ class gToxFileRecv: public gToxObserver {
         void pause();
 
         void get_progress(uint64_t& position, uint64_t& size);
+        Glib::ustring get_path();
 
         class EventFileProgress {
             public:
