@@ -141,17 +141,19 @@ bool VideoPlayer::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
     if (img) {
         cr->save();
 
-        double w_scaled;
-        double h_scaled;
+        double w_scaled = m_w;
+        double h_scaled = m_h;
 
         int max_size = std::max(512, std::min(get_width(), get_height()));
 
-        if (m_w > m_h) {
-            w_scaled = max_size;
-            h_scaled = m_h * max_size / m_w;
-        } else {
-            h_scaled = max_size;
-            w_scaled = m_w * max_size / m_h;
+        if (std::max(m_w, m_h) > 512) {
+            if (m_w > m_h) {
+                w_scaled = max_size;
+                h_scaled = m_h * max_size / m_w;
+            } else {
+                h_scaled = max_size;
+                w_scaled = m_w * max_size / m_h;
+            }
         }
         set_size_request(w_scaled, h_scaled);
         cr->scale(w_scaled / m_w, h_scaled / m_h);
