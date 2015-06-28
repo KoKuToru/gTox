@@ -38,15 +38,15 @@ gTox::gTox()
     Glib::set_application_name(_("APPLICATION_NAME"));
 
     if (!Glib::file_test(m_config_path, Glib::FILE_TEST_IS_DIR)) {
-        Gio::File::create_for_path(m_config_path)->make_directory();
+        Gio::File::create_for_path(m_config_path)->make_directory_with_parents();
     }
 
     if (!Glib::file_test(m_avatar_path, Glib::FILE_TEST_IS_DIR)) {
-        Gio::File::create_for_path(m_avatar_path)->make_directory();
+        Gio::File::create_for_path(m_avatar_path)->make_directory_with_parents();
     }
 
     if (!Glib::file_test(m_config_global_path, Glib::FILE_TEST_IS_DIR)) {
-        Gio::File::create_for_path(m_config_global_path)->make_directory();
+        Gio::File::create_for_path(m_config_global_path)->make_directory_with_parents();
     }
 
     m_config.open(Glib::build_filename(m_config_global_path, "config.sqlite"));

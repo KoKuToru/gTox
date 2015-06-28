@@ -142,6 +142,17 @@ DialogSettings::DialogSettings(gToxObservable* observable)
     settings_video_default_device->signal_changed().connect(video_changed);
     video_changed();
 
+    auto filetransfer_save_to = m_builder.get_widget<Gtk::FileChooserButton>("settings_filetransfer_saveto");
+    std::string path = tox().database().config_get("SETTINGS_FILETRANSFER_SAVE_TO",
+                                                   Glib::build_filename(Glib::get_user_special_dir(GUserDirectory::G_USER_DIRECTORY_DOWNLOAD), "gtox"));
+    if (!Glib::file_test(path, Glib::FILE_TEST_IS_DIR)) {
+        Gio::File::create_for_path(path)->make_directory_with_parents();
+    }
+    filetransfer_save_to->set_file(Gio::File::create_for_path(path));
+    filetransfer_save_to->signal_file_set().connect([this, filetransfer_save_to](){
+        tox().database().config_set("SETTINGS_FILETRANSFER_SAVE_TO", filetransfer_save_to->get_file()->get_path());
+    });
+
     m_builder.get_widget<Gtk::Button>("close_btn")->signal_clicked().connect([this](){
         hide();
     });

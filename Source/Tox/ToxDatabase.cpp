@@ -48,7 +48,7 @@ void ToxDatabase::open(const std::string& path, const std::string& address, bool
     //New path:
     auto npath = Glib::build_filename(Glib::path_get_dirname(path), "gtox");
     if (!Glib::file_test(npath, Glib::FILE_TEST_IS_DIR)) {
-        Gio::File::create_for_path(npath)->make_directory();
+        Gio::File::create_for_path(npath)->make_directory_with_parents();
     }
     npath = Glib::build_filename(npath, address + ".sqlite");
     if (address.empty()) {
