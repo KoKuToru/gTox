@@ -543,6 +543,24 @@ void Toxmm::inject_event(ToxEvent ev) {
         entity.friendaddr = to_hex(addr.data(), addr.size());
         entity.data = data.message;
         m_db.toxcore_log_add(entity);
+    } else if (ev.type() == typeid(EventFileRecv)) {
+        auto data = ev.get<EventFileRecv>();
+        if (data.kind != TOX_FILE_KIND::TOX_FILE_KIND_DATA) {
+            return;
+        }
+        auto addr = get_address(data.nr);
+        ToxLogEntity entity;
+        entity.type = EToxLogType::LOG_FILE_RECV;
+        entity.friendaddr = to_hex(addr.data(), addr.size());
+        entity.data = data.filename;
+        entity.filesize = data.file_size;
+        entity.filenumber = data.file_number;
+        m_db.toxcore_log_add(entity);
+    } else if (ev.type() == typeid(EventFileRecvChunk)) {
+        auto data = ev.get<EventFileRecvChunk>();
+        auto addr = get_address(data.nr);
+        //if (data.file_position + data.file_data.size() == data.)
+        //TODO
     }
 }
 
