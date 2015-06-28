@@ -89,7 +89,8 @@ void ToxDatabase::open(const std::string& path, const std::string& address, bool
                &DATABASE::version_5,
                &DATABASE::version_6,
                &DATABASE::version_7,
-               &DATABASE::version_8};
+               &DATABASE::version_8,
+               &DATABASE::version_9};
 
         if (version < 1 || version > (int)sizeof(upgrade_scripts)) {
             throw std::runtime_error("Database not open !");
