@@ -191,3 +191,7 @@ void gStreamerVideo::set_state(Gst::State state) {
         m_playbin->set_state(state);
     }
 }
+
+bool gStreamerVideo::get_progress(gint64& position, gint64& duration) {
+    return m_playbin && m_playbin->query_position(Gst::FORMAT_TIME, position) && m_playbin->query_duration(Gst::FORMAT_TIME, duration);
+}

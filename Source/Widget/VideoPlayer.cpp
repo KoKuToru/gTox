@@ -150,7 +150,7 @@ bool VideoPlayer::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
             w_scaled = max_size;
             h_scaled = m_h * max_size / m_w;
         } else {
-            h_scaled = get_height();
+            h_scaled = max_size;
             w_scaled = m_w * max_size / m_h;
         }
         set_size_request(w_scaled, h_scaled);

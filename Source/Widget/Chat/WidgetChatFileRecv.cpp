@@ -138,6 +138,30 @@ WidgetChatFileRecv::WidgetChatFileRecv(BaseObjectType* cobject,
         m_player->get_streamer()->signal_update().connect([this](int,int,const std::vector<unsigned char>&){
             m_builder.get_widget<Gtk::Widget>("spinner")->hide();
             m_builder.get_widget<Gtk::Revealer>("revealer_video")->set_reveal_child(true);
+
+            auto video_seek = m_builder.get_widget<Gtk::Scale>("video_seek");
+            auto video_position = m_builder.get_widget<Gtk::Label>("video_position");
+            auto video_duration = m_builder.get_widget<Gtk::Label>("video_duration");
+            auto video_pos_dur = m_builder.get_widget<Gtk::Widget>("video_pos_dur");
+            m_update_video_interval = Glib::signal_timeout().connect([this, video_seek, video_position, video_duration, video_pos_dur](){
+                gint64 pos = 0, dur = 0;
+                if (m_player->get_streamer()->get_progress(pos, dur)) {
+                    video_seek->get_adjustment()->set_upper(dur);
+                    video_seek->get_adjustment()->set_value(pos);
+                    video_position->set_text(
+                                Glib::ustring::format(std::setw(3), std::setfill(L'0'), std::right, Gst::get_hours(pos)) + ":" +
+                                Glib::ustring::format(std::setw(2), std::setfill(L'0'), std::right, Gst::get_minutes(pos)) + ":" +
+                                Glib::ustring::format(std::setw(2), std::setfill(L'0'), std::right, Gst::get_seconds(pos)));
+                    video_duration->set_text(
+                                Glib::ustring::format(std::setw(3), std::setfill(L'0'), std::right, Gst::get_hours(dur)) + ":" +
+                                Glib::ustring::format(std::setw(2), std::setfill(L'0'), std::right, Gst::get_minutes(dur)) + ":" +
+                                Glib::ustring::format(std::setw(2), std::setfill(L'0'), std::right, Gst::get_seconds(dur)));
+                    video_pos_dur->show();
+                } else {
+                    video_pos_dur->hide();
+                }
+                return true;
+            }, 1000);
         });
         m_player->get_streamer()->emit_update_signal();
     });
@@ -177,9 +201,9 @@ WidgetChatFileRecv::WidgetChatFileRecv(BaseObjectType* cobject,
         int h   = (int(s) / 60) / 60;
 
         m_file_time->set_text(
-                    Glib::ustring::format(std::setw(2), std::setfill(L'0'), std::right, std::to_string(h)) + ":" +
-                    Glib::ustring::format(std::setw(2), std::setfill(L'0'), std::right, std::to_string(min)) + ":" +
-                    Glib::ustring::format(std::setw(2), std::setfill(L'0'), std::right, std::to_string(sec)));
+                    Glib::ustring::format(std::setw(3), std::setfill(L'0'), std::right, h) + ":" +
+                    Glib::ustring::format(std::setw(2), std::setfill(L'0'), std::right, min) + ":" +
+                    Glib::ustring::format(std::setw(2), std::setfill(L'0'), std::right, sec));
 
         return true;
     }, 500);
@@ -285,24 +309,27 @@ void WidgetChatFileRecv::observer_handle(const ToxEvent& event) {
                 //try load file
                 m_thread = Glib::Thread::create([this](){
                     auto target_size = 512;
-                    //try image;
+                    //try image
                     try {
-                        auto image = Gdk::Pixbuf::create_from_file(m_recv.get_path());
-                        if (image->get_width() > target_size || image->get_height() > target_size) {
-                            int w, h;
-                            if (image->get_width() > image->get_height()) {
-                                w = target_size;
-                                h = image->get_height()*target_size/image->get_width();
-                            } else {
-                                h = target_size;
-                                w = image->get_width()*target_size/image->get_height();
+                        auto ani = Gdk::PixbufAnimation::create_from_file(m_recv.get_path());
+                        if (!ani || ani->is_static_image()) {
+                            auto image = Gdk::Pixbuf::create_from_file(m_recv.get_path());
+                            if (image->get_width() > target_size || image->get_height() > target_size) {
+                                int w, h;
+                                if (image->get_width() > image->get_height()) {
+                                    w = target_size;
+                                    h = image->get_height()*target_size/image->get_width();
+                                } else {
+                                    h = target_size;
+                                    w = image->get_width()*target_size/image->get_height();
+                                }
+                                image = image->scale_simple(w, h, Gdk::InterpType::INTERP_BILINEAR);
                             }
-                            image = image->scale_simple(w, h, Gdk::InterpType::INTERP_BILINEAR);
-                        }
-                        if (image) {
-                            std::lock_guard<std::mutex> lg(m_mutex);
-                            m_signal_set_image.emit(image);
-                            return;
+                            if (image) {
+                                std::lock_guard<std::mutex> lg(m_mutex);
+                                m_signal_set_image.emit(image);
+                                return;
+                            }
                         }
                     } catch (...) {}
 

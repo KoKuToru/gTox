@@ -33,6 +33,8 @@ class gStreamerVideo {
         void pause();
         void stop();
 
+        bool get_progress(gint64& position, gint64& duration);
+
         void emit_update_signal();
 
         ~gStreamerVideo();

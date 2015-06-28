@@ -62,6 +62,7 @@ class WidgetChatFileRecv: public Gtk::Frame, public gToxObserver {
         sigc::connection m_set_image_connection;
         sigc::connection m_try_video;
         sigc::connection m_update_interval;
+        sigc::connection m_update_video_interval;
 
         VideoPlayer* m_player;
 
