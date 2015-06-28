@@ -50,29 +50,27 @@ class ToxLogBaseEntity {
         std::string data;
 };
 
-class ToxLogRecvEntity:
-        public ToxLogBaseEntity {
-    public:
-        using ToxLogBaseEntity::ToxLogBaseEntity;
+enum EToxLogType {
+    LOG_MESSAGE_SEND = 1,
+    LOG_MESSAGE_RECV = 2,
+    LOG_ACTION_SEND = 3,
+    LOG_ACTION_RECV = 4,
+    LOG_FILE_SEND = 5,
+    LOG_FILE_RECV = 6
 };
 
-class ToxLogSendEntity:
-        public ToxLogBaseEntity {
+class ToxLogEntity {
     public:
-        ToxLogSendEntity() = default;
-        ToxLogSendEntity(std::string friendaddr,
-                         int type,
-                         std::string data,
-                         int receipt): ToxLogBaseEntity(friendaddr, type, data), receipt(receipt) {}
-        int receipt;
-};
-
-class ToxLogEntity:
-        public ToxLogSendEntity {
-    public:
-        ToxLogEntity() = default;
+        std::string friendaddr;
+        EToxLogType type;
         unsigned long long recvtime;
         unsigned long long sendtime;
+        std::string data;
+        long long filenumber;
+        uint64_t filesize;
+        long long receipt;
+
+        ToxLogEntity() = default;
 };
 
 
@@ -102,6 +100,21 @@ class ToxDatabase {
     }
     void bind(SQLite::Statement& stmt, int i, const char* value) {
         stmt.bind(i, value);
+    }
+    void bind(SQLite::Statement& stmt, int i, const EToxLogType& value) {
+        stmt.bind(i, (int)value);
+    }
+    void bind(SQLite::Statement& stmt, int i, const sqlite3_uint64& value) {
+        //INFO: unsigned to signed convertion !
+        stmt.bind(i, (sqlite3_int64)value);
+    }
+    void bind(SQLite::Statement& stmt, int i, const long unsigned int& value) {
+        //isn't this the same as sqlite3_uint64 ?
+        //INFO: unsigned to signed convertion !
+        stmt.bind(i, (sqlite3_int64)value);
+    }
+    void bind(SQLite::Statement& stmt, int i, const unsigned int& value) {
+        stmt.bind(i, (sqlite3_int64)value);
     }
     void bind(SQLite::Statement& stmt,
               int i,
@@ -229,9 +242,9 @@ class ToxDatabase {
      *
      * @param entity
      */
-    void toxcore_log_add(ToxLogSendEntity entity);
-    void toxcore_log_add(ToxLogRecvEntity entity);
+    void toxcore_log_add(ToxLogEntity entity);
     void toxcore_log_set_received(std::string friendaddr, int receipt_id);
+    void toxcore_log_set_file_received(std::string friendaddr, uint32_t filenumber);
     /**
      * @brief Removes everything from log
      * @return Number of deleted log-entries
@@ -248,7 +261,7 @@ class ToxDatabase {
      *
      * @return Chat log
      */
-    std::vector<ToxLogEntity> toxcore_log_get(std::string friendaddr, int offset, int limit);
+    std::vector<ToxLogEntity> toxcore_log_get(std::string friendaddr, int offset = 0, int limit = 100);
 };
 
 #endif

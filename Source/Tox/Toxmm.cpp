@@ -271,10 +271,12 @@ Toxmm::ReceiptNr Toxmm::send_message(Toxmm::FriendNr nr,
     }
 
     auto addr = get_address(nr);
-    m_db.toxcore_log_add(ToxLogSendEntity(to_hex(addr.data(), addr.size()),
-                         ELogType::LOGMSG,
-                         message,
-                         res));
+    ToxLogEntity entity;
+    entity.friendaddr = to_hex(addr.data(), addr.size());
+    entity.type = EToxLogType::LOG_MESSAGE_SEND;
+    entity.data = message;
+    entity.receipt = res;
+    m_db.toxcore_log_add(entity);
 
     return res;
 }
@@ -298,10 +300,12 @@ Toxmm::ReceiptNr Toxmm::send_action(Toxmm::FriendNr nr, const Glib::ustring& act
     }
 
     auto addr = get_address(nr);
-    m_db.toxcore_log_add(ToxLogSendEntity(to_hex(addr.data(), addr.size()),
-                         ELogType::LOGACTION,
-                         action,
-                         res));
+    ToxLogEntity entity;
+    entity.friendaddr = to_hex(addr.data(), addr.size());
+    entity.type = EToxLogType::LOG_ACTION_SEND;
+    entity.data = action;
+    entity.receipt = res;
+    m_db.toxcore_log_add(entity);
 
     return res;
 }
@@ -526,41 +530,30 @@ void Toxmm::inject_event(ToxEvent ev) {
     } else if (ev.type() == typeid(EventFriendMessage)) {
         auto data = ev.get<EventFriendMessage>();
         auto addr = get_address(data.nr);
-        m_db.toxcore_log_add(ToxLogRecvEntity(to_hex(addr.data(), addr.size()),
-                             ELogType::LOGMSG,
-                             data.message));
+        ToxLogEntity entity;
+        entity.type = EToxLogType::LOG_MESSAGE_RECV;
+        entity.friendaddr = to_hex(addr.data(), addr.size());
+        entity.data = data.message;
     } else if (ev.type() == typeid(EventFriendAction)) {
         auto data = ev.get<EventFriendAction>();
         auto addr = get_address(data.nr);
-        m_db.toxcore_log_add(ToxLogRecvEntity(to_hex(addr.data(), addr.size()),
-                             ELogType::LOGACTION,
-                             data.message));
+        ToxLogEntity entity;
+        entity.type = EToxLogType::LOG_ACTION_RECV;
+        entity.friendaddr = to_hex(addr.data(), addr.size());
+        entity.data = data.message;
     }
 }
 
-std::vector<Toxmm::SLog> Toxmm::get_log(Toxmm::FriendNr nr, int offset, int limit) {
+std::vector<ToxLogEntity> Toxmm::get_log(Toxmm::FriendNr nr, int offset, int limit) {
     if (m_tox == nullptr) {
         throw std::runtime_error("TOX_UNITIALIZED");
     }
 
-    std::vector<Toxmm::SLog> result;
     auto addr = get_address(nr);
-    for (auto line : m_db.toxcore_log_get(to_hex(addr.data(),
-                                                 addr.size()),
-                                          offset,
-                                          limit)) {
-        Toxmm::SLog n;
-        n.sendtime = line.sendtime;
-        n.recvtime = line.recvtime;
-        n.type = (ELogType)line.type;
-        n.data = line.data;
-
-        result.push_back(n);
-    }
-
-    std::reverse(result.begin(), result.end());
-
-    return result;
+    return m_db.toxcore_log_get(to_hex(addr.data(),
+                                       addr.size()),
+                                offset,
+                                limit);
 }
 
 void Toxmm::file_control(FriendNr nr, uint32_t file_nr, TOX_FILE_CONTROL control) {

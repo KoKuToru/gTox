@@ -122,24 +122,33 @@ WidgetChat::WidgetChat(gToxObservable* instance, Toxmm::FriendNr nr)
     // load log
     auto log = tox().get_log(nr);
     for (auto l : log) {
-        if (l.sendtime != 0) {
-            add_message(WidgetChatBubble::RIGHT, WidgetChatBubble::Line{
-                         false,
-                         false,
-                         0,
-                         l.sendtime,
-                         nr,
-                         l.data
-                     });
-        } else {
-            add_message(WidgetChatBubble::LEFT, WidgetChatBubble::Line{
-                         false,
-                         false,
-                         0,
-                         l.recvtime,
-                         0,
-                         l.data
-                     });
+        switch (l.type) {
+            case EToxLogType::LOG_MESSAGE_SEND:
+            case EToxLogType::LOG_ACTION_SEND:
+                add_message(WidgetChatBubble::RIGHT, WidgetChatBubble::Line{
+                             false,
+                             false,
+                             0,
+                             l.sendtime,
+                             nr,
+                             l.data
+                         });
+                break;
+            case EToxLogType::LOG_MESSAGE_RECV:
+            case EToxLogType::LOG_ACTION_RECV:
+                add_message(WidgetChatBubble::LEFT, WidgetChatBubble::Line{
+                             false,
+                             false,
+                             0,
+                             l.recvtime,
+                             0,
+                             l.data
+                         });
+                break;
+            case LOG_FILE_RECV:
+                break;
+            default:
+                break;
         }
     }
 

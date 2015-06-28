@@ -159,17 +159,6 @@ class Toxmm {
             std::vector<uint8_t> file_data;
     };
 
-    enum ELogType { LOGMSG = 1, LOGACTION = 2 };
-
-    struct SLog {
-        ELogType type;
-
-        uint64_t sendtime;
-        uint64_t recvtime;
-
-        Glib::ustring data;
-    };
-
     ToxDatabase& database();
     ToxProfile& profile();
 
@@ -451,7 +440,7 @@ class Toxmm {
      *
      * @return Chat log
      */
-    std::vector<SLog> get_log(FriendNr nr, int offset = 0, int limit = 100);
+    std::vector<ToxLogEntity> get_log(FriendNr nr, int offset = 0, int limit = 100);
 
     /**
      * @brief Sends a file control command to a friend for a given file transfer.
