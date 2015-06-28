@@ -43,8 +43,8 @@ For comparison https://wiki.tox.im/Client
 | Emoticons | Yes/No | [#25](https://github.com/KoKuToru/gTox/issues/25) | *Only UTF-8*
 | Spell check | No | | 
 | Desktop sharing | No | |
-| Inline images | No | |
-| File resuming | No | |
+| Inline images | **Yes++** | | **Inline videos**
+| File resuming | Yes/No | | *only receiving working*
 | Read receipts | **Yes** | | *But log wont save "failed" yet*
 | Message splitting | No | | 
 | Changing nospam | No | |
