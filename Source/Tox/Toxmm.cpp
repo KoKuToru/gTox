@@ -534,6 +534,7 @@ void Toxmm::inject_event(ToxEvent ev) {
         entity.type = EToxLogType::LOG_MESSAGE_RECV;
         entity.friendaddr = to_hex(addr.data(), addr.size());
         entity.data = data.message;
+        m_db.toxcore_log_add(entity);
     } else if (ev.type() == typeid(EventFriendAction)) {
         auto data = ev.get<EventFriendAction>();
         auto addr = get_address(data.nr);
@@ -541,6 +542,7 @@ void Toxmm::inject_event(ToxEvent ev) {
         entity.type = EToxLogType::LOG_ACTION_RECV;
         entity.friendaddr = to_hex(addr.data(), addr.size());
         entity.data = data.message;
+        m_db.toxcore_log_add(entity);
     }
 }
 
