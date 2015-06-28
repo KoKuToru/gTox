@@ -161,12 +161,16 @@ void gToxFileRecv::observer_handle(const ToxEvent& ev) {
     }
 
     //Handle download
+    if (lseek(m_fd, data.file_position, SEEK_SET) != (__off_t)data.file_position) {
+        throw std::runtime_error("gToxFileRecv couldn't seek file");
+    }
+
     auto ret = write(m_fd, data.file_data.data(), data.file_data.size());
     if (ret != ssize_t(data.file_data.size())) {
         throw std::runtime_error("gToxFileRecv couldn't write file");
     }
 
-    m_position += data.file_data.size();
+    m_position = data.file_position + data.file_data.size();
 
     if (m_position == m_file.file_size) {
         close(m_fd);
