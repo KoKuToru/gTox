@@ -43,7 +43,8 @@ set(DATABASE
     Database/version_4.sql
     Database/version_5.sql
     Database/version_6.sql
-    Database/version_7.sql)
+    Database/version_7.sql
+    Database/version_8.sql)
 add_custom_command(
     OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/Generated/database.cpp"
     COMMAND "${PROJECT_BINARY_DIR}/Tools/text2h" DATABASE Generated/database ${DATABASE}
