@@ -25,6 +25,7 @@
 class gToxFileRecv: public gToxObserver {
     public:
         enum STATE {
+            INITIAL,
             PAUSED,
             RECVING,
             STOPPED
@@ -43,21 +44,24 @@ class gToxFileRecv: public gToxObserver {
         void get_progress(uint64_t& position, uint64_t& size);
         Glib::ustring get_path();
 
+        void emit_progress();
+
         class EventFileProgress {
             public:
                 gToxFileRecv* receiver;
                 Toxmm::FriendNr nr;
                 TOX_FILE_KIND file_kind;
-                uint32_t file_number;
+                long long file_number;
                 uint64_t file_position;
                 uint64_t file_size;
+                std::string file_path;
         };
     private:
         int m_fd = -1;
         Toxmm::EventFileRecv m_file;
         Glib::ustring m_path;
         uint64_t m_position = 0;
-        STATE m_state = PAUSED;
+        STATE m_state = INITIAL;
 
     protected:
         void observer_handle(const ToxEvent&) override;

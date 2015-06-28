@@ -145,7 +145,7 @@ class Toxmm {
     class EventFileRecv {
         public:
             FriendNr nr;
-            uint32_t file_number;
+            long long file_number;
             TOX_FILE_KIND kind;
             uint64_t file_size;
             Glib::ustring filename;

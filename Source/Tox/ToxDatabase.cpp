@@ -254,13 +254,14 @@ void ToxDatabase::toxcore_log_set_received(std::string friendaddr, int receipt_i
     }
 }
 
-void ToxDatabase::toxcore_log_set_file_received(std::string friendaddr, uint32_t filenumber) {
+void ToxDatabase::toxcore_log_set_file_received(std::string friendaddr, std::string filename, uint32_t filenumber) {
     friendaddr.resize(64);
     for(std::string table : {"log", "mem.log"}) {
         query("UPDATE " + table + " SET filenumber=NULL"
-              " WHERE friendaddr=?1 AND filenumber=?2",
+              " WHERE friendaddr=?1 AND filenumber=?2 AND message=?3",
               friendaddr,
-              filenumber)->exec();
+              filenumber,
+              filename)->exec();
     }
 }
 
@@ -299,7 +300,7 @@ std::vector<ToxLogEntity> ToxDatabase::toxcore_log_get(std::string friendaddr, i
         tmp.data = std::string(data_ptr, data_ptr + data.getBytes());
         tmp.receipt = stmt->getColumn(4).isNull()?-1:stmt->getColumn(4).getInt64();
         tmp.filenumber = stmt->getColumn(5).isNull()?-1:stmt->getColumn(5).getInt64();
-        tmp.filesize = stmt->getColumn(5).getInt64();
+        tmp.filesize = stmt->getColumn(6).getInt64();
         res.push_back(tmp);
     }
     std::reverse(res.begin(), res.end());

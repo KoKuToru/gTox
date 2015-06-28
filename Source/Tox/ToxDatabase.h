@@ -244,7 +244,7 @@ class ToxDatabase {
      */
     void toxcore_log_add(ToxLogEntity entity);
     void toxcore_log_set_received(std::string friendaddr, int receipt_id);
-    void toxcore_log_set_file_received(std::string friendaddr, uint32_t filenumber);
+    void toxcore_log_set_file_received(std::string friendaddr, std::string filename, uint32_t filenumber);
     /**
      * @brief Removes everything from log
      * @return Number of deleted log-entries

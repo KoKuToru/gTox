@@ -580,11 +580,6 @@ void Toxmm::inject_event(ToxEvent ev) {
             entity.filenumber = data.file_number;
             m_db.toxcore_log_add(entity);
         }
-    } else if (ev.type() == typeid(EventFileRecvChunk)) {
-        auto data = ev.get<EventFileRecvChunk>();
-        auto addr = get_address(data.nr);
-        //if (data.file_position + data.file_data.size() == data.)
-        //TODO
     }
 
     m_events.push_back(ev);

@@ -33,9 +33,10 @@ WidgetChatFileRecv::WidgetChatFileRecv(BaseObjectType* cobject,
     Gtk::Frame(cobject),
     gToxObserver(observable),
     m_builder(builder),
-    m_recv(observable, file) {
-
-    m_file_number = file.file_number;
+    m_recv(observable, file),
+    m_friend_nr(file.nr),
+    m_file_number(file.file_number),
+    m_file_size(file.file_size) {
 
     m_builder.get_widget<Gtk::Label>("file_name")->set_text(file.filename);
     double size  = file.file_size;
@@ -65,7 +66,11 @@ WidgetChatFileRecv::WidgetChatFileRecv(BaseObjectType* cobject,
             m_file_speed->show();
             m_file_time->show();
             m_file_resume->set_sensitive(false);
-            m_recv.resume();
+            try {
+                m_recv.resume();
+            } catch (...) {
+                m_file_cancel->clicked();
+            }
         } else {
             m_file_resume->set_sensitive(true);
         }
@@ -78,7 +83,11 @@ WidgetChatFileRecv::WidgetChatFileRecv(BaseObjectType* cobject,
             if (m_file_pause->get_active()) {
                 m_file_pause->set_active(false);
             }
-            m_recv.cancel();
+            try {
+                m_recv.cancel();
+            } catch (...) {
+                //TODO ?
+            }
             m_builder.get_widget<Gtk::Widget>("file_info_box_1")->hide();
             m_builder.get_widget<Gtk::Widget>("file_info_box_2")->hide();
             m_file_cancel->set_sensitive(false);
@@ -99,7 +108,11 @@ WidgetChatFileRecv::WidgetChatFileRecv(BaseObjectType* cobject,
             m_file_speed->hide();
             m_file_time->hide();
             m_file_pause->set_sensitive(false);
-            m_recv.pause();
+            try {
+                m_recv.pause();
+            } catch (...) {
+                m_file_cancel->clicked();
+            }
         } else {
             m_file_pause->set_sensitive(true);
         }
@@ -236,10 +249,7 @@ WidgetChatFileRecv::WidgetChatFileRecv(BaseObjectType* cobject,
     });
     m_file_video_stop->set_active(true);
 
-    //auto start TODO:check in config
-    if (file.file_size < 1024*1024) {
-        m_file_resume->clicked();
-    }
+    m_recv.emit_progress();
 }
 
 void WidgetChatFileRecv::observer_handle(const ToxEvent& event) {
@@ -247,50 +257,91 @@ void WidgetChatFileRecv::observer_handle(const ToxEvent& event) {
     if (event.type() == typeid(gToxFileRecv::EventFileProgress)) {
         auto data = event.get<gToxFileRecv::EventFileProgress>();
 
-        if (data.file_number != m_file_number) {
+        if (m_file_number < 0 && (!m_first_emit || m_finish)) {
+            return;
+        }
+
+        if (data.file_number != m_file_number || data.nr != m_friend_nr || data.file_path != m_recv.get_path()) {
             return;
         }
 
         m_file_progress->set_fraction(data.file_position / (double)data.file_size);
 
         if (data.file_position == data.file_size) {
+            m_finish = true;
+
             //finish !
             m_update_interval.disconnect();
 
             //display
-            m_builder.get_widget<Gtk::Widget>("spinner")->show();
             m_builder.get_widget<Gtk::Revealer>("revealer_download")->set_reveal_child(false);
-            m_builder.get_widget<Gtk::Widget>("file_open_bar")->show();
 
-            //try load file
-            m_thread = Glib::Thread::create([this](){
-                //TODO:check for filesize
-                auto target_size = 512;
-                //try image;
-                try {
-                    auto image = Gdk::Pixbuf::create_from_file(m_recv.get_path());
-                    if (image->get_width() > target_size || image->get_height() > target_size) {
-                        int w, h;
-                        if (image->get_width() > image->get_height()) {
-                            w = target_size;
-                            h = image->get_height()*target_size/image->get_width();
-                        } else {
-                            h = target_size;
-                            w = image->get_width()*target_size/image->get_height();
+            //check if file exists
+            if (Glib::file_test(m_recv.get_path(), Glib::FILE_TEST_IS_REGULAR)) {
+                //TODO: check file size for preview generation ?
+                m_builder.get_widget<Gtk::Widget>("spinner")->show();
+                m_builder.get_widget<Gtk::Widget>("file_open_bar")->show();
+
+                //try load file
+                m_thread = Glib::Thread::create([this](){
+                    auto target_size = 512;
+                    //try image;
+                    try {
+                        auto image = Gdk::Pixbuf::create_from_file(m_recv.get_path());
+                        if (image->get_width() > target_size || image->get_height() > target_size) {
+                            int w, h;
+                            if (image->get_width() > image->get_height()) {
+                                w = target_size;
+                                h = image->get_height()*target_size/image->get_width();
+                            } else {
+                                h = target_size;
+                                w = image->get_width()*target_size/image->get_height();
+                            }
+                            image = image->scale_simple(w, h, Gdk::InterpType::INTERP_BILINEAR);
                         }
-                        image = image->scale_simple(w, h, Gdk::InterpType::INTERP_BILINEAR);
-                    }
-                    if (image) {
-                        std::lock_guard<std::mutex> lg(m_mutex);
-                        m_signal_set_image.emit(image);
-                        return;
-                    }
-                } catch (...) {}
+                        if (image) {
+                            std::lock_guard<std::mutex> lg(m_mutex);
+                            m_signal_set_image.emit(image);
+                            return;
+                        }
+                    } catch (...) {}
 
-                //try video
-                std::lock_guard<std::mutex> lg(m_mutex);
-                m_signal_try_video.emit();
-            });
+                    //try video
+                    std::lock_guard<std::mutex> lg(m_mutex);
+                    m_signal_try_video.emit();
+                });
+            } else {
+                //nothing todo
+            }
+        } else if (m_first_emit) {
+            m_first_emit = false;
+            if (!m_finish) {
+                //auto start TODO:check in config
+                if (tox().get_status(m_friend_nr) != Toxmm::OFFLINE) {
+                    if (m_file_size < 1024*1024) {
+                        m_file_resume->clicked();
+                    }
+                } else {
+                    m_file_resume->set_sensitive(false);
+                }
+            }
+        }
+    } else if (event.type() == typeid(Toxmm::EventUserStatus)) {
+        auto data = event.get<Toxmm::EventUserStatus>();
+
+        if (data.nr != m_friend_nr || m_finish) {
+            return;
+        }
+
+        if (tox().get_status(m_friend_nr) != Toxmm::OFFLINE) {
+            m_builder.get_widget<Gtk::Revealer>("revealer_download")->set_reveal_child(true);
+            m_file_resume->set_sensitive(true);
+            m_first_emit = true;
+            m_recv.emit_progress();
+        } else {
+            m_builder.get_widget<Gtk::Revealer>("revealer_download")->set_reveal_child(false);
+            m_file_pause->clicked();
+            m_file_resume->set_sensitive(false);
         }
     }
 }

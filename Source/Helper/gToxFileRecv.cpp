@@ -28,6 +28,11 @@ uint64_t operator "" _kib(unsigned long long input) {
 gToxFileRecv::gToxFileRecv(gToxObservable* observable,
                            Toxmm::EventFileRecv file)
     : gToxObserver(observable), m_file(file) {
+    if (m_file.file_number < 0) {
+        m_path = m_file.filename;
+        m_position = file.file_size;
+        return;
+    }
     try {
         if (m_file.kind == TOX_FILE_KIND_AVATAR) {
             if (m_file.file_size > 65_kib) {
@@ -75,8 +80,6 @@ gToxFileRecv::gToxFileRecv(gToxObservable* observable,
         }
         //read file size
         m_position = lseek(m_fd, 0, SEEK_END);
-
-        tox().file_seek(m_file.nr, m_file.file_number, m_position);
     } catch(const Toxmm::Exception& exp) {
         //Ignore
         if (m_fd != -1) {
@@ -98,44 +101,67 @@ void gToxFileRecv::get_progress(uint64_t& position, uint64_t& size) {
     size = m_file.file_size;
 }
 
-void gToxFileRecv::resume() {
-    if (m_state != PAUSED) {
-        return;
-    }
-    m_state = RECVING;
-    if (m_file.file_size == m_position) {
-        cancel();
+void gToxFileRecv::emit_progress() {
+    if (m_position == m_file.file_size) {
+        m_state = STOPPED;
+        if (m_fd != -1) {
+            close(m_fd);
+            m_fd = -1;
 
-        observer_notify(ToxEvent(EventFileProgress{
-                                     this,
-                                     m_file.nr,
-                                     m_file.kind,
-                                     m_file.file_number,
-                                     m_position,
-                                     m_file.file_size
-                                 }));
-
-        if (m_file.kind == TOX_FILE_KIND_AVATAR) {
-            WidgetAvatar::set_avatar(observable(),
-                                     m_path,
-                                     WidgetAvatar::get_avatar(m_path, true));
+            auto addr = tox().get_address(m_file.nr);
+            tox().database().toxcore_log_set_file_received(
+                        Toxmm::to_hex(addr.data(), addr.size()),
+                        m_file.filename,
+                        m_file.file_number);
         }
+    }
+    observer_notify(ToxEvent(EventFileProgress{
+                                 this,
+                                 m_file.nr,
+                                 m_file.kind,
+                                 m_file.file_number,
+                                 m_position,
+                                 m_file.file_size,
+                                 m_file.filename
+                             }));
+}
+
+void gToxFileRecv::resume() {
+    if (m_fd == -1 || (m_state != PAUSED && m_state != INITIAL)) {
         return;
     }
+
+    if (m_state == INITIAL) {
+        tox().file_seek(m_file.nr, m_file.file_number, m_position);
+    }
+
+    m_state = RECVING;
+
     tox().file_control(m_file.nr, m_file.file_number, TOX_FILE_CONTROL_RESUME);
 }
 
 void gToxFileRecv::cancel() {
-    if (m_state != STOPPED) {
+    if (m_fd == -1 || (m_state != STOPPED && m_state != INITIAL)) {
         return;
     }
     m_state = STOPPED;
+
+    auto addr = tox().get_address(m_file.nr);
+
+    tox().database().toxcore_log_set_file_received(
+                Toxmm::to_hex(addr.data(), addr.size()),
+                m_file.filename,
+                m_file.file_number);
+
+    unlink(m_file.filename.c_str());
+    close(m_fd);
+    m_fd = -1;
+
     tox().file_control(m_file.nr, m_file.file_number, TOX_FILE_CONTROL_CANCEL);
-    //TODO: delete file ?
 }
 
 void gToxFileRecv::pause() {
-    if (m_state != RECVING) {
+    if (m_fd == -1 || m_state != RECVING) {
         return;
     }
     m_state = PAUSED;
@@ -143,15 +169,16 @@ void gToxFileRecv::pause() {
 }
 
 void gToxFileRecv::observer_handle(const ToxEvent& ev) {
-    if (ev.type() != typeid(Toxmm::EventFileRecvChunk)) {
-        return;
-    }
-    auto data = ev.get<Toxmm::EventFileRecvChunk>();
-    if (data.nr != m_file.nr || data.file_number != m_file.file_number) {
+    if (m_fd == -1) {
         return;
     }
 
-    if (m_fd == -1) {
+    if (ev.type() != typeid(Toxmm::EventFileRecvChunk)) {
+        return;
+    }
+
+    auto data = ev.get<Toxmm::EventFileRecvChunk>();
+    if (data.nr != m_file.nr || data.file_number != m_file.file_number) {
         return;
     }
 
@@ -167,19 +194,7 @@ void gToxFileRecv::observer_handle(const ToxEvent& ev) {
 
     m_position = data.file_position + data.file_data.size();
 
-    if (m_position == m_file.file_size) {
-        close(m_fd);
-        m_fd = -1;
-    }
-
-    observer_notify(ToxEvent(EventFileProgress{
-                                 this,
-                                 m_file.nr,
-                                 m_file.kind,
-                                 m_file.file_number,
-                                 m_position,
-                                 m_file.file_size
-                             }));
+    emit_progress();
 }
 
 Glib::ustring gToxFileRecv::get_path() {

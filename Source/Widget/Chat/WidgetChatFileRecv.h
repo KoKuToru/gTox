@@ -30,7 +30,9 @@ class WidgetChatFileRecv: public Gtk::Frame, public gToxObserver {
         gToxBuilder m_builder;
         gToxFileRecv m_recv;
 
-        uint32_t m_file_number;
+        uint32_t m_friend_nr;
+        long long m_file_number;
+        uint64_t m_file_size;
 
         Gtk::ToggleButton* m_file_resume;
         Gtk::ToggleButton* m_file_cancel;
@@ -64,6 +66,9 @@ class WidgetChatFileRecv: public Gtk::Frame, public gToxObserver {
         VideoPlayer* m_player;
 
         size_t m_last_position;
+
+        bool m_first_emit = true;
+        bool m_finish = false;
 
     public:
         WidgetChatFileRecv(BaseObjectType* cobject,
