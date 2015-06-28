@@ -22,6 +22,7 @@
 #include <string>
 #include <algorithm>
 #include "Generated/database.h"
+#include <giomm.h>
 
 Toxmm::Toxmm() {
 
@@ -520,8 +521,6 @@ void Toxmm::inject_event(ToxEvent ev) {
         }
     }
 
-    m_events.push_back(ev);
-
     if (ev.type() == typeid(EventReadReceipt)) {
         auto data = ev.get<EventReadReceipt>();
         auto addr = get_address(data.nr);
@@ -545,23 +544,50 @@ void Toxmm::inject_event(ToxEvent ev) {
         m_db.toxcore_log_add(entity);
     } else if (ev.type() == typeid(EventFileRecv)) {
         auto data = ev.get<EventFileRecv>();
-        if (data.kind != TOX_FILE_KIND::TOX_FILE_KIND_DATA) {
-            return;
+        if (data.kind == TOX_FILE_KIND::TOX_FILE_KIND_DATA) {
+            auto addr = get_address(data.nr);
+            auto path = database().config_get("SETTINGS_FILETRANSFER_SAVE_TO",
+                                              Glib::get_user_special_dir(GUserDirectory::G_USER_DIRECTORY_DOWNLOAD));
+            if (!Glib::file_test(path, Glib::FILE_TEST_IS_DIR)) {
+                Gio::File::create_for_path(path)->make_directory_with_parents();
+            }
+
+            auto cpath = Glib::build_filename(path, data.filename);
+
+            int index = 0;
+            while (Glib::file_test(cpath, Glib::FILE_TEST_EXISTS)) {
+                auto last_point = data.filename.find_last_of('.');
+                if (last_point != std::string::npos) {
+                    cpath = Glib::build_filename(path,
+                                                 data.filename.substr(0, last_point) +
+                                                 std::to_string(++index) +
+                                                 data.filename.substr(last_point));
+                } else {
+                    cpath = Glib::build_filename(path,
+                                                 data.filename +
+                                                 std::to_string(++index));
+                }
+            }
+
+            data.filename = cpath;
+            ev = ToxEvent(data);
+
+            ToxLogEntity entity;
+            entity.type = EToxLogType::LOG_FILE_RECV;
+            entity.friendaddr = to_hex(addr.data(), addr.size());
+            entity.data = data.filename;
+            entity.filesize = data.file_size;
+            entity.filenumber = data.file_number;
+            m_db.toxcore_log_add(entity);
         }
-        auto addr = get_address(data.nr);
-        ToxLogEntity entity;
-        entity.type = EToxLogType::LOG_FILE_RECV;
-        entity.friendaddr = to_hex(addr.data(), addr.size());
-        entity.data = data.filename;
-        entity.filesize = data.file_size;
-        entity.filenumber = data.file_number;
-        m_db.toxcore_log_add(entity);
     } else if (ev.type() == typeid(EventFileRecvChunk)) {
         auto data = ev.get<EventFileRecvChunk>();
         auto addr = get_address(data.nr);
         //if (data.file_position + data.file_data.size() == data.)
         //TODO
     }
+
+    m_events.push_back(ev);
 }
 
 std::vector<ToxLogEntity> Toxmm::get_log(Toxmm::FriendNr nr, int offset, int limit) {

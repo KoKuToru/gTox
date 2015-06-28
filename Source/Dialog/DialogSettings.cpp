@@ -144,7 +144,7 @@ DialogSettings::DialogSettings(gToxObservable* observable)
 
     auto filetransfer_save_to = m_builder.get_widget<Gtk::FileChooserButton>("settings_filetransfer_saveto");
     std::string path = tox().database().config_get("SETTINGS_FILETRANSFER_SAVE_TO",
-                                                   Glib::build_filename(Glib::get_user_special_dir(GUserDirectory::G_USER_DIRECTORY_DOWNLOAD), "gtox"));
+                                                   Glib::get_user_special_dir(GUserDirectory::G_USER_DIRECTORY_DOWNLOAD));
     if (!Glib::file_test(path, Glib::FILE_TEST_IS_DIR)) {
         Gio::File::create_for_path(path)->make_directory_with_parents();
     }

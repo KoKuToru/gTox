@@ -67,12 +67,7 @@ gToxFileRecv::gToxFileRecv(gToxObservable* observable,
                 }
             }
         } else {
-            m_path = tox().database().config_get("SETTINGS_FILETRANSFER_SAVE_TO",
-                                                 Glib::build_filename(Glib::get_user_special_dir(GUserDirectory::G_USER_DIRECTORY_DOWNLOAD), "gtox"));
-            if (!Glib::file_test(m_path, Glib::FILE_TEST_IS_DIR)) {
-                Gio::File::create_for_path(m_path)->make_directory_with_parents();
-            }
-            m_path = Glib::build_filename(m_path, m_file.filename);
+            m_path = m_file.filename;
         }
         m_fd = ::open(m_path.c_str(), O_RDWR|O_CREAT, 0600);
         if (m_fd == -1) {
