@@ -23,6 +23,7 @@
 
 #include <gtkmm.h>
 #include "Helper/gToxBuilder.h"
+#include "Tox/Toxmm.h"
 
 class DialogProfileCreate : public Gtk::Assistant {
   private:
@@ -36,10 +37,11 @@ class DialogProfileCreate : public Gtk::Assistant {
     Gtk::Entry  *m_file_tox = nullptr;
     Gtk::Entry  *m_file_gtox = nullptr;
 
-    int on_next(int page);
     void on_cancel();
     void on_close();
     void on_apply();
+
+    Toxmm m_tox_instance;
 
   public:
     ~DialogProfileCreate();

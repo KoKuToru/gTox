@@ -146,21 +146,19 @@ void gTox::on_activate() {
 
                 assistant->signal_hide().connect_notify([this, assistant]() {
                     remove_window(*assistant);
-
-                    //if (!assistant->is_aborted()) {
-                        if (!assistant->get_path().empty()) {
-                            open(Gio::File::create_for_path(assistant->get_path()));
-                        } else {
-                            activate();
-                        }
-                    //}
-
+                    Glib::ustring path = assistant->get_path();
                     delete assistant;
-                });
+
+                    if (!path.empty()) {
+                        open(Gio::File::create_for_path(path));
+                    } else {
+                        activate();
+                    }
+                }, true);
             }
 
             delete profile;
-        });
+        }, true);
         profile->show();
     } else {
         if (!profile->is_aborted()) {

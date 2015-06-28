@@ -18,7 +18,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
  **/
 #include "DialogProfileCreate.h"
-#include "Tox/Toxmm.h"
 #include <glibmm/i18n.h>
 
 DialogProfileCreate::DialogProfileCreate(BaseObjectType* cobject, gToxBuilder builder,
@@ -35,31 +34,31 @@ DialogProfileCreate::DialogProfileCreate(BaseObjectType* cobject, gToxBuilder bu
     m_builder.get_widget("assistant_file_tox", m_file_tox);
     m_builder.get_widget("assistant_file_gtox", m_file_gtox);
 
-    if (m_username && m_file_tox && m_file_gtox) {
-        auto w = m_builder.get_widget<Gtk::Widget>("assistant_first_page");
-        m_username->signal_changed().connect([this, w]() {
-            if (!m_username->get_text().empty()) {
-                int i = 0;
-                do {
-                    auto name = m_username->get_text() + (i?std::to_string(i):"");
-                    m_file_tox->set_text(Glib::build_filename(m_path, name + ".tox"));
-                    m_file_gtox->set_text(Glib::build_filename(m_path, name + ".gtox"));
-                    i += 1;
-                } while (Glib::file_test(m_file_tox->get_text(), Glib::FILE_TEST_IS_REGULAR) ||
-                         Glib::file_test(m_file_gtox->get_text(), Glib::FILE_TEST_IS_REGULAR));
 
-                if (w) {
-                    set_page_complete(*w, true);
-                }
-            } else {
-                m_file_tox->set_text("");
-                m_file_gtox->set_text("");
-                if (w) {
-                    set_page_complete(*w, false);
-                }
+    auto w = m_builder.get_widget<Gtk::Widget>("assistant_first_page");
+    m_username->signal_changed().connect([this, w]() {
+        if (!m_username->get_text().empty()) {
+            int i = 0;
+            do {
+                auto name = m_username->get_text() + (i?std::to_string(i):"");
+                m_file_tox->set_text(Glib::build_filename(m_path, name + ".tox"));
+                m_tox_instance.open(m_file_tox->get_text(), false, true);
+                auto address = m_tox_instance.get_address();
+                m_file_gtox->set_text(Glib::build_filename(m_path, "gtox", Toxmm::to_hex(address.data(), TOX_PUBLIC_KEY_SIZE) + ".sqlite"));
+                i += 1;
+            } while (Glib::file_test(m_file_tox->get_text(), Glib::FILE_TEST_IS_REGULAR));
+
+            if (w) {
+                set_page_complete(*w, true);
             }
-        });
-    }
+        } else {
+            m_file_tox->set_text("");
+            m_file_gtox->set_text("");
+            if (w) {
+                set_page_complete(*w, false);
+            }
+        }
+    });
 }
 
 DialogProfileCreate* DialogProfileCreate::create(const Glib::ustring& path) {
@@ -70,26 +69,23 @@ DialogProfileCreate* DialogProfileCreate::create(const Glib::ustring& path) {
 DialogProfileCreate::~DialogProfileCreate() {
 }
 
-
-int DialogProfileCreate::on_next(int) {
-    return 0;
-}
-
 void DialogProfileCreate::on_cancel() {
     m_path.clear();
     hide();
 }
 
 void DialogProfileCreate::on_apply() {
-    m_path = m_file_tox->get_text().substr(0, m_file_tox->get_text().find_last_of("."));
-    Toxmm instance;
-    instance.open(m_path);
-    instance.set_name(m_username->get_text());
-    instance.set_status_message(m_status->get_text());
-    instance.database().open(m_path, true);
-    instance.database().config_set("LOG_CHAT", m_logging->get_active());
-    instance.save();
+    m_tox_instance.set_name(m_username->get_text());
+    m_tox_instance.set_status_message(m_status->get_text());
+    auto address = m_tox_instance.get_address();
+    m_tox_instance.database().close();
+    m_tox_instance.database().open(m_file_tox->get_text(), Toxmm::to_hex(address.data(), TOX_PUBLIC_KEY_SIZE), true);
+    m_tox_instance.database().config_set("LOG_CHAT", m_logging->get_active());
+    m_tox_instance.profile().open(m_file_tox->get_text());
+    m_tox_instance.save();
     m_aborted = false;
+    m_path = m_file_tox->get_text();
+    m_path.clear();
     hide();
 }
 

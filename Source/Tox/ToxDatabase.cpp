@@ -24,11 +24,16 @@
 #include <tox/tox.h>
 #include <fstream>
 #include <exception>
+#include <glibmm.h>
+#include <glib.h>
 
-void ToxDatabase::open(const std::string& path, bool init) {
+void ToxDatabase::open(const std::string& path, const std::string& address, bool init) {
     if (m_db) {
         throw std::runtime_error("Database already open");
     }
+
+    //TODO: 28.07.2015 START Remove after some weeks
+    //old path:
     m_path_db    = path;
     std::string state_ext = ".tox";
     bool f_tox = (m_path_db.size() > state_ext.size()
@@ -38,6 +43,26 @@ void ToxDatabase::open(const std::string& path, bool init) {
         m_path_db = m_path_db.substr(0, m_path_db.size() - 4);
     }
     m_path_db += ".gtox";
+    //TODO: 28.07.2015 END Remove after some weeks
+
+    //New path:
+    auto npath = Glib::build_filename(Glib::path_get_dirname(path), "gtox");
+    if (!Glib::file_test(npath, Glib::FILE_TEST_IS_DIR)) {
+        Gio::File::create_for_path(npath)->make_directory();
+    }
+    npath = Glib::build_filename(npath, address + ".sqlite");
+    if (address.empty()) {
+        npath = path;
+    }
+
+    //TODO: 28.07.2015 START Remove after some weeks
+    //move old path to new path
+    if (Glib::file_test(m_path_db, Glib::FILE_TEST_IS_REGULAR)) {
+        Gio::File::create_for_path(m_path_db)
+                            ->move(Gio::File::create_for_path(npath));
+    }
+    //TODO: 28.07.2015 END Remove after some weeks
+    m_path_db = npath;
 
     if (!Glib::file_test(m_path_db, Glib::FILE_TEST_IS_REGULAR)) {
         //force init
@@ -97,41 +122,10 @@ void ToxDatabase::close() {
     m_db.reset();
 }
 
-void ToxDatabase::move(const std::string& path) {
-    if (!m_db) {
-        throw std::runtime_error("Database not open !");
-    }
-
-    if (m_path_db == path + ".gtox") {
-        return;
-    }
-
-    // just to be save close database
+void ToxDatabase::save() {
     m_db.reset();
-    // try to move file
-    try {
-        //TODO ! MORE SECURE SOLUTION
-        if (Glib::file_test(m_path_db, Glib::FILE_TEST_IS_REGULAR)) {
-            if (!Gio::File::create_for_path(m_path_db)
-                    ->move(Gio::File::create_for_path(path + ".gtox"))) {
-                throw std::runtime_error("Database not open !");
-            }
-        }
-        if (Glib::file_test(m_path_state, Glib::FILE_TEST_IS_REGULAR)) {
-            if (!Gio::File::create_for_path(m_path_state)
-                    ->move(Gio::File::create_for_path(path + ".tox"))) {
-                throw std::runtime_error("Database not open !");
-            }
-        }
-        m_path_db    = path + ".gtox";
-        m_path_state = path + ".tox";
-        // open new database
-        m_db = std::make_shared<SQLite::Database>(m_path_db, SQLITE_OPEN_READWRITE);
-    } catch (...) {
-        // restore m_db state
-        m_db = std::make_shared<SQLite::Database>(m_path_db, SQLITE_OPEN_READWRITE);
-        throw;
-    }
+    m_db = std::make_shared<SQLite::Database>(
+        m_path_db, SQLITE_OPEN_READWRITE);
 }
 
 std::string ToxDatabase::config_get(const std::string& name,

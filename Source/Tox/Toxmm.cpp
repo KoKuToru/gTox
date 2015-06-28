@@ -27,15 +27,18 @@ Toxmm::Toxmm() {
 
 }
 
-void Toxmm::open(const Glib::ustring& profile_path, bool bootstrap) {
-    m_profile.open(profile_path);
-    /* load the toxcore profile */
-    if (!m_profile.can_read()) {
-        throw std::runtime_error("Couldn't read toxcore profile");
+void Toxmm::open(const Glib::ustring& profile_path, bool bootstrap, bool skip_profile) {
+    std::vector<unsigned char> state;
+
+    if (!skip_profile) {
+        m_profile.open(profile_path);
+        /* load the toxcore profile */
+        if (!m_profile.can_read()) {
+            throw std::runtime_error("Couldn't read toxcore profile");
+        }
+
+        state = m_profile.read();
     }
-    std::vector<unsigned char> state = m_profile.read();
-    /* try to open the db */
-    m_db.open(profile_path);
 
     TOX_ERR_OPTIONS_NEW nerror;
     auto options = std::shared_ptr<Tox_Options>(tox_options_new(&nerror),
@@ -50,14 +53,25 @@ void Toxmm::open(const Glib::ustring& profile_path, bool bootstrap) {
     options->udp_enabled  = true;
 
     // load state
-    options->savedata_type   = TOX_SAVEDATA_TYPE_TOX_SAVE;
-    options->savedata_data   = state.data();
-    options->savedata_length = state.size();
+    if (state.empty()) {
+        options->savedata_type   = TOX_SAVEDATA_TYPE_NONE;
+    } else {
+        options->savedata_type   = TOX_SAVEDATA_TYPE_TOX_SAVE;
+        options->savedata_data   = state.data();
+        options->savedata_length = state.size();
+    }
     TOX_ERR_NEW error;
     m_tox = tox_new(options.get(), &error);
 
     if (error != TOX_ERR_NEW_OK) {
         throw Exception(error);
+    }
+
+    /* try to open the db */
+    auto address = get_address();
+    m_db.close();
+    if (!skip_profile) {
+        m_db.open(profile_path, to_hex(address.data(), TOX_PUBLIC_KEY_SIZE));
     }
 
     // install callbacks
@@ -126,6 +140,7 @@ void Toxmm::save() {
     std::vector<unsigned char> state(tox_get_savedata_size(m_tox));
     tox_get_savedata(m_tox, (unsigned char*)state.data());
     m_profile.write(state);
+    m_db.save();
 }
 
 int Toxmm::update_optimal_interval() {

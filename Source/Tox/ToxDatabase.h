@@ -166,8 +166,9 @@ class ToxDatabase {
         return stmt;
     }
 
-    void open(const std::string& path, bool init = false);
+    void open(const std::string& path, const std::string& address = "", bool init = false);
     void close();
+    void save();
     void move(const std::string& path);
 
     /**

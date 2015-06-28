@@ -175,7 +175,7 @@ class Toxmm {
 
     Toxmm();
 
-    void open(const Glib::ustring& statefile, bool bootstrap = true);
+    void open(const Glib::ustring& statefile, bool bootstrap = true, bool skip_profile = false);
     void save();
 
     /**
