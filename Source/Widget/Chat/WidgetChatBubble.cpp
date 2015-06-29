@@ -23,6 +23,10 @@
 
 #include "Tox/Toxmm.h"
 
+namespace sigc {
+    SIGC_FUNCTORS_DEDUCE_RESULT_TYPE_WITH_DECLTYPE
+}
+
 WidgetChatBubble::WidgetChatBubble(gToxObservable* instance, Toxmm::FriendNr nr, Side left_side)
     : Glib::ObjectBase("WidgetChatLine"), m_side(left_side), m_row_count(0), m_avatar(instance, nr) {
 
@@ -65,6 +69,7 @@ WidgetChatBubble::WidgetChatBubble(gToxObservable* instance, Toxmm::FriendNr nr,
 }
 
 WidgetChatBubble::~WidgetChatBubble() {
+    signal_update_avatar_size.disconnect();
 }
 
 WidgetChatBubble::Side WidgetChatBubble::get_side() {
@@ -163,16 +168,18 @@ void WidgetChatBubble::add_message(Line new_line) {
 }
 
 void WidgetChatBubble::on_size_allocate(Gtk::Allocation& allocation) {
+    Gtk::Box::on_size_allocate(allocation);
+
     int w = std::min(64, allocation.get_height() - 5); //5px radius
 
     //update widget size:
     if (w != m_avatar.get_width()) {
-        Glib::signal_idle().connect_once([this, w](){
+        signal_update_avatar_size.disconnect();
+        signal_update_avatar_size = Glib::signal_idle().connect([this, w](){
             m_avatar.set_size_request(w, w);
+            return false;
         });
     }
-
-    Gtk::Box::on_size_allocate(allocation);
 }
 
 unsigned long long WidgetChatBubble::last_timestamp() {

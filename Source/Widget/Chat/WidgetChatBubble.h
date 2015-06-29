@@ -56,6 +56,8 @@ class WidgetChatBubble : public Gtk::Box, public gToxObserver {
 
         unsigned long long last_timestamp();
 
+        sigc::connection signal_update_avatar_size;
+
     private:
       Side m_side;
 
