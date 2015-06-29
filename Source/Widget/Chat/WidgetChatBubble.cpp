@@ -19,7 +19,6 @@
 **/
 #include "WidgetChatBubble.h"
 #include "WidgetChatLabel.h"
-#include "WidgetChatFileRecv.h"
 
 #include "Tox/Toxmm.h"
 
@@ -70,6 +69,10 @@ WidgetChatBubble::WidgetChatBubble(gToxObservable* instance, Toxmm::FriendNr nr,
 
 WidgetChatBubble::~WidgetChatBubble() {
     signal_update_avatar_size.disconnect();
+    //improve close performance
+    for (auto item : m_filerecv) {
+        item->before_deconstructor();
+    }
 }
 
 WidgetChatBubble::Side WidgetChatBubble::get_side() {
@@ -217,6 +220,8 @@ void WidgetChatBubble::add_filerecv(Toxmm::EventFileRecv file) {
     auto msg  = Gtk::manage(msg_builder.raw());
     auto time = Gtk::manage(new Gtk::Label());
     m_last_timestamp = msg_time.to_unix();
+
+    m_filerecv.push_back(msg);
 
     // get local time
     msg_time = Glib::DateTime::create_now_local(m_last_timestamp);

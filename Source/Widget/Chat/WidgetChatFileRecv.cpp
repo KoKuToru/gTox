@@ -337,6 +337,9 @@ void WidgetChatFileRecv::observer_handle(const ToxEvent& event) {
                 m_thread = Glib::Thread::create([this](){
                     static std::mutex mutex;
                     std::lock_guard<std::mutex> lg2(mutex); //don't do too much at the same time
+                    if (!m_run) {
+                        return;
+                    }
 
                     auto target_size = 512;
                     //try image
@@ -363,6 +366,10 @@ void WidgetChatFileRecv::observer_handle(const ToxEvent& event) {
                             }
                         }
                     } catch (...) {}
+
+                    if (!m_run) {
+                        return;
+                    }
 
                     //try video
                     bool has_audio;
@@ -417,14 +424,17 @@ gToxBuilderRef<WidgetChatFileRecv> WidgetChatFileRecv::create(gToxObservable* in
 }
 
 WidgetChatFileRecv::~WidgetChatFileRecv() {
-    {
-        m_set_image_connection.disconnect();
-        m_update_video_interval.disconnect();
-        m_update_video.disconnect();
-        m_try_video.disconnect();
-    }
+    before_deconstructor();
     if (m_thread != nullptr) {
         //wait for thread
         m_thread->join();
     }
+}
+
+void WidgetChatFileRecv::before_deconstructor() {
+    m_set_image_connection.disconnect();
+    m_update_video_interval.disconnect();
+    m_update_video.disconnect();
+    m_try_video.disconnect();
+    m_run = false;
 }

@@ -76,6 +76,7 @@ class WidgetChatFileRecv: public Gtk::Frame, public gToxObserver {
 
         bool m_first_emit = true;
         bool m_finish = false;
+        bool m_run = true;
 
     public:
         WidgetChatFileRecv(BaseObjectType* cobject,
@@ -88,6 +89,7 @@ class WidgetChatFileRecv: public Gtk::Frame, public gToxObserver {
 
         void observer_handle(const ToxEvent&) override;
 
+        void before_deconstructor();
         ~WidgetChatFileRecv();
 
     protected:

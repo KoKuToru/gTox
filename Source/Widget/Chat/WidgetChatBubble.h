@@ -26,6 +26,7 @@
 #include "Tox/Toxmm.h"
 #include "Helper/gToxObserver.h"
 #include "Widget/WidgetAvatar.h"
+#include "Widget/Chat/WidgetChatFileRecv.h"
 
 class WidgetChatLabel;
 
@@ -57,6 +58,8 @@ class WidgetChatBubble : public Gtk::Box, public gToxObserver {
         unsigned long long last_timestamp();
 
         sigc::connection signal_update_avatar_size;
+
+        std::vector<WidgetChatFileRecv*> m_filerecv;
 
     private:
       Side m_side;
