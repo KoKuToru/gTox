@@ -24,30 +24,27 @@
 WidgetAvatar::WidgetAvatar(gToxObservable* observable,
                            Toxmm::FriendNr nr)
     : gToxObserver(observable),
-      m_builder(Glib::RefPtr<Gtk::Builder>()),
       m_path(get_avatar_path(observable, nr)) {
     //load image
     load();
     show();
 }
 
-WidgetAvatar::WidgetAvatar(BaseObjectType* cobject, gToxBuilder builder,
+WidgetAvatar::WidgetAvatar(BaseObjectType* cobject, gToxBuilder,
                            gToxObservable* observable,
                            Toxmm::FriendNr nr)
     : Gtk::Image(cobject),
       gToxObserver(observable),
-      m_builder(builder),
       m_path(get_avatar_path(observable, nr)) {
     //load image
     load();
     show();
 }
 
-WidgetAvatar::WidgetAvatar(BaseObjectType* cobject, gToxBuilder builder,
+WidgetAvatar::WidgetAvatar(BaseObjectType* cobject, gToxBuilder,
                            const Glib::ustring& path) :
     Gtk::Image(cobject),
     gToxObserver(nullptr),
-    m_builder(builder),
     m_path(path) {
     //load image
     load();

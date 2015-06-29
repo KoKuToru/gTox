@@ -19,7 +19,7 @@
 **/
 #include "WidgetNotification.h"
 
-WidgetNotification* WidgetNotification::create(gToxObservable* instance, DialogContact::EventAddNotification event) {
+gToxBuilderRef<WidgetNotification> WidgetNotification::create(gToxObservable* instance, DialogContact::EventAddNotification event) {
     return gToxBuilder(Gtk::Builder::create_from_resource("/org/gtox/ui/list_item_notification.ui"))
             .get_widget_derived<WidgetNotification>("contact_list_item",
                                                     instance,
@@ -30,9 +30,12 @@ WidgetNotification::WidgetNotification(BaseObjectType* cobject, gToxBuilder buil
                                        gToxObservable* observable,
                                        DialogContact::EventAddNotification event)
     : Gtk::ListBoxRow(cobject),
-      gToxObserver(observable),
-      m_builder(builder) {
-
+      gToxObserver(observable) {
+    builder.get_widget("title", m_title);
+    builder.get_widget("message", m_message);
+    builder.get_widget("image", m_image);
+    builder.get_widget("icon", m_icon);
+    builder->get_widget("action_bar", m_action_bar);
     set_event(event);
     show();
 }
@@ -48,34 +51,22 @@ WidgetNotification::~WidgetNotification() {
 void WidgetNotification::set_event(DialogContact::EventAddNotification event) {
     m_event = event;
 
-    Gtk::Label* title;
-    Gtk::Label* message;
-    Gtk::Image* image;
-    Gtk::Image* icon;
-
-    m_builder.get_widget("title", title);
-    m_builder.get_widget("message", message);
-    m_builder.get_widget("image", image);
-    m_builder.get_widget("icon", icon);
-
     m_notify = std::make_shared<Notify::Notification>(m_event.title, m_event.message);
 
-    title->set_text(m_event.title);
-    message->set_text(m_event.message);
+    m_title->set_text(m_event.title);
+    m_message->set_text(m_event.message);
     if (m_event.image) {
-        image->property_pixbuf() = m_event.image->scale_simple(
+        m_image->property_pixbuf() = m_event.image->scale_simple(
                                        64,
                                        64,
                                        Gdk::INTERP_BILINEAR);
-        m_notify->set_image_from_pixbuf(image->property_pixbuf());
+        m_notify->set_image_from_pixbuf(m_image->property_pixbuf());
     } else {
         m_notify->set_image_from_pixbuf(Gdk::Pixbuf::create_from_resource("/org/gtox/icon/icon_128.svg"));
     }
 
-    icon->property_pixbuf() = Gdk::Pixbuf::create_from_resource("/org/gtox/icon/notification.svg");
+    m_icon->property_pixbuf() = Gdk::Pixbuf::create_from_resource("/org/gtox/icon/notification.svg");
 
-    Gtk::Box* action_bar;
-    m_builder->get_widget("action_bar", action_bar);
     //handle actions
     for (auto action : event.actions) {
         m_notify->add_action(action.first, action.first, [this, action](const Glib::ustring&){
@@ -95,7 +86,7 @@ void WidgetNotification::set_event(DialogContact::EventAddNotification event) {
             });
         });
         action_btn->show();
-        action_bar->add(*action_btn);
+        m_action_bar->add(*action_btn);
     }
 
     m_notify->signal_closed().connect([this](){

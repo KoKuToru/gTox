@@ -129,13 +129,12 @@ void gTox::on_activate() {
     add_window(*profile);
     profile->present();
 
+    auto profile_ptr = profile.raw();
     if (profile->get_path().empty()) {
-        profile->signal_hide().connect_notify([this, profile](){
-            remove_window(*profile);
-
-            if (!profile->get_path().empty()) {
-                open(Gio::File::create_for_path(profile->get_path()));
-            } else if (!profile->is_aborted()) {
+        profile->signal_hide().connect_notify([this, profile_ptr](){
+            if (!profile_ptr->get_path().empty()) {
+                open(Gio::File::create_for_path(profile_ptr->get_path()));
+            } else if (!profile_ptr->is_aborted()) {
                 mark_busy();
                 auto assistant = DialogProfileCreate::create(m_config_path);
                 unmark_busy();
@@ -144,10 +143,10 @@ void gTox::on_activate() {
 
                 assistant->present();
 
-                assistant->signal_hide().connect_notify([this, assistant]() {
-                    remove_window(*assistant);
-                    Glib::ustring path = assistant->get_path();
-                    delete assistant;
+                auto assistant_ptr = assistant.raw();
+                assistant->signal_hide().connect_notify([this, assistant_ptr]() {
+                    Glib::ustring path = assistant_ptr->get_path();
+                    remove_window(*assistant_ptr);
 
                     if (!path.empty()) {
                         open(Gio::File::create_for_path(path));
@@ -156,15 +155,13 @@ void gTox::on_activate() {
                     }
                 }, true);
             }
-
-            delete profile;
+            remove_window(*profile_ptr);
         }, true);
         profile->show();
     } else {
         if (!profile->is_aborted()) {
             activate();
         }
-        delete profile;
     }
 
     Gtk::Application::on_activate();

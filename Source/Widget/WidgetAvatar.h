@@ -26,7 +26,6 @@
 
 class WidgetAvatar : public Gtk::Image, public gToxObserver {
     private:
-        gToxBuilder m_builder;
         Glib::ustring m_path;
 
         void load(bool force_reload=false);

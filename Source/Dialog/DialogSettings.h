@@ -25,8 +25,9 @@
 
 class DialogSettings : public Gtk::Window, public gToxObserver {
   private:
-        gToxBuilder m_builder;
         bool m_in_window = false;
+
+        gToxBuilder m_builder;
 
         Gtk::HeaderBar* m_headerbar = nullptr;
         Gtk::Box*       m_body = nullptr;

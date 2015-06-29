@@ -206,7 +206,8 @@ void WidgetChatBubble::add_filerecv(Toxmm::EventFileRecv file) {
     }
 
     // create a new row
-    auto msg  = Gtk::manage(WidgetChatFileRecv::create(observable(), file));
+    auto msg_builder = WidgetChatFileRecv::create(observable(), file);
+    auto msg  = Gtk::manage(msg_builder.raw());
     auto time = Gtk::manage(new Gtk::Label());
     m_last_timestamp = msg_time.to_unix();
 

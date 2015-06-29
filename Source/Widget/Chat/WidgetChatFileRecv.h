@@ -27,7 +27,6 @@
 
 class WidgetChatFileRecv: public Gtk::Frame, public gToxObserver {
     private:
-        gToxBuilder m_builder;
         gToxFileRecv m_recv;
 
         uint32_t m_friend_nr;
@@ -43,6 +42,9 @@ class WidgetChatFileRecv: public Gtk::Frame, public gToxObserver {
         Gtk::ToggleButton* m_file_video_pause;
 
         Gtk::ProgressBar* m_file_progress;
+        Gtk::Revealer* m_revealer_download;
+        Gtk::Spinner* m_spinner;
+        Gtk::Widget* m_file_open_bar;
 
         Gtk::Label* m_file_speed;
         Gtk::Label* m_file_time;
@@ -78,7 +80,7 @@ class WidgetChatFileRecv: public Gtk::Frame, public gToxObserver {
                            gToxObservable* observable,
                            Toxmm::EventFileRecv file);
 
-        static WidgetChatFileRecv* create(gToxObservable* instance,
+        static gToxBuilderRef<WidgetChatFileRecv> create(gToxObservable* instance,
                                           Toxmm::EventFileRecv file);
 
         void observer_handle(const ToxEvent&) override;

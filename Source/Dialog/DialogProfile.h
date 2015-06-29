@@ -26,14 +26,15 @@
 // Single chat window
 class DialogProfile : public Gtk::Window {
   private:
-    gToxBuilder m_builder;
-
     std::vector<std::string> m_accounts;
     bool m_abort;
     bool m_quited;
     std::string m_selected_path;
     Glib::Thread* m_thread = nullptr;
     std::list<sigc::connection> m_events;
+
+    Gtk::ListBox* m_profile_list;
+    Gtk::Revealer* m_revealer;
 
     void quit();
 
@@ -43,7 +44,7 @@ class DialogProfile : public Gtk::Window {
     DialogProfile(BaseObjectType* cobject, gToxBuilder builder,
                   const std::vector<std::string>& accounts);
 
-    static DialogProfile* create(const std::vector<std::string>& accounts);
+    static gToxBuilderRef<DialogProfile> create(const std::vector<std::string>& accounts);
 
     ~DialogProfile();
 
