@@ -69,7 +69,7 @@ VideoPlayer::~VideoPlayer() {
 
 static gStreamerHelper streamer;
 
-bool VideoPlayer::set_uri(Glib::ustring uri) {
+bool VideoPlayer::set_uri(Glib::ustring uri, bool generate_preview) {
     stop();
 
     m_uri = uri;
@@ -79,7 +79,7 @@ bool VideoPlayer::set_uri(Glib::ustring uri) {
     m_signal_connection.disconnect();
     m_error_connection.disconnect();
 
-    m_streamer = streamer.create(uri);
+    m_streamer = streamer.create(uri, generate_preview);
 
     m_signal_connection = m_streamer->signal_update().connect([this](int w, int h, const std::vector<unsigned char>& frame) {
         m_lastimg_data = frame;

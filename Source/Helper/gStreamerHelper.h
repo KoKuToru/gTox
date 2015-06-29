@@ -40,7 +40,7 @@ class gStreamerHelper {
         static std::vector<Device> probe_devices(const char* classes = CLASS_VIDEO_INPUT);
         static Device probe_device_by_name(Glib::ustring name);
 
-        const std::shared_ptr<gStreamerVideo> create(std::string uri);
+        const std::shared_ptr<gStreamerVideo> create(std::string uri, bool generate_preview=true);
 
         ~gStreamerHelper();
 };

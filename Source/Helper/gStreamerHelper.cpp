@@ -39,7 +39,7 @@ gStreamerHelper::Device gStreamerHelper::probe_device_by_name(Glib::ustring name
     throw std::runtime_error("Gst Device not found");
 }
 
-const std::shared_ptr<gStreamerVideo> gStreamerHelper::create(std::string uri) {
+const std::shared_ptr<gStreamerVideo> gStreamerHelper::create(std::string uri, bool generate_preview) {
     std::lock_guard<std::recursive_mutex> lg(m_mutex);
 
     auto iter = m_videos.find(uri);
@@ -47,7 +47,7 @@ const std::shared_ptr<gStreamerVideo> gStreamerHelper::create(std::string uri) {
         return iter->second.lock();
     }
 
-    auto tmp = std::shared_ptr<gStreamerVideo>(new gStreamerVideo(uri), [this, uri](const gStreamerVideo* ori){
+    auto tmp = std::shared_ptr<gStreamerVideo>(new gStreamerVideo(uri, generate_preview), [this, uri](const gStreamerVideo* ori){
         std::lock_guard<std::recursive_mutex> lg(m_mutex);
         auto iter = m_videos.find(uri);
         if (iter != m_videos.end()) {

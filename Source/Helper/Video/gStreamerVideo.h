@@ -27,7 +27,14 @@ class gStreamerVideo {
             return m_error;
         }
 
-        gStreamerVideo(std::string uri);
+        gStreamerVideo(std::string uri, bool generate_preview=true);
+
+        /**
+          * Checks if the uri has a video/audio stream
+          *
+          * ! WARNING IS BLOCKING !
+          **/
+        static std::pair<bool, bool> has_video_audio(std::string uri);
 
         void play();
         void pause();

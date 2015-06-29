@@ -6,6 +6,7 @@
 #include <gstreamermm/playbin.h>
 #include <gstreamermm/appsink.h>
 #include <gstreamermm/elementfactory.h>
+#include <gstreamermm/uridecodebin.h>
 #include <cstring>
 #include <glibmm/i18n.h>
 
@@ -121,7 +122,7 @@ void gStreamerVideo::init_bus(Glib::RefPtr<Gst::Bus> bus) {
     });
 }
 
-gStreamerVideo::gStreamerVideo(std::string uri):
+gStreamerVideo::gStreamerVideo(std::string uri, bool generate_preview):
     m_alive(std::make_shared<bool>(true)) {
 
     //init appsink
@@ -153,7 +154,9 @@ gStreamerVideo::gStreamerVideo(std::string uri):
     init_bus(m_playbin->get_bus());
 
     stop();
-    set_state(Gst::STATE_PLAYING);
+    if (generate_preview) {
+        set_state(Gst::STATE_PLAYING);
+    }
 }
 
 
@@ -195,3 +198,53 @@ void gStreamerVideo::set_state(Gst::State state) {
 bool gStreamerVideo::get_progress(gint64& position, gint64& duration) {
     return m_playbin && m_playbin->query_position(Gst::FORMAT_TIME, position) && m_playbin->query_duration(Gst::FORMAT_TIME, duration);
 }
+
+
+std::pair<bool, bool> gStreamerVideo::has_video_audio(std::string uri) {
+    //http://gstreamer.freedesktop.org/data/doc/gstreamer/head/manual/html/chapter-metadata.html
+    auto pipeline = Gst::Pipeline::create();
+    auto decoder  = Gst::UriDecodeBin::create();
+    auto sink     = Gst::ElementFactory::create_element("fakesink");
+
+    pipeline->add(decoder);
+    pipeline->add(sink);
+
+    decoder->property_uri() = uri;
+
+    decoder->signal_pad_added().connect([sink](const Glib::RefPtr<Gst::Pad>& pad) {
+        //Why am I doing this here ?
+        auto sinkpad = sink->get_static_pad("sink");
+        if (!sinkpad->is_linked()) {
+            if (pad->link(sinkpad) != Gst::PAD_LINK_OK) {
+                g_error("Failed to link pads !");
+            }
+        }
+    });
+
+    pipeline->set_state(Gst::STATE_PAUSED);
+
+    bool found_video_stream  = false;
+    bool found_audio_stream  = false;
+    while (true) {
+        auto msg = pipeline->get_bus()->pop(Gst::CLOCK_TIME_NONE, Gst::MESSAGE_ASYNC_DONE | Gst::MESSAGE_TAG | Gst::MESSAGE_ERROR);
+
+        if (msg->get_message_type() != Gst::MESSAGE_TAG) {
+            break;
+        }
+
+        auto tag = Glib::RefPtr<Gst::MessageTag>::cast_static(msg);
+        auto tag_list = tag->parse();
+        tag_list.foreach([&](const Glib::ustring& tag){
+            if (tag == "video-codec") {
+                found_video_stream = true;
+            } else if (tag == "audio-codec") {
+                found_audio_stream = true;
+            }
+        });
+    }
+
+    pipeline->set_state(Gst::STATE_NULL);
+
+    return {found_video_stream, found_audio_stream};
+}
+

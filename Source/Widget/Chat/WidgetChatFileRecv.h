@@ -54,7 +54,7 @@ class WidgetChatFileRecv: public Gtk::Frame, public gToxObserver {
         type_signal_set_image signal_set_image() {
             return m_signal_set_image;
         }
-        typedef sigc::signal<void> type_signal_try_video;
+        typedef sigc::signal<void, bool, bool> type_signal_try_video;
         type_signal_try_video signal_try_video() {
             return m_signal_try_video;
         }
@@ -63,6 +63,7 @@ class WidgetChatFileRecv: public Gtk::Frame, public gToxObserver {
         sigc::connection m_try_video;
         sigc::connection m_update_interval;
         sigc::connection m_update_video_interval;
+        sigc::connection m_update_video;
 
         VideoPlayer* m_player;
 

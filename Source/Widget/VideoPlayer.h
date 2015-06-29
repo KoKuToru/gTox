@@ -48,7 +48,7 @@ class VideoPlayer : public Gtk::DrawingArea {
         VideoPlayer(BaseObjectType* cobject, gToxBuilder builder);
         virtual ~VideoPlayer();
 
-        bool set_uri(Glib::ustring uri);
+        bool set_uri(Glib::ustring uri, bool generate_preview = true);
 
         void play();
         void pause();

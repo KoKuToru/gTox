@@ -129,21 +129,30 @@ WidgetChatFileRecv::WidgetChatFileRecv(BaseObjectType* cobject,
     });
 
     m_player = m_builder.get_widget_derived<VideoPlayer>("video");
-    m_try_video = signal_try_video().connect([this]() {
-        m_player->set_uri("file://"+m_recv.get_path());
-        m_player->get_streamer()->signal_error().connect([this](std::string) {
-            //not okay
-            m_builder.get_widget<Gtk::Widget>("spinner")->hide();
-        });
-        m_player->get_streamer()->signal_update().connect([this](int,int,const std::vector<unsigned char>&){
-            m_builder.get_widget<Gtk::Widget>("spinner")->hide();
-            m_builder.get_widget<Gtk::Revealer>("revealer_video")->set_reveal_child(true);
-
+    m_try_video = signal_try_video().connect([this](bool has_video, bool has_audio) {
+        if (has_video || has_audio) {
+            m_player->set_uri(Glib::filename_to_uri(m_recv.get_path()), has_video);
+            m_player->get_streamer()->signal_error().connect([this](std::string) {
+                //not okay
+                m_builder.get_widget<Gtk::Widget>("spinner")->hide();
+                m_builder.get_widget<Gtk::Revealer>("revealer_video")->set_reveal_child(false);
+            });
+            if (has_video) {
+                m_update_video = m_player->get_streamer()->signal_update().connect([this](int,int,const std::vector<unsigned char>&) {
+                    //m_update_video.disconnect();
+                    m_builder.get_widget<Gtk::Widget>("spinner")->hide();
+                    m_builder.get_widget<Gtk::Revealer>("revealer_video")->set_reveal_child(true);
+                });
+                m_player->get_streamer()->emit_update_signal();
+            } else {
+                m_builder.get_widget<Gtk::Widget>("spinner")->hide();
+            }
+            //audio only
             auto video_seek = m_builder.get_widget<Gtk::Scale>("video_seek");
             auto video_position = m_builder.get_widget<Gtk::Label>("video_position");
             auto video_duration = m_builder.get_widget<Gtk::Label>("video_duration");
             auto video_pos_dur = m_builder.get_widget<Gtk::Widget>("video_pos_dur");
-            m_update_video_interval = Glib::signal_timeout().connect([this, video_seek, video_position, video_duration, video_pos_dur](){
+            m_update_video_interval = Glib::signal_timeout().connect([this, video_seek, video_position, video_duration, video_pos_dur]() {
                 gint64 pos = 0, dur = 0;
                 if (m_player->get_streamer()->get_progress(pos, dur)) {
                     video_seek->get_adjustment()->set_upper(dur);
@@ -162,8 +171,9 @@ WidgetChatFileRecv::WidgetChatFileRecv(BaseObjectType* cobject,
                 }
                 return true;
             }, 1000);
-        });
-        m_player->get_streamer()->emit_update_signal();
+        } else {
+            m_builder.get_widget<Gtk::Widget>("spinner")->hide();
+        }
     });
 
     m_builder.get_widget("file_speed", m_file_speed);
@@ -210,7 +220,7 @@ WidgetChatFileRecv::WidgetChatFileRecv(BaseObjectType* cobject,
 
     m_builder.get_widget<Gtk::Button>("file_dir")->signal_clicked().connect([this](){
         try {
-            Gio::AppInfo::get_default_for_type("inode/directory", true)->launch_uri("file://"+m_recv.get_path());
+            Gio::AppInfo::get_default_for_type("inode/directory", true)->launch_uri(Glib::filename_to_uri(m_recv.get_path()));
         } catch (...) {
             //TODO: display error !
         }
@@ -218,7 +228,7 @@ WidgetChatFileRecv::WidgetChatFileRecv(BaseObjectType* cobject,
 
     m_builder.get_widget<Gtk::Button>("file_open")->signal_clicked().connect([this](){
         try {
-            Gio::AppInfo::launch_default_for_uri("file://"+m_recv.get_path());
+            Gio::AppInfo::launch_default_for_uri(Glib::filename_to_uri(m_recv.get_path()));
         } catch (...) {
             //TODO: display error !
         }
@@ -334,8 +344,11 @@ void WidgetChatFileRecv::observer_handle(const ToxEvent& event) {
                     } catch (...) {}
 
                     //try video
+                    bool has_audio;
+                    bool has_video;
+                    std::tie(has_video, has_audio) = gStreamerVideo::has_video_audio(Glib::filename_to_uri(m_recv.get_path()));
                     std::lock_guard<std::mutex> lg(m_mutex);
-                    m_signal_try_video.emit();
+                    m_signal_try_video.emit(has_video, has_audio);
                 });
             } else {
                 //nothing todo
@@ -385,6 +398,9 @@ WidgetChatFileRecv::~WidgetChatFileRecv() {
     {
         std::lock_guard<std::mutex> lg(m_mutex);
         m_set_image_connection.disconnect();
+        m_update_video_interval.disconnect();
+        m_update_video.disconnect();
+        m_try_video.disconnect();
     }
     if (m_thread != nullptr) {
         //wait for thread
