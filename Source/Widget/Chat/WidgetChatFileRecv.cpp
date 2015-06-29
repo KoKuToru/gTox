@@ -143,6 +143,7 @@ WidgetChatFileRecv::WidgetChatFileRecv(BaseObjectType* cobject,
     m_try_video = signal_try_video().connect([this, revelear_video, video_seek, video_position, video_duration, video_pos_dur](bool has_video, bool has_audio) {
         if (has_video || has_audio) {
             m_player->set_uri(Glib::filename_to_uri(m_recv.get_path()), has_video);
+            m_player->set_auto_reset(false);
             m_player->get_streamer()->signal_error().connect([this, revelear_video](std::string) {
                 //not okay
                 m_spinner->hide();
@@ -156,14 +157,15 @@ WidgetChatFileRecv::WidgetChatFileRecv(BaseObjectType* cobject,
                 });
                 m_player->get_streamer()->emit_update_signal();
             } else {
+                //audio only
+                revelear_video->set_reveal_child(true);
                 m_spinner->hide();
             }
-            //audio only
 
             m_update_video_interval = Glib::signal_timeout().connect([this, video_seek, video_position, video_duration, video_pos_dur]() {
-                return false;
                 gint64 pos = 0, dur = 0;
-                if (m_player->get_streamer()->get_progress(pos, dur)) {
+                auto streamer = m_player->get_streamer();
+                if (streamer && streamer->get_progress(pos, dur)) {
                     video_seek->get_adjustment()->set_upper(dur);
                     video_seek->get_adjustment()->set_value(pos);
                     video_position->set_text(
@@ -294,7 +296,7 @@ WidgetChatFileRecv::WidgetChatFileRecv(BaseObjectType* cobject,
 
     m_recv.emit_progress();
 }
-
+#include <iostream>
 void WidgetChatFileRecv::observer_handle(const ToxEvent& event) {
     //nothing yet
     if (event.type() == typeid(gToxFileRecv::EventFileProgress)) {
@@ -358,6 +360,7 @@ void WidgetChatFileRecv::observer_handle(const ToxEvent& event) {
                     std::tie(has_video, has_audio) = gStreamerVideo::has_video_audio(Glib::filename_to_uri(m_recv.get_path()));
                     std::lock_guard<std::mutex> lg(m_mutex);
                     m_signal_try_video.emit(has_video, has_audio);
+                    std::clog << m_recv.get_path() << " has_video:" << has_video << " has_audio:" << has_audio << std::endl;
                 });
             } else {
                 //nothing todo

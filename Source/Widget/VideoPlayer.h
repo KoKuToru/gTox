@@ -30,6 +30,7 @@ class VideoPlayer : public Gtk::DrawingArea {
         std::vector<unsigned char>  m_lastimg_data;
         Glib::RefPtr<Gdk::Pixbuf>   m_lastimg;
         bool m_playing;
+        bool m_auto_reset = true;
 
         int m_w = 1;
         int m_h = 1;
@@ -49,6 +50,9 @@ class VideoPlayer : public Gtk::DrawingArea {
         virtual ~VideoPlayer();
 
         bool set_uri(Glib::ustring uri, bool generate_preview = true);
+
+        //default = true
+        void set_auto_reset(bool enable);
 
         void play();
         void pause();

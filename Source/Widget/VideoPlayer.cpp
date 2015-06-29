@@ -38,13 +38,15 @@ void VideoPlayer::init() {
     m_playing = false;
 
     signal_unmap().connect_notify([this](){
-        m_signal_connection.disconnect();
-        m_error_connection.disconnect();
-        m_streamer.reset();
+        if (m_auto_reset) {
+            m_signal_connection.disconnect();
+            m_error_connection.disconnect();
+            m_streamer.reset();
+        }
     });
 
     signal_map().connect_notify([this](){
-        if (!m_uri.empty()) {
+        if (m_auto_reset && !m_uri.empty()) {
             bool playing = m_playing;
             set_uri(m_uri);
             if (playing) {
@@ -64,6 +66,7 @@ VideoPlayer::VideoPlayer() : Glib::ObjectBase("VideoPlayer") {
 
 VideoPlayer::~VideoPlayer() {
     m_signal_connection.disconnect();
+    m_error_connection.disconnect();
     m_streamer.reset();
 }
 
@@ -197,4 +200,8 @@ bool VideoPlayer::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
 
 std::shared_ptr<gStreamerVideo> VideoPlayer::get_streamer() {
     return m_streamer;
+}
+
+void VideoPlayer::set_auto_reset(bool enable) {
+    m_auto_reset = enable;
 }
