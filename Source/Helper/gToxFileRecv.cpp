@@ -90,6 +90,9 @@ gToxFileRecv::gToxFileRecv(gToxObservable* observable,
 }
 
 gToxFileRecv::~gToxFileRecv() {
+    try {
+        pause();
+    } catch (...) {}
     if (m_fd != -1) {
         close(m_fd);
         m_fd = -1;
