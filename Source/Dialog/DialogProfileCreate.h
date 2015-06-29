@@ -27,7 +27,6 @@
 
 class DialogProfileCreate : public Gtk::Assistant {
   private:
-    gToxBuilder m_builder;
     bool m_aborted;
     Glib::ustring m_path;
 
@@ -49,7 +48,7 @@ class DialogProfileCreate : public Gtk::Assistant {
     DialogProfileCreate(BaseObjectType* cobject, gToxBuilder builder,
                         const Glib::ustring& path);
 
-    static DialogProfileCreate* create(const Glib::ustring& path);
+    static gToxBuilderRef<DialogProfileCreate> create(const Glib::ustring& path);
 
     bool is_aborted();
     Glib::ustring get_path();

@@ -28,15 +28,20 @@
 
 class WidgetNotification : public Gtk::ListBoxRow, public gToxObserver {
   private:
-    gToxBuilder m_builder;
     DialogContact::EventAddNotification m_event;
     std::shared_ptr<Notify::Notification> m_notify;
+
+    Gtk::Label* m_title;
+    Gtk::Label* m_message;
+    Gtk::Image* m_image;
+    Gtk::Image* m_icon;
+    Gtk::Box* m_action_bar;
 
   public:
     WidgetNotification(BaseObjectType* cobject, gToxBuilder builder,
                        gToxObservable* observable,
                        DialogContact::EventAddNotification event);
-    static WidgetNotification* create(gToxObservable* observable, DialogContact::EventAddNotification event);
+    static gToxBuilderRef<WidgetNotification> create(gToxObservable* observable, DialogContact::EventAddNotification event);
 
     ~WidgetNotification();
 

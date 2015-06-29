@@ -34,15 +34,22 @@ namespace sigc {
 }
 
 DialogContact::DialogContact(BaseObjectType* cobject, gToxBuilder builder, const Glib::ustring& file)
-    : Gtk::Window(cobject), m_builder(builder) {
+    : Gtk::Window(cobject) {
     m_tox_callback = observer_add([this](const ToxEvent& ev) { tox_event_handling(ev); });
 
     tox().open(file);
 
-    m_builder.get_widget("headerbar", m_headerbar);
-    m_builder.get_widget("status_btn", m_btn_status);
-    m_builder.get_widget("stack_header", m_stack_header);
-    m_builder.get_widget("stack", m_stack);
+    builder.get_widget("headerbar", m_headerbar);
+    builder.get_widget("status_btn", m_btn_status);
+    builder.get_widget("stack_header", m_stack_header);
+    builder.get_widget("stack", m_stack);
+    builder.get_widget("list", m_list_contact);
+    builder.get_widget("headerbar", m_headerbar);
+    builder.get_widget("stack_header", m_stack_header);
+    builder.get_widget("list", m_list_contact);
+    builder.get_widget("list_active_chat", m_list_contact_active);
+    builder.get_widget("list_notify", m_list_notify);
+    builder.get_widget("contact_scroll", m_list_contact_scroll);
 
     set_icon(Gdk::Pixbuf::create_from_resource("/org/gtox/icon/icon_128.svg"));
 
@@ -55,17 +62,14 @@ DialogContact::DialogContact(BaseObjectType* cobject, gToxBuilder builder, const
     m_headerbar->set_subtitle(tox().get_status_message());
 
     //Connect the 2 paneds
-    auto paned_top = m_builder.get_widget<Gtk::Paned>("paned_top");
-    auto paned_bottom = m_builder.get_widget<Gtk::Paned>("paned_bottom");
+    auto paned_top = builder.get_widget<Gtk::Paned>("paned_top");
+    auto paned_bottom = builder.get_widget<Gtk::Paned>("paned_bottom");
 
     m_position_binding = Glib::Binding::bind_property(paned_top->property_position(),
                                                       paned_bottom->property_position(),
                                                       Glib::BINDING_DEFAULT |
                                                       Glib::BINDING_BIDIRECTIONAL |
                                                       Glib::BINDING_SYNC_CREATE);
-
-    m_builder.get_widget("headerbar", m_headerbar);
-    m_builder.get_widget("stack_header", m_stack_header);
 
     m_stack_header->signal_map().connect_notify([this](){
         m_headerbar->get_style_context()->add_class("gtox-headerbar-right");
@@ -83,7 +87,7 @@ DialogContact::DialogContact(BaseObjectType* cobject, gToxBuilder builder, const
         m_popover_status->set_visible();
     });
 
-    auto setting_btn = m_builder.get_widget<Gtk::Button>("setting_btn");
+    auto setting_btn = builder.get_widget<Gtk::Button>("setting_btn");
     setting_btn->signal_clicked().connect([this, setting_btn]() {
         if (!m_popover_settings) {
             m_popover_settings = std::make_shared<PopoverSettings>(this, *setting_btn);
@@ -91,24 +95,21 @@ DialogContact::DialogContact(BaseObjectType* cobject, gToxBuilder builder, const
         m_popover_settings->set_visible();
     });
 
-    auto list = m_builder.get_widget<Gtk::ListBox>("list");
-    auto list_active_chat  = m_builder.get_widget<Gtk::ListBox>("list_active_chat");
-    auto list_notify  = m_builder.get_widget<Gtk::ListBox>("list_notify");
     auto activated = [this](Gtk::ListBoxRow* row) {
         //FORWARD SIGNAL TO THE ITEM
         auto item = dynamic_cast<WidgetContactListItem*>(row);
         observer_notify(ToxEvent(WidgetContactListItem::EventActivated{item->get_friend_nr()}));
     };
-    list->signal_row_activated().connect(activated);
-    list_active_chat->signal_row_activated().connect(activated);
+    m_list_contact->signal_row_activated().connect(activated);
+    m_list_contact_active->signal_row_activated().connect(activated);
 
-    list->set_sort_func([this](Gtk::ListBoxRow* a, Gtk::ListBoxRow* b){
+    m_list_contact->set_sort_func([this](Gtk::ListBoxRow* a, Gtk::ListBoxRow* b){
         auto item_a = dynamic_cast<WidgetContactListItem*>(a);
         auto item_b = dynamic_cast<WidgetContactListItem*>(b);
         return item_a->compare(item_b);
     });
 
-    list_notify->signal_row_activated().connect([](Gtk::ListBoxRow* row){
+    m_list_notify->signal_row_activated().connect([](Gtk::ListBoxRow* row){
         WidgetNotification* item = dynamic_cast<WidgetNotification*>(row);
         item->activated();
     });
@@ -130,43 +131,39 @@ DialogContact::DialogContact(BaseObjectType* cobject, gToxBuilder builder, const
         tox().update_optimal_interval());
 }
 
-DialogContact* DialogContact::create(const Glib::ustring& file) {
+gToxBuilderRef<DialogContact> DialogContact::create(const Glib::ustring& file) {
     return gToxBuilder(Gtk::Builder::create_from_resource("/org/gtox/ui/dialog_contact.ui"))
             .get_widget_derived<DialogContact>("dialog_contact", file);
 }
 
 void DialogContact::load_contacts() {
-    auto list = m_builder.get_widget<Gtk::ListBox>("list");
-    auto list_active_chat = m_builder.get_widget<Gtk::ListBox>("list_active_chat");
-    if (!list) {
-        return;
-    }
-    for (auto item : list->get_children()) {
+    for (auto item : m_list_contact->get_children()) {
         delete item;
     }
     bool first = true;
     for (auto contact : tox().get_friendlist()) {
-        auto item = Gtk::manage(WidgetContactListItem::create(this, contact));
-        list->add(*item);
+        auto item_builder = WidgetContactListItem::create(this, contact);
+        auto item = Gtk::manage(item_builder.raw());
+        m_list_contact->add(*item);
         if (first) {
             //pixel perfect list size
             int min_height;
             int natural_height;
             item->get_preferred_height(min_height, natural_height);
-            auto scroll = m_builder.get_widget<Gtk::ScrolledWindow>("contact_scroll");
-            scroll->set_size_request(-1, min_height*7);
-            scroll->queue_resize_no_redraw();
-            Glib::signal_idle().connect_once([scroll](){
-                scroll->set_size_request(-1, -1);
+            m_list_contact_scroll->set_size_request(-1, min_height*7);
+            m_list_contact_scroll->queue_resize_no_redraw();
+            Glib::signal_idle().connect_once([this](){
+                m_list_contact_scroll->set_size_request(-1, -1);
             });
             first = false;
         }
-        auto item_notify = Gtk::manage(WidgetContactListItem::create(this, contact, true));
-        list_active_chat->add(*item_notify);
+        auto item_notify_builder = WidgetContactListItem::create(this, contact, true);
+        auto item_notify = Gtk::manage(item_notify_builder.raw());
+        m_list_contact_active->add(*item_notify);
     }
 
     bool display = gTox::instance()->database().config_get("SETTINGS_CONTACTLIST_DISPLAY_ACTIVE", true);
-    list_active_chat->set_visible(display);
+    m_list_contact_active->set_visible(display);
 }
 
 DialogContact::~DialogContact() {
@@ -273,20 +270,17 @@ void DialogContact::tox_event_handling(const ToxEvent& ev) {
         auto data = ev.get<EventAddNotification>();
 
         //add to the list..
-        Gtk::ListBox* list;
-        m_builder->get_widget("list_notify", list);
-        list->add(*Gtk::manage(WidgetNotification::create(this, data)));
+        auto widget = WidgetNotification::create(this, data);
+        m_list_notify->add(*Gtk::manage(widget.raw()));
     } else if (ev.type() == typeid(EventAddContact)) {
         auto data = ev.get<EventAddContact>();
 
-        Gtk::ListBox* list;
-        Gtk::ListBox* list_active_chat;
-        m_builder->get_widget("list", list);
-        m_builder->get_widget("list_active_chat", list_active_chat);
-        auto item = Gtk::manage(WidgetContactListItem::create(this, data.nr));
-        list->add(*item);
-        auto item_notify = Gtk::manage(WidgetContactListItem::create(this, data.nr, true));
-        list_active_chat->add(*item_notify);
+        auto item_builder = WidgetContactListItem::create(this, data.nr);
+        auto item = Gtk::manage(item_builder.raw());
+        m_list_contact->add(*item);
+        auto item_notify_builder = WidgetContactListItem::create(this, data.nr, true);
+        auto item_notify = Gtk::manage(item_notify_builder.raw());
+        m_list_contact_active->add(*item_notify);
     } else if (ev.type() == typeid(EventCallback)) {
         auto data = ev.get<EventCallback>();
         data.callback();
@@ -301,7 +295,7 @@ void DialogContact::tox_event_handling(const ToxEvent& ev) {
         }
     } else if (ev.type() == typeid(WidgetContactListItem::EventUpdateDisplayActive)) {
         auto data = ev.get<WidgetContactListItem::EventUpdateDisplayActive>();
-        m_builder.get_widget<Gtk::Widget>("list_active_chat")->set_visible(data.display);
+        m_list_contact_active->set_visible(data.display);
     }
 }
 

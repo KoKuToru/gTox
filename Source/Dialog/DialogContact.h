@@ -32,16 +32,16 @@
 // contact list with pinned chat
 class DialogContact : public Gtk::Window, public gToxObservable {
   private:
-    gToxBuilder m_builder;
-
     Glib::RefPtr<Gtk::StatusIcon> m_status_icon;
 
     Gtk::HeaderBar* m_headerbar;
-
     Gtk::Button* m_btn_status;
-
     Gtk::Stack* m_stack_header;
     Gtk::Stack* m_stack;
+    Gtk::ListBox* m_list_contact;
+    Gtk::ListBox* m_list_contact_active;
+    Gtk::ListBox* m_list_notify;
+    Gtk::ScrolledWindow* m_list_contact_scroll;
 
     Gtk::Image m_icon_status;
 
@@ -65,7 +65,7 @@ class DialogContact : public Gtk::Window, public gToxObservable {
                   const Glib::ustring& file);
     ~DialogContact();
 
-    static DialogContact* create(const Glib::ustring& file);
+    static gToxBuilderRef<DialogContact> create(const Glib::ustring& file);
 
     void exit();
 

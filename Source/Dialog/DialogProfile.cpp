@@ -30,15 +30,17 @@ namespace sigc {
 
 DialogProfile::DialogProfile(BaseObjectType* cobject, gToxBuilder builder, const std::vector<std::string>& accounts):
     Gtk::Window(cobject),
-    m_builder(builder),
     m_abort(true),
     m_quited(false) {
+
+    builder->get_widget("profile_list", m_profile_list);
+    builder->get_widget("revealer", m_revealer);
 
     set_title(_("PROFILE_TITLE"));
     set_default_geometry(300, 300);
     set_position(Gtk::WindowPosition::WIN_POS_CENTER);
 
-    auto hbar = m_builder.get_widget<Gtk::HeaderBar>("headerbar");
+    auto hbar = builder.get_widget<Gtk::HeaderBar>("headerbar");
     hbar->set_title(_("PROFILE_TITLE"));
     hbar->set_subtitle(_("PROFILE_SUBTITLE"));
 
@@ -82,86 +84,82 @@ DialogProfile::DialogProfile(BaseObjectType* cobject, gToxBuilder builder, const
 
 void DialogProfile::set_accounts(const std::vector<std::string>& accounts) {
     m_accounts = accounts;
-    Gtk::ListBox* list = nullptr;
-    m_builder->get_widget("profile_list", list);
-    if (list) {
-        m_thread = Glib::Thread::create([this, list, accounts](){
-            Glib::ustring tox_name;
-            Glib::ustring tox_status;
-            Toxmm::FriendAddr tox_addr;
-            bool tox_okay = false;
-            bool can_write = false;
 
-            for (auto acc : accounts) {
-                //TRY TO LOAD TOX DATA
-                try {
-                    Toxmm instance;
-                    instance.open(acc, false);
+    m_thread = Glib::Thread::create([this, accounts](){
+        Glib::ustring tox_name;
+        Glib::ustring tox_status;
+        Toxmm::FriendAddr tox_addr;
+        bool tox_okay = false;
+        bool can_write = false;
 
-                    tox_name = instance.get_name_or_address();
-                    tox_status = instance.get_status_message();
-                    tox_addr = instance.get_address();
-                    tox_okay = true;
-                    can_write = instance.profile().can_write();
-                } catch (...) {
-                    tox_okay = false;
-                }
+        for (auto acc : accounts) {
+            //TRY TO LOAD TOX DATA
+            try {
+                Toxmm instance;
+                instance.open(acc, false);
 
-                auto avatar_path = Glib::build_filename(Glib::get_user_config_dir(),
-                                                        "tox", "avatars",
-                                                        Toxmm::to_hex(tox_addr.data(), TOX_PUBLIC_KEY_SIZE) + ".png");
-
-                //TODO: not thread safe !
-                m_events.push_back(Glib::signal_idle().connect([list, tox_name, acc, tox_status, tox_okay, can_write, tox_addr, avatar_path](){
-                    gToxBuilder builder = Gtk::Builder::create_from_resource("/org/gtox/ui/list_item_profile.ui");
-                    Gtk::ListBoxRow* row = nullptr;
-                    builder->get_widget("pofile_list_item", row);
-                    if (row) {
-                        Gtk::Label* name = nullptr;
-                        Gtk::Label* status = nullptr;
-                        Gtk::Label* path = nullptr;
-                        WidgetAvatar* avatar = nullptr;
-                        builder.get_widget("name", name);
-                        builder.get_widget("status", status);
-                        builder.get_widget("path", path);
-                        avatar = builder.get_widget_derived<WidgetAvatar>("avatar", avatar_path);
-
-                        if (name && status && path && avatar) {
-                            path->set_text(acc);
-                            row->set_sensitive(false);
-                            if (tox_okay) {
-                                name->set_text(tox_name);
-                                status->set_text(tox_status);
-                                if (can_write) {
-                                    row->set_sensitive(true);
-                                }
-                            }
-                        }
-                        row->show();
-                        list->add(*row);
-
-                        //reveale profil
-                        Gtk::Revealer* revealer;
-                        builder->get_widget("revealer", revealer);
-                        revealer->reference();
-                        Glib::signal_idle().connect_once([revealer](){
-                            revealer->set_reveal_child(true);
-                            revealer->unreference();
-                        });
-                    }
-
-                    return false;
-                }));
+                tox_name = instance.get_name_or_address();
+                tox_status = instance.get_status_message();
+                tox_addr = instance.get_address();
+                tox_okay = true;
+                can_write = instance.profile().can_write();
+            } catch (...) {
+                tox_okay = false;
             }
 
-            Gtk::Revealer* revealer;
-            m_builder->get_widget("revealer", revealer);
-            revealer->set_reveal_child(false);
-        }, true);
-    }
+            auto avatar_path = Glib::build_filename(Glib::get_user_config_dir(),
+                                                    "tox", "avatars",
+                                                    Toxmm::to_hex(tox_addr.data(), TOX_PUBLIC_KEY_SIZE) + ".png");
+
+            //TODO: not thread safe !
+            m_events.push_back(Glib::signal_idle().connect([this, tox_name, acc, tox_status, tox_okay, can_write, tox_addr, avatar_path](){
+                gToxBuilder builder = Gtk::Builder::create_from_resource("/org/gtox/ui/list_item_profile.ui");
+                Gtk::ListBoxRow* row = nullptr;
+                builder->get_widget("pofile_list_item", row);
+                if (row) {
+                    Gtk::Label* name = nullptr;
+                    Gtk::Label* status = nullptr;
+                    Gtk::Label* path = nullptr;
+                    WidgetAvatar* avatar = nullptr;
+                    builder.get_widget("name", name);
+                    builder.get_widget("status", status);
+                    builder.get_widget("path", path);
+                    avatar = builder.get_widget_derived<WidgetAvatar>("avatar", avatar_path);
+
+                    if (name && status && path && avatar) {
+                        path->set_text(acc);
+                        row->set_sensitive(false);
+                        if (tox_okay) {
+                            name->set_text(tox_name);
+                            status->set_text(tox_status);
+                            if (can_write) {
+                                row->set_sensitive(true);
+                            }
+                        }
+                    }
+                    row->show();
+                    m_profile_list->add(*row);
+
+                    //reveale profil
+                    Gtk::Revealer* revealer;
+                    builder->get_widget("revealer", revealer);
+                    revealer->reference();
+                    Glib::signal_idle().connect_once([revealer](){
+                        revealer->set_reveal_child(true);
+                        revealer->unreference();
+                    });
+                }
+
+                return false;
+            }));
+        }
+
+        m_revealer->set_reveal_child(false);
+    }, true);
+
 }
 
-DialogProfile* DialogProfile::create(const std::vector<std::string>& accounts) {
+gToxBuilderRef<DialogProfile> DialogProfile::create(const std::vector<std::string>& accounts) {
     return gToxBuilder(Gtk::Builder::create_from_resource("/org/gtox/ui/dialog_profile.ui"))
             .get_widget_derived<DialogProfile>("dialog_profile", accounts);
 }

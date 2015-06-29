@@ -28,9 +28,6 @@
 
 class PopoverSettings : public Gtk::Popover, public gToxObserver {
     private:
-        gToxBuilder m_builder;
-        //DialogSettings m_settings;
-
         struct {
             Gtk::Entry* username;
             Gtk::Entry* status;

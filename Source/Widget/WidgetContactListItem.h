@@ -30,7 +30,6 @@
 class WidgetContact;
 class WidgetContactListItem : public Gtk::ListBoxRow, public gToxObserver {
   private:
-    gToxBuilder m_builder;
     WidgetAvatar* m_avatar;
     WidgetAvatar* m_avatar_mini;
 
@@ -43,6 +42,11 @@ class WidgetContactListItem : public Gtk::ListBoxRow, public gToxObserver {
     Gtk::Label* m_status_msg_mini;
     Gtk::Image* m_status_icon_mini;
     Gtk::Spinner* m_spin_mini;
+
+    Gtk::Widget* m_contact_list_grid_mini;
+    Gtk::Widget* m_contact_list_grid;
+
+    Gtk::Revealer* m_revealer;
 
     Glib::RefPtr<Glib::Binding> m_bindings[5];
 
@@ -62,7 +66,7 @@ class WidgetContactListItem : public Gtk::ListBoxRow, public gToxObserver {
                           Toxmm::FriendNr nr,
                           bool for_notify=false);
 
-    static WidgetContactListItem* create(gToxObservable* observable,
+    static gToxBuilderRef<WidgetContactListItem> create(gToxObservable* observable,
                                          Toxmm::FriendNr nr,
                                          bool for_notify=false);
 

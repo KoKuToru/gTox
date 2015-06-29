@@ -32,13 +32,12 @@ WidgetChatFileRecv::WidgetChatFileRecv(BaseObjectType* cobject,
                                        Toxmm::EventFileRecv file):
     Gtk::Frame(cobject),
     gToxObserver(observable),
-    m_builder(builder),
     m_recv(observable, file),
     m_friend_nr(file.nr),
     m_file_number(file.file_number),
     m_file_size(file.file_size) {
 
-    m_builder.get_widget<Gtk::Label>("file_name")->set_text(file.filename);
+    builder.get_widget<Gtk::Label>("file_name")->set_text(file.filename);
     double size  = file.file_size;
     int unit = 0;
     while (size > 1024 && unit < 4) {
@@ -47,11 +46,14 @@ WidgetChatFileRecv::WidgetChatFileRecv(BaseObjectType* cobject,
     }
     auto file_size = Glib::ustring::format(std::fixed, std::setprecision(2), size)
                      + " " + s_units[unit];
-    m_builder.get_widget<Gtk::Label>("file_size")->set_text(file_size);
+    builder.get_widget<Gtk::Label>("file_size")->set_text(file_size);
 
-    m_builder.get_widget("file_resume", m_file_resume);
-    m_builder.get_widget("file_cancel", m_file_cancel);
-    m_builder.get_widget("file_pause", m_file_pause);
+    builder.get_widget("file_resume", m_file_resume);
+    builder.get_widget("file_cancel", m_file_cancel);
+    builder.get_widget("file_pause", m_file_pause);
+    builder.get_widget("revealer_download", m_revealer_download);
+    builder.get_widget("spinner", m_spinner);
+    builder.get_widget("file_open_bar", m_file_open_bar);
 
     m_file_pause->set_active(true);
 
@@ -75,7 +77,9 @@ WidgetChatFileRecv::WidgetChatFileRecv(BaseObjectType* cobject,
             m_file_resume->set_sensitive(true);
         }
     });
-    m_file_cancel->signal_toggled().connect([this](){
+    auto file_info_box_1 = builder.get_widget<Gtk::Widget>("file_info_box_1");
+    auto file_info_box_2 = builder.get_widget<Gtk::Widget>("file_info_box_2");
+    m_file_cancel->signal_toggled().connect([this, file_info_box_1, file_info_box_2](){
         if (m_file_cancel->get_active()) {
             if (m_file_resume->get_active()) {
                 m_file_resume->set_active(false);
@@ -88,8 +92,8 @@ WidgetChatFileRecv::WidgetChatFileRecv(BaseObjectType* cobject,
             } catch (...) {
                 //TODO ?
             }
-            m_builder.get_widget<Gtk::Widget>("file_info_box_1")->hide();
-            m_builder.get_widget<Gtk::Widget>("file_info_box_2")->hide();
+            file_info_box_1->hide();
+            file_info_box_2->hide();
             m_file_cancel->set_sensitive(false);
             m_update_interval.disconnect();
             m_file_progress->hide();
@@ -118,41 +122,46 @@ WidgetChatFileRecv::WidgetChatFileRecv(BaseObjectType* cobject,
         }
     });
 
-    m_builder.get_widget("file_progress", m_file_progress);
+    builder.get_widget("file_progress", m_file_progress);
 
-    m_builder.get_widget<Gtk::Revealer>("revealer_download")->set_reveal_child(true);
+    builder.get_widget<Gtk::Revealer>("revealer_download")->set_reveal_child(true);
 
-    m_set_image_connection = signal_set_image().connect([this](Glib::RefPtr<Gdk::Pixbuf> image) {
-        m_builder.get_widget<Gtk::Image>("image")->property_pixbuf() = image;
-        m_builder.get_widget<Gtk::Widget>("spinner")->hide();
-        m_builder.get_widget<Gtk::Revealer>("revealer_image")->set_reveal_child(true);
+    auto image = builder.get_widget<Gtk::Image>("image");
+    auto revealer_image = builder.get_widget<Gtk::Revealer>("revealer_image");
+    m_set_image_connection = signal_set_image().connect([this, image, revealer_image](Glib::RefPtr<Gdk::Pixbuf> pixbuf) {
+        image->property_pixbuf() = pixbuf;
+        m_spinner->hide();
+        revealer_image->set_reveal_child(true);
     });
 
-    m_player = m_builder.get_widget_derived<VideoPlayer>("video");
-    m_try_video = signal_try_video().connect([this](bool has_video, bool has_audio) {
+    m_player = builder.get_widget_derived<VideoPlayer>("video");
+    auto revelear_video = builder.get_widget<Gtk::Revealer>("revealer_video");
+    auto video_seek = builder.get_widget<Gtk::Scale>("video_seek");
+    auto video_position = builder.get_widget<Gtk::Label>("video_position");
+    auto video_duration = builder.get_widget<Gtk::Label>("video_duration");
+    auto video_pos_dur = builder.get_widget<Gtk::Widget>("video_pos_dur");
+    m_try_video = signal_try_video().connect([this, revelear_video, video_seek, video_position, video_duration, video_pos_dur](bool has_video, bool has_audio) {
         if (has_video || has_audio) {
             m_player->set_uri(Glib::filename_to_uri(m_recv.get_path()), has_video);
-            m_player->get_streamer()->signal_error().connect([this](std::string) {
+            m_player->get_streamer()->signal_error().connect([this, revelear_video](std::string) {
                 //not okay
-                m_builder.get_widget<Gtk::Widget>("spinner")->hide();
-                m_builder.get_widget<Gtk::Revealer>("revealer_video")->set_reveal_child(false);
+                m_spinner->hide();
+                revelear_video->set_reveal_child(false);
             });
             if (has_video) {
-                m_update_video = m_player->get_streamer()->signal_update().connect([this](int,int,const std::vector<unsigned char>&) {
+                m_update_video = m_player->get_streamer()->signal_update().connect([this, revelear_video](int,int,const std::vector<unsigned char>&) {
                     //m_update_video.disconnect();
-                    m_builder.get_widget<Gtk::Widget>("spinner")->hide();
-                    m_builder.get_widget<Gtk::Revealer>("revealer_video")->set_reveal_child(true);
+                    m_spinner->hide();
+                    revelear_video->set_reveal_child(true);
                 });
                 m_player->get_streamer()->emit_update_signal();
             } else {
-                m_builder.get_widget<Gtk::Widget>("spinner")->hide();
+                m_spinner->hide();
             }
             //audio only
-            auto video_seek = m_builder.get_widget<Gtk::Scale>("video_seek");
-            auto video_position = m_builder.get_widget<Gtk::Label>("video_position");
-            auto video_duration = m_builder.get_widget<Gtk::Label>("video_duration");
-            auto video_pos_dur = m_builder.get_widget<Gtk::Widget>("video_pos_dur");
+
             m_update_video_interval = Glib::signal_timeout().connect([this, video_seek, video_position, video_duration, video_pos_dur]() {
+                return false;
                 gint64 pos = 0, dur = 0;
                 if (m_player->get_streamer()->get_progress(pos, dur)) {
                     video_seek->get_adjustment()->set_upper(dur);
@@ -172,12 +181,12 @@ WidgetChatFileRecv::WidgetChatFileRecv(BaseObjectType* cobject,
                 return true;
             }, 1000);
         } else {
-            m_builder.get_widget<Gtk::Widget>("spinner")->hide();
+            m_spinner->hide();
         }
     });
 
-    m_builder.get_widget("file_speed", m_file_speed);
-    m_builder.get_widget("file_time", m_file_time);
+    builder.get_widget("file_speed", m_file_speed);
+    builder.get_widget("file_time", m_file_time);
     size_t dummy;
     m_recv.get_progress(m_last_position, dummy);
     m_update_interval = Glib::signal_timeout().connect([this](){
@@ -218,7 +227,7 @@ WidgetChatFileRecv::WidgetChatFileRecv(BaseObjectType* cobject,
         return true;
     }, 500);
 
-    m_builder.get_widget<Gtk::Button>("file_dir")->signal_clicked().connect([this](){
+    builder.get_widget<Gtk::Button>("file_dir")->signal_clicked().connect([this](){
         try {
             Gio::AppInfo::get_default_for_type("inode/directory", true)->launch_uri(Glib::filename_to_uri(m_recv.get_path()));
         } catch (...) {
@@ -226,7 +235,7 @@ WidgetChatFileRecv::WidgetChatFileRecv(BaseObjectType* cobject,
         }
     });
 
-    m_builder.get_widget<Gtk::Button>("file_open")->signal_clicked().connect([this](){
+    builder.get_widget<Gtk::Button>("file_open")->signal_clicked().connect([this](){
         try {
             Gio::AppInfo::launch_default_for_uri(Glib::filename_to_uri(m_recv.get_path()));
         } catch (...) {
@@ -234,9 +243,9 @@ WidgetChatFileRecv::WidgetChatFileRecv(BaseObjectType* cobject,
         }
     });
 
-    m_builder.get_widget("file_recv_video_play", m_file_video_play);
-    m_builder.get_widget("file_recv_video_pause", m_file_video_pause);
-    m_builder.get_widget("file_recv_video_stop", m_file_video_stop);
+    builder.get_widget("file_recv_video_play", m_file_video_play);
+    builder.get_widget("file_recv_video_pause", m_file_video_pause);
+    builder.get_widget("file_recv_video_stop", m_file_video_stop);
     m_file_video_play->signal_toggled().connect([this](){
         if (m_file_video_play->get_active()) {
             if (m_file_video_stop->get_active()) {
@@ -308,13 +317,13 @@ void WidgetChatFileRecv::observer_handle(const ToxEvent& event) {
             m_update_interval.disconnect();
 
             //display
-            m_builder.get_widget<Gtk::Revealer>("revealer_download")->set_reveal_child(false);
+            m_revealer_download->set_reveal_child(false);
 
             //check if file exists
             if (Glib::file_test(m_recv.get_path(), Glib::FILE_TEST_IS_REGULAR)) {
                 //TODO: check file size for preview generation ?
-                m_builder.get_widget<Gtk::Widget>("spinner")->show();
-                m_builder.get_widget<Gtk::Widget>("file_open_bar")->show();
+                m_spinner->show();
+                m_file_open_bar->show();
 
                 //try load file
                 m_thread = Glib::Thread::create([this](){
@@ -374,19 +383,19 @@ void WidgetChatFileRecv::observer_handle(const ToxEvent& event) {
         }
 
         if (tox().get_status(m_friend_nr) != Toxmm::OFFLINE) {
-            m_builder.get_widget<Gtk::Revealer>("revealer_download")->set_reveal_child(true);
+            m_revealer_download->set_reveal_child(true);
             m_file_resume->set_sensitive(true);
             m_first_emit = true;
             m_recv.emit_progress();
         } else {
-            m_builder.get_widget<Gtk::Revealer>("revealer_download")->set_reveal_child(false);
+            m_revealer_download->set_reveal_child(false);
             m_file_pause->clicked();
             m_file_resume->set_sensitive(false);
         }
     }
 }
 
-WidgetChatFileRecv* WidgetChatFileRecv::create(gToxObservable* instance, Toxmm::EventFileRecv file) {
+gToxBuilderRef<WidgetChatFileRecv> WidgetChatFileRecv::create(gToxObservable* instance, Toxmm::EventFileRecv file) {
     auto builder = Gtk::Builder::create_from_resource("/org/gtox/ui/chat_filerecv.ui");
     return gToxBuilder(builder)
             .get_widget_derived<WidgetChatFileRecv>("chat_filerecv",

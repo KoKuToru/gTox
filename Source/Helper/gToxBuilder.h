@@ -21,6 +21,36 @@
 #define H_GTOX_BUILDER
 
 #include <gtkmm.h>
+#include <glibmm.h>
+template<typename T>
+class gToxBuilderRef {
+    private:
+        Glib::RefPtr<T> m_ref;
+        T* m_ptr;
+    public:
+        gToxBuilderRef(T* ptr): m_ref(ptr), m_ptr(ptr) {
+            m_ref->reference();
+        }
+        T& operator *() {
+            return *m_ptr;
+        }
+        const T& operator*() const {
+            return *m_ptr;
+        }
+        T* operator ->() {
+            return m_ptr;
+        }
+        const T* operator ->() const {
+            return m_ptr;
+        }
+        T* raw() {
+            return m_ptr;
+        }
+        const T* raw() const {
+            return m_ptr;
+        }
+
+};
 
 /**
  * @brief Proxy class for Gtk::Builder
@@ -57,7 +87,6 @@ class gToxBuilder {
             else
             {
                 //Create a new C++ instance to wrap the existing C instance:
-                m_builder->reference();
                 widget = new T_Widget(pCWidget, m_builder, params ...);
             }
 

@@ -27,17 +27,18 @@
 PopoverSettings::PopoverSettings(gToxObservable* observable,
                                  const Gtk::Widget& relative_to)
     : Gtk::Popover(relative_to),
-      gToxObserver(observable),
-      m_builder(Gtk::Builder::create_from_resource("/org/gtox/ui/popover_settings.ui")) {
+      gToxObserver(observable) {
 
-    m_builder.get_widget("profile_username_entry", m_profile.username);
-    m_builder.get_widget("profile_statusmessage_entry", m_profile.status);
-    m_profile.avatar = m_builder.get_widget_derived<WidgetAvatar>("profile_avatar", observable, ~0u);
+    gToxBuilder builder = Gtk::Builder::create_from_resource("/org/gtox/ui/popover_settings.ui");
 
-    m_builder.get_widget("add_contact_tox_id", m_add_contact.tox_id);
-    m_builder.get_widget("add_contact_message", m_add_contact.message);
+    builder.get_widget("profile_username_entry", m_profile.username);
+    builder.get_widget("profile_statusmessage_entry", m_profile.status);
+    m_profile.avatar = builder.get_widget_derived<WidgetAvatar>("profile_avatar", observable, ~0u);
 
-    m_builder.get_widget("popover_stack", m_stack);
+    builder.get_widget("add_contact_tox_id", m_add_contact.tox_id);
+    builder.get_widget("add_contact_message", m_add_contact.message);
+
+    builder.get_widget("popover_stack", m_stack);
 
     add(*m_stack);
 
@@ -48,10 +49,10 @@ PopoverSettings::PopoverSettings(gToxObservable* observable,
         hex.insert(2 * i * TOX_PUBLIC_KEY_SIZE / 4, 1, '\n');
     }
 
-    m_builder.get_widget<Gtk::Label>("profile_tox_hex_id")
+    builder.get_widget<Gtk::Label>("profile_tox_hex_id")
             ->set_markup("<span font_desc=\"mono\">" + hex + "</span>");
 
-    m_builder.get_widget<Gtk::Button>("profile_copy_tox_id")
+    builder.get_widget<Gtk::Button>("profile_copy_tox_id")
             ->signal_clicked().connect([this]() {
         Gtk::Clipboard::get()->set_text(
                     Toxmm::to_hex(tox().get_address().data(),
@@ -59,7 +60,7 @@ PopoverSettings::PopoverSettings(gToxObservable* observable,
     });
 
     /* Open settings */
-    m_builder.get_widget<Gtk::Button>("profile_open_settings")
+    builder.get_widget<Gtk::Button>("profile_open_settings")
             ->signal_clicked().connect([this, observable]() {
         hide();
         auto s = new DialogSettings(observable);
@@ -70,7 +71,7 @@ PopoverSettings::PopoverSettings(gToxObservable* observable,
     });
 
     /* change avatar logic */
-    m_builder.get_widget<Gtk::Button>("profile_avatar_btn")
+    builder.get_widget<Gtk::Button>("profile_avatar_btn")
             ->signal_clicked().connect([this, observable](){
         Gtk::FileChooserDialog dialog(_("PROFILE_AVATAR_SELECT_TITLE"), Gtk::FILE_CHOOSER_ACTION_OPEN);
         dialog.add_button (Gtk::Stock::OPEN,
@@ -121,7 +122,7 @@ PopoverSettings::PopoverSettings(gToxObservable* observable,
     m_profile.status  ->signal_focus_out_event().connect_notify(update);
 
     /* Add contact submit button handling */
-    m_builder.get_widget<Gtk::Button>("add_contact_submit")
+    builder.get_widget<Gtk::Button>("add_contact_submit")
             ->signal_clicked().connect([this](){
         add_contact();
     });

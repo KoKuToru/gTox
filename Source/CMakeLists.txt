@@ -55,6 +55,7 @@ add_custom_command(
 
 set(SOURCES
     main.cpp
+
     Helper/Canberra.cpp
     Helper/gToxObservable.cpp
     Helper/gToxObserver.cpp
@@ -62,6 +63,7 @@ set(SOURCES
     Helper/gToxFileRecv.cpp
     Helper/gStreamerHelper.cpp
     Helper/Video/gStreamerVideo.cpp
+
     gTox.cpp
     Dialog/DialogContact.cpp
     Dialog/DialogProfile.cpp

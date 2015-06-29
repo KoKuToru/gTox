@@ -22,20 +22,22 @@
 
 DialogProfileCreate::DialogProfileCreate(BaseObjectType* cobject, gToxBuilder builder,
                                          const Glib::ustring& path):
-    Gtk::Assistant(cobject), m_builder(builder), m_aborted(true), m_path(path) {
+    Gtk::Assistant(cobject),
+    m_aborted(true),
+    m_path(path) {
 
     property_resizable() = false;
     set_size_request(800, 600);
     set_position(Gtk::WindowPosition::WIN_POS_CENTER_ALWAYS);
 
-    m_builder.get_widget("assistant_username", m_username);
-    m_builder.get_widget("assistant_statusmessage", m_status);
-    m_builder.get_widget("assistant_logging", m_logging);
-    m_builder.get_widget("assistant_file_tox", m_file_tox);
-    m_builder.get_widget("assistant_file_gtox", m_file_gtox);
+    builder.get_widget("assistant_username", m_username);
+    builder.get_widget("assistant_statusmessage", m_status);
+    builder.get_widget("assistant_logging", m_logging);
+    builder.get_widget("assistant_file_tox", m_file_tox);
+    builder.get_widget("assistant_file_gtox", m_file_gtox);
 
 
-    auto w = m_builder.get_widget<Gtk::Widget>("assistant_first_page");
+    auto w = builder.get_widget<Gtk::Widget>("assistant_first_page");
     m_username->signal_changed().connect([this, w]() {
         if (!m_username->get_text().empty()) {
             int i = 0;
@@ -61,7 +63,7 @@ DialogProfileCreate::DialogProfileCreate(BaseObjectType* cobject, gToxBuilder bu
     });
 }
 
-DialogProfileCreate* DialogProfileCreate::create(const Glib::ustring& path) {
+gToxBuilderRef<DialogProfileCreate> DialogProfileCreate::create(const Glib::ustring& path) {
     return gToxBuilder(Gtk::Builder::create_from_resource("/org/gtox/ui/dialog_assistant.ui"))
             .get_widget_derived<DialogProfileCreate>("dialog_assistant", path);
 }

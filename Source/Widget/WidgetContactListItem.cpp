@@ -24,7 +24,7 @@
 #include "gTox.h"
 #include <glibmm/i18n.h>
 
-WidgetContactListItem* WidgetContactListItem::create(gToxObservable* instance, Toxmm::FriendNr nr, bool for_notify) {
+gToxBuilderRef<WidgetContactListItem> WidgetContactListItem::create(gToxObservable* instance, Toxmm::FriendNr nr, bool for_notify) {
     gToxObserver dummy(instance);
     auto builder = Gtk::Builder::create_from_resource("/org/gtox/ui/list_item_contact.ui");
     return gToxBuilder(builder)
@@ -105,11 +105,11 @@ void WidgetContactListItem::observer_handle(const ToxEvent& ev) {
         bool compact = data.compact;
 
         if (compact || m_for_notify) {
-            m_builder.get_widget<Gtk::Widget>("contact_list_grid_mini")->show();
-            m_builder.get_widget<Gtk::Widget>("contact_list_grid")->hide();
+            m_contact_list_grid_mini->show();
+            m_contact_list_grid->hide();
         } else {
-            m_builder.get_widget<Gtk::Widget>("contact_list_grid_mini")->hide();
-            m_builder.get_widget<Gtk::Widget>("contact_list_grid")->show();
+            m_contact_list_grid_mini->hide();
+            m_contact_list_grid->show();
         }
     } else if (ev.type() == typeid(EventUpdateDisplayActive)) {
         auto data = ev.get<EventUpdateDisplayActive>();
@@ -126,22 +126,25 @@ WidgetContactListItem::WidgetContactListItem(BaseObjectType* cobject, gToxBuilde
                                              bool for_notify)
     : Gtk::ListBoxRow(cobject),
       gToxObserver(observable),
-      m_builder(builder),
       m_friend_nr(nr),
       m_for_notify(for_notify) {
 
-    //m_builder.get_widget("avatar", m_avatar);
-    m_avatar = m_builder.get_widget_derived<WidgetAvatar>("avatar", observable, nr);
-    m_builder.get_widget("name", m_name);
-    m_builder.get_widget("status", m_status_msg);
-    m_builder.get_widget("status_icon", m_status_icon);
-    m_builder.get_widget("spinner", m_spin);
+    builder.get_widget("contact_list_grid_mini", m_contact_list_grid_mini);
+    builder.get_widget("contact_list_grid", m_contact_list_grid);
+    builder.get_widget("revealer", m_revealer);
 
-    m_avatar_mini = m_builder.get_widget_derived<WidgetAvatar>("avatar_mini", observable, nr);
-    m_builder.get_widget("name_mini", m_name_mini);
-    m_builder.get_widget("status_mini", m_status_msg_mini);
-    m_builder.get_widget("status_icon_mini", m_status_icon_mini);
-    m_builder.get_widget("spinner_mini", m_spin_mini);
+    //builder.get_widget("avatar", m_avatar);
+    m_avatar = builder.get_widget_derived<WidgetAvatar>("avatar", observable, nr);
+    builder.get_widget("name", m_name);
+    builder.get_widget("status", m_status_msg);
+    builder.get_widget("status_icon", m_status_icon);
+    builder.get_widget("spinner", m_spin);
+
+    m_avatar_mini = builder.get_widget_derived<WidgetAvatar>("avatar_mini", observable, nr);
+    builder.get_widget("name_mini", m_name_mini);
+    builder.get_widget("status_mini", m_status_msg_mini);
+    builder.get_widget("status_icon_mini", m_status_icon_mini);
+    builder.get_widget("spinner_mini", m_spin_mini);
 
     m_bindings[0] = Glib::Binding::bind_property(m_name->property_label(),
                                                  m_name_mini->property_label(),
@@ -251,27 +254,25 @@ bool WidgetContactListItem::use_mini(gToxObserver* gchild, bool for_notify) {
 
 void WidgetContactListItem::on_show() {
     Gtk::Widget::on_show();
-    Gtk::Revealer* revealer;
-    m_builder->get_widget("revealer", revealer);
-    revealer->reference();
-    Glib::signal_idle().connect_once([revealer](){
-        revealer->set_reveal_child(true);
-        revealer->unreference();
+    m_revealer->reference();
+    Glib::signal_idle().connect_once([this](){
+        m_revealer->set_reveal_child(true);
+        m_revealer->unreference();
     });
 }
 
 void WidgetContactListItem::on_hide() {
-    Gtk::Revealer* revealer;
-    m_builder->get_widget("revealer", revealer);
-    if (revealer->get_reveal_child()) {
-        revealer->set_reveal_child(false);
-        revealer->reference();
-        Glib::signal_timeout().connect_once([this, revealer](){
-            if (!revealer->get_reveal_child()) {
+    if (m_revealer->get_reveal_child()) {
+        m_revealer->set_reveal_child(false);
+        m_revealer->reference();
+        reference();
+        Glib::signal_timeout().connect_once([this](){
+            if (!m_revealer->get_reveal_child()) {
                 hide();
+                unreference();
             }
-            revealer->unreference();
-        }, revealer->get_transition_duration());
+            m_revealer->unreference();
+        }, m_revealer->get_transition_duration());
     } else {
         Gtk::Widget::on_hide();
     }
