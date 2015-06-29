@@ -34,6 +34,8 @@ class VideoPlayer : public Gtk::DrawingArea {
 
         int m_w = 1;
         int m_h = 1;
+        double m_w_scaled = 1;
+        double m_h_scaled = 1;
 
         std::shared_ptr<gStreamerVideo> m_streamer;
         sigc::connection m_signal_connection;

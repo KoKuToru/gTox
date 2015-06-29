@@ -97,12 +97,36 @@ bool VideoPlayer::set_uri(Glib::ustring uri, bool generate_preview) {
         if (m_w != w || m_h != h) {
             m_w = w;
             m_h = h;
+
+            m_w_scaled = m_w;
+            m_h_scaled = m_h;
+
+            int max_size = std::max(512, std::min(get_width(), get_height()));
+
+            if (std::max(m_w, m_h) > 512) {
+                if (m_w > m_h) {
+                    m_w_scaled = max_size;
+                    m_h_scaled = m_h * max_size / m_w;
+                } else {
+                    m_h_scaled = max_size;
+                    m_w_scaled = m_w * max_size / m_h;
+                }
+            }
+
+            set_size_request(m_w_scaled, m_h_scaled);
+            queue_resize();
         }
         queue_draw();
     });
 
     m_error_connection = m_streamer->signal_error().connect([this](std::string error) {
         m_last_error = error;
+        if (m_w < 512 || m_h < 240) {
+            m_w = std::max(512, m_w);
+            m_h = std::max(240, m_h);
+            set_size_request(m_w, m_h);
+            queue_resize();
+        }
         queue_draw();
     });
 
@@ -143,24 +167,7 @@ bool VideoPlayer::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
     auto img = snapshot();
     if (img) {
         cr->save();
-
-        double w_scaled = m_w;
-        double h_scaled = m_h;
-
-        int max_size = std::max(512, std::min(get_width(), get_height()));
-
-        if (std::max(m_w, m_h) > 512) {
-            if (m_w > m_h) {
-                w_scaled = max_size;
-                h_scaled = m_h * max_size / m_w;
-            } else {
-                h_scaled = max_size;
-                w_scaled = m_w * max_size / m_h;
-            }
-        }
-        set_size_request(w_scaled, h_scaled);
-        cr->scale(w_scaled / m_w, h_scaled / m_h);
-
+        cr->scale(m_w_scaled / m_w, m_h_scaled / m_h);
         Gdk::Cairo::set_source_pixbuf(cr, img);
         cr->paint();
         cr->restore();
@@ -176,14 +183,6 @@ bool VideoPlayer::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
 
         Cairo::TextExtents extents;
         cr->get_text_extents(m_last_error, extents);
-
-        if (m_w < 320 || m_w < (extents.width + 10) || m_h < 240) {
-            m_w = std::max(320, (int)extents.width + 10);
-            m_h = 240;
-            set_size_request(m_w, m_h);
-            queue_resize();
-            return true;
-        }
 
         cr->translate((get_width() - extents.width) / 2, (get_height() + extents.height) / 2);
         cr->rectangle(-5, 5, extents.width + 10, -(extents.height + 10));
