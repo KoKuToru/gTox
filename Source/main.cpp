@@ -122,11 +122,12 @@ void terminate_handler() {
     }
     abort();
 }
-
+#include <X11/Xlib.h>
 int main(int argc, char* argv[]) {
     std::set_terminate(terminate_handler);
     Glib::add_exception_handler(sigc::ptr_fun(&terminate_handler));
 
+    XInitThreads(); //gstreamer wont work correctly with this !
     Gtk::Main kit(argc, argv);
     Gst::init(argc, argv);
     Notify::init("gTox");
