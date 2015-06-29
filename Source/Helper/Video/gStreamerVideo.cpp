@@ -14,6 +14,8 @@ namespace sigc {
     SIGC_FUNCTORS_DEDUCE_RESULT_TYPE_WITH_DECLTYPE
 }
 
+#include <iostream>
+
 void gStreamerVideo::init() {
     //setup pipeline
     m_appsink = Gst::AppSink::create();
@@ -124,7 +126,6 @@ void gStreamerVideo::init_bus(Glib::RefPtr<Gst::Bus> bus) {
 
 gStreamerVideo::gStreamerVideo(std::string uri, bool generate_preview):
     m_alive(std::make_shared<bool>(true)) {
-
     //init appsink
     init();
 
@@ -248,3 +249,8 @@ std::pair<bool, bool> gStreamerVideo::has_video_audio(std::string uri) {
     return {found_video_stream, found_audio_stream};
 }
 
+void gStreamerVideo::set_volume(double vol) {
+    if (m_playbin) {
+        m_playbin->set_volume(Gst::STREAM_VOLUME_FORMAT_LINEAR, vol);
+    }
+}

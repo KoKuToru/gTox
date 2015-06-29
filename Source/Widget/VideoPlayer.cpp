@@ -198,6 +198,12 @@ bool VideoPlayer::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
     return true;
 }
 
+void VideoPlayer::set_volume(double vol) {
+    if (m_streamer) {
+        m_streamer->set_volume(vol);
+    }
+}
+
 std::shared_ptr<gStreamerVideo> VideoPlayer::get_streamer() {
     return m_streamer;
 }

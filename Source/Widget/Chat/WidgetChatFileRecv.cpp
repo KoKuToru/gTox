@@ -140,10 +140,18 @@ WidgetChatFileRecv::WidgetChatFileRecv(BaseObjectType* cobject,
     auto video_position = builder.get_widget<Gtk::Label>("video_position");
     auto video_duration = builder.get_widget<Gtk::Label>("video_duration");
     auto video_pos_dur = builder.get_widget<Gtk::Widget>("video_pos_dur");
-    m_try_video = signal_try_video().connect([this, revelear_video, video_seek, video_position, video_duration, video_pos_dur](bool has_video, bool has_audio) {
+    auto video_volume = builder.get_widget<Gtk::VolumeButton>("video_volume");
+    m_try_video = signal_try_video().connect([this, revelear_video, video_seek, video_position, video_duration, video_pos_dur, video_volume](bool has_video, bool has_audio) {
+        has_video = false;
+        has_audio = false;
         if (has_video || has_audio) {
             m_player->set_uri(Glib::filename_to_uri(m_recv.get_path()), has_video);
             m_player->set_auto_reset(false);
+            m_player->set_volume(0.5);
+            video_volume->get_adjustment()->set_value(0.5);
+            video_volume->get_adjustment()->signal_value_changed().connect([this, video_volume](){
+                m_player->set_volume(video_volume->get_adjustment()->get_value());
+            });
             m_player->get_streamer()->signal_error().connect([this, revelear_video](std::string) {
                 //not okay
                 m_spinner->hide();
@@ -329,6 +337,9 @@ void WidgetChatFileRecv::observer_handle(const ToxEvent& event) {
 
                 //try load file
                 m_thread = Glib::Thread::create([this](){
+                    static std::mutex mutex;
+                    std::lock_guard<std::mutex> lg2(mutex); //don't do too much at the same time
+
                     auto target_size = 512;
                     //try image
                     try {
@@ -418,5 +429,4 @@ WidgetChatFileRecv::~WidgetChatFileRecv() {
         //wait for thread
         m_thread->join();
     }
-    m_player->stop();
 }

@@ -465,7 +465,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkVolumeButton" id="volumebutton1">
+                      <object class="GtkVolumeButton" id="video_volume">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>

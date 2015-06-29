@@ -58,6 +58,8 @@ class VideoPlayer : public Gtk::DrawingArea {
         void pause();
         void stop();
 
+        void set_volume(double vol);
+
         Glib::RefPtr<Gdk::Pixbuf> snapshot();
 
         std::shared_ptr<gStreamerVideo> get_streamer();

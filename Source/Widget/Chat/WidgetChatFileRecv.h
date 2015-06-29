@@ -49,7 +49,7 @@ class WidgetChatFileRecv: public Gtk::Frame, public gToxObserver {
         Gtk::Label* m_file_speed;
         Gtk::Label* m_file_time;
 
-        Glib::Thread* m_thread;
+        Glib::Thread* m_thread = nullptr;
         std::mutex m_mutex;
 
         typedef sigc::signal<void, Glib::RefPtr<Gdk::Pixbuf>> type_signal_set_image;
