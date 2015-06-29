@@ -63,6 +63,7 @@ set(SOURCES
     Helper/gToxFileRecv.cpp
     Helper/gStreamerHelper.cpp
     Helper/Video/gStreamerVideo.cpp
+    Helper/Dispatcher.h
 
     gTox.cpp
     Dialog/DialogContact.cpp

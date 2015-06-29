@@ -24,9 +24,12 @@
 #include "Helper/gToxBuilder.h"
 #include "Helper/gToxFileRecv.h"
 #include "../VideoPlayer.h"
+#include "Helper/Dispatcher.h"
 
 class WidgetChatFileRecv: public Gtk::Frame, public gToxObserver {
     private:
+        Dispatcher m_dispatcher;
+
         gToxFileRecv m_recv;
 
         uint32_t m_friend_nr;

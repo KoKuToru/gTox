@@ -356,8 +356,9 @@ void WidgetChatFileRecv::observer_handle(const ToxEvent& event) {
                                 image = image->scale_simple(w, h, Gdk::InterpType::INTERP_BILINEAR);
                             }
                             if (image) {
-                                std::lock_guard<std::mutex> lg(m_mutex);
-                                m_signal_set_image.emit(image);
+                                m_dispatcher.emit([this, image](){
+                                    m_signal_set_image.emit(image);
+                                });
                                 return;
                             }
                         }
@@ -367,9 +368,9 @@ void WidgetChatFileRecv::observer_handle(const ToxEvent& event) {
                     bool has_audio;
                     bool has_video;
                     std::tie(has_video, has_audio) = gStreamerVideo::has_video_audio(Glib::filename_to_uri(m_recv.get_path()));
-                    std::lock_guard<std::mutex> lg(m_mutex);
-                    m_signal_try_video.emit(has_video, has_audio);
-                    std::clog << m_recv.get_path() << " has_video:" << has_video << " has_audio:" << has_audio << std::endl;
+                    m_dispatcher.emit([this, has_audio, has_video](){
+                        m_signal_try_video.emit(has_video, has_audio);
+                    });
                 });
             } else {
                 //nothing todo
@@ -417,7 +418,6 @@ gToxBuilderRef<WidgetChatFileRecv> WidgetChatFileRecv::create(gToxObservable* in
 
 WidgetChatFileRecv::~WidgetChatFileRecv() {
     {
-        std::lock_guard<std::mutex> lg(m_mutex);
         m_set_image_connection.disconnect();
         m_update_video_interval.disconnect();
         m_update_video.disconnect();

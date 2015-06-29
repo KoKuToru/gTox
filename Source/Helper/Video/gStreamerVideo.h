@@ -8,6 +8,7 @@
 #include <gstreamermm/pipeline.h>
 #include <gstreamermm/appsink.h>
 #include <mutex>
+#include "Helper/Dispatcher.h"
 
 class gStreamerVideo {
     public:
@@ -17,6 +18,8 @@ class gStreamerVideo {
             PAUSE,
             STOP
         };
+
+        Dispatcher m_dispatcher;
 
         typedef sigc::signal<void, int, int, const std::vector<unsigned char>&> type_signal_update;
         type_signal_update signal_update() {

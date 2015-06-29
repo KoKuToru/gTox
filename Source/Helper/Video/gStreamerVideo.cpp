@@ -73,11 +73,7 @@ void gStreamerVideo::init() {
         }
         buffer->unmap(map);
 
-        Glib::signal_idle().connect_once([this, alive](){
-            if (!*alive) {
-                return;
-            }
-
+        m_dispatcher.emit([this]() {
             m_update.emit(m_width, m_height, m_lastframe);
 
             if (m_state != PLAY) {
