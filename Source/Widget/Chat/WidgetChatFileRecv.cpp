@@ -142,8 +142,6 @@ WidgetChatFileRecv::WidgetChatFileRecv(BaseObjectType* cobject,
     auto video_pos_dur = builder.get_widget<Gtk::Widget>("video_pos_dur");
     auto video_volume = builder.get_widget<Gtk::VolumeButton>("video_volume");
     m_try_video = signal_try_video().connect([this, revelear_video, video_seek, video_position, video_duration, video_pos_dur, video_volume](bool has_video, bool has_audio) {
-        has_video = false;
-        has_audio = false;
         if (has_video || has_audio) {
             m_player->set_uri(Glib::filename_to_uri(m_recv.get_path()), has_video);
             m_player->set_auto_reset(false);
