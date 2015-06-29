@@ -434,6 +434,7 @@ WidgetChatFileRecv::~WidgetChatFileRecv() {
 void WidgetChatFileRecv::before_deconstructor() {
     m_set_image_connection.disconnect();
     m_update_video_interval.disconnect();
+    m_update_interval.disconnect();
     m_update_video.disconnect();
     m_try_video.disconnect();
     m_run = false;
