@@ -120,6 +120,18 @@ DialogChat::DialogChat(gToxObservable* instance, Toxmm::FriendNr nr)
                                           &m_header,
                                           &m_chat
                                       }));*/
+
+    //Drag and drop of files
+    std::vector<Gtk::TargetEntry> targets;
+    targets.push_back(Gtk::TargetEntry("text/uri-list"));
+    m_chat.drag_dest_set(targets,
+                         Gtk::DEST_DEFAULT_MOTION | Gtk::DEST_DEFAULT_DROP,
+                         Gdk::ACTION_COPY | Gdk::ACTION_MOVE);
+    m_chat.signal_drag_data_received().connect([this](const Glib::RefPtr<Gdk::DragContext>&, int, int, const Gtk::SelectionData& data, guint, guint) {
+        for (auto uri : data.get_uris()) {
+            m_chat.add_filesend(uri);
+        }
+    });
 }
 
 DialogChat::~DialogChat() {
