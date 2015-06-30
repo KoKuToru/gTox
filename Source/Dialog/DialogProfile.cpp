@@ -89,10 +89,11 @@ void DialogProfile::set_accounts(const std::vector<std::string>& accounts) {
         Glib::ustring tox_name;
         Glib::ustring tox_status;
         Toxmm::FriendAddr tox_addr;
-        bool tox_okay = false;
-        bool can_write = false;
 
         for (auto acc : accounts) {
+            int tox_error = 0;
+            bool can_write = false;
+
             //TRY TO LOAD TOX DATA
             try {
                 Toxmm instance;
@@ -101,17 +102,32 @@ void DialogProfile::set_accounts(const std::vector<std::string>& accounts) {
                 tox_name = instance.get_name_or_address();
                 tox_status = instance.get_status_message();
                 tox_addr = instance.get_address();
-                tox_okay = true;
                 can_write = instance.profile().can_write();
+            } catch (ToxException exception) {
+                if (exception.type() == typeid(TOX_ERR_NEW)) {
+                    switch (exception.what_id()) {
+                        case TOX_ERR_NEW_LOAD_BAD_FORMAT:
+                            tox_error = 1;
+                            break;
+                        case TOX_ERR_NEW_LOAD_ENCRYPTED:
+                            tox_error = 2;
+                            break;
+                        default:
+                            tox_error = 3;
+                            break;
+                    }
+                } else {
+                    tox_error = 3;
+                }
             } catch (...) {
-                tox_okay = false;
+                tox_error = 3;
             }
 
             auto avatar_path = Glib::build_filename(Glib::get_user_config_dir(),
                                                     "tox", "avatars",
                                                     Toxmm::to_hex(tox_addr.data(), TOX_PUBLIC_KEY_SIZE) + ".png");
 
-            m_dispatcher.emit([this, tox_name, acc, tox_status, tox_okay, can_write, tox_addr, avatar_path](){
+            m_dispatcher.emit([this, tox_name, acc, tox_status, tox_error, can_write, tox_addr, avatar_path](){
                 gToxBuilder builder = Gtk::Builder::create_from_resource("/org/gtox/ui/list_item_profile.ui");
                 Gtk::ListBoxRow* row = nullptr;
                 builder->get_widget("pofile_list_item", row);
@@ -125,23 +141,36 @@ void DialogProfile::set_accounts(const std::vector<std::string>& accounts) {
                     builder.get_widget("path", path);
                     avatar = builder.get_widget_derived<WidgetAvatar>("avatar", avatar_path);
 
-                    if (name && status && path && avatar) {
-                        path->set_text(acc);
-                        row->set_sensitive(false);
-                        if (tox_okay) {
+                    path->set_text(acc);
+                    row->set_sensitive(false);
+                    switch (tox_error) {
+                        case 0:
                             name->set_text(tox_name);
                             status->set_text(tox_status);
                             if (can_write) {
                                 row->set_sensitive(true);
                             }
-                        }
+                            break;
+                        case 1:
+                            name->set_text(_("PROFILE_CORRUPTED_TITLE"));
+                            status->set_text(_("PROFILE_CORRUPTED"));
+                            break;
+                        case 2:
+                            name->set_text(_("PROFILE_CRYPTED_TITLE"));
+                            status->set_text(_("PROFILE_CRYPTED"));
+                            break;
+                        default:
+                            name->set_text(_("PROFILE_UNEXPECTED_TITLE"));
+                            status->set_text(_("PROFILE_UNEXPECTED"));
+                            break;
                     }
+
                     row->show();
                     m_profile_list->add(*row);
 
                     //reveale profil
                     Gtk::Revealer* revealer;
-                    builder->get_widget("revealer", revealer);
+                    builder.get_widget("revealer", revealer);
                     revealer->reference();
                     Glib::signal_idle().connect_once([revealer](){
                         revealer->set_reveal_child(true);
