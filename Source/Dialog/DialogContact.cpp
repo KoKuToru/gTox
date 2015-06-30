@@ -300,6 +300,10 @@ void DialogContact::tox_event_handling(const ToxEvent& ev) {
 }
 
 void DialogContact::set_status(Toxmm::EUSERSTATUS status_code) {
+    if (status_code == Toxmm::OFFLINE) {
+        exit();
+        return;
+    }
     tox().set_status(status_code);
 
     // TODO: implement a get_status_icon function
@@ -341,5 +345,5 @@ void DialogContact::set_status(Toxmm::EUSERSTATUS status_code) {
 void DialogContact::exit() {
     tox().save();
     // TODO: ask for confirmation
-    Gtk::Main::quit();
+    hide();
 }

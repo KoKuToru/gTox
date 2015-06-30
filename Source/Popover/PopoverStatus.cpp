@@ -36,20 +36,28 @@ PopoverStatus::PopoverStatus(gToxObservable* instance, const Gtk::Widget& relati
 
     // signal handling
     m_listbox.signal_row_activated().connect([this](Gtk::ListBoxRow* row) {
-        /*switch (row->get_index()) {
+        switch (row->get_index()) {
             case 0:
-                DialogContact::instance().set_status(Toxmm::NONE);
+                observer_notify(ToxEvent(DialogContact::EventSetStatus{
+                                              Toxmm::NONE
+                                          }));
                 break;
             case 1:
-                DialogContact::instance().set_status(Toxmm::BUSY);
+                observer_notify(ToxEvent(DialogContact::EventSetStatus{
+                                              Toxmm::BUSY
+                                          }));
                 break;
             case 2:
-                DialogContact::instance().set_status(Toxmm::AWAY);
+                observer_notify(ToxEvent(DialogContact::EventSetStatus{
+                                              Toxmm::AWAY
+                                          }));
                 break;
             case 3:
-                DialogContact::instance().exit();
+                observer_notify(ToxEvent(DialogContact::EventSetStatus{
+                                              Toxmm::OFFLINE
+                                          }));
                 break;
-        }*/
+        }
         set_visible(false);
     });
 }
