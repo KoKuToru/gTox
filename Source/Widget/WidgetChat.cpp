@@ -336,3 +336,7 @@ bool WidgetChat::need_date(unsigned long long a_timestamp, unsigned long long b_
             a_time.get_month() != b_time.get_month() ||
             a_time.get_day_of_month() != b_time.get_day_of_month();
 }
+
+void WidgetChat::add_filesend(Glib::ustring uri) {
+    //TODO
+}

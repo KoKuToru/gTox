@@ -59,6 +59,8 @@ class WidgetChat : public Gtk::VPaned, public gToxObserver {
     WidgetChat(gToxObservable* observable, Toxmm::FriendNr nr);
     ~WidgetChat();
 
+    void add_filesend(Glib::ustring uri);
+
     Toxmm::FriendNr get_friend_nr() const;
     void focus();
 
