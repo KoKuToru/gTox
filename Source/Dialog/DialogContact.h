@@ -60,6 +60,8 @@ class DialogContact : public Gtk::Window, public gToxObservable {
 
     Glib::RefPtr<Glib::Binding> m_position_binding;
 
+    Gtk::Menu m_popup_menu;
+
   public:
     DialogContact(BaseObjectType* cobject, gToxBuilder builder,
                   const Glib::ustring& file);

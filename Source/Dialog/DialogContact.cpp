@@ -129,6 +129,56 @@ DialogContact::DialogContact(BaseObjectType* cobject, gToxBuilder builder, const
     m_update_interval = Glib::signal_timeout().connect(
         sigc::mem_fun(this, &DialogContact::update),
         tox().update_optimal_interval());
+
+    //Menu items
+    auto contact_remove = Gtk::manage(new Gtk::MenuItem(_("CONTACT_MENU_REMOVE"), true));
+
+    m_popup_menu.append(*contact_remove);
+    m_popup_menu.accelerate(*this);
+    m_popup_menu.show_all();
+
+    m_list_contact->signal_button_press_event().connect_notify([this](GdkEventButton* event) {
+        if (event->type == GDK_BUTTON_PRESS && event->button == 3) {
+            auto item = m_list_contact->get_row_at_y(event->y);
+            if (item) {
+                m_list_contact->select_row(*item);
+                m_popup_menu.popup(event->button, event->time);
+            }
+        }
+    });
+
+    contact_remove->signal_activate().connect([this]() {
+        auto row = dynamic_cast<WidgetContactListItem*>(m_list_contact->get_selected_row());
+        if (!row) {
+            return;
+        }
+        auto friend_nr = row->get_friend_nr();
+
+        Gtk::Window& parent = dynamic_cast<Gtk::Window&>(*this->get_toplevel());
+        Gtk::MessageDialog msg(parent,
+                               _("CONTACT_DIALOG_REMOVE_TITLE"),
+                               false,
+                               Gtk::MESSAGE_QUESTION,
+                               Gtk::BUTTONS_OK_CANCEL,
+                               true);
+        msg.set_secondary_text(
+                    Glib::ustring::compose(_("CONTACT_DIALOG_REMOVE"),
+                                           tox().get_name_or_address(friend_nr)));
+        if (msg.run() != Gtk::RESPONSE_OK) {
+            return;
+        }
+        m_list_contact->remove(*row);
+        delete row;
+        for(auto item : m_list_contact_active->get_children()) {
+            row = dynamic_cast<WidgetContactListItem*>(item);
+            if (row) {
+                m_list_contact_active->remove(*row);
+                delete row;
+            }
+        }
+        tox().del_friend(friend_nr);
+        tox().save();
+    });
 }
 
 gToxBuilderRef<DialogContact> DialogContact::create(const Glib::ustring& file) {
