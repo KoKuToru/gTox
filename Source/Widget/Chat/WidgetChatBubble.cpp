@@ -253,7 +253,7 @@ void WidgetChatBubble::add_filerecv(Toxmm::EventFileRecv file) {
     }
 }
 
-void WidgetChatBubble::add_filesend(Glib::ustring uri) {
+void WidgetChatBubble::add_filesend(Toxmm::FriendNr nr, Glib::ustring uri) {
     auto msg_time = Glib::DateTime::create_now_utc();
 
     // remove seconds
@@ -279,10 +279,11 @@ void WidgetChatBubble::add_filesend(Glib::ustring uri) {
         display_time = !(msg_time.compare(old_time) == 0);
     }
 
+    auto path = Glib::filename_from_uri(uri);
+
     // create a new row
-    auto msg_builder = WidgetChatFilePreview::create(uri);
+    auto msg_builder = WidgetChatFileSend::create(observable(), nr, path);
     auto msg  = Gtk::manage(msg_builder.raw());
-    msg->start_loading();
     auto time = Gtk::manage(new Gtk::Label());
     m_last_timestamp = msg_time.to_unix();
 

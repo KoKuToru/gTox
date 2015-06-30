@@ -370,7 +370,7 @@ void WidgetChat::add_filesend(Glib::ustring uri) {
         //on same bubble !
         WidgetChatBubble* bubble = dynamic_cast<WidgetChatBubble*>(m_vbox.get_children().back());
         if (bubble) {
-            bubble->add_filesend(uri);
+            bubble->add_filesend(m_nr, uri);
 
             m_last_timestamp = timestamp;
             m_last_side = side;
@@ -380,7 +380,7 @@ void WidgetChat::add_filesend(Glib::ustring uri) {
 
     //add new bubble
     auto new_bubble = Gtk::manage(new WidgetChatBubble(observable(), (side == WidgetChatBubble::LEFT)?m_nr:~0u, side));
-    new_bubble->add_filesend(uri);
+    new_bubble->add_filesend(m_nr, uri);
     new_bubble->show_all();
 
     add_widget(*new_bubble);

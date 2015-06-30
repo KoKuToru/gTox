@@ -27,6 +27,7 @@
 #include "Helper/gToxObserver.h"
 #include "Widget/WidgetAvatar.h"
 #include "Widget/Chat/WidgetChatFileRecv.h"
+#include "Widget/Chat/WidgetChatFileSend.h"
 
 class WidgetChatLabel;
 
@@ -54,14 +55,14 @@ class WidgetChatBubble : public Gtk::Box, public gToxObserver {
 
         void add_message(Line new_line);
         void add_filerecv(Toxmm::EventFileRecv file);
-        void add_filesend(Glib::ustring uri);
+        void add_filesend(Toxmm::FriendNr nr, Glib::ustring uri);
 
         unsigned long long last_timestamp();
 
         sigc::connection signal_update_avatar_size;
 
         std::vector<WidgetChatFileRecv*> m_filerecv;
-        std::vector<WidgetChatFilePreview*> m_filesend;
+        std::vector<WidgetChatFileSend*> m_filesend;
 
     private:
       Side m_side;
