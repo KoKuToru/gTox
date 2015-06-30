@@ -54,12 +54,14 @@ class WidgetChatBubble : public Gtk::Box, public gToxObserver {
 
         void add_message(Line new_line);
         void add_filerecv(Toxmm::EventFileRecv file);
+        void add_filesend(Glib::ustring uri);
 
         unsigned long long last_timestamp();
 
         sigc::connection signal_update_avatar_size;
 
         std::vector<WidgetChatFileRecv*> m_filerecv;
+        std::vector<WidgetChatFilePreview*> m_filesend;
 
     private:
       Side m_side;

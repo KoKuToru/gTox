@@ -252,3 +252,68 @@ void WidgetChatBubble::add_filerecv(Toxmm::EventFileRecv file) {
         time->hide();
     }
 }
+
+void WidgetChatBubble::add_filesend(Glib::ustring uri) {
+    auto msg_time = Glib::DateTime::create_now_utc();
+
+    // remove seconds
+    msg_time = Glib::DateTime::create_utc(msg_time.get_year(),
+                                          msg_time.get_month(),
+                                          msg_time.get_day_of_month(),
+                                          msg_time.get_hour(),
+                                          msg_time.get_minute(),
+                                          0);
+
+    bool display_time = true;
+
+    if (m_last_timestamp != 0) {
+        auto old_time = Glib::DateTime::create_now_utc(m_last_timestamp);
+        // remove seconds
+        old_time = Glib::DateTime::create_utc(old_time.get_year(),
+                                              old_time.get_month(),
+                                              old_time.get_day_of_month(),
+                                              old_time.get_hour(),
+                                              old_time.get_minute(),
+                                              0);
+        // check
+        display_time = !(msg_time.compare(old_time) == 0);
+    }
+
+    // create a new row
+    auto msg_builder = WidgetChatFilePreview::create(uri);
+    auto msg  = Gtk::manage(msg_builder.raw());
+    msg->start_loading();
+    auto time = Gtk::manage(new Gtk::Label());
+    m_last_timestamp = msg_time.to_unix();
+
+    m_filesend.push_back(msg);
+
+    // get local time
+    msg_time = Glib::DateTime::create_now_local(m_last_timestamp);
+
+    time->set_text(msg_time.format("%R"));
+
+    // add to grid
+    if (m_side == RIGHT) {
+        rows.emplace_back(m_grid, m_row_count, *msg, *time);
+    } else {
+        rows.emplace_back(m_grid, m_row_count, *time, *msg);
+    }
+    m_row_count += 1;
+
+    // styling
+    time->set_halign(Gtk::ALIGN_CENTER);
+    time->set_valign(Gtk::ALIGN_START);
+    time->get_style_context()->add_class("bubble_chat_line_time");
+
+    msg->set_halign(Gtk::ALIGN_FILL);
+    msg->set_valign(Gtk::ALIGN_CENTER);
+
+    msg->show();
+    msg->set_no_show_all();
+    time->show();
+    time->set_no_show_all();
+    if (!display_time) {
+        time->hide();
+    }
+}
