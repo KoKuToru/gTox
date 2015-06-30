@@ -67,16 +67,44 @@ DialogProfile::DialogProfile(BaseObjectType* cobject, gToxBuilder builder, const
         quit();
     });
 
+    profile_list->signal_button_press_event().connect_notify([this, profile_list](GdkEventButton* event) {
+        if (event->type == GDK_BUTTON_PRESS && event->button == 3) {
+            auto item = profile_list->get_row_at_y(event->y);
+            if (item) {
+                profile_list->select_row(*item);
+                m_popup_menu.popup(event->button, event->time);
+            }
+        }
+    });
+
     profile_select->set_sensitive(false);
     profile_select->signal_clicked().connect([this, profile_list](){
         m_abort = false;
-        if (profile_list) {
-            auto row = profile_list->get_selected_row();
-            if (row) {
-                m_selected_path = m_accounts[row->get_index()];
+
+        auto row = profile_list->get_selected_row();
+        if (row) {
+            m_selected_path = m_accounts[row->get_index()];
+        }
+
+        quit();
+    });
+
+    auto open_in_fm = Gtk::manage(new Gtk::MenuItem(_("PROFILE_MENU_OPEN_IN_FILEMANAGER"), true));
+
+    m_popup_menu.append(*open_in_fm);
+
+    m_popup_menu.accelerate(*this);
+    m_popup_menu.show_all();
+
+    open_in_fm->signal_activate().connect([this, profile_list](){
+        auto row = profile_list->get_selected_row();
+        if (row) {
+            try {
+                Gio::AppInfo::get_default_for_type("inode/directory", true)->launch_uri(Glib::filename_to_uri(m_accounts[row->get_index()]));
+            } catch (...) {
+                //TODO: display error !
             }
         }
-        quit();
     });
 
     set_accounts(accounts);

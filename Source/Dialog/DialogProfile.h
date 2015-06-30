@@ -26,32 +26,34 @@
 
 // Single chat window
 class DialogProfile : public Gtk::Window {
-  private:
-    std::vector<std::string> m_accounts;
-    bool m_abort;
-    bool m_quited;
-    std::string m_selected_path;
-    Glib::Thread* m_thread = nullptr;
+    private:
+        std::vector<std::string> m_accounts;
+        bool m_abort;
+        bool m_quited;
+        std::string m_selected_path;
+        Glib::Thread* m_thread = nullptr;
 
-    Gtk::ListBox* m_profile_list;
-    Gtk::Revealer* m_revealer;
+        Gtk::ListBox* m_profile_list;
+        Gtk::Revealer* m_revealer;
 
-    Dispatcher m_dispatcher;
+        Gtk::Menu m_popup_menu;
 
-    void quit();
+        Dispatcher m_dispatcher;
 
-    void set_accounts(const std::vector<std::string>& accounts);
+        void quit();
 
-  public:
-    DialogProfile(BaseObjectType* cobject, gToxBuilder builder,
-                  const std::vector<std::string>& accounts);
+        void set_accounts(const std::vector<std::string>& accounts);
 
-    static gToxBuilderRef<DialogProfile> create(const std::vector<std::string>& accounts);
+    public:
+        DialogProfile(BaseObjectType* cobject, gToxBuilder builder,
+                      const std::vector<std::string>& accounts);
 
-    ~DialogProfile();
+        static gToxBuilderRef<DialogProfile> create(const std::vector<std::string>& accounts);
 
-    bool is_aborted();
-    std::string get_path();
+        ~DialogProfile();
+
+        bool is_aborted();
+        std::string get_path();
 };
 
 #endif
