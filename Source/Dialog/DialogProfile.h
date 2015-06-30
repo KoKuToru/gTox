@@ -22,6 +22,7 @@
 
 #include <gtkmm.h>
 #include "Helper/gToxBuilder.h"
+#include "Helper/Dispatcher.h"
 
 // Single chat window
 class DialogProfile : public Gtk::Window {
@@ -31,10 +32,11 @@ class DialogProfile : public Gtk::Window {
     bool m_quited;
     std::string m_selected_path;
     Glib::Thread* m_thread = nullptr;
-    std::list<sigc::connection> m_events;
 
     Gtk::ListBox* m_profile_list;
     Gtk::Revealer* m_revealer;
+
+    Dispatcher m_dispatcher;
 
     void quit();
 

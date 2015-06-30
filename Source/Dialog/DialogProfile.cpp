@@ -111,8 +111,7 @@ void DialogProfile::set_accounts(const std::vector<std::string>& accounts) {
                                                     "tox", "avatars",
                                                     Toxmm::to_hex(tox_addr.data(), TOX_PUBLIC_KEY_SIZE) + ".png");
 
-            //TODO: not thread safe !
-            m_events.push_back(Glib::signal_idle().connect([this, tox_name, acc, tox_status, tox_okay, can_write, tox_addr, avatar_path](){
+            m_dispatcher.emit([this, tox_name, acc, tox_status, tox_okay, can_write, tox_addr, avatar_path](){
                 gToxBuilder builder = Gtk::Builder::create_from_resource("/org/gtox/ui/list_item_profile.ui");
                 Gtk::ListBoxRow* row = nullptr;
                 builder->get_widget("pofile_list_item", row);
@@ -151,7 +150,7 @@ void DialogProfile::set_accounts(const std::vector<std::string>& accounts) {
                 }
 
                 return false;
-            }));
+            });
         }
 
         m_revealer->set_reveal_child(false);
@@ -174,10 +173,6 @@ DialogProfile::~DialogProfile() {
     if (m_thread != nullptr) {
         //wait for thread :D
         m_thread->join();
-
-        for (auto event : m_events) {
-            event.disconnect();
-        }
     }
 }
 
