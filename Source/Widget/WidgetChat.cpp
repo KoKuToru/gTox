@@ -237,8 +237,10 @@ void WidgetChat::add_message(WidgetChatBubble::Side side, WidgetChatBubble::Line
                                message.timestamp, side)) {
         //on same bubble !
         WidgetChatBubble* bubble = dynamic_cast<WidgetChatBubble*>(m_vbox.get_children().back());
-        bubble->add_message(message);
-        return;
+        if (bubble) {
+            bubble->add_message(message);
+            return;
+        }
     }
 
     if (action) {
@@ -297,8 +299,10 @@ void WidgetChat::add_filerecv(WidgetChatBubble::Side side, Toxmm::EventFileRecv 
                     timestamp, side)) {
         //on same bubble !
         WidgetChatBubble* bubble = dynamic_cast<WidgetChatBubble*>(m_vbox.get_children().back());
-        bubble->add_filerecv(file);
-        return;
+        if (bubble) {
+            bubble->add_filerecv(file);
+            return;
+        }
     }
 
     //add new bubble
