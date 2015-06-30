@@ -16,6 +16,7 @@
           <object class="GtkBox" id="box4">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="margin_left">5</property>
             <property name="spacing">5</property>
             <child>
               <object class="GtkLabel" id="file_name">
@@ -23,7 +24,6 @@
                 <property name="can_focus">False</property>
                 <property name="halign">start</property>
                 <property name="valign">start</property>
-                <property name="margin_top">2</property>
                 <property name="label">Filename abc.txt</property>
                 <property name="ellipsize">end</property>
                 <property name="single_line_mode">True</property>
@@ -39,6 +39,7 @@
                 <property name="width_request">30</property>
                 <property name="can_focus">False</property>
                 <property name="margin_right">5</property>
+                <property name="margin_bottom">1</property>
                 <property name="active">True</property>
               </object>
               <packing>
@@ -56,13 +57,19 @@
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                     <property name="tooltip_text" translatable="yes" comments="Open file with file-explorer">FILE_RECV_OPEN_DIR</property>
+                    <property name="relief">none</property>
                     <child>
                       <object class="GtkImage" id="image9">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="pixel_size">9</property>
                         <property name="icon_name">inode-directory-symbolic</property>
                       </object>
                     </child>
+                    <style>
+                      <class name="flat"/>
+                      <class name="menuitem"/>
+                    </style>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -80,9 +87,14 @@
                       <object class="GtkImage" id="image1">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="pixel_size">9</property>
                         <property name="icon_name">document-open-symbolic</property>
                       </object>
                     </child>
+                    <style>
+                      <class name="flat"/>
+                      <class name="menuitem"/>
+                    </style>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -90,9 +102,6 @@
                     <property name="position">1</property>
                   </packing>
                 </child>
-                <style>
-                  <class name="linked"/>
-                </style>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -121,6 +130,8 @@
                   <object class="GtkBox" id="file_info_box_1">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="margin_left">5</property>
+                    <property name="margin_right">5</property>
                     <child>
                       <object class="GtkLabel" id="file_size">
                         <property name="visible">True</property>
@@ -150,13 +161,15 @@
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">True</property>
-                    <property name="position">1</property>
+                    <property name="position">2</property>
                   </packing>
                 </child>
                 <child>
                   <object class="GtkBox" id="file_info_box_2">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="margin_left">5</property>
+                    <property name="margin_right">5</property>
                     <child>
                       <object class="GtkBox" id="file_control">
                         <property name="visible">True</property>
@@ -174,6 +187,10 @@
                                 <property name="icon_name">media-playback-start-symbolic</property>
                               </object>
                             </child>
+                            <style>
+                              <class name="flat"/>
+                              <class name="menuitem"/>
+                            </style>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -188,7 +205,6 @@
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
                             <property name="tooltip_text" translatable="yes" comments="Pauses the download">FILE_RECV_PAUSE</property>
-                            <property name="yalign">0.51999998092651367</property>
                             <child>
                               <object class="GtkImage" id="image3">
                                 <property name="visible">True</property>
@@ -196,6 +212,10 @@
                                 <property name="icon_name">media-playback-pause-symbolic</property>
                               </object>
                             </child>
+                            <style>
+                              <class name="flat"/>
+                              <class name="menuitem"/>
+                            </style>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -216,6 +236,10 @@
                                 <property name="icon_name">media-playback-stop-symbolic</property>
                               </object>
                             </child>
+                            <style>
+                              <class name="flat"/>
+                              <class name="menuitem"/>
+                            </style>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -223,9 +247,6 @@
                             <property name="position">2</property>
                           </packing>
                         </child>
-                        <style>
-                          <class name="linked"/>
-                        </style>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -256,6 +277,9 @@
                   <object class="GtkProgressBar" id="file_progress">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="margin_left">10</property>
+                    <property name="margin_right">10</property>
+                    <property name="margin_bottom">5</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -280,6 +304,9 @@
     <child type="label_item">
       <placeholder/>
     </child>
+    <style>
+      <class name="bubble_chat_file"/>
+    </style>
   </object>
   <object class="GtkAdjustment" id="video_adjustment">
     <property name="upper">100</property>

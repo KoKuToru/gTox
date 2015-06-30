@@ -122,7 +122,7 @@ GtkListBoxRow {
 	border-radius: 0 0 5px 0;
 }
 
-.bubble_chat_line_time {
+.bubble_chat_line_time, .bubble_chat_file, .bubble_chat_file_preview {
     border-radius: 3px;
     padding: 2px;
 }
