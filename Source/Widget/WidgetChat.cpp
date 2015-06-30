@@ -213,9 +213,6 @@ void WidgetChat::add_message(WidgetChatBubble::Side side, WidgetChatBubble::Line
     auto last_timestmap = m_last_timestamp;
     auto last_side = m_last_side;
 
-    m_last_timestamp = message.timestamp;
-    m_last_side = side;
-
     if (need_date(last_timestmap, message.timestamp)) {
         // add a date message
         auto msg = Gtk::manage(new WidgetChatLabel());
@@ -227,7 +224,6 @@ void WidgetChat::add_message(WidgetChatBubble::Side side, WidgetChatBubble::Line
 
         add_widget(*msg);
 
-        m_last_side = WidgetChatBubble::NONE;
         last_side   = WidgetChatBubble::NONE;
     }
 
@@ -239,6 +235,9 @@ void WidgetChat::add_message(WidgetChatBubble::Side side, WidgetChatBubble::Line
         WidgetChatBubble* bubble = dynamic_cast<WidgetChatBubble*>(m_vbox.get_children().back());
         if (bubble) {
             bubble->add_message(message);
+
+            m_last_timestamp = message.timestamp;
+            m_last_side = side;
             return;
         }
     }
@@ -266,6 +265,9 @@ void WidgetChat::add_message(WidgetChatBubble::Side side, WidgetChatBubble::Line
     new_bubble->show_all();
 
     add_widget(*new_bubble);
+
+    m_last_timestamp = message.timestamp;
+    m_last_side = side;
 }
 
 void WidgetChat::add_filerecv(WidgetChatBubble::Side side, Toxmm::EventFileRecv file) {
@@ -291,7 +293,6 @@ void WidgetChat::add_filerecv(WidgetChatBubble::Side side, Toxmm::EventFileRecv 
 
         add_widget(*msg);
 
-        m_last_side = WidgetChatBubble::NONE;
         last_side   = WidgetChatBubble::NONE;
     }
 
@@ -301,6 +302,9 @@ void WidgetChat::add_filerecv(WidgetChatBubble::Side side, Toxmm::EventFileRecv 
         WidgetChatBubble* bubble = dynamic_cast<WidgetChatBubble*>(m_vbox.get_children().back());
         if (bubble) {
             bubble->add_filerecv(file);
+
+            m_last_timestamp = timestamp;
+            m_last_side = side;
             return;
         }
     }
@@ -311,6 +315,9 @@ void WidgetChat::add_filerecv(WidgetChatBubble::Side side, Toxmm::EventFileRecv 
     new_bubble->show_all();
 
     add_widget(*new_bubble);
+
+    m_last_timestamp = timestamp;
+    m_last_side = side;
 }
 
 void WidgetChat::add_widget(Gtk::Widget& widget) {
