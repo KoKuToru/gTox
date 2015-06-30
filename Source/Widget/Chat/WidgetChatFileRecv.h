@@ -25,6 +25,7 @@
 #include "Helper/gToxFileRecv.h"
 #include "../VideoPlayer.h"
 #include "Helper/Dispatcher.h"
+#include "WidgetChatFilePreview.h"
 
 class WidgetChatFileRecv: public Gtk::Frame, public gToxObserver {
     private:
@@ -32,17 +33,13 @@ class WidgetChatFileRecv: public Gtk::Frame, public gToxObserver {
 
         gToxFileRecv m_recv;
 
-        uint32_t m_friend_nr;
+        uint32_t  m_friend_nr;
         long long m_file_number;
-        uint64_t m_file_size;
+        uint64_t  m_file_size;
 
         Gtk::ToggleButton* m_file_resume;
         Gtk::ToggleButton* m_file_cancel;
         Gtk::ToggleButton* m_file_pause;
-
-        Gtk::ToggleButton* m_file_video_play;
-        Gtk::ToggleButton* m_file_video_stop;
-        Gtk::ToggleButton* m_file_video_pause;
 
         Gtk::ProgressBar* m_file_progress;
         Gtk::Revealer* m_revealer_download;
@@ -52,31 +49,15 @@ class WidgetChatFileRecv: public Gtk::Frame, public gToxObserver {
         Gtk::Label* m_file_speed;
         Gtk::Label* m_file_time;
 
-        Glib::Thread* m_thread = nullptr;
-        std::mutex m_mutex;
-
-        typedef sigc::signal<void, Glib::RefPtr<Gdk::Pixbuf>> type_signal_set_image;
-        type_signal_set_image signal_set_image() {
-            return m_signal_set_image;
-        }
-        typedef sigc::signal<void, bool, bool> type_signal_try_video;
-        type_signal_try_video signal_try_video() {
-            return m_signal_try_video;
-        }
-
-        sigc::connection m_set_image_connection;
-        sigc::connection m_try_video;
         sigc::connection m_update_interval;
-        sigc::connection m_update_video_interval;
-        sigc::connection m_update_video;
+        sigc::connection m_loaded;
 
-        VideoPlayer* m_player;
+        WidgetChatFilePreview* m_preview;
 
         size_t m_last_position;
 
         bool m_first_emit = true;
         bool m_finish = false;
-        bool m_run = true;
 
     public:
         WidgetChatFileRecv(BaseObjectType* cobject,
@@ -91,10 +72,6 @@ class WidgetChatFileRecv: public Gtk::Frame, public gToxObserver {
 
         void before_deconstructor();
         ~WidgetChatFileRecv();
-
-    protected:
-        type_signal_set_image m_signal_set_image;
-        type_signal_try_video m_signal_try_video;
 };
 
 #endif

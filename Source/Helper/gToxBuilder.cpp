@@ -31,7 +31,7 @@ GtkWidget* gToxBuilder::get_cwidget(const Glib::ustring& name)
 {
   GObject *cobject = gtk_builder_get_object (m_builder->gobj(), name.c_str());
   if(!cobject) {
-      throw std::runtime_error("gToxBuilder - widget not found");
+      throw std::runtime_error(std::string() + "gToxBuilder - widget \"" + name + "\"not found");
   }
 
   if (!GTK_IS_WIDGET (cobject)) {
