@@ -25,8 +25,8 @@
 class WidgetChatLayout : public Gtk::EventBox {
   private:
     Gtk::VBox m_vbox;
-    int from_x;
-    int from_y;
+    int from_x = -1;
+    int from_y = -1;
 
     void update_children(GdkEventMotion* event,
                          std::vector<Gtk::Widget*> children);
