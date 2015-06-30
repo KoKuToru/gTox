@@ -240,9 +240,11 @@ std::string replace(std::string str,
 }
 
 int WidgetContactListItem::compare(WidgetContactListItem* other) {
-    if (m_name < other->m_name) {
+    auto name_a = tox().get_name_or_address(get_friend_nr()).lowercase();
+    auto name_b = tox().get_name_or_address(other->get_friend_nr()).lowercase();
+    if (name_a < name_b) {
         return -1;
-    } else if (m_name > other->m_name) {
+    } else if (name_a > name_b) {
         return 1;
     }
     return 0;

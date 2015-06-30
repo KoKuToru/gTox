@@ -103,11 +103,19 @@ DialogContact::DialogContact(BaseObjectType* cobject, gToxBuilder builder, const
     m_list_contact->signal_row_activated().connect(activated);
     m_list_contact_active->signal_row_activated().connect(activated);
 
-    m_list_contact->set_sort_func([this](Gtk::ListBoxRow* a, Gtk::ListBoxRow* b){
+    auto sort_func = [this](Gtk::ListBoxRow* a, Gtk::ListBoxRow* b){
         auto item_a = dynamic_cast<WidgetContactListItem*>(a);
         auto item_b = dynamic_cast<WidgetContactListItem*>(b);
+        if (item_a == 0) {
+            return 0;
+        }
+        if (item_b == 0) {
+            return 0;
+        }
         return item_a->compare(item_b);
-    });
+    };
+    m_list_contact->set_sort_func(sort_func);
+    m_list_contact_active->set_sort_func(sort_func);
 
     m_list_notify->signal_row_activated().connect([](Gtk::ListBoxRow* row){
         WidgetNotification* item = dynamic_cast<WidgetNotification*>(row);
@@ -207,13 +215,16 @@ void DialogContact::load_contacts() {
             });
             first = false;
         }
-        auto item_notify_builder = WidgetContactListItem::create(this, contact, true);
-        auto item_notify = Gtk::manage(item_notify_builder.raw());
-        m_list_contact_active->add(*item_notify);
+        item_builder = WidgetContactListItem::create(this, contact, true);
+        item = Gtk::manage(item_builder.raw());
+        m_list_contact_active->add(*item);
     }
 
     bool display = gTox::instance()->database().config_get("SETTINGS_CONTACTLIST_DISPLAY_ACTIVE", true);
     m_list_contact_active->set_visible(display);
+
+    m_list_contact->invalidate_sort();
+    m_list_contact_active->invalidate_sort();
 }
 
 DialogContact::~DialogContact() {
@@ -331,6 +342,9 @@ void DialogContact::tox_event_handling(const ToxEvent& ev) {
         auto item_notify_builder = WidgetContactListItem::create(this, data.nr, true);
         auto item_notify = Gtk::manage(item_notify_builder.raw());
         m_list_contact_active->add(*item_notify);
+
+        m_list_contact->invalidate_sort();
+        m_list_contact_active->invalidate_sort();
     } else if (ev.type() == typeid(EventCallback)) {
         auto data = ev.get<EventCallback>();
         data.callback();
@@ -346,6 +360,9 @@ void DialogContact::tox_event_handling(const ToxEvent& ev) {
     } else if (ev.type() == typeid(WidgetContactListItem::EventUpdateDisplayActive)) {
         auto data = ev.get<WidgetContactListItem::EventUpdateDisplayActive>();
         m_list_contact_active->set_visible(data.display);
+    } else if (ev.type() == typeid(Toxmm::EventName)) {
+        m_list_contact->invalidate_sort();
+        m_list_contact_active->invalidate_sort();
     }
 }
 
