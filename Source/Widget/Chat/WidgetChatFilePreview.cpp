@@ -69,7 +69,7 @@ WidgetChatFilePreview::WidgetChatFilePreview(BaseObjectType* cobject,
                 //audio only
                 video_control->show();
                 set_reveal_child(true);
-                m_signal_loaded.emit(false);
+                m_signal_loaded.emit(true);
             }
 
             m_update_video_interval = Glib::signal_timeout().connect([this, video_seek, video_position, video_duration, video_pos_dur]() {

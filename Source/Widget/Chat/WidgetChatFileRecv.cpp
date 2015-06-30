@@ -191,9 +191,6 @@ WidgetChatFileRecv::WidgetChatFileRecv(BaseObjectType* cobject,
 
     m_loaded = m_preview->signal_loaded().connect([this](bool success) {
         m_spinner->hide();
-        if (success) {
-            m_file_open_bar->show();
-        }
     });
 
     m_recv.emit_progress();
@@ -219,11 +216,14 @@ void WidgetChatFileRecv::observer_handle(const ToxEvent& event) {
 
             //finish !
             m_update_interval.disconnect();
-
-            //display
             m_revealer_download->set_reveal_child(false);
-            m_spinner->show();
-            m_preview->start_loading();
+
+            if (Glib::file_test(m_recv.get_path(), Glib::FILE_TEST_IS_REGULAR)) {
+                //display
+                m_file_open_bar->show();
+                m_spinner->show();
+                m_preview->start_loading();
+            }
         } else if (m_first_emit) {
             m_first_emit = false;
             if (!m_finish) {
