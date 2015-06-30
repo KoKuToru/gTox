@@ -15,7 +15,8 @@ set(SRC
     dialog_contact.ui
     popover_settings.ui
     dialog_settings.ui
-    chat_filerecv.ui)
+    chat_filerecv.ui
+    chat_filepreview.ui)
 
 set(LAYOUT ${SRC} PARENT_SCOPE)
 
