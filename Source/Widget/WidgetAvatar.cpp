@@ -77,10 +77,27 @@ void WidgetAvatar::load(bool force_reload) {
         return;
     }
 
-    //load avatar from disk !
-    auto pix = get_avatar(m_path, force_reload);
+    //display placeholder
+    set(get_avatar(std::string()));
 
-    set(pix);
+    //load avatar async
+    int version = ++m_version;
+    auto path = m_path;
+    auto self = this;
+    Dispatcher::Ref dispatcher(m_dispatcher); //take a reference
+    Glib::Thread::create([self, dispatcher, force_reload, path, version](){
+        static std::mutex mutex;
+        std::lock_guard<std::mutex> lg(mutex); //limit parallel load
+        auto pix = get_avatar(path, force_reload);
+        //dispatch to gtk main loop
+        //also makes sure the class which uses the dispatcher still exists
+        dispatcher.emit([self, pix, version](){
+            //make sure we are the "latest" version
+            if (self->m_version == version) {
+                self->set(pix);
+            }
+        });
+    }, false);
 }
 
 void WidgetAvatar::set_size_request(int width, int height) {
@@ -92,14 +109,14 @@ Glib::RefPtr<Gdk::Pixbuf> WidgetAvatar::get_avatar(Glib::ustring path, bool forc
     static auto pix_default = Gdk::Pixbuf::create_from_resource("/org/gtox/icon/avatar.svg");
     static std::map<std::string, Glib::RefPtr<Gdk::Pixbuf>> pix_cache;
 
-    if (!force_reload) {
+    if (!force_reload && use_cache) {
         auto pix_iter = pix_cache.find(path);
         if (pix_iter != pix_cache.end()) {
             return pix_iter->second;
         }
     }
 
-    if (!Glib::file_test(path, Glib::FILE_TEST_IS_REGULAR)) {
+    if (path.empty() || !Glib::file_test(path, Glib::FILE_TEST_IS_REGULAR)) {
         return pix_default;
     }
 

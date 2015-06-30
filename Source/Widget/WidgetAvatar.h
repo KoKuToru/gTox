@@ -23,6 +23,7 @@
 #include <gtkmm.h>
 #include "Helper/gToxObserver.h"
 #include "Helper/gToxBuilder.h"
+#include "Helper/Dispatcher.h"
 
 class WidgetAvatar : public Gtk::Image, public gToxObserver {
     private:
@@ -51,6 +52,9 @@ class WidgetAvatar : public Gtk::Image, public gToxObserver {
             public:
                 Glib::ustring path;
         };
+
+        Dispatcher m_dispatcher;
+        int m_version = 0;
 
     protected:
         void observer_handle(const ToxEvent&) override;
