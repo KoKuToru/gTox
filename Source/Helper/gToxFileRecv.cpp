@@ -65,7 +65,7 @@ gToxFileRecv::gToxFileRecv(gToxObservable* observable,
                 m_fd = -1;
 
                 auto file_id_should = tox().hash(data);
-                auto file_id = tox().file_get_field_id(m_file.nr, m_file.file_number);
+                auto file_id = tox().file_get_file_id(m_file.nr, m_file.file_number);
                 if (!std::equal(file_id.begin(), file_id.end(), file_id_should.begin())) {
                     //Remove avatar, because it's wrong
                     WidgetAvatar::set_avatar(observable, m_path, Glib::RefPtr<Gdk::Pixbuf>());

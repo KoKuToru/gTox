@@ -269,3 +269,20 @@ ToxException::ToxException(TOX_ERR_FILE_GET error):
         throw std::runtime_error("TOX_ERR_FILE_GET unknow error code " + std::to_string(error));
     }
 }
+
+ToxException::ToxException(TOX_ERR_FILE_SEND error):
+    m_type(typeid(error)) {
+    static std::map<decltype(error), std::string> enum2str =
+    {{TOX_ERR_FILE_SEND_NULL, _("TOX_ERR_FILE_SEND_NULL")},
+    {TOX_ERR_FILE_SEND_FRIEND_NOT_FOUND, _("TOX_ERR_FILE_SEND_FRIEND_NOT_FOUND")},
+    {TOX_ERR_FILE_SEND_FRIEND_NOT_CONNECTED, _("TOX_ERR_FILE_SEND_FRIEND_NOT_CONNECTED")},
+    {TOX_ERR_FILE_SEND_NAME_TOO_LONG, _("TOX_ERR_FILE_SEND_NAME_TOO_LONG")},
+    {TOX_ERR_FILE_SEND_TOO_MANY, _("TOX_ERR_FILE_SEND_TOO_MANY")}};
+    auto iter = enum2str.find(error);
+    if (iter != enum2str.end()) {
+        m_what = iter->second;
+        m_what_id = error;
+    } else {
+        throw std::runtime_error("TOX_ERR_FILE_SEND unknow error code " + std::to_string(error));
+    }
+}

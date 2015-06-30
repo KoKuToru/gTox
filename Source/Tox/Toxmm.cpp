@@ -552,6 +552,8 @@ void Toxmm::inject_event(ToxEvent ev) {
                 Gio::File::create_for_path(path)->make_directory_with_parents();
             }
 
+            data.filename = Gio::File::create_for_path(data.filename)
+                            ->get_basename();
             auto cpath = Glib::build_filename(path, data.filename);
 
             int index = 0;
@@ -578,6 +580,7 @@ void Toxmm::inject_event(ToxEvent ev) {
             entity.data = data.filename;
             entity.filesize = data.file_size;
             entity.filenumber = data.file_number;
+            entity.fileid = file_get_file_id(data.nr, data.file_number);
             m_db.toxcore_log_add(entity);
         }
     }
@@ -597,7 +600,7 @@ std::vector<ToxLogEntity> Toxmm::get_log(Toxmm::FriendNr nr, int offset, int lim
                                 limit);
 }
 
-void Toxmm::file_control(FriendNr nr, uint32_t file_nr, TOX_FILE_CONTROL control) {
+void Toxmm::file_control(FriendNr nr, FileNr file_nr, TOX_FILE_CONTROL control) {
     if (m_tox == nullptr) {
         throw std::runtime_error("TOX_UNITIALIZED");
     }
@@ -612,7 +615,7 @@ void Toxmm::file_control(FriendNr nr, uint32_t file_nr, TOX_FILE_CONTROL control
     }
 }
 
-void Toxmm::file_seek(FriendNr nr, uint32_t file_nr, uint64_t position) {
+void Toxmm::file_seek(FriendNr nr, FileNr file_nr, uint64_t position) {
     if (m_tox == nullptr) {
         throw std::runtime_error("TOX_UNITIALIZED");
     }
@@ -627,7 +630,7 @@ void Toxmm::file_seek(FriendNr nr, uint32_t file_nr, uint64_t position) {
     }
 }
 
-Toxmm::FileId Toxmm::file_get_field_id(FriendNr nr, uint32_t file_nr) {
+Toxmm::FileId Toxmm::file_get_file_id(FriendNr nr, FileNr file_nr) {
     if (m_tox == nullptr) {
         throw std::runtime_error("TOX_UNITIALIZED");
     }
@@ -644,6 +647,56 @@ Toxmm::FileId Toxmm::file_get_field_id(FriendNr nr, uint32_t file_nr) {
     }
 
     return id;
+}
+
+Toxmm::FileNr Toxmm::file_resume(FriendNr nr, FileId id) {
+    if (m_tox == nullptr) {
+        throw std::runtime_error("TOX_UNITIALIZED");
+    }
+
+    throw std::runtime_error("Toxmm::file_resume not implemented yet !");
+
+    return 0;
+}
+
+Toxmm::FileNr Toxmm::file_send(FriendNr nr, TOX_FILE_KIND kind, Glib::ustring path) {
+    if (m_tox == nullptr) {
+        throw std::runtime_error("TOX_UNITIALIZED");
+    }
+
+    if (!Glib::file_test(path, Glib::FILE_TEST_EXISTS)) {
+        throw std::runtime_error("FILE NOT FOUND");
+    }
+    auto name = Gio::File::create_for_path(path)->get_basename();
+    auto info = Gio::File::create_for_path(path)->query_info();
+
+    TOX_ERR_FILE_SEND error;
+    auto res = tox_file_send(m_tox,
+                             nr,
+                             kind,
+                             info->get_size(),
+                             nullptr,
+                             reinterpret_cast<const unsigned char*>(name.c_str()),
+                             name.size(),
+                             &error);
+    if (error != TOX_ERR_FILE_SEND_OK) {
+        throw Exception(error);
+    }
+    if (res == UINT32_MAX) {
+        throw std::runtime_error("tox_file_send unknow UINT32_MAX error");
+    }
+
+    ToxLogEntity entity;
+    entity.type = EToxLogType::LOG_FILE_SEND;
+    auto addr = get_address(nr);
+    entity.friendaddr = to_hex(addr.data(), addr.size());
+    entity.data = path;
+    entity.filesize = info->get_size();
+    entity.filenumber = res;
+    entity.fileid = file_get_file_id(nr, res);
+    m_db.toxcore_log_add(entity);
+
+    return res;
 }
 
 Toxmm::Hash Toxmm::hash(const std::vector<uint8_t>& data) {

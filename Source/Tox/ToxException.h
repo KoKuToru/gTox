@@ -46,6 +46,7 @@ class ToxException: public std::exception {
         ToxException(TOX_ERR_FILE_CONTROL error);
         ToxException(TOX_ERR_FILE_SEEK error);
         ToxException(TOX_ERR_FILE_GET error);
+        ToxException(TOX_ERR_FILE_SEND error);
 
         virtual const char* what() const noexcept;
         virtual std::type_index type() const noexcept;

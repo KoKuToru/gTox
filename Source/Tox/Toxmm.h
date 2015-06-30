@@ -55,6 +55,7 @@ class Toxmm {
   public:
     typedef uint32_t FriendNr;
     typedef uint32_t ReceiptNr;
+    typedef uint32_t FileNr;
     typedef std::array<uint8_t, TOX_ADDRESS_SIZE> FriendAddr;
     typedef std::array<uint8_t, TOX_FILE_ID_LENGTH> FileId;
     typedef std::array<uint8_t, TOX_HASH_LENGTH> Hash;
@@ -451,7 +452,7 @@ class Toxmm {
      *
      * @throws Toxmm::Exception
      */
-    void file_control(FriendNr nr, uint32_t file_nr, TOX_FILE_CONTROL control);
+    void file_control(FriendNr nr, FileNr file_nr, TOX_FILE_CONTROL control);
 
     /**
      * @brief Sends a file seek control command to a friend for a given file transfer.
@@ -463,7 +464,7 @@ class Toxmm {
      * @param file_nr The friend-specific identifier for the file transfer.
      * @param postion The position that the file should be seeked to.
      */
-    void file_seek(FriendNr nr, uint32_t file_nr, uint64_t position);
+    void file_seek(FriendNr nr, FileNr file_nr, uint64_t position);
 
     /**
      * @brief Gets the file id associated to the file transfer.
@@ -471,8 +472,22 @@ class Toxmm {
      *   transferred to or received from.
      * @param file_nr The friend-specific identifier for the file transfer.
      */
-    FileId file_get_field_id(FriendNr nr, uint32_t file_nr);
+    FileId file_get_file_id(FriendNr nr, FileNr file_nr);
 
+    /**
+     * @brief file_send
+     * @param nr The friend number of the friend the file send request
+     *   should be sent to.
+     * @param kind The meaning of the file to be sent.
+     * @param path The full path of the file
+     * @return
+     */
+    FileNr file_send(FriendNr nr, TOX_FILE_KIND kind, Glib::ustring path);
+    /**
+     * @param id  A file identifier of length TOX_FILE_ID_LENGTH that can be used to
+     *   uniquely identify file transfers across core restarts. It can then be obtained by using file_get_file_id().
+     * */
+    FileNr file_resume(FriendNr nr, FileId id);
 
     /**
      * Generates a cryptographic hash of the given data.

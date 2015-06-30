@@ -26,6 +26,7 @@
 #include <glibmm/ustring.h>
 #include <vector>
 #include <array>
+#include <tox/tox.h>
 
 class ToxBootstrapEntity {
     public:
@@ -69,6 +70,7 @@ class ToxLogEntity {
         long long filenumber;
         uint64_t filesize;
         long long receipt;
+        std::array<uint8_t, TOX_FILE_ID_LENGTH> fileid;
 
         ToxLogEntity() = default;
 };
