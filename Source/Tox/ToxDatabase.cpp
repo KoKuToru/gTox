@@ -275,6 +275,19 @@ void ToxDatabase::toxcore_log_set_file_complete(std::string friendaddr, uint32_t
     }
 }
 
+void ToxDatabase::toxcore_log_set_file_aborted(std::string friendaddr, uint32_t filenumber, std::array<uint8_t, TOX_FILE_ID_LENGTH> fileid) {
+    friendaddr.resize(64);
+    for(std::string table : {"log", "mem.log"}) {
+        query("UPDATE " + table + " SET status=2"
+              " WHERE runid=?1 AND status!=1 AND friendaddr=?2 AND filenumber=?3 AND fileid=?4",
+              m_runid,
+              friendaddr,
+              filenumber,
+              fileid)->exec();
+    }
+}
+
+
 size_t ToxDatabase::toxcore_log_cleanup(){
     size_t res = 0;
     for(std::string table : {"log", "mem.log"}){

@@ -151,8 +151,7 @@ void gToxFileRecv::cancel() {
 
     auto addr = tox().get_address(m_file.nr);
 
-    //TODO store as aborted
-    tox().database().toxcore_log_set_file_complete(
+    tox().database().toxcore_log_set_file_aborted(
                 Toxmm::to_hex(addr.data(), addr.size()),
                 m_file.file_number,
                 tox().file_get_file_id(m_file.nr, m_file.file_number));

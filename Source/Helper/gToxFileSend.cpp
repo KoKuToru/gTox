@@ -76,12 +76,10 @@ void gToxFileSend::emit_progress() {
             m_stream.reset();
 
             auto addr = tox().get_address(m_friend_nr);
-            /*tox().database().toxcore_log_set_file_sent(
+            tox().database().toxcore_log_set_file_complete(
                         Toxmm::to_hex(addr.data(), addr.size()),
-                        m_path,
                         m_nr,
                         m_id);
-                        */
         }
     }
     observer_notify(ToxEvent(EventFileProgress{
@@ -117,12 +115,10 @@ void gToxFileSend::cancel() {
 
     auto addr = tox().get_address(m_friend_nr);
 
-    /*tox().database().toxcore_log_set_file_sent(
+    tox().database().toxcore_log_set_file_aborted(
                 Toxmm::to_hex(addr.data(), addr.size()),
-                m_path,
                 m_nr,
                 m_id);
-                */
 }
 
 void gToxFileSend::pause() {
