@@ -96,6 +96,20 @@ WidgetChatFilePreview::WidgetChatFilePreview(BaseObjectType* cobject,
             m_signal_loaded.emit(false);
         }
     });
+    auto video_control_revealer = builder.get_widget<Gtk::Revealer>("video_control_revealer");
+    auto video_control_box = builder.get_widget<Gtk::Widget>("video_control_box");
+    int min_height, min_width;
+    int natural_height, natural_width;
+    video_control_box->get_preferred_height(min_height, natural_height);
+    video_control_box->get_preferred_width(min_width, natural_width);
+    m_player->set_size_request(min_width + 10, min_height + 10); //+10 because padding 5 px in xml..
+    video_control->add_events(Gdk::POINTER_MOTION_MASK | Gdk::ENTER_NOTIFY_MASK | Gdk::LEAVE_NOTIFY_MASK);
+    video_control->signal_enter_notify_event().connect_notify([this, video_control_revealer](GdkEventCrossing*) {
+        video_control_revealer->set_reveal_child(true);
+    });
+    video_control->signal_leave_notify_event().connect_notify([this, video_control_revealer](GdkEventCrossing*) {
+        video_control_revealer->set_reveal_child(false);
+    });
 
     builder.get_widget("file_recv_video_play", m_file_video_play);
     builder.get_widget("file_recv_video_pause", m_file_video_pause);
