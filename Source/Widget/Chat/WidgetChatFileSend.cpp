@@ -64,7 +64,9 @@ void WidgetChatFileSend::init(gToxBuilder builder) {
             m_file_time->show();
             m_file_resume->set_sensitive(false);
             try {
-                m_send.resume();
+                if (!m_send_skip_control) {
+                    m_send.resume();
+                }
             } catch (...) {
                 m_file_cancel->clicked();
             }
@@ -83,7 +85,9 @@ void WidgetChatFileSend::init(gToxBuilder builder) {
                 m_file_pause->set_active(false);
             }
             try {
-                m_send.cancel();
+                if (!m_send_skip_control) {
+                    m_send.cancel();
+                }
             } catch (...) {
                 //TODO ?
             }
@@ -108,7 +112,9 @@ void WidgetChatFileSend::init(gToxBuilder builder) {
             m_file_time->hide();
             m_file_pause->set_sensitive(false);
             try {
-                m_send.pause();
+                if (!m_send_skip_control) {
+                    m_send.pause();
+                }
             } catch (...) {
                 m_file_cancel->clicked();
             }
@@ -130,6 +136,8 @@ void WidgetChatFileSend::init(gToxBuilder builder) {
         m_send.get_progress(position, size);
         size_t diff = position - m_last_position;
         m_last_position = position;
+
+        m_file_progress->set_fraction(position / (double)size);
 
         double s  = diff / 0.5; //each 500 ms
 
@@ -221,8 +229,34 @@ WidgetChatFileSend::WidgetChatFileSend(BaseObjectType* cobject,
 }
 
 
-void WidgetChatFileSend::observer_handle(const ToxEvent& event) {
-    //nothing yet
+void WidgetChatFileSend::observer_handle(const ToxEvent& ev) {
+    if (ev.type() == typeid(Toxmm::EventFileControl)) {
+        auto data = ev.get<Toxmm::EventFileControl>();
+        if (data.nr != m_friend_nr || data.file_number != m_file_number) {
+            return;
+        }
+
+        m_send_skip_control = true;
+
+        m_file_resume->set_active(false);
+        m_file_cancel->set_active(false);
+        m_file_pause->set_active(false);
+
+        switch (data.control) {
+            case TOX_FILE_CONTROL_RESUME:
+                m_file_resume->set_active(true);
+                break;
+            case TOX_FILE_CONTROL_PAUSE:
+                m_file_pause->set_active(true);
+                break;
+            case TOX_FILE_CONTROL_CANCEL:
+                m_file_cancel->set_active(true);
+                break;
+        }
+
+        m_send_skip_control = false;
+    }
+
     /*
     if (event.type() == typeid(gToxFileRecv::EventFileProgress)) {
         auto data = event.get<gToxFileRecv::EventFileProgress>();

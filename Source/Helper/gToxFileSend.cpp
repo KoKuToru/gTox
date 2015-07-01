@@ -153,7 +153,6 @@ void gToxFileSend::observer_handle(const ToxEvent& ev) {
             return;
         }
 
-        //change state ?
         switch (data.control) {
             case TOX_FILE_CONTROL_RESUME:
                 m_state = SENDING;

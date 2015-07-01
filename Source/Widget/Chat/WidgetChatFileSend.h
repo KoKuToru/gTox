@@ -32,6 +32,7 @@ class WidgetChatFileSend: public Gtk::Frame, public gToxObserver {
         Dispatcher m_dispatcher;
 
         gToxFileSend m_send;
+        bool m_send_skip_control = false;
 
         Toxmm::FriendNr m_friend_nr;
         std::string m_path;
@@ -87,7 +88,7 @@ class WidgetChatFileSend: public Gtk::Frame, public gToxObserver {
                                                          Toxmm::FileId id,
                                                          uint64_t filesize);
 
-        void observer_handle(const ToxEvent&) override;
+        void observer_handle(const ToxEvent&ev) override;
 
         void before_deconstructor();
         ~WidgetChatFileSend();
