@@ -60,6 +60,12 @@ enum EToxLogType {
     LOG_FILE_RECV = 6
 };
 
+enum EToxLogStatus {
+    FILE_COMPLETE = 1,
+    FILE_ABORTED = 2,
+    MESSAGE_RECEIVED = 1
+};
+
 class ToxLogEntity {
     public:
         std::string friendaddr;
@@ -71,6 +77,7 @@ class ToxLogEntity {
         uint64_t filesize;
         long long receipt;
         std::array<uint8_t, TOX_FILE_ID_LENGTH> fileid;
+        EToxLogStatus status;
 
         ToxLogEntity() = default;
 };

@@ -256,7 +256,7 @@ void ToxDatabase::toxcore_log_set_received(std::string friendaddr, int receipt_i
     friendaddr.resize(64);
     for(std::string table : {"log", "mem.log"}) {
         query("UPDATE " + table + " SET recvtime=CURRENT_TIMESTAMP, status=1"
-              " WHERE runid=?1 AND status!=1 AND friendaddr=?1 AND receipt=?2",
+              " WHERE runid=?1 AND friendaddr=?1 AND receipt=?2",
               m_runid,
               friendaddr,
               receipt_id)->exec();
@@ -303,10 +303,11 @@ std::vector<ToxLogEntity> ToxDatabase::toxcore_log_get(std::string friendaddr, i
                       " strftime('%s', sendtime)," //0
                       " strftime('%s', recvtime)," //1
                       " type, "                    //2
-                      " data, "                 //3
+                      " data, "                    //3
                       " receipt, "                 //4
                       " filenumber, "              //5
-                      " filesize "                 //6
+                      " filesize, "                //6
+                      " status "                   //7
                       " FROM (SELECT * FROM log UNION ALL SELECT * FROM mem.log)"
                       " WHERE cast(friendaddr as text) = cast(?1 as text)"
                       " ORDER BY ifNull(sendtime, recvtime) DESC, id DESC LIMIT ?2, ?3",
@@ -324,6 +325,7 @@ std::vector<ToxLogEntity> ToxDatabase::toxcore_log_get(std::string friendaddr, i
         tmp.receipt = stmt->getColumn(4).isNull()?-1:stmt->getColumn(4).getInt64();
         tmp.filenumber = stmt->getColumn(5).isNull()?-1:stmt->getColumn(5).getInt64();
         tmp.filesize = stmt->getColumn(6).getInt64();
+        tmp.status = EToxLogStatus(stmt->getColumn(7).getInt());
         res.push_back(tmp);
     }
     std::reverse(res.begin(), res.end());
