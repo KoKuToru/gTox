@@ -61,6 +61,7 @@ set(SOURCES
     Helper/gToxObserver.cpp
     Helper/gToxBuilder.cpp
     Helper/gToxFileRecv.cpp
+    Helper/gToxFileSend.cpp
     Helper/gStreamerHelper.cpp
     Helper/Video/gStreamerVideo.cpp
     Helper/Dispatcher.h
