@@ -189,7 +189,7 @@ WidgetChatFileRecv::WidgetChatFileRecv(BaseObjectType* cobject,
         }
     });
 
-    m_loaded = m_preview->signal_loaded().connect([this](bool success) {
+    m_loaded = m_preview->signal_loaded().connect([this](bool) {
         m_spinner->hide();
     });
 

@@ -81,6 +81,7 @@ class ToxDatabase {
     std::string m_path_db;
     std::string m_path_state;
     std::shared_ptr<SQLite::Database> m_db;
+    int m_runid;
 
     void bind(SQLite::Statement& stmt, int i, const bool& value) {
         stmt.bind(i, value);
@@ -129,7 +130,7 @@ class ToxDatabase {
         bind(stmt, i, (const void*)value.data(), value.size() * sizeof(T));
     }
     template <typename T, size_t S>
-    void bin(SQLite::Statement& stmt, int i, const std::array<T, S>& value) {
+    void bind(SQLite::Statement& stmt, int i, const std::array<T, S>& value) {
         bind(stmt, i, (const void*)value.data(), value.size() * sizeof(T));
     }
 
@@ -246,7 +247,7 @@ class ToxDatabase {
      */
     void toxcore_log_add(ToxLogEntity entity);
     void toxcore_log_set_received(std::string friendaddr, int receipt_id);
-    void toxcore_log_set_file_received(std::string friendaddr, std::string filename, uint32_t filenumber);
+    void toxcore_log_set_file_complete(std::string friendaddr, uint32_t filenumber, std::array<uint8_t, TOX_FILE_ID_LENGTH> fileid);
     /**
      * @brief Removes everything from log
      * @return Number of deleted log-entries

@@ -112,10 +112,10 @@ void gToxFileRecv::emit_progress() {
             m_fd = -1;
 
             auto addr = tox().get_address(m_file.nr);
-            tox().database().toxcore_log_set_file_received(
+            tox().database().toxcore_log_set_file_complete(
                         Toxmm::to_hex(addr.data(), addr.size()),
-                        m_file.filename,
-                        m_file.file_number);
+                        m_file.file_number,
+                        tox().file_get_file_id(m_file.nr, m_file.file_number));
         }
     }
     observer_notify(ToxEvent(EventFileProgress{
@@ -151,10 +151,11 @@ void gToxFileRecv::cancel() {
 
     auto addr = tox().get_address(m_file.nr);
 
-    tox().database().toxcore_log_set_file_received(
+    //TODO store as aborted
+    tox().database().toxcore_log_set_file_complete(
                 Toxmm::to_hex(addr.data(), addr.size()),
-                m_file.filename,
-                m_file.file_number);
+                m_file.file_number,
+                tox().file_get_file_id(m_file.nr, m_file.file_number));
 
     unlink(m_file.filename.c_str());
     close(m_fd);
