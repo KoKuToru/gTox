@@ -59,9 +59,6 @@ class WidgetChatFileSend: public Gtk::Frame, public gToxObserver {
 
         size_t m_last_position;
 
-        bool m_first_emit = true;
-        bool m_finish = false;
-
         void init(gToxBuilder builder);
 
     public:

@@ -139,6 +139,12 @@ void WidgetChatFileSend::init(gToxBuilder builder) {
 
         m_file_progress->set_fraction(position / (double)size);
 
+        if (position == size) {
+            //finish !
+            m_revealer_download->set_reveal_child(false);
+            return false;
+        }
+
         double s  = diff / 0.5; //each 500 ms
 
         double sf = s;
@@ -256,65 +262,6 @@ void WidgetChatFileSend::observer_handle(const ToxEvent& ev) {
 
         m_send_skip_control = false;
     }
-
-    /*
-    if (event.type() == typeid(gToxFileRecv::EventFileProgress)) {
-        auto data = event.get<gToxFileRecv::EventFileProgress>();
-
-        if (m_file_number < 0 && (!m_first_emit || m_finish)) {
-            return;
-        }
-
-        if (data.file_number != m_file_number || data.nr != m_friend_nr || data.file_path != m_recv.get_path()) {
-            return;
-        }
-
-        m_file_progress->set_fraction(data.file_position / (double)data.file_size);
-
-        if (data.file_position == data.file_size) {
-            m_finish = true;
-
-            //finish !
-            m_update_interval.disconnect();
-            m_revealer_download->set_reveal_child(false);
-
-            if (Glib::file_test(m_recv.get_path(), Glib::FILE_TEST_IS_REGULAR)) {
-                //display
-                m_file_open_bar->show();
-                m_spinner->show();
-                m_preview->start_loading();
-            }
-        } else if (m_first_emit) {
-            m_first_emit = false;
-            if (!m_finish) {
-                //auto start TODO:check in config
-                if (tox().get_status(m_friend_nr) != Toxmm::OFFLINE) {
-                    if (m_file_size < 1024*1024) {
-                        m_file_resume->clicked();
-                    }
-                } else {
-                    m_file_resume->set_sensitive(false);
-                }
-            }
-        }
-    } else if (event.type() == typeid(Toxmm::EventUserStatus)) {
-        auto data = event.get<Toxmm::EventUserStatus>();
-
-        if (data.nr != m_friend_nr || m_finish) {
-            return;
-        }
-
-        if (tox().get_status(m_friend_nr) != Toxmm::OFFLINE) {
-            m_revealer_download->set_reveal_child(true);
-            m_file_resume->set_sensitive(true);
-            m_first_emit = true;
-            m_recv.emit_progress();
-        } else {
-            m_revealer_download->set_reveal_child(false);
-            m_file_pause->clicked();
-            m_file_resume->set_sensitive(false);
-        }
-    }*/
 }
 
 gToxBuilderRef<WidgetChatFileSend> WidgetChatFileSend::create(gToxObservable* instance,
