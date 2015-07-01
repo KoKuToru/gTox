@@ -22,6 +22,7 @@
 
 #include "gToxObserver.h"
 #include <giomm.h>
+#include <queue>
 
 class gToxFileSend: public gToxObserver {
     public:
@@ -38,6 +39,7 @@ class gToxFileSend: public gToxObserver {
                      Glib::ustring path);
         gToxFileSend(gToxObservable* observable,
                      Toxmm::FriendNr nr,
+                     TOX_FILE_KIND kind,
                      Glib::ustring path,
                      Toxmm::FileId id,
                      uint64_t filesize);
@@ -76,8 +78,15 @@ class gToxFileSend: public gToxObserver {
         uint64_t m_size = 0;
         STATE m_state = INITIAL;
 
+        Glib::RefPtr<Gio::Cancellable> m_cancel = Gio::Cancellable::create();
+        sigc::connection m_timeout;
+        std::queue<Toxmm::EventFileSendChunkRequest> m_queue;
+
+        bool m_is_sending_chunk = false;
+
     protected:
         void observer_handle(const ToxEvent&) override;
+        void send_chunk();
 };
 
 #endif

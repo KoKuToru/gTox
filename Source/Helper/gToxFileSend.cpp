@@ -20,6 +20,10 @@
 #include "gToxFileSend.h"
 #include <iostream>
 
+namespace sigc {
+    SIGC_FUNCTORS_DEDUCE_RESULT_TYPE_WITH_DECLTYPE
+}
+
 gToxFileSend::gToxFileSend(gToxObservable* observable,
                            Toxmm::FriendNr nr,
                            TOX_FILE_KIND kind,
@@ -37,7 +41,23 @@ gToxFileSend::gToxFileSend(gToxObservable* observable,
     m_size = m_stream->query_info()->get_size();
 }
 
+gToxFileSend::gToxFileSend(gToxObservable* observable,
+                           Toxmm::FriendNr nr,
+                           TOX_FILE_KIND kind,
+                           Glib::ustring path,
+                           Toxmm::FileId id,
+                           uint64_t filesize)
+    : gToxObserver(observable),
+      m_friend_nr(nr),
+      m_path(path),
+      m_kind(kind) {
+
+    throw std::runtime_error("gToxFileSend RESUME NOT IMPLEMENTED");
+}
+
 gToxFileSend::~gToxFileSend() {
+    m_cancel->cancel();
+    m_timeout.disconnect();
     try {
         pause();
     } catch (...) {}
@@ -124,29 +144,62 @@ void gToxFileSend::observer_handle(const ToxEvent& ev) {
         return;
     }
 
-    /*
-    if (ev.type() != typeid(Toxmm::EventFileSendChunk)) {
+    if (ev.type() != typeid(Toxmm::EventFileSendChunkRequest)) {
         return;
     }
 
-    auto data = ev.get<Toxmm::EventFileRecvChunk>();
-    if (data.nr != m_file.nr || data.file_number != m_file.file_number) {
+    auto data = ev.get<Toxmm::EventFileSendChunkRequest>();
+    if (data.nr != m_friend_nr || data.file_number != m_nr) {
         return;
     }
 
-    //Handle download
-    if (lseek(m_fd, data.file_position, SEEK_SET) != (__off_t)data.file_position) {
-        throw std::runtime_error("gToxFileSend couldn't seek file");
+    //Handle upload
+    m_queue.push(data);
+    send_chunk();
+}
+
+void gToxFileSend::send_chunk() {
+    if (m_queue.empty() || m_cancel->is_cancelled() || m_is_sending_chunk) {
+        return;
     }
 
-    auto ret = write(m_fd, data.file_data.data(), data.file_data.size());
-    if (ret != ssize_t(data.file_data.size())) {
-        throw std::runtime_error("gToxFileSend couldn't write file");
-    }
+    m_is_sending_chunk = true;
 
-    m_position = data.file_position + data.file_data.size();
+    auto data = m_queue.front();
 
-    emit_progress();*/
+    m_stream->seek(data.position, Glib::SeekType::SEEK_TYPE_SET);
+    m_stream->read_bytes_async(data.size, [this, data](Glib::RefPtr<Gio::AsyncResult>& result) {
+        auto bytes = m_stream->read_bytes_finish(result);
+        gsize size;
+        try {
+        tox().file_send_chunk(m_friend_nr,
+                              m_nr, data.position,
+                              std::vector<uint8_t>( (uint8_t*)bytes->get_data(size),
+                                                   ((uint8_t*)bytes->get_data(size)) + bytes->get_size()));
+        } catch (Toxmm::Exception exp) {
+            if (exp.type() == typeid(TOX_ERR_FILE_SEND_CHUNK) && exp.what_id() ==
+                    TOX_ERR_FILE_SEND_CHUNK_SENDQ) {
+                //thats stupid
+                auto cancel = m_cancel;
+                Glib::signal_timeout().connect_once([cancel, this]() {
+                    if (!m_cancel->is_cancelled()) {
+                        m_is_sending_chunk = false;
+                        send_chunk();
+                    }
+                }, 100);
+                return;
+            }
+            throw;
+        }
+
+        m_position = data.position + size;
+        emit_progress();
+
+        //take next
+        m_queue.pop();
+        m_is_sending_chunk = false;
+        send_chunk();
+    }, m_cancel);
 }
 
 Glib::ustring gToxFileSend::get_path() {
