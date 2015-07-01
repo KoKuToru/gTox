@@ -22,7 +22,7 @@
 #include <gtkmm.h>
 #include "Helper/gToxObserver.h"
 #include "Helper/gToxBuilder.h"
-#include "Helper/gToxFileRecv.h"
+#include "Helper/gToxFileSend.h"
 #include "../VideoPlayer.h"
 #include "Helper/Dispatcher.h"
 #include "WidgetChatFilePreview.h"
@@ -31,7 +31,7 @@ class WidgetChatFileSend: public Gtk::Frame, public gToxObserver {
     private:
         Dispatcher m_dispatcher;
 
-        //gToxFileSend m_send;
+        gToxFileSend m_send;
 
         Toxmm::FriendNr m_friend_nr;
         std::string m_path;

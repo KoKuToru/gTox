@@ -64,7 +64,7 @@ void WidgetChatFileSend::init(gToxBuilder builder) {
             m_file_time->show();
             m_file_resume->set_sensitive(false);
             try {
-                //m_recv.resume();
+                m_send.resume();
             } catch (...) {
                 m_file_cancel->clicked();
             }
@@ -83,7 +83,7 @@ void WidgetChatFileSend::init(gToxBuilder builder) {
                 m_file_pause->set_active(false);
             }
             try {
-                //m_recv.cancel();
+                m_send.cancel();
             } catch (...) {
                 //TODO ?
             }
@@ -108,7 +108,7 @@ void WidgetChatFileSend::init(gToxBuilder builder) {
             m_file_time->hide();
             m_file_pause->set_sensitive(false);
             try {
-                //m_recv.pause();
+                m_send.pause();
             } catch (...) {
                 m_file_cancel->clicked();
             }
@@ -124,11 +124,10 @@ void WidgetChatFileSend::init(gToxBuilder builder) {
     builder.get_widget("file_speed", m_file_speed);
     builder.get_widget("file_time", m_file_time);
     size_t dummy;
-    //m_recv.get_progress(m_last_position, dummy);
-    /*
+    m_send.get_progress(m_last_position, dummy);
     m_update_interval = Glib::signal_timeout().connect([this](){
         size_t position, size;
-        //m_recv.get_progress(position, size);
+        m_send.get_progress(position, size);
         size_t diff = position - m_last_position;
         m_last_position = position;
 
@@ -162,7 +161,7 @@ void WidgetChatFileSend::init(gToxBuilder builder) {
                     Glib::ustring::format(std::setw(2), std::setfill(L'0'), std::right, sec));
 
         return true;
-    }, 500);*/
+    }, 500);
 
     builder.get_widget<Gtk::Button>("file_dir")->signal_clicked().connect([this](){
         try {
@@ -184,7 +183,7 @@ void WidgetChatFileSend::init(gToxBuilder builder) {
         m_spinner->hide();
     });
     m_preview->start_loading();
-    //m_recv.emit_progress();
+    m_send.emit_progress();
 }
 
 WidgetChatFileSend::WidgetChatFileSend(BaseObjectType* cobject,
@@ -194,6 +193,7 @@ WidgetChatFileSend::WidgetChatFileSend(BaseObjectType* cobject,
                                        Glib::ustring path):
     Gtk::Frame(cobject),
     gToxObserver(observable),
+    m_send(observable, nr, TOX_FILE_KIND_DATA, path),
     m_friend_nr(nr),
     m_path(path) {
 
@@ -211,6 +211,7 @@ WidgetChatFileSend::WidgetChatFileSend(BaseObjectType* cobject,
                                        uint64_t filesize):
     Gtk::Frame(cobject),
     gToxObserver(observable),
+    m_send(observable, nr, TOX_FILE_KIND_DATA, path, id, filesize),
     m_friend_nr(nr),
     m_path(path),
     m_file_size(filesize) {
