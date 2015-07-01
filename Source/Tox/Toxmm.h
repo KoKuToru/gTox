@@ -163,7 +163,7 @@ class Toxmm {
     class EventFileControl {
         public:
             FriendNr nr;
-            FileNr file_nr;
+            FileNr file_number;
             TOX_FILE_CONTROL control;
     };
 

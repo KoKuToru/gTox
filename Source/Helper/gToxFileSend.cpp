@@ -112,12 +112,6 @@ void gToxFileSend::cancel() {
     m_stream->close();
     m_stream.reset();
 
-    try {
-        m_file->trash();
-    } catch (...) {
-        m_file->remove();
-    }
-
     m_state = STOPPED;
     tox().file_control(m_friend_nr, m_nr, TOX_FILE_CONTROL_CANCEL);
 
@@ -144,18 +138,34 @@ void gToxFileSend::observer_handle(const ToxEvent& ev) {
         return;
     }
 
-    if (ev.type() != typeid(Toxmm::EventFileSendChunkRequest)) {
-        return;
-    }
+    if (ev.type() == typeid(Toxmm::EventFileSendChunkRequest)) {
+        auto data = ev.get<Toxmm::EventFileSendChunkRequest>();
+        if (data.nr != m_friend_nr || data.file_number != m_nr) {
+            return;
+        }
 
-    auto data = ev.get<Toxmm::EventFileSendChunkRequest>();
-    if (data.nr != m_friend_nr || data.file_number != m_nr) {
-        return;
-    }
+        //Handle upload
+        m_queue.push(data);
+        send_chunk();
+    } else if (ev.type() == typeid(Toxmm::EventFileControl)) {
+        auto data = ev.get<Toxmm::EventFileControl>();
+        if (data.nr != m_friend_nr || data.file_number != m_nr) {
+            return;
+        }
 
-    //Handle upload
-    m_queue.push(data);
-    send_chunk();
+        //change state ?
+        switch (data.control) {
+            case TOX_FILE_CONTROL_RESUME:
+                m_state = SENDING;
+                break;
+            case TOX_FILE_CONTROL_PAUSE:
+                m_state = PAUSED;
+                break;
+            case TOX_FILE_CONTROL_CANCEL:
+                m_state = STOPPED;
+                break;
+        }
+    }
 }
 
 void gToxFileSend::send_chunk() {
