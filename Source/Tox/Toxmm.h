@@ -146,7 +146,7 @@ class Toxmm {
     class EventFileRecv {
         public:
             FriendNr nr;
-            long long file_number;
+            FileNr file_number;
             TOX_FILE_KIND kind;
             uint64_t file_size;
             Glib::ustring filename;
@@ -155,9 +155,24 @@ class Toxmm {
     class EventFileRecvChunk {
         public:
             FriendNr nr;
-            uint32_t file_number;
+            FileNr file_number;
             uint64_t file_position;
             std::vector<uint8_t> file_data;
+    };
+
+    class EventFileControl {
+        public:
+            FriendNr nr;
+            FileNr file_nr;
+            TOX_FILE_CONTROL control;
+    };
+
+    class EventFileSendChunkRequest {
+        public:
+            FriendNr nr;
+            FileNr file_number;
+            uint64_t position;
+            size_t size;
     };
 
     ToxDatabase& database();
@@ -490,6 +505,24 @@ class Toxmm {
     FileNr file_resume(FriendNr nr, FileId id);
 
     /**
+     * Send a chunk of file data to a friend.
+     *
+     * This function is called in response to the `file_chunk_request` callback. The
+     * length parameter should be equal to the one received though the callback.
+     * If it is zero, the transfer is assumed complete. For files with known size,
+     * Core will know that the transfer is complete after the last byte has been
+     * received, so it is not necessary (though not harmful) to send a zero-length
+     * chunk to terminate. For streams, core will know that the transfer is finished
+     * if a chunk with length less than the length requested in the callback is sent.
+     *
+     * @param nr
+     * @param file_nr
+     * @param position
+     * @param data
+     */
+    void file_send_chunk(FriendNr nr, FileNr file_nr, uint64_t position, const std::vector<uint8_t>& data);
+
+    /**
      * Generates a cryptographic hash of the given data.
      *
      * This function may be used by clients for any purpose, but is provided
@@ -553,9 +586,14 @@ class Toxmm {
                                            TOX_CONNECTION data,
                                            void*);
 
+    static void callback_file_recv_control(Tox*,
+                                           FriendNr nr,
+                                           FileNr file_number,
+                                           TOX_FILE_CONTROL control,
+                                           void*);
     static void callback_file_recv(Tox*,
                                    FriendNr nr,
-                                   uint32_t file_number,
+                                   FileNr file_number,
                                    uint32_t kind,
                                    uint64_t file_size,
                                    const uint8_t* filename,
@@ -563,12 +601,17 @@ class Toxmm {
                                    void*);
     static void callback_file_recv_chunk(Tox*,
                                          FriendNr nr,
-                                         uint32_t file_number,
+                                         FileNr file_number,
                                          uint64_t position,
                                          const uint8_t* data,
                                          size_t data_length,
                                          void*);
-
+    static void callback_file_chunk_request(Tox*,
+                                            FriendNr nr,
+                                            FileNr file_number,
+                                            uint64_t position,
+                                            size_t size,
+                                            void*);
     void inject_event(ToxEvent ev);
 };
 #endif

@@ -86,6 +86,8 @@ void Toxmm::open(const Glib::ustring& profile_path, bool bootstrap, bool skip_pr
     tox_callback_friend_connection_status(m_tox, Toxmm::callback_connection_status, this);
     tox_callback_file_recv(m_tox, Toxmm::callback_file_recv, this);
     tox_callback_file_recv_chunk(m_tox, Toxmm::callback_file_recv_chunk, this);
+    tox_callback_file_chunk_request(m_tox, Toxmm::callback_file_chunk_request, this);
+    tox_callback_file_recv_control(m_tox, Toxmm::callback_file_recv_control, this);
 
     if (bootstrap) {
         bool okay = true;
@@ -699,6 +701,27 @@ Toxmm::FileNr Toxmm::file_send(FriendNr nr, TOX_FILE_KIND kind, Glib::ustring pa
     return res;
 }
 
+void Toxmm::file_send_chunk(FriendNr nr, FileNr file_nr, uint64_t position, const std::vector<uint8_t>& data) {
+    if (m_tox == nullptr) {
+        throw std::runtime_error("TOX_UNITIALIZED");
+    }
+
+    TOX_ERR_FILE_SEND_CHUNK error;
+    auto res = tox_file_send_chunk(m_tox,
+                                   nr,
+                                   file_nr,
+                                   position,
+                                   data.data(),
+                                   data.size(),
+                                   &error);
+    if (error != TOX_ERR_FILE_SEND_CHUNK_OK) {
+        throw Exception(error);
+    }
+    if (!res) {
+        throw std::runtime_error("tox_file_send_chunk unknow FALSE error");
+    }
+}
+
 Toxmm::Hash Toxmm::hash(const std::vector<uint8_t>& data) {
     Hash res = {0};
     tox_hash(res.data(), data.data(), data.size());
@@ -836,7 +859,7 @@ std::vector<unsigned char> Toxmm::from_hex(std::string data) {
 
 void Toxmm::callback_file_recv(Tox*,
                                FriendNr nr,
-                               uint32_t file_number,
+                               FileNr file_number,
                                uint32_t kind,
                                uint64_t file_size,
                                const unsigned char* filename,
@@ -854,7 +877,7 @@ void Toxmm::callback_file_recv(Tox*,
 
 void Toxmm::callback_file_recv_chunk(Tox*,
                                      Toxmm::FriendNr nr,
-                                     uint32_t file_number,
+                                     FileNr file_number,
                                      uint64_t position,
                                      const unsigned char* data,
                                      size_t data_length,
@@ -865,6 +888,34 @@ void Toxmm::callback_file_recv_chunk(Tox*,
                              file_number,
                              position,
                              std::vector<unsigned char>(data, data+data_length)
+                         }));
+}
+
+void Toxmm::callback_file_recv_control(Tox*,
+                                       FriendNr nr,
+                                       FileNr file_number,
+                                       TOX_FILE_CONTROL control,
+                                       void* _this) {
+    ((Toxmm*)_this)->inject_event(
+                ToxEvent(EventFileControl{
+                             nr,
+                             file_number,
+                             control
+                         }));
+}
+
+void Toxmm::callback_file_chunk_request(Tox*,
+                                        FriendNr nr,
+                                        FileNr file_number,
+                                        uint64_t position,
+                                        size_t size,
+                                        void* _this) {
+    ((Toxmm*)_this)->inject_event(
+                ToxEvent(EventFileSendChunkRequest{
+                             nr,
+                             file_number,
+                             position,
+                             size
                          }));
 }
 

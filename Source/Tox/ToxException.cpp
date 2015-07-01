@@ -286,3 +286,23 @@ ToxException::ToxException(TOX_ERR_FILE_SEND error):
         throw std::runtime_error("TOX_ERR_FILE_SEND unknow error code " + std::to_string(error));
     }
 }
+
+ToxException::ToxException(TOX_ERR_FILE_SEND_CHUNK error):
+    m_type(typeid(error)) {
+    static std::map<decltype(error), std::string> enum2str =
+    {{TOX_ERR_FILE_SEND_CHUNK_NULL, _("TOX_ERR_FILE_SEND_CHUNK_NULL")},
+    {TOX_ERR_FILE_SEND_CHUNK_FRIEND_NOT_FOUND, _("TOX_ERR_FILE_SEND_CHUNK_FRIEND_NOT_FOUND")},
+    {TOX_ERR_FILE_SEND_CHUNK_FRIEND_NOT_CONNECTED, _("TOX_ERR_FILE_SEND_CHUNK_FRIEND_NOT_CONNECTED")},
+    {TOX_ERR_FILE_SEND_CHUNK_NOT_FOUND, _("TOX_ERR_FILE_SEND_CHUNK_NOT_FOUND")},
+    {TOX_ERR_FILE_SEND_CHUNK_NOT_TRANSFERRING, _("TOX_ERR_FILE_SEND_CHUNK_NOT_TRANSFERRING")},
+    {TOX_ERR_FILE_SEND_CHUNK_INVALID_LENGTH, "TOX_ERR_FILE_SEND_CHUNK_INVALID_LENGTH"},
+    {TOX_ERR_FILE_SEND_CHUNK_SENDQ, "TOX_ERR_FILE_SEND_CHUNK_SENDQ"},
+    {TOX_ERR_FILE_SEND_CHUNK_WRONG_POSITION, "TOX_ERR_FILE_SEND_CHUNK_WRONG_POSITION"}};
+    auto iter = enum2str.find(error);
+    if (iter != enum2str.end()) {
+        m_what = iter->second;
+        m_what_id = error;
+    } else {
+        throw std::runtime_error("TOX_ERR_FILE_SEND_CHUNK unknow error code " + std::to_string(error));
+    }
+}
