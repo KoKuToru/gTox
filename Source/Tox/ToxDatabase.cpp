@@ -267,7 +267,7 @@ void ToxDatabase::toxcore_log_set_file_complete(std::string friendaddr, uint32_t
     friendaddr.resize(64);
     for(std::string table : {"log", "mem.log"}) {
         query("UPDATE " + table + " SET status=1"
-              " WHERE runid=?1 AND status!=1 AND friendaddr=?2 AND filenumber=?3 AND fileid=?4",
+              " WHERE runid=?1 AND friendaddr=?2 AND filenumber=?3 AND fileid=?4",
               m_runid,
               friendaddr,
               filenumber,
@@ -279,7 +279,7 @@ void ToxDatabase::toxcore_log_set_file_aborted(std::string friendaddr, uint32_t 
     friendaddr.resize(64);
     for(std::string table : {"log", "mem.log"}) {
         query("UPDATE " + table + " SET status=2"
-              " WHERE runid=?1 AND status!=1 AND friendaddr=?2 AND filenumber=?3 AND fileid=?4",
+              " WHERE runid=?1 AND friendaddr=?2 AND filenumber=?3 AND fileid=?4",
               m_runid,
               friendaddr,
               filenumber,
