@@ -27,6 +27,7 @@ void gToxFileManager::init() {
                             item.file_nr,
                             item.file_id,
                             item.file_kind,
+                            item.file_name,
                             item.file_path,
                             0,
                             item.file_size,
@@ -40,6 +41,7 @@ void gToxFileManager::init() {
                             item.file_nr,
                             item.file_id,
                             item.file_kind,
+                            item.file_name,
                             item.file_path,
                             0,
                             item.file_size,
@@ -121,7 +123,7 @@ void gToxFileManager::observer_handle(const ToxEvent& ev) {
         //check if file exists
         auto files = find_by_friend_nr(data.nr);
         for (auto file : files) {
-            if (data.filename == file->m_file_path &&
+            if (data.filename == file->m_file_name &&
                 data.file_size == file->m_file_size &&
                 file_id == file->m_file_id) {
                 file->m_file_nr = data.file_number;
@@ -146,6 +148,7 @@ void gToxFileManager::observer_handle(const ToxEvent& ev) {
                         file_id,
                         data.kind,
                         data.filename,
+                        data.filepath,
                         0,
                         data.file_size,
                         0);
@@ -160,6 +163,7 @@ void gToxFileManager::observer_handle(const ToxEvent& ev) {
                                                    file_id,
                                                    data.kind,
                                                    data.filename,
+                                                   data.filepath,
                                                    data.file_size,
                                                    0
                                                });

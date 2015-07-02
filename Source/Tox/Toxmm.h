@@ -154,6 +154,7 @@ class Toxmm {
             TOX_FILE_KIND kind;
             uint64_t file_size;
             Glib::ustring filename;
+            Glib::ustring filepath;
     };
 
     class EventFileRecvChunk {

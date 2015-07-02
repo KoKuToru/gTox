@@ -581,8 +581,9 @@ void Toxmm::inject_event(ToxEvent ev) {
                 }
             }
 
-            //data.filename = cpath;
-            //ev = ToxEvent(data);
+            //TODO: CORNER CASE ! IN SAME EVENT LOOP SAME NAME WILL ALSO GENERATE SAME PATH !
+            data.filepath = cpath;
+            ev = ToxEvent(data);
 
             ToxLogEntity entity;
             entity.type = EToxLogType::LOG_FILE_RECV;

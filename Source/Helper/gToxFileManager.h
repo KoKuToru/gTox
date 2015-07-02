@@ -32,6 +32,7 @@ struct gToxFileTransfEntity {
         Toxmm::FileNr   file_nr;
         Toxmm::FileId   file_id;
         TOX_FILE_KIND   file_kind;
+        std::string     file_name;
         std::string     file_path;
         size_t          file_size;
         int             status;
@@ -60,6 +61,7 @@ class gToxFileTransf {
         Toxmm::FileNr   m_file_nr;
         Toxmm::FileId   m_file_id;
         TOX_FILE_KIND   m_file_kind;
+        std::string     m_file_name;
         std::string     m_file_path;
         size_t          m_file_position;
         size_t          m_file_size;
@@ -80,6 +82,7 @@ class gToxFileTransf {
                        Toxmm::FileNr file_nr,
                        Toxmm::FileId file_id,
                        TOX_FILE_KIND file_kind,
+                       std::string file_name,
                        std::string file_path,
                        size_t file_position,
                        size_t file_size,
@@ -92,6 +95,7 @@ class gToxFileTransf {
             m_file_nr(file_nr),
             m_file_id(file_id),
             m_file_kind(file_kind),
+            m_file_name(file_name),
             m_file_path(file_path),
             m_file_position(file_position),
             m_file_size(file_size),
@@ -105,6 +109,10 @@ class gToxFileTransf {
         virtual void resume() = 0;
         virtual void pause() = 0;
         virtual void cancel() = 0;
+
+        size_t id() {
+            return m_id;
+        }
 
         std::shared_ptr<gToxFileManager> manager() {
             return m_manager.lock();
@@ -132,6 +140,10 @@ class gToxFileTransf {
 
         TOX_FILE_KIND file_kind() const {
             return m_file_kind;
+        }
+
+        const std::string& file_name() const {
+            return m_file_name;
         }
 
         const std::string& file_path() const {

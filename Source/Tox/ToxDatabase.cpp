@@ -95,7 +95,8 @@ void ToxDatabase::open(const std::string& path, const std::string& address, bool
                &DATABASE::version_9,
                &DATABASE::version_10,
                &DATABASE::version_11,
-               &DATABASE::version_12};
+               &DATABASE::version_12,
+               &DATABASE::version_13};
 
         if (version < 1 || version > (int)sizeof(upgrade_scripts)) {
             throw std::runtime_error("Database not open !");
@@ -340,7 +341,8 @@ std::vector<gToxFileTransfEntity> ToxDatabase::gtoxfiletransf_get() {
                       " file_kind, "
                       " file_path,"
                       " file_size, "
-                      " status "
+                      " status, "
+                      " file_name "
                       "FROM (SELECT * FROM file UNION ALL SELECT * FROM mem.file)");
     while (stmt->executeStep()) {
         gToxFileTransfEntity tmp;
@@ -365,6 +367,11 @@ std::vector<gToxFileTransfEntity> ToxDatabase::gtoxfiletransf_get() {
         }
         tmp.file_size = stmt->getColumn(7).getInt64();
         tmp.status = stmt->getColumn(8).getInt();
+        {
+            auto data = stmt->getColumn(9);
+            auto data_ptr = (const char*)data.getBlob();
+            tmp.file_name = std::string(data_ptr, data_ptr + data.getBytes());
+        }
         res.push_back(tmp);
     }
     return res;
@@ -382,7 +389,8 @@ void ToxDatabase::gtoxfiletransf_insert(gToxFileTransfEntity data) {
           " file_kind, "
           " file_path, "
           " file_size, "
-          " status) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)",
+          " file_name, "
+          " status) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10)",
                       data.id,
                       data.is_recv,
                       data.friend_addr,
@@ -391,6 +399,7 @@ void ToxDatabase::gtoxfiletransf_insert(gToxFileTransfEntity data) {
                       int(data.file_kind),
                       data.file_path,
                       data.file_size,
+                      data.file_name,
                       data.status)->exec();
 }
 
