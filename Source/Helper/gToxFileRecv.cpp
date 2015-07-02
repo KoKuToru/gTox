@@ -28,6 +28,7 @@ uint64_t operator "" _kib(unsigned long long input) {
 gToxFileRecv::gToxFileRecv(gToxObservable* observable,
                            Toxmm::EventFileRecv file)
     : gToxObserver(observable), m_file(file) {
+    return;
     if (m_file.file_number < 0) {
         m_path = m_file.filename;
         m_position = file.file_size;

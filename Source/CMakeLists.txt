@@ -46,7 +46,8 @@ set(DATABASE
     Database/version_7.sql
     Database/version_8.sql
     Database/version_9.sql
-    Database/version_10.sql)
+    Database/version_10.sql
+    Database/version_11.sql)
 add_custom_command(
     OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/Generated/database.cpp"
     COMMAND "${PROJECT_BINARY_DIR}/Tools/text2h" DATABASE Generated/database ${DATABASE}
@@ -62,7 +63,9 @@ set(SOURCES
     Helper/gToxObserver.cpp
     Helper/gToxBuilder.cpp
     Helper/gToxFileRecv.cpp
+    Helper/gToxFileRecv2.cpp
     Helper/gToxFileSend.cpp
+    Helper/gToxFileManager.cpp
     Helper/gStreamerHelper.cpp
     Helper/Video/gStreamerVideo.cpp
     Helper/Dispatcher.h

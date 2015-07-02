@@ -28,11 +28,14 @@
 #include "Helper/gToxObservable.h"
 #include "Helper/gToxBuilder.h"
 #include "Helper/gToxFileRecv.h"
+#include "Helper/gToxFileManager.h"
 
 // contact list with pinned chat
 class DialogContact : public Gtk::Window, public gToxObservable {
   private:
     Glib::RefPtr<Gtk::StatusIcon> m_status_icon;
+
+    std::shared_ptr<gToxFileManager> manager;
 
     Gtk::HeaderBar* m_headerbar;
     Gtk::Button* m_btn_status;

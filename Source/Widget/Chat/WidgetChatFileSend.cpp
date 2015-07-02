@@ -220,15 +220,13 @@ WidgetChatFileSend::WidgetChatFileSend(BaseObjectType* cobject,
                                        gToxBuilder builder,
                                        gToxObservable* observable,
                                        Toxmm::FriendNr nr,
-                                       Glib::ustring path,
-                                       Toxmm::FileId id,
-                                       uint64_t filesize):
+                                       ToxLogEntity log):
     Gtk::Frame(cobject),
     gToxObserver(observable),
-    m_send(observable, nr, TOX_FILE_KIND_DATA, path, id, filesize),
+    m_send(observable, nr, TOX_FILE_KIND_DATA, log),
     m_friend_nr(nr),
-    m_path(path),
-    m_file_size(filesize) {
+    m_path(log.data),
+    m_file_size(log.filesize) {
 
     //Resume transfer
     init(builder);
@@ -277,17 +275,13 @@ gToxBuilderRef<WidgetChatFileSend> WidgetChatFileSend::create(gToxObservable* in
 
 gToxBuilderRef<WidgetChatFileSend> WidgetChatFileSend::create(gToxObservable* instance,
                                                               Toxmm::FriendNr nr,
-                                                              Glib::ustring uri,
-                                                              Toxmm::FileId id,
-                                                              uint64_t filesize) {
+                                                              ToxLogEntity log) {
     auto builder = Gtk::Builder::create_from_resource("/org/gtox/ui/chat_filerecv.ui");
     return gToxBuilder(builder)
             .get_widget_derived<WidgetChatFileSend>("chat_filerecv",
                                                     instance,
                                                     nr,
-                                                    uri,
-                                                    id,
-                                                    filesize);
+                                                    log);
 }
 
 WidgetChatFileSend::~WidgetChatFileSend() {

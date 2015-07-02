@@ -78,11 +78,13 @@ class ToxLogEntity {
         long long receipt;
         std::array<uint8_t, TOX_FILE_ID_LENGTH> fileid;
         EToxLogStatus status;
+        int runid;
 
         ToxLogEntity() = default;
 };
 
 
+class gToxFileTransfEntity;
 class ToxDatabase {
   private:
     std::string m_path_db;
@@ -194,6 +196,8 @@ class ToxDatabase {
     void save();
     void move(const std::string& path);
 
+    int get_runid();
+
     /**
      * @brief Gets a config parameter
      *
@@ -273,6 +277,10 @@ class ToxDatabase {
      * @return Chat log
      */
     std::vector<ToxLogEntity> toxcore_log_get(std::string friendaddr, int offset = 0, int limit = 100);
+
+    std::vector<gToxFileTransfEntity> gtoxfiletransf_get();
+    void gtoxfiletransf_insert(gToxFileTransfEntity data);
+    void gtoxfiletransf_update(gToxFileTransfEntity data);
 };
 
 #endif

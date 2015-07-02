@@ -72,18 +72,14 @@ class WidgetChatFileSend: public Gtk::Frame, public gToxObserver {
                            gToxBuilder builder,
                            gToxObservable* observable,
                            Toxmm::FriendNr nr,
-                           Glib::ustring path,
-                           Toxmm::FileId id,
-                           uint64_t filesize);
+                           ToxLogEntity log);
 
         static gToxBuilderRef<WidgetChatFileSend> create(gToxObservable* instance,
                                                          Toxmm::FriendNr nr,
                                                          Glib::ustring uri);
         static gToxBuilderRef<WidgetChatFileSend> create(gToxObservable* instance,
                                                          Toxmm::FriendNr nr,
-                                                         Glib::ustring uri,
-                                                         Toxmm::FileId id,
-                                                         uint64_t filesize);
+                                                         ToxLogEntity log);
 
         void observer_handle(const ToxEvent&ev) override;
 

@@ -26,12 +26,13 @@
 #include "../VideoPlayer.h"
 #include "Helper/Dispatcher.h"
 #include "WidgetChatFilePreview.h"
+#include "Helper/gToxFileManager.h"
 
 class WidgetChatFileRecv: public Gtk::Frame, public gToxObserver {
     private:
         Dispatcher m_dispatcher;
 
-        gToxFileRecv m_recv;
+        std::shared_ptr<gToxFileTransf> m_file;
 
         uint32_t  m_friend_nr;
         long long m_file_number;
@@ -63,15 +64,18 @@ class WidgetChatFileRecv: public Gtk::Frame, public gToxObserver {
         WidgetChatFileRecv(BaseObjectType* cobject,
                            gToxBuilder builder,
                            gToxObservable* observable,
-                           Toxmm::EventFileRecv file);
+                           std::shared_ptr<gToxFileTransf> file);
 
         static gToxBuilderRef<WidgetChatFileRecv> create(gToxObservable* instance,
-                                          Toxmm::EventFileRecv file);
+                                                         std::shared_ptr<gToxFileTransf> file);
 
         void observer_handle(const ToxEvent&) override;
 
         void before_deconstructor();
         ~WidgetChatFileRecv();
+
+    protected:
+        bool update();
 };
 
 #endif

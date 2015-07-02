@@ -29,21 +29,21 @@ static Glib::ustring s_units[] = {"Bytes", "KiB", "MiB", "GiB"};
 WidgetChatFileRecv::WidgetChatFileRecv(BaseObjectType* cobject,
                                        gToxBuilder builder,
                                        gToxObservable* observable,
-                                       Toxmm::EventFileRecv file):
+                                       std::shared_ptr<gToxFileTransf> file):
     Gtk::Frame(cobject),
     gToxObserver(observable),
-    m_recv(observable, file),
-    m_friend_nr(file.nr),
-    m_file_number(file.file_number),
-    m_file_size(file.file_size) {
+    m_file(file),
+    m_friend_nr(file->friend_nr()),
+    m_file_number(file->file_nr()),
+    m_file_size(file->file_size()) {
 
-    auto preview_builder = WidgetChatFilePreview::create(Glib::filename_to_uri(file.filename));
+    auto preview_builder = WidgetChatFilePreview::create(Glib::filename_to_uri(file->file_path()));
     m_preview = Gtk::manage(preview_builder.raw());
 
     builder.get_widget<Gtk::Box>("widget_list")->add(*m_preview);
 
-    builder.get_widget<Gtk::Label>("file_name")->set_text(file.filename);
-    double size  = file.file_size;
+    builder.get_widget<Gtk::Label>("file_name")->set_text(file->file_path());
+    double size  = file->file_size();
     int unit = 0;
     while (size > 1024 && unit < 4) {
         size /= 1024;
@@ -74,7 +74,7 @@ WidgetChatFileRecv::WidgetChatFileRecv(BaseObjectType* cobject,
             m_file_time->show();
             m_file_resume->set_sensitive(false);
             try {
-                m_recv.resume();
+                m_file->resume();
             } catch (...) {
                 m_file_cancel->clicked();
             }
@@ -93,7 +93,7 @@ WidgetChatFileRecv::WidgetChatFileRecv(BaseObjectType* cobject,
                 m_file_pause->set_active(false);
             }
             try {
-                m_recv.cancel();
+                m_file->cancel();
             } catch (...) {
                 //TODO ?
             }
@@ -118,7 +118,7 @@ WidgetChatFileRecv::WidgetChatFileRecv(BaseObjectType* cobject,
             m_file_time->hide();
             m_file_pause->set_sensitive(false);
             try {
-                m_recv.pause();
+                m_file->pause();
             } catch (...) {
                 m_file_cancel->clicked();
             }
@@ -133,49 +133,12 @@ WidgetChatFileRecv::WidgetChatFileRecv(BaseObjectType* cobject,
 
     builder.get_widget("file_speed", m_file_speed);
     builder.get_widget("file_time", m_file_time);
-    size_t dummy;
-    m_recv.get_progress(m_last_position, dummy);
-    m_update_interval = Glib::signal_timeout().connect([this](){
-        size_t position, size;
-        m_recv.get_progress(position, size);
-        size_t diff = position - m_last_position;
-        m_last_position = position;
-
-        double s  = diff / 0.5; //each 500 ms
-
-        double sf = s;
-        int unit = 0;
-        while (sf > 1024 && unit < 4) {
-            sf /= 1024;
-            unit += 1;
-        }
-
-        m_file_speed->set_text(Glib::ustring::format(std::fixed, std::setprecision(2), sf)
-                               + " " + s_units[unit] + "/s");
-
-        if (s < 1) { //1 Bytes/s
-            m_file_time->set_text(_("FILE_RECV_LESS_THAN_1_BYTES_EACH_SEC"));
-            return true;
-        }
-
-        //calculate time it takes to download rest
-        s = (size - position) / s;
-
-        int sec = int(s) % 60;
-        int min = (int(s) / 60) % 60;
-        int h   = (int(s) / 60) / 60;
-
-        m_file_time->set_text(
-                    Glib::ustring::format(std::setw(3), std::setfill(L'0'), std::right, h) + ":" +
-                    Glib::ustring::format(std::setw(2), std::setfill(L'0'), std::right, min) + ":" +
-                    Glib::ustring::format(std::setw(2), std::setfill(L'0'), std::right, sec));
-
-        return true;
-    }, 500);
+    m_last_position = m_file->file_position();
+    m_update_interval = Glib::signal_timeout().connect(sigc::mem_fun(*this, &WidgetChatFileRecv::update), 500);
 
     builder.get_widget<Gtk::Button>("file_dir")->signal_clicked().connect([this](){
         try {
-            Gio::AppInfo::get_default_for_type("inode/directory", true)->launch_uri(Glib::filename_to_uri(m_recv.get_path()));
+            Gio::AppInfo::get_default_for_type("inode/directory", true)->launch_uri(Glib::filename_to_uri(m_file->file_path()));
         } catch (...) {
             //TODO: display error !
         }
@@ -183,7 +146,7 @@ WidgetChatFileRecv::WidgetChatFileRecv(BaseObjectType* cobject,
 
     builder.get_widget<Gtk::Button>("file_open")->signal_clicked().connect([this](){
         try {
-            Gio::AppInfo::launch_default_for_uri(Glib::filename_to_uri(m_recv.get_path()));
+            Gio::AppInfo::launch_default_for_uri(Glib::filename_to_uri(m_file->file_path()));
         } catch (...) {
             //TODO: display error !
         }
@@ -193,71 +156,58 @@ WidgetChatFileRecv::WidgetChatFileRecv(BaseObjectType* cobject,
         m_spinner->hide();
     });
 
-    m_recv.emit_progress();
-}
-#include <iostream>
-void WidgetChatFileRecv::observer_handle(const ToxEvent& event) {
-    //nothing yet
-    if (event.type() == typeid(gToxFileRecv::EventFileProgress)) {
-        auto data = event.get<gToxFileRecv::EventFileProgress>();
-
-        if (m_file_number < 0 && (!m_first_emit || m_finish)) {
-            return;
-        }
-
-        if (data.file_number != m_file_number || data.nr != m_friend_nr || data.file_path != m_recv.get_path()) {
-            return;
-        }
-
-        m_file_progress->set_fraction(data.file_position / (double)data.file_size);
-
-        if (data.file_position == data.file_size) {
-            m_finish = true;
-
-            //finish !
-            m_update_interval.disconnect();
-            m_revealer_download->set_reveal_child(false);
-
-            if (Glib::file_test(m_recv.get_path(), Glib::FILE_TEST_IS_REGULAR)) {
-                //display
-                m_file_open_bar->show();
-                m_spinner->show();
-                m_preview->start_loading();
-            }
-        } else if (m_first_emit) {
-            m_first_emit = false;
-            if (!m_finish) {
-                //auto start TODO:check in config
-                if (tox().get_status(m_friend_nr) != Toxmm::OFFLINE) {
-                    if (m_file_size < 1024*1024) {
-                        m_file_resume->clicked();
-                    }
-                } else {
-                    m_file_resume->set_sensitive(false);
-                }
-            }
-        }
-    } else if (event.type() == typeid(Toxmm::EventUserStatus)) {
-        auto data = event.get<Toxmm::EventUserStatus>();
-
-        if (data.nr != m_friend_nr || m_finish) {
-            return;
-        }
-
-        if (tox().get_status(m_friend_nr) != Toxmm::OFFLINE) {
-            m_revealer_download->set_reveal_child(true);
-            m_file_resume->set_sensitive(true);
-            m_first_emit = true;
-            m_recv.emit_progress();
-        } else {
-            m_revealer_download->set_reveal_child(false);
-            m_file_pause->clicked();
-            m_file_resume->set_sensitive(false);
-        }
+    //auto start TODO:check in config
+    if (m_file->active() && m_file->state() != gToxFileTransf::FINISH && m_file->file_size() < 1024*1024) {
+        m_file_resume->clicked();
+    }
+    if (m_file->state() != gToxFileTransf::CANCEL) {
+        update();
+    } else {
+        m_file_cancel->clicked();
     }
 }
 
-gToxBuilderRef<WidgetChatFileRecv> WidgetChatFileRecv::create(gToxObservable* instance, Toxmm::EventFileRecv file) {
+void WidgetChatFileRecv::observer_handle(const ToxEvent& event) {
+    if (event.type() != typeid(gToxFileManager::EventFileUpdate)) {
+        return;
+    }
+    auto data = event.get<gToxFileManager::EventFileUpdate>();
+    if (data.file != m_file) {
+        return;
+    }
+
+    if (m_file->active()) {
+        m_revealer_download->set_reveal_child(true);
+        m_file_resume->set_sensitive(true);
+
+        switch (m_file->state()) {
+            case gToxFileTransf::RESUME:
+                if (!m_file_resume->get_active()) {
+                    m_file_resume->clicked();
+                }
+                break;
+            case gToxFileTransf::PAUSE:
+                if (!m_file_pause->get_active()) {
+                    m_file_pause->clicked();
+                }
+                break;
+            case gToxFileTransf::CANCEL:
+                if (!m_file_cancel->get_active()) {
+                    m_file_cancel->clicked();
+                }
+                break;
+            case gToxFileTransf::FINISH:
+                //ignore
+                break;
+        }
+    } else {
+        m_revealer_download->set_reveal_child(false);
+        m_file_pause->clicked();
+        m_file_resume->set_sensitive(false);
+    }
+}
+
+gToxBuilderRef<WidgetChatFileRecv> WidgetChatFileRecv::create(gToxObservable* instance, std::shared_ptr<gToxFileTransf> file) {
     auto builder = Gtk::Builder::create_from_resource("/org/gtox/ui/chat_filerecv.ui");
     return gToxBuilder(builder)
             .get_widget_derived<WidgetChatFileRecv>("chat_filerecv",
@@ -273,4 +223,59 @@ void WidgetChatFileRecv::before_deconstructor() {
     m_update_interval.disconnect();
     m_loaded.disconnect();
     m_preview->before_deconstructor();
+}
+
+bool WidgetChatFileRecv::update() {
+    size_t position = m_file->file_position(),
+           size     = m_file->file_size();
+    size_t diff = position - m_last_position;
+    m_last_position = position;
+
+    if (position == size) {
+        m_finish = true;
+
+        //finish !
+        m_update_interval.disconnect();
+        m_revealer_download->set_reveal_child(false);
+
+        if (Glib::file_test(m_file->file_path(), Glib::FILE_TEST_IS_REGULAR)) {
+            //display
+            m_file_open_bar->show();
+            m_spinner->show();
+            m_preview->start_loading();
+        }
+
+        return false;
+    }
+
+    double s  = diff / 0.5; //each 500 ms
+
+    double sf = s;
+    int unit = 0;
+    while (sf > 1024 && unit < 4) {
+        sf /= 1024;
+        unit += 1;
+    }
+
+    m_file_speed->set_text(Glib::ustring::format(std::fixed, std::setprecision(2), sf)
+                           + " " + s_units[unit] + "/s");
+
+    if (s < 1) { //1 Bytes/s
+        m_file_time->set_text(_("FILE_RECV_LESS_THAN_1_BYTES_EACH_SEC"));
+        return true;
+    }
+
+    //calculate time it takes to download rest
+    s = (size - position) / s;
+
+    int sec = int(s) % 60;
+    int min = (int(s) / 60) % 60;
+    int h   = (int(s) / 60) / 60;
+
+    m_file_time->set_text(
+                Glib::ustring::format(std::setw(3), std::setfill(L'0'), std::right, h) + ":" +
+                Glib::ustring::format(std::setw(2), std::setfill(L'0'), std::right, min) + ":" +
+                Glib::ustring::format(std::setw(2), std::setfill(L'0'), std::right, sec));
+
+    return true;
 }

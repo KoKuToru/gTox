@@ -148,7 +148,7 @@ void DialogProfile::set_accounts(const std::vector<std::string>& accounts) {
                     tox_error = 3;
                 }
             } catch (...) {
-                tox_error = 3;
+                throw;
             }
 
             auto avatar_path = Glib::build_filename(Glib::get_user_config_dir(),

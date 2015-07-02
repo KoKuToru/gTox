@@ -30,7 +30,8 @@ class gToxFileSend: public gToxObserver {
             INITIAL,
             PAUSED,
             SENDING,
-            STOPPED
+            STOPPED,
+            WAITING
         };
 
         gToxFileSend(gToxObservable* observable,
@@ -40,9 +41,7 @@ class gToxFileSend: public gToxObserver {
         gToxFileSend(gToxObservable* observable,
                      Toxmm::FriendNr nr,
                      TOX_FILE_KIND kind,
-                     Glib::ustring path,
-                     Toxmm::FileId id,
-                     uint64_t filesize);
+                     ToxLogEntity log);
 
         gToxFileSend(const gToxFileSend& o) = delete;
         void operator=(const gToxFileSend& o) = delete;

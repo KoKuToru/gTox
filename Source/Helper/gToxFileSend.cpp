@@ -32,7 +32,7 @@ gToxFileSend::gToxFileSend(gToxObservable* observable,
       m_friend_nr(nr),
       m_path(path),
       m_kind(kind) {
-
+    return;
     //New file transfer
     m_nr = tox().file_send(nr, kind, path);
     m_id = tox().file_get_file_id(nr, m_nr);
@@ -44,15 +44,27 @@ gToxFileSend::gToxFileSend(gToxObservable* observable,
 gToxFileSend::gToxFileSend(gToxObservable* observable,
                            Toxmm::FriendNr nr,
                            TOX_FILE_KIND kind,
-                           Glib::ustring path,
-                           Toxmm::FileId id,
-                           uint64_t filesize)
+                           ToxLogEntity log)
     : gToxObserver(observable),
       m_friend_nr(nr),
-      m_path(path),
+      m_path(log.data),
       m_kind(kind) {
+    return;
+    //RESUME SEND LOGIC
 
-    throw std::runtime_error("gToxFileSend RESUME NOT IMPLEMENTED");
+    //Check if same runid
+    if (log.runid == tox().database().get_runid()) {
+        m_nr = log.filenumber;
+        m_id = log.fileid;
+
+        m_file = Gio::File::create_for_path(m_path);
+        m_stream = m_file->read();
+
+        //TODO make sure same file size + handle file not found !
+    } else {
+
+
+    }
 }
 
 gToxFileSend::~gToxFileSend() {
@@ -93,7 +105,7 @@ void gToxFileSend::emit_progress() {
 }
 
 void gToxFileSend::resume() {
-    if (!m_stream || (m_state != PAUSED && m_state != INITIAL)) {
+    if (!m_stream || (m_state != PAUSED && m_state != WAITING)) {
         return;
     }
 
@@ -103,7 +115,7 @@ void gToxFileSend::resume() {
 }
 
 void gToxFileSend::cancel() {
-    if (!m_stream || (m_state != STOPPED && m_state != INITIAL)) {
+    if (!m_stream || (m_state != STOPPED && m_state != WAITING)) {
         return;
     }
 
@@ -160,11 +172,27 @@ void gToxFileSend::observer_handle(const ToxEvent& ev) {
                 m_state = STOPPED;
                 break;
         }
+    } else if (ev.type() == typeid(Toxmm::EventUserStatus)) {
+        auto data = ev.get<Toxmm::EventUserStatus>();
+        if (data.nr != m_friend_nr) {
+            return;
+        }
+
+        switch (data.status) {
+            case Toxmm::OFFLINE:
+                m_state = WAITING;
+                break;
+            default:
+                if (m_state == WAITING) {
+                    //send file for resume
+                }
+                break;
+        }
     }
 }
 
 void gToxFileSend::send_chunk() {
-    if (m_queue.empty() || m_cancel->is_cancelled() || m_is_sending_chunk) {
+    if (m_queue.empty() || m_cancel->is_cancelled() || m_is_sending_chunk || m_state != SENDING) {
         return;
     }
 
