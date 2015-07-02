@@ -25,6 +25,9 @@ bool gToxFileRecv2::is_recv() {
 
 void gToxFileRecv2::deactivate() {
     m_stream.reset();
+    if (state() == gToxFileTransf::CANCEL) {
+        Gio::File::create_for_path(path())->remove();
+    }
 }
 
 void gToxFileRecv2::activate() {

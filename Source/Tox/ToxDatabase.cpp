@@ -346,7 +346,7 @@ std::vector<gToxFileTransfEntity> ToxDatabase::gtoxfiletransf_get() {
                       "FROM (SELECT * FROM file UNION ALL SELECT * FROM mem.file)");
     while (stmt->executeStep()) {
         gToxFileTransfEntity tmp;
-        tmp.id = stmt->getColumn(0).getInt();
+        tmp.id = stmt->getColumn(0).getInt64();
         tmp.is_recv = stmt->getColumn(1).getInt() == 1;
         {
             auto data = stmt->getColumn(2);
@@ -401,8 +401,16 @@ void ToxDatabase::gtoxfiletransf_insert(gToxFileTransfEntity data) {
                       data.file_size,
                       data.file_name,
                       data.status)->exec();
+    //also insert in chat
+    ToxLogEntity log;
+    log.friendaddr = data.friend_addr;
+    log.type = data.is_recv?LOG_FILE_RECV:LOG_FILE_SEND;
+    log.data = data.file_path;
+    log.unqiue_file_id = data.id;
+    toxcore_log_add(log);
 }
 
-void ToxDatabase::gtoxfiletransf_update(gToxFileTransfEntity data) {
-
+void ToxDatabase::gtoxfiletransf_update(size_t unique_id, int status) {
+    std::string table = config_get("LOG_CHAT", 1) ? "file" : "mem.file";
+    query("UPDATE " + table + " SET status=?1 WHERE id=?2", status, unique_id)->exec();
 }

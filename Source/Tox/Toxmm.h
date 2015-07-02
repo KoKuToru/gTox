@@ -184,7 +184,7 @@ class Toxmm {
 
     ToxDatabase& database();
     ToxProfile& profile();
-    std::shared_ptr<gToxFileManager> filemanager();
+    gToxFileManager& filemanager();
 
     Toxmm();
 

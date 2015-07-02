@@ -277,7 +277,7 @@ class ToxDatabase {
 
     std::vector<gToxFileTransfEntity> gtoxfiletransf_get();
     void gtoxfiletransf_insert(gToxFileTransfEntity data);
-    void gtoxfiletransf_update(gToxFileTransfEntity data);
+    void gtoxfiletransf_update(size_t unique_id, int status);
 };
 
 #endif

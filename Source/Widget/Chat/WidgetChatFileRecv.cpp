@@ -226,12 +226,7 @@ void WidgetChatFileRecv::before_deconstructor() {
 }
 
 bool WidgetChatFileRecv::update() {
-    size_t position = m_file->file_position(),
-           size     = m_file->file_size();
-    size_t diff = position - m_last_position;
-    m_last_position = position;
-
-    if (position == size) {
+    if (m_file->state() == gToxFileTransf::FINISH) {
         m_finish = true;
 
         //finish !
@@ -247,6 +242,13 @@ bool WidgetChatFileRecv::update() {
 
         return false;
     }
+
+    size_t position = m_file->file_position(),
+           size     = m_file->file_size();
+    size_t diff = position - m_last_position;
+    m_last_position = position;
+
+    m_file_progress->set_fraction(position / (double)size);
 
     double s  = diff / 0.5; //each 500 ms
 

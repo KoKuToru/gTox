@@ -65,7 +65,6 @@ class gToxFileTransf {
         std::string     m_file_path;
         size_t          m_file_position;
         size_t          m_file_size;
-        int             m_status;
 
         virtual void deactivate() = 0;
         virtual void activate() = 0;
@@ -88,7 +87,7 @@ class gToxFileTransf {
                        size_t file_size,
                        int status):
             m_manager(manager),
-            m_state(PAUSE),
+            m_state(gToxFileTransf::STATE(status)),
             m_id(id),
             m_active(false),
             m_friend_nr(friend_nr),
@@ -98,8 +97,7 @@ class gToxFileTransf {
             m_file_name(file_name),
             m_file_path(file_path),
             m_file_position(file_position),
-            m_file_size(file_size),
-            m_status(status) {
+            m_file_size(file_size) {
             std::clog << "Created instance " << (void*)this << std::endl;
         }
         ~gToxFileTransf() {
@@ -158,10 +156,6 @@ class gToxFileTransf {
         size_t file_size() const {
             return m_file_size;
         }
-
-        int file_status() const {
-            return m_status;
-        }
 };
 
 class gToxFileSend2: public gToxFileTransf {
@@ -206,7 +200,7 @@ class gToxFileManager: public std::enable_shared_from_this<gToxFileManager> {
         void init();
         ~gToxFileManager();
 
-        std::shared_ptr<gToxFileTransf> find(int64_t unique_file_id);
+        std::shared_ptr<gToxFileTransf> find(size_t unique_file_id);
         std::vector<std::shared_ptr<gToxFileTransf>> find_by_friend_nr(Toxmm::FriendNr nr);
 
         void resume(gToxFileTransf* file);

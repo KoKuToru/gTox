@@ -54,7 +54,7 @@ void gToxFileManager::init() {
 gToxFileManager::~gToxFileManager() {
 }
 
-std::shared_ptr<gToxFileTransf> gToxFileManager::find(int64_t unique_file_id) {
+std::shared_ptr<gToxFileTransf> gToxFileManager::find(size_t unique_file_id) {
     std::shared_ptr<gToxFileTransf> res;
     auto iter = m_file.find(unique_file_id);
     if (iter != m_file.end()) {
@@ -151,7 +151,7 @@ void gToxFileManager::observer_handle(const ToxEvent& ev) {
                         data.filepath,
                         0,
                         data.file_size,
-                        0);
+                        int(gToxFileTransf::PAUSE));
         m_file.insert({unique_id, file});
         auto addr = m_tox->get_address(data.nr);
         //store in db
@@ -165,7 +165,7 @@ void gToxFileManager::observer_handle(const ToxEvent& ev) {
                                                    data.filename,
                                                    data.filepath,
                                                    data.file_size,
-                                                   0
+                                                   int(file->state())
                                                });
         file->activate();
         file->m_active = true;
@@ -182,9 +182,10 @@ void gToxFileManager::observer_handle(const ToxEvent& ev) {
                     file->m_file_position = data.file_position + data.file_data.size();
                     std::clog << "in recv chunk"; file->file_position();
                     if (file->m_file_position >= file->m_file_size) {
-                        file->deactivate();
                         file->m_state = gToxFileTransf::FINISH;
+                        file->deactivate();
                         file->m_active = false;
+                        m_tox->database().gtoxfiletransf_update(file->id(), int(file->m_state));
                     }
                     m_tox->inject_event(ToxEvent(EventFileUpdate{
                                                  file
@@ -213,29 +214,48 @@ void gToxFileManager::observer_handle(const ToxEvent& ev) {
 }
 
 void gToxFileManager::resume(gToxFileTransf* file) {
-    if (!file->m_active || file->m_state == gToxFileTransf::RESUME) {
+    if (file->m_state == gToxFileTransf::FINISH ||
+            file->m_state == gToxFileTransf::CANCEL ||
+            file->m_state == gToxFileTransf::RESUME) {
         return;
     }
-    m_tox->file_control(file->m_friend_nr, file->m_file_nr, TOX_FILE_CONTROL_RESUME);
+
     file->m_state = gToxFileTransf::RESUME;
+    m_tox->database().gtoxfiletransf_update(file->id(), int(file->m_state));
+
+    if (file->m_active) {
+        m_tox->file_control(file->m_friend_nr, file->m_file_nr, TOX_FILE_CONTROL_RESUME);
+    }
 }
 
 void gToxFileManager::pause(gToxFileTransf* file) {
-    if (!file->m_active || file->m_state == gToxFileTransf::PAUSE) {
+    if (file->m_state == gToxFileTransf::FINISH ||
+            file->m_state == gToxFileTransf::CANCEL ||
+            file->m_state == gToxFileTransf::PAUSE) {
         return;
     }
-    m_tox->file_control(file->m_friend_nr, file->m_file_nr, TOX_FILE_CONTROL_PAUSE);
+
     file->m_state = gToxFileTransf::PAUSE;
+    m_tox->database().gtoxfiletransf_update(file->id(), int(file->m_state));
+
+    if (file->m_active) {
+        m_tox->file_control(file->m_friend_nr, file->m_file_nr, TOX_FILE_CONTROL_PAUSE);
+    }
 }
 
 void gToxFileManager::cancel(gToxFileTransf* file) {
-    if (!file->m_active || file->m_state == gToxFileTransf::CANCEL) {
+    if (file->m_state == gToxFileTransf::FINISH ||
+            file->m_state == gToxFileTransf::CANCEL) {
         return;
     }
-    m_tox->file_control(file->m_friend_nr, file->m_file_nr, TOX_FILE_CONTROL_CANCEL);
-    file->deactivate();
-    file->m_state = gToxFileTransf::CANCEL;
-    file->m_active = false;
 
-    //TODO: delete file + save in db !
+    file->m_state = gToxFileTransf::CANCEL;
+    m_tox->database().gtoxfiletransf_update(file->id(), int(file->m_state));
+
+    file->deactivate();
+
+    if (file->m_active) {
+        file->m_active = false;
+        m_tox->file_control(file->m_friend_nr, file->m_file_nr, TOX_FILE_CONTROL_CANCEL);
+    }
 }

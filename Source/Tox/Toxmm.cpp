@@ -143,6 +143,10 @@ ToxProfile& Toxmm::profile() {
     return m_profile;
 }
 
+gToxFileManager& Toxmm::filemanager() {
+    return *m_filemanager;
+}
+
 void Toxmm::save() {
     if (m_tox == nullptr) {
         throw std::runtime_error("TOX_UNITIALIZED");
