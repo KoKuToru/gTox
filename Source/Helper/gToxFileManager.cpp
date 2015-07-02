@@ -6,52 +6,50 @@ namespace sigc {
     SIGC_FUNCTORS_DEDUCE_RESULT_TYPE_WITH_DECLTYPE
 }
 
-gToxFileManager::gToxFileManager(gToxObservable* observable):
-    gToxObserver(observable)
-{
-    //shared_from_this() can not be used in constructor !!!
-    m_init_connection =
-    Glib::signal_idle().connect([this]() {
-        for (auto item : tox().database().gtoxfiletransf_get()) {
-            Toxmm::FriendAddr addr;
-            auto addr_vec = Toxmm::from_hex(item.friend_addr);
-            std::copy(addr_vec.begin(), addr_vec.end(), addr.begin());
-            auto friend_nr = tox().get_friend_number(addr);
+gToxFileManager::gToxFileManager(Toxmm* tox):
+    m_tox(tox) {
 
-            if (item.is_recv) {
-                auto file = std::make_shared<gToxFileRecv2>(
-                                shared_from_this(),
-                                item.id,
-                                friend_nr,
-                                item.file_nr,
-                                item.file_id,
-                                item.file_kind,
-                                item.file_path,
-                                0,
-                                item.file_size,
-                                item.status);
-                m_file.insert({item.id, file});
-            } else {
-                auto file = std::make_shared<gToxFileSend2>(
-                                shared_from_this(),
-                                item.id,
-                                friend_nr,
-                                item.file_nr,
-                                item.file_id,
-                                item.file_kind,
-                                item.file_path,
-                                0,
-                                item.file_size,
-                                item.status);
-                m_file.insert({item.id, file});
-            }
+    //shared_from_this() can not be used in constructor !!!
+}
+
+void gToxFileManager::init() {
+    for (auto item : m_tox->database().gtoxfiletransf_get()) {
+        Toxmm::FriendAddr addr;
+        auto addr_vec = Toxmm::from_hex(item.friend_addr);
+        std::copy(addr_vec.begin(), addr_vec.end(), addr.begin());
+        auto friend_nr = m_tox->get_friend_number(addr);
+
+        if (item.is_recv) {
+            auto file = std::make_shared<gToxFileRecv2>(
+                            shared_from_this(),
+                            item.id,
+                            friend_nr,
+                            item.file_nr,
+                            item.file_id,
+                            item.file_kind,
+                            item.file_path,
+                            0,
+                            item.file_size,
+                            item.status);
+            m_file.insert({item.id, file});
+        } else {
+            auto file = std::make_shared<gToxFileSend2>(
+                            shared_from_this(),
+                            item.id,
+                            friend_nr,
+                            item.file_nr,
+                            item.file_id,
+                            item.file_kind,
+                            item.file_path,
+                            0,
+                            item.file_size,
+                            item.status);
+            m_file.insert({item.id, file});
         }
-        return false;
-    });
+    }
 }
 
 gToxFileManager::~gToxFileManager() {
-    m_init_connection.disconnect();
 }
 
 std::shared_ptr<gToxFileTransf> gToxFileManager::find(int64_t unique_file_id) {
@@ -90,7 +88,7 @@ void gToxFileManager::observer_handle(const ToxEvent& ev) {
                     //TODO FOR RESUME
                     break;
             }
-            observer_notify(ToxEvent(EventFileUpdate{
+            m_tox->inject_event(ToxEvent(EventFileUpdate{
                                          file
                                      }));
         }
@@ -111,7 +109,7 @@ void gToxFileManager::observer_handle(const ToxEvent& ev) {
                         file->m_state = gToxFileTransf::CANCEL;
                         break;
                 }
-                observer_notify(ToxEvent(EventFileUpdate{
+                m_tox->inject_event(ToxEvent(EventFileUpdate{
                                              file
                                          }));
                 return;
@@ -119,7 +117,7 @@ void gToxFileManager::observer_handle(const ToxEvent& ev) {
         }
     } else if (ev.type() == typeid(Toxmm::EventFileRecv)) {
         auto data = ev.get<Toxmm::EventFileRecv>();
-        auto file_id = tox().file_get_file_id(data.nr, data.file_number);
+        auto file_id = m_tox->file_get_file_id(data.nr, data.file_number);
         //check if file exists
         auto files = find_by_friend_nr(data.nr);
         for (auto file : files) {
@@ -152,9 +150,9 @@ void gToxFileManager::observer_handle(const ToxEvent& ev) {
                         data.file_size,
                         0);
         m_file.insert({unique_id, file});
-        auto addr = tox().get_address(data.nr);
+        auto addr = m_tox->get_address(data.nr);
         //store in db
-        tox().database().gtoxfiletransf_insert({
+        m_tox->database().gtoxfiletransf_insert({
                                                    unique_id,
                                                    true,
                                                    Toxmm::to_hex(addr.begin(), addr.size()),
@@ -167,7 +165,7 @@ void gToxFileManager::observer_handle(const ToxEvent& ev) {
                                                });
         file->activate();
         file->m_active = true;
-        observer_notify(ToxEvent(EventNewFile{
+        m_tox->inject_event(ToxEvent(EventNewFile{
                                      file
                                  }));
     } else if (ev.type() == typeid(Toxmm::EventFileRecvChunk)) {
@@ -184,7 +182,7 @@ void gToxFileManager::observer_handle(const ToxEvent& ev) {
                         file->m_state = gToxFileTransf::FINISH;
                         file->m_active = false;
                     }
-                    observer_notify(ToxEvent(EventFileUpdate{
+                    m_tox->inject_event(ToxEvent(EventFileUpdate{
                                                  file
                                              }));
                 });
@@ -198,9 +196,9 @@ void gToxFileManager::observer_handle(const ToxEvent& ev) {
         for (auto file : files) {
             if (file->m_active && file->m_file_nr == data.file_number) {
                 file->send_chunk(data.position, data.size, [this, file, data](const std::vector<uint8_t>& chunk) {
-                    tox().file_send_chunk(file->m_friend_nr, file->m_file_nr, data.position, chunk);
+                    m_tox->file_send_chunk(file->m_friend_nr, file->m_file_nr, data.position, chunk);
                     file->m_file_position = data.position + chunk.size();
-                    observer_notify(ToxEvent(EventFileUpdate{
+                    m_tox->inject_event(ToxEvent(EventFileUpdate{
                                                  file
                                              }));
                 });
@@ -214,7 +212,7 @@ void gToxFileManager::resume(gToxFileTransf* file) {
     if (!file->m_active || file->m_state == gToxFileTransf::RESUME) {
         return;
     }
-    tox().file_control(file->m_friend_nr, file->m_file_nr, TOX_FILE_CONTROL_RESUME);
+    m_tox->file_control(file->m_friend_nr, file->m_file_nr, TOX_FILE_CONTROL_RESUME);
     file->m_state = gToxFileTransf::RESUME;
 }
 
@@ -222,7 +220,7 @@ void gToxFileManager::pause(gToxFileTransf* file) {
     if (!file->m_active || file->m_state == gToxFileTransf::PAUSE) {
         return;
     }
-    tox().file_control(file->m_friend_nr, file->m_file_nr, TOX_FILE_CONTROL_PAUSE);
+    m_tox->file_control(file->m_friend_nr, file->m_file_nr, TOX_FILE_CONTROL_PAUSE);
     file->m_state = gToxFileTransf::PAUSE;
 }
 
@@ -230,7 +228,7 @@ void gToxFileManager::cancel(gToxFileTransf* file) {
     if (!file->m_active || file->m_state == gToxFileTransf::CANCEL) {
         return;
     }
-    tox().file_control(file->m_friend_nr, file->m_file_nr, TOX_FILE_CONTROL_CANCEL);
+    m_tox->file_control(file->m_friend_nr, file->m_file_nr, TOX_FILE_CONTROL_CANCEL);
     file->deactivate();
     file->m_state = gToxFileTransf::CANCEL;
     file->m_active = false;

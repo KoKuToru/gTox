@@ -38,7 +38,6 @@ DialogContact::DialogContact(BaseObjectType* cobject, gToxBuilder builder, const
     m_tox_callback = observer_add([this](const ToxEvent& ev) { tox_event_handling(ev); });
 
     tox().open(file);
-    manager = std::make_shared<gToxFileManager>(this);
 
     builder.get_widget("headerbar", m_headerbar);
     builder.get_widget("status_btn", m_btn_status);

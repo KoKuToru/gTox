@@ -23,6 +23,7 @@
 #include <algorithm>
 #include "Generated/database.h"
 #include <giomm.h>
+#include "Helper/gToxFileManager.h"
 
 Toxmm::Toxmm() {
 
@@ -118,9 +119,16 @@ void Toxmm::open(const Glib::ustring& profile_path, bool bootstrap, bool skip_pr
             }
         }
     }
+
+    m_filemanager.reset();
+    if (!skip_profile && bootstrap) {
+        m_filemanager = std::make_shared<gToxFileManager>(this);
+        m_filemanager->init();
+    }
 }
 
 Toxmm::~Toxmm() {
+    m_filemanager.reset();
     if (m_tox != nullptr) {
         tox_kill(m_tox);
         m_tox = nullptr;
@@ -585,6 +593,10 @@ void Toxmm::inject_event(ToxEvent ev) {
             entity.fileid = file_get_file_id(data.nr, data.file_number);*/
             //m_db.toxcore_log_add(entity);
         }
+    }
+
+    if (m_filemanager) {
+        m_filemanager->observer_handle(ev);
     }
 
     m_events.push_back(ev);

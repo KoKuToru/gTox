@@ -183,13 +183,15 @@ class gToxFileSend2: public gToxFileTransf {
 /**
  * @brief Manages all send/recv of files
  */
-class gToxFileManager: public gToxObserver, public std::enable_shared_from_this<gToxFileManager> {
+class Toxmm;
+class gToxFileManager: public std::enable_shared_from_this<gToxFileManager> {
     private:
+        Toxmm* m_tox;
         std::map<size_t, std::shared_ptr<gToxFileTransf>> m_file;
-        sigc::connection m_init_connection;
 
     public:
-        gToxFileManager(gToxObservable* observer);
+        gToxFileManager(Toxmm* tox);
+        void init();
         ~gToxFileManager();
 
         std::shared_ptr<gToxFileTransf> find(int64_t unique_file_id);
@@ -199,7 +201,7 @@ class gToxFileManager: public gToxObserver, public std::enable_shared_from_this<
         void pause(gToxFileTransf* file);
         void cancel(gToxFileTransf* file);
 
-        void observer_handle(const ToxEvent&) override;
+        void observer_handle(const ToxEvent&);
 
         /**
          * A new file recv or send

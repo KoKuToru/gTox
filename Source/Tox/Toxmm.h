@@ -35,7 +35,9 @@
 /**
  * @brief Wraps the toxcore but also add features with a sqlitedb
  */
+class gToxFileManager;
 class Toxmm {
+        friend class gToxFileManager;
   private:
     /**
      * @brief Instance of toxcore
@@ -51,6 +53,8 @@ class Toxmm {
       * @brief Save/Load profile helper
       */
     ToxProfile m_profile;
+
+    std::shared_ptr<gToxFileManager> m_filemanager;
 
   public:
     typedef uint32_t FriendNr;
@@ -175,8 +179,11 @@ class Toxmm {
             size_t size;
     };
 
+
+
     ToxDatabase& database();
     ToxProfile& profile();
+    std::shared_ptr<gToxFileManager> filemanager();
 
     Toxmm();
 
