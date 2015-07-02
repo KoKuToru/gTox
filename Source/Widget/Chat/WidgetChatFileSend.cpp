@@ -225,8 +225,7 @@ WidgetChatFileSend::WidgetChatFileSend(BaseObjectType* cobject,
     gToxObserver(observable),
     m_send(observable, nr, TOX_FILE_KIND_DATA, log),
     m_friend_nr(nr),
-    m_path(log.data),
-    m_file_size(log.filesize) {
+    m_path(log.data) {
 
     //Resume transfer
     init(builder);

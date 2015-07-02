@@ -73,12 +73,9 @@ class ToxLogEntity {
         unsigned long long recvtime;
         unsigned long long sendtime;
         std::string data;
-        long long filenumber;
-        uint64_t filesize;
         long long receipt;
-        std::array<uint8_t, TOX_FILE_ID_LENGTH> fileid;
+        size_t unqiue_file_id;
         EToxLogStatus status;
-        int runid;
 
         ToxLogEntity() = default;
 };

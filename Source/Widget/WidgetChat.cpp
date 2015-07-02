@@ -146,13 +146,11 @@ WidgetChat::WidgetChat(gToxObservable* instance, Toxmm::FriendNr nr)
                          });
                 break;
             case LOG_FILE_RECV: {
-                Toxmm::EventFileRecv data;
-                data.filename = l.data;
-                data.file_number = l.filenumber;
-                data.file_size = l.filesize;
-                data.kind = TOX_FILE_KIND::TOX_FILE_KIND_DATA;
-                data.nr = nr;
-                //add_filerecv(data);
+                //TODO:
+                /*
+                auto file = tox().filemanager().find(l.unique_file_id);
+                add_filerecv(file);
+                */
                 } break;
             case LOG_FILE_SEND:
                 add_filesend(l);

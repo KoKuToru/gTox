@@ -53,18 +53,6 @@ gToxFileSend::gToxFileSend(gToxObservable* observable,
     //RESUME SEND LOGIC
 
     //Check if same runid
-    if (log.runid == tox().database().get_runid()) {
-        m_nr = log.filenumber;
-        m_id = log.fileid;
-
-        m_file = Gio::File::create_for_path(m_path);
-        m_stream = m_file->read();
-
-        //TODO make sure same file size + handle file not found !
-    } else {
-
-
-    }
 }
 
 gToxFileSend::~gToxFileSend() {

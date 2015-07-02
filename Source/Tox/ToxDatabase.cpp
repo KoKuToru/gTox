@@ -94,7 +94,8 @@ void ToxDatabase::open(const std::string& path, const std::string& address, bool
                &DATABASE::version_8,
                &DATABASE::version_9,
                &DATABASE::version_10,
-               &DATABASE::version_11};
+               &DATABASE::version_11,
+               &DATABASE::version_12};
 
         if (version < 1 || version > (int)sizeof(upgrade_scripts)) {
             throw std::runtime_error("Database not open !");
@@ -215,44 +216,36 @@ void ToxDatabase::toxcore_log_add(ToxLogEntity entity) {
     switch (entity.type) {
         case LOG_MESSAGE_SEND:
         case LOG_ACTION_SEND:
-            query("INSERT INTO " + table + "(friendaddr, sendtime, type, data, receipt, runid)"
-                  " VALUES (?1, CURRENT_TIMESTAMP, ?2, ?3, ?4, ?5)",
-                  entity.friendaddr,
-                  entity.type,
-                  entity.data,
-                  entity.receipt,
-                  m_runid)->exec();
-            break;
-        case LOG_MESSAGE_RECV:
-        case LOG_ACTION_RECV:
-            query("INSERT INTO " + table + "(friendaddr, recvtime, type, data, runid)"
+            query("INSERT INTO " + table + "(friendaddr, sendtime, type, data, receipt)"
                   " VALUES (?1, CURRENT_TIMESTAMP, ?2, ?3, ?4)",
                   entity.friendaddr,
                   entity.type,
                   entity.data,
-                  m_runid)->exec();
+                  entity.receipt)->exec();
+            break;
+        case LOG_MESSAGE_RECV:
+        case LOG_ACTION_RECV:
+            query("INSERT INTO " + table + "(friendaddr, recvtime, type, data)"
+                  " VALUES (?1, CURRENT_TIMESTAMP, ?2, ?3)",
+                  entity.friendaddr,
+                  entity.type,
+                  entity.data)->exec();
             break;
         case LOG_FILE_SEND:
-            query("INSERT INTO " + table + "(friendaddr, sendtime, type, data, filenumber, filesize, fileid, runid)"
-                  " VALUES (?1, CURRENT_TIMESTAMP, ?2, ?3, ?4, ?5, ?6, ?7)",
+            query("INSERT INTO " + table + "(friendaddr, sendtime, type, data, fileid)"
+                  " VALUES (?1, CURRENT_TIMESTAMP, ?2, ?3, ?4)",
                   entity.friendaddr,
                   entity.type,
                   entity.data,
-                  entity.filenumber,
-                  entity.filesize,
-                  entity.fileid,
-                  m_runid)->exec();
+                  entity.unqiue_file_id)->exec();
             break;
         case LOG_FILE_RECV:
-            query("INSERT INTO " + table + "(friendaddr, recvtime, type, data, filenumber, filesize, fileid, runid)"
-                  " VALUES (?1, CURRENT_TIMESTAMP, ?2, ?3, ?4, ?5, ?6, ?7)",
+            query("INSERT INTO " + table + "(friendaddr, recvtime, type, data, fileid)"
+                  " VALUES (?1, CURRENT_TIMESTAMP, ?2, ?3, ?4)",
                   entity.friendaddr,
                   entity.type,
                   entity.data,
-                  entity.filenumber,
-                  entity.filesize,
-                  entity.fileid,
-                  m_runid)->exec();
+                  entity.unqiue_file_id)->exec();
             break;
     }
 }
@@ -261,8 +254,7 @@ void ToxDatabase::toxcore_log_set_received(std::string friendaddr, int receipt_i
     friendaddr.resize(64);
     for(std::string table : {"log", "mem.log"}) {
         query("UPDATE " + table + " SET recvtime=CURRENT_TIMESTAMP, status=1"
-              " WHERE runid=?1 AND friendaddr=?1 AND receipt=?2",
-              m_runid,
+              " WHERE friendaddr=?1 AND receipt=?2",
               friendaddr,
               receipt_id)->exec();
     }
@@ -272,8 +264,7 @@ void ToxDatabase::toxcore_log_set_file_complete(std::string friendaddr, uint32_t
     friendaddr.resize(64);
     for(std::string table : {"log", "mem.log"}) {
         query("UPDATE " + table + " SET status=1"
-              " WHERE runid=?1 AND friendaddr=?2 AND filenumber=?3 AND fileid=?4",
-              m_runid,
+              " WHERE friendaddr=?1 AND filenumber=?2 AND fileid=?3",
               friendaddr,
               filenumber,
               fileid)->exec();
@@ -284,8 +275,7 @@ void ToxDatabase::toxcore_log_set_file_aborted(std::string friendaddr, uint32_t 
     friendaddr.resize(64);
     for(std::string table : {"log", "mem.log"}) {
         query("UPDATE " + table + " SET status=2"
-              " WHERE runid=?1 AND friendaddr=?2 AND filenumber=?3 AND fileid=?4",
-              m_runid,
+              " WHERE friendaddr=?1 AND filenumber=?2 AND fileid=?3",
               friendaddr,
               filenumber,
               fileid)->exec();
@@ -310,10 +300,8 @@ std::vector<ToxLogEntity> ToxDatabase::toxcore_log_get(std::string friendaddr, i
                       " type, "                    //2
                       " data, "                    //3
                       " receipt, "                 //4
-                      " filenumber, "              //5
-                      " filesize, "                //6
-                      " status, "                  //7
-                      " runid "                    //8
+                      " fileid, "                  //5
+                      " status  "                  //6
                       " FROM (SELECT * FROM log UNION ALL SELECT * FROM mem.log)"
                       " WHERE cast(friendaddr as text) = cast(?1 as text)"
                       " ORDER BY ifNull(sendtime, recvtime) DESC, id DESC LIMIT ?2, ?3",
@@ -329,10 +317,8 @@ std::vector<ToxLogEntity> ToxDatabase::toxcore_log_get(std::string friendaddr, i
         auto data_ptr = (const char*)data.getBlob();
         tmp.data = std::string(data_ptr, data_ptr + data.getBytes());
         tmp.receipt = stmt->getColumn(4).isNull()?-1:stmt->getColumn(4).getInt64();
-        tmp.filenumber = stmt->getColumn(5).isNull()?-1:stmt->getColumn(5).getInt64();
-        tmp.filesize = stmt->getColumn(6).getInt64();
-        tmp.status = EToxLogStatus(stmt->getColumn(7).getInt());
-        tmp.runid = stmt->getColumn(8).getInt();
+        tmp.unqiue_file_id = stmt->getColumn(5).getInt64();
+        tmp.status = EToxLogStatus(stmt->getColumn(6).getInt());
         res.push_back(tmp);
     }
     std::reverse(res.begin(), res.end());

@@ -573,17 +573,17 @@ void Toxmm::inject_event(ToxEvent ev) {
                 }
             }
 
-            data.filename = cpath;
-            ev = ToxEvent(data);
+            //data.filename = cpath;
+            //ev = ToxEvent(data);
 
             ToxLogEntity entity;
             entity.type = EToxLogType::LOG_FILE_RECV;
             entity.friendaddr = to_hex(addr.data(), addr.size());
             entity.data = data.filename;
-            entity.filesize = data.file_size;
+            /*entity.filesize = data.file_size;
             entity.filenumber = data.file_number;
-            entity.fileid = file_get_file_id(data.nr, data.file_number);
-            m_db.toxcore_log_add(entity);
+            entity.fileid = file_get_file_id(data.nr, data.file_number);*/
+            //m_db.toxcore_log_add(entity);
         }
     }
 
@@ -693,10 +693,10 @@ Toxmm::FileNr Toxmm::file_send(FriendNr nr, TOX_FILE_KIND kind, Glib::ustring pa
     auto addr = get_address(nr);
     entity.friendaddr = to_hex(addr.data(), addr.size());
     entity.data = path;
-    entity.filesize = info->get_size();
+    /*entity.filesize = info->get_size();
     entity.filenumber = res;
-    entity.fileid = file_get_file_id(nr, res);
-    m_db.toxcore_log_add(entity);
+    entity.fileid = file_get_file_id(nr, res);*/
+    //m_db.toxcore_log_add(entity);
 
     return res;
 }
