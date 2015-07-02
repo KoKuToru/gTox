@@ -57,8 +57,6 @@ class DialogContact : public Gtk::Window, public gToxObservable {
 
     bool is_chat_open(Toxmm::FriendNr nr);
 
-    std::vector<gToxFileRecv> m_file_receivers;
-
     Glib::RefPtr<Glib::Binding> m_position_binding;
 
     Gtk::Menu m_popup_menu;
