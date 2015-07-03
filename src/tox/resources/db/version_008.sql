@@ -1,0 +1,3 @@
+DROP TABLE IF EXISTS toxcore;
+DROP TABLE IF EXISTS delcontact;
+
