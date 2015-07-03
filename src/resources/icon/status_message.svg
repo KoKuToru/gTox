@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="24"
+   height="24"
+   id="svg6930"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="status_message.svg">
+  <defs
+     id="defs6932" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#86827f"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="22.627418"
+     inkscape:cx="-2.9218474"
+     inkscape:cy="18.646191"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1924"
+     inkscape:window-height="1568"
+     inkscape:window-x="285"
+     inkscape:window-y="466"
+     inkscape:window-maximized="0"
+     inkscape:snap-bbox="true"
+     inkscape:snap-center="true"
+     inkscape:snap-object-midpoints="true"
+     inkscape:snap-smooth-nodes="true"
+     inkscape:object-nodes="true"
+     inkscape:snap-intersection-paths="true"
+     inkscape:object-paths="true"
+     inkscape:snap-midpoints="true"
+     inkscape:snap-bbox-midpoints="true"
+     inkscape:snap-bbox-edge-midpoints="true"
+     inkscape:bbox-nodes="true"
+     inkscape:bbox-paths="true"
+     inkscape:snap-page="true" />
+  <metadata
+     id="metadata6935">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="rotate_me"
+     style="fill:#000000;stroke:#000000">
+    <g
+       inkscape:label="Ebene 1"
+       inkscape:groupmode="layer"
+       id="layer1"
+       transform="translate(0,-1028.3622)"
+       style="fill:#000000;stroke:#000000">
+      <path
+         style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.76679844"
+         d="m 12,2.09375 c -2.7119439,0 -5.168984,1.0959294 -6.9589844,2.8652344 l 1.4941406,1.46875 C 7.9454833,5.0443805 9.8742059,4.1875 12,4.1875 l 0,-2.09375 z"
+         transform="translate(0,1028.3622)"
+         id="path6938"
+         inkscape:connector-curvature="0" />
+    </g>
+  </g>
+</svg>

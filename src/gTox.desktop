@@ -1,0 +1,12 @@
+[Desktop Entry]
+Version=0.01
+Type=Application
+Name=gTox
+Comment=a GTK-based tox-client
+TryExec=gTox
+Exec=gTox %u
+Icon=gTox
+Categories=InstantMessaging;AudioVideo;Network;
+Terminal=false
+Encoding=UTF-8
+MimeType=application/x-extension-tox;application/x-extension-gtox;x-scheme-handler/tox;
