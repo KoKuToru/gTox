@@ -1,0 +1,71 @@
+/*
+    Profile selection
+*/
+
+.gtox-profile {
+    padding: 5px;
+    background-image:
+		-gtk-gradient (
+			linear,
+			left top, right bottom,
+			color-stop(0, transparent),
+			color-stop(0.01, transparent),
+			color-stop(0.03, transparent),
+			color-stop(0.47, transparent),
+			color-stop(0.49, transparent),
+			color-stop(0.51, transparent),
+			color-stop(0.53, transparent),
+			color-stop(0.97, transparent),
+			color-stop(0.99, transparent),
+			color-stop(1, transparent));		
+	background-repeat: repeat;
+	background-size: 10px 10px;
+	border-bottom: 1px solid rgba(0,0,0,0.3);
+	padding-left: 9px;
+    padding-right: 5px;
+}
+
+.gtox-profile .gtox-profile-avatar {
+    padding: 5px
+}
+
+.gtox-profile .gtox-profile-name {
+    font-size: 120%;
+    padding: 0 5px;
+}
+
+.gtox-profile .gtox-profile-status {
+    font-size: 80%;
+    padding: 0 5px;
+}
+
+.gtox-profile .gtox-profile-path {
+    font-size: 80%;
+    padding: 0 5px;
+    color: gray;
+}
+
+.gtox-profile:insensitive {
+    background-image:
+		-gtk-gradient (
+			linear,
+			left top, right bottom,
+			color-stop(0, black),
+			color-stop(0.01, black),
+			color-stop(0.03, transparent),
+			color-stop(0.47, transparent),
+			color-stop(0.49, black),
+			color-stop(0.51, black),
+			color-stop(0.53, transparent),
+			color-stop(0.97, transparent),
+			color-stop(0.99, black),
+			color-stop(1, black));
+	background-repeat: repeat;
+	background-size: 10px 10px;
+}
+
+.gtox-profile:selected {
+    background-color: rgba(40,150,40,0.2);
+}
+
+

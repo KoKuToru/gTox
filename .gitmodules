@@ -1,3 +1,6 @@
 [submodule "Source/Libs/SQLiteCpp"]
 	path = Source/Libs/SQLiteCpp
 	url = https://github.com/SRombauts/SQLiteCpp
+[submodule "src/tox/libs/SQLiteCpp"]
+	path = src/tox/libs/SQLiteCpp
+	url = https://github.com/SRombauts/SQLiteCpp
