@@ -24,6 +24,7 @@
 
 #include "dialog/error.h"
 #include "dialog/profile_selection.h"
+#include "dialog/profile_create.h"
 
 Glib::RefPtr<gTox> gTox::m_instance;
 
@@ -52,7 +53,7 @@ gTox::gTox()
             ->add_resource_path("/org/gtox/icon");
 
     Gtk::Settings::get_default()
-            ->property_gtk_application_prefer_dark_theme() = 0 == 0;
+            ->property_gtk_application_prefer_dark_theme() = 0 == 0; //TODO: load from config
 
     auto css = Gtk::CssProvider::create();
     auto screen = Gdk::Screen::get_default();
@@ -133,7 +134,7 @@ void gTox::on_activate() {
                 open(Gio::File::create_for_path(profile_ptr->get_path()));
             } else if (!profile_ptr->is_aborted()) {
                 mark_busy();
-                /*auto assistant = DialogProfileCreate::create(m_config_path);
+                auto assistant = dialog::profile_create::create(m_config_path);
                 unmark_busy();
 
                 add_window(*assistant);
@@ -150,7 +151,7 @@ void gTox::on_activate() {
                     } else {
                         activate();
                     }
-                }, true);*/
+                }, true);
             }
             remove_window(*profile_ptr);
         }, true);
@@ -208,12 +209,12 @@ int gTox::on_command_line(const Glib::RefPtr<Gio::ApplicationCommandLine>& comma
 
     if (!invites.empty()) {
         //invite.. send signal too all ?
-        for(auto w : get_windows()) {
-            /*auto dialog = dynamic_cast<DialogContact*>(w);
+        /*for(auto w : get_windows()) {
+            auto dialog = dynamic_cast<DialogContact*>(w);
             if (dialog) {
                 //TODO: invites
-            }*/
-        }
+            }
+        }*/
     }
 
     if (invites.empty() && files.empty()) {
