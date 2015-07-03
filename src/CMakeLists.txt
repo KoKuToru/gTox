@@ -35,6 +35,7 @@ set(SOURCES
 
     dialog/error.cpp
     dialog/profile_selection.cpp
+    dialog/profile_create.cpp
 
     widget/avatar.cpp
 

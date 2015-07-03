@@ -65,6 +65,7 @@ namespace toxmm2 {
             type_signal_contact_connection_status signal_contact_connection_status();
 
             static void try_load(std::string path, Glib::ustring& out_name, Glib::ustring& out_status, contactPublicAddr& out_addr, bool& out_writeable);
+            static std::vector<uint8_t> create_state(std::string name, std::string status, contactPublicAddr& out_addr);
 
         private:
             Tox* m_toxcore;

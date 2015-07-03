@@ -67,6 +67,40 @@ std::shared_ptr<core> core::create(std::string path) {
     return tmp;
 }
 
+std::vector<uint8_t> core::create_state(std::string name, std::string status, contactPublicAddr& out_addr) {
+    TOX_ERR_OPTIONS_NEW nerror;
+    auto options = std::shared_ptr<Tox_Options>(tox_options_new(&nerror),
+                                                [](Tox_Options* p) {
+                                                    tox_options_free(p);
+                                                });
+    if (nerror != TOX_ERR_OPTIONS_NEW_OK) {
+        throw exception(nerror);
+    }
+    options->savedata_type   = TOX_SAVEDATA_TYPE_NONE;
+    TOX_ERR_NEW error;
+    Tox* m_toxcore = tox_new(options.get(), &error);
+    if (error != TOX_ERR_NEW_OK) {
+        throw exception(error);
+    }
+    //set name
+    TOX_ERR_SET_INFO serror;
+    tox_self_set_name(m_toxcore, (const uint8_t*)name.data(), name.size(), &serror);
+    if (serror != TOX_ERR_SET_INFO_OK) {
+        throw exception(error);
+    }
+    //set status
+    tox_self_set_status_message(m_toxcore, (const uint8_t*)status.data(), status.size(), &serror);
+    if (serror != TOX_ERR_SET_INFO_OK) {
+        throw exception(error);
+    }
+    //get addr
+    tox_self_get_public_key(m_toxcore, out_addr);
+    //get state
+    std::vector<uint8_t> state(tox_get_savedata_size(m_toxcore));
+    tox_get_savedata(m_toxcore, state.data());
+    return state;
+}
+
 void core::try_load(std::string path, Glib::ustring& out_name, Glib::ustring& out_status, contactPublicAddr& out_addr, bool& out_writeable) {
     profile m_profile;
     m_profile.open(path);
