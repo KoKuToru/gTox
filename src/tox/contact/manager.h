@@ -39,6 +39,8 @@ namespace toxmm2 {
             void destroy();
             ~contact_manager();
 
+            const std::vector<std::shared_ptr<contact>>& get_all();
+
         private:
             std::shared_ptr<core> m_core;
 
@@ -50,7 +52,6 @@ namespace toxmm2 {
 
             void init();
 
-            std::vector<sigc::connection> m_connections;
             type_signal_request m_signal_request;
             type_signal_removed m_signal_removed;
     };

@@ -42,6 +42,7 @@ namespace toxmm2 {
             Glib::PropertyProxy_ReadOnly<contactNr>         property_nr();
             Glib::PropertyProxy_ReadOnly<contactPublicAddr> property_addr();
             Glib::PropertyProxy_ReadOnly<Glib::ustring>     property_name();
+            Glib::PropertyProxy_ReadOnly<Glib::ustring>     property_name_or_addr();
             Glib::PropertyProxy_ReadOnly<Glib::ustring>     property_status_message();
             Glib::PropertyProxy_ReadOnly<TOX_USER_STATUS>   property_status();
             Glib::PropertyProxy_ReadOnly<TOX_CONNECTION>    property_connection();
@@ -53,6 +54,7 @@ namespace toxmm2 {
             Glib::Property<contactNr>         m_property_nr;
             Glib::Property<contactPublicAddr> m_property_addr;
             Glib::Property<Glib::ustring>     m_property_name;
+            Glib::Property<Glib::ustring>     m_property_name_or_addr;
             Glib::Property<Glib::ustring>     m_property_status_message;
             Glib::Property<TOX_USER_STATUS>   m_property_status;
             Glib::Property<TOX_CONNECTION>    m_property_connection;
@@ -66,8 +68,6 @@ namespace toxmm2 {
             contact(std::shared_ptr<core> core, contactNr nr);
             contact(const contact&) = delete;
             void operator=(const contact&) = delete;
-
-            void init();
 
             contactPublicAddr toxcore_get_addr();
             Glib::ustring     toxcore_get_name();

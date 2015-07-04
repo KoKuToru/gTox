@@ -25,14 +25,15 @@
 #include "types.h"
 
 namespace toxmm2 {
-    class core : public std::enable_shared_from_this<core> {
+    class core : public Glib::Object, public std::enable_shared_from_this<core> {
         public:
             static std::shared_ptr<core> create(std::string path);
             void save();
 
             void update();
-            uint32_t update_optima_interval();
+            uint32_t update_optimal_interval();
 
+            static Glib::ustring fix_utf8(const std::string& input);
             static Glib::ustring fix_utf8(const uint8_t* input, int size);
             static Glib::ustring fix_utf8(const int8_t* input, int size);
             static Glib::ustring to_hex(const uint8_t* data, size_t len);
@@ -42,6 +43,15 @@ namespace toxmm2 {
             ~core();
 
             Tox* toxcore();
+            std::shared_ptr<toxmm2::contact_manager> contact_manager();
+
+            //props
+            Glib::PropertyProxy_ReadOnly<contactPublicAddr> property_addr();
+            Glib::PropertyProxy<Glib::ustring>              property_name();
+            Glib::PropertyProxy_ReadOnly<Glib::ustring>     property_name_or_addr();
+            Glib::PropertyProxy<Glib::ustring>              property_status_message();
+            Glib::PropertyProxy<TOX_USER_STATUS>            property_status();
+            Glib::PropertyProxy_ReadOnly<TOX_CONNECTION>    property_connection();
 
             //Signals
             typedef sigc::signal<void, contactAddr, Glib::ustring> type_signal_contact_request;
@@ -71,13 +81,20 @@ namespace toxmm2 {
             Tox* m_toxcore;
             std::string m_path;
             profile m_profile;
-            std::shared_ptr<contact_manager> m_contact_manager;
+            std::shared_ptr<toxmm2::contact_manager> m_contact_manager;
 
             core(std::string path);
             core(const core&) = delete;
             void operator=(const core&) = delete;
 
             void init();
+
+            Glib::Property<contactPublicAddr> m_property_addr;
+            Glib::Property<Glib::ustring>     m_property_name;
+            Glib::Property<Glib::ustring>     m_property_name_or_addr;
+            Glib::Property<Glib::ustring>     m_property_status_message;
+            Glib::Property<TOX_USER_STATUS>   m_property_status;
+            Glib::Property<TOX_CONNECTION>    m_property_connection;
 
             type_signal_contact_request           m_signal_contact_request;
             type_signal_contact_message           m_signal_contact_message;

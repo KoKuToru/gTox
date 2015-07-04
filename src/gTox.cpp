@@ -25,6 +25,7 @@
 #include "dialog/error.h"
 #include "dialog/profile_selection.h"
 #include "dialog/profile_create.h"
+#include "dialog/main.h"
 
 Glib::RefPtr<gTox> gTox::m_instance;
 
@@ -169,12 +170,12 @@ void gTox::on_open(const Gio::Application::type_vec_files& files,
                    const Glib::ustring& hint) {
     //open file !
     for (auto file : files) {
-        /*mark_busy();
-        auto tmp = DialogContact::create(file->get_path());
+        mark_busy();
+        auto tmp = dialog::main::create(file->get_path());
         unmark_busy();
         add_window(*tmp);
 
-        tmp->show();*/
+        tmp->show();
     }
 
     Gtk::Application::on_open(files, hint);
