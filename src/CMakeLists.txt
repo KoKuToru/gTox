@@ -2,7 +2,7 @@ project(gTox)
 cmake_minimum_required(VERSION 2.8)
 
 set(CMAKE_BUILD_TYPE Debug)
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1y -Wall -Wextra -rdynamic -g3 -Wno-deprecated")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1y -Wall -Wextra -rdynamic -g3 -Wno-deprecated -fsanitize=address")
 
 find_package(PkgConfig)
 pkg_check_modules(GTKMM gtkmm-3.0)
@@ -36,8 +36,10 @@ set(SOURCES
     dialog/error.cpp
     dialog/profile_selection.cpp
     dialog/profile_create.cpp
+    dialog/main.cpp
 
     widget/avatar.cpp
+    widget/contact.cpp
 
     utils/builder.cpp
     utils/dispatcher.h
