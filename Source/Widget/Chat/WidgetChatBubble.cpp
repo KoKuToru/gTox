@@ -189,7 +189,7 @@ unsigned long long WidgetChatBubble::last_timestamp() {
     return m_last_timestamp;
 }
 
-void WidgetChatBubble::add_filerecv(Toxmm::EventFileRecv file) {
+void WidgetChatBubble::add_filerecv(std::shared_ptr<gToxFileTransf> file) {
     auto msg_time = Glib::DateTime::create_now_utc();
 
     // remove seconds
@@ -317,4 +317,33 @@ void WidgetChatBubble::add_filesend(Toxmm::FriendNr nr, Glib::ustring uri) {
     if (!display_time) {
         time->hide();
     }
+}
+
+void WidgetChatBubble::add_filesend(Toxmm::FriendNr nr, ToxLogEntity log) {
+    auto msg_time = Glib::DateTime::create_now_utc();
+
+    // remove seconds
+    msg_time = Glib::DateTime::create_utc(msg_time.get_year(),
+                                          msg_time.get_month(),
+                                          msg_time.get_day_of_month(),
+                                          msg_time.get_hour(),
+                                          msg_time.get_minute(),
+                                          0);
+
+    bool display_time = true;
+
+    if (m_last_timestamp != 0) {
+        auto old_time = Glib::DateTime::create_now_utc(m_last_timestamp);
+        // remove seconds
+        old_time = Glib::DateTime::create_utc(old_time.get_year(),
+                                              old_time.get_month(),
+                                              old_time.get_day_of_month(),
+                                              old_time.get_hour(),
+                                              old_time.get_minute(),
+                                              0);
+        // check
+        display_time = !(msg_time.compare(old_time) == 0);
+    }
+
+
 }

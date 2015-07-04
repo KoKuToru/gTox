@@ -1,0 +1,130 @@
+/*@import url("resource:///org/gtk/libgtk/theme/Adwaita-dark.css");*/
+@import url("resource:///org/gtox/style/common.css");
+
+/**
+    Profile selection
+**/
+
+.gtox-profile, .gtox-contact, .gtox-notification {
+	border-bottom: 1px solid rgba(0,0,0,0.3);
+}
+
+.gtox-profile-path, .gtox-contact-path {
+    color: gray;
+}
+
+.gtox-contact-avatar, .gtox-profile-avatar {
+	background: rgba(240, 240, 240, 1);
+}
+
+.gtox-profile:selected {
+    background-color: rgba(0,0,0,0.2);
+    color: black;
+}
+
+.gtox-contact-active {
+    background-color: rgba(40,150,40,0.4);
+}
+
+.gtox-contact:selected {
+    background-color: transparent;
+    color: black;
+}
+
+.gtox-contact:prelight {
+    background-color: rgba(0,0,0,0.2);
+}
+
+.gtox-notification:selected {
+    background-color: rgba(0,0,0,0.2);
+}
+
+.gtox-notification-area {
+    background-color: rgba(150,40,40,0.6);
+}
+
+.gtox-notification {
+	color: white;
+}
+
+.gtox-notification:selected {
+    background-color: transparent;
+}
+
+.gtox-notification:prelight {
+    background-color: rgba(0,0,0,0.2);
+}
+
+/**
+    Item lists, like in Status selection in Popover
+**/
+
+.gtox-item-list {
+    border-bottom: 1px solid rgba(0,0,0,0.3);
+}
+
+.gtox-item-list:selected {
+    background: rgba(0,0,0,0.2);
+}
+
+/**
+    Chat bubbles
+**/
+
+.gtox-chat {
+    
+}
+
+.gtox-bubble {
+    background-color: rgba(0,0,0,0.2);
+}
+
+.gtox-left .gtox-bubble {
+    border-top-left-radius: 0;
+}
+
+.gtox-right .gtox-bubble {
+    border-bottom-right-radius: 0;
+}
+
+.gtox-right #Avatar {
+	background: rgba(0, 0, 0, 0.2);
+}
+
+.gtox-left #Avatar {
+	background: rgba(0, 0, 0, 0.2);
+}
+
+.message_receipt {
+	opacity: 1;
+}
+
+.message_pending {
+    background: rgba(240, 240, 240, 1);
+	opacity: 0.3;
+}
+
+.message_failed {
+	opacity: 0.3;
+	background: rgba(240, 240, 240, 1);
+}
+
+.bubble_chat_line {
+	background: transparent;
+}
+
+.bubble_chat_line_time {
+    background: rgba(255,255,255,0.2);
+    color: black;
+}
+
+.bubble_chat_file {
+    background: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: black;
+}
+
+.bubble_chat_file_preview {
+    border: 1px solid rgba(0,0,0,0.1);
+    color: black;
+}

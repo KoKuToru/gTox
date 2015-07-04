@@ -49,7 +49,8 @@ class WidgetChat : public Gtk::VPaned, public gToxObserver {
     WidgetChatBubble::Side m_last_side = WidgetChatBubble::NONE;
 
     void add_message(WidgetChatBubble::Side side, WidgetChatBubble::Line message);
-    void add_filerecv(Toxmm::EventFileRecv file);
+    void add_filerecv(std::shared_ptr<gToxFileTransf> file);
+    void add_filesend(ToxLogEntity data);
     void add_widget(Gtk::Widget& widget);
 
     bool same_bubble(unsigned long long a_timestamp, WidgetChatBubble::Side a_side, unsigned long long b_timestamp, WidgetChatBubble::Side b_side);

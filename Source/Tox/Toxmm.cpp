@@ -23,6 +23,7 @@
 #include <algorithm>
 #include "Generated/database.h"
 #include <giomm.h>
+#include "Helper/gToxFileManager.h"
 
 Toxmm::Toxmm() {
 
@@ -118,9 +119,16 @@ void Toxmm::open(const Glib::ustring& profile_path, bool bootstrap, bool skip_pr
             }
         }
     }
+
+    m_filemanager.reset();
+    if (!skip_profile && bootstrap) {
+        m_filemanager = std::make_shared<gToxFileManager>(this);
+        m_filemanager->init();
+    }
 }
 
 Toxmm::~Toxmm() {
+    m_filemanager.reset();
     if (m_tox != nullptr) {
         tox_kill(m_tox);
         m_tox = nullptr;
@@ -133,6 +141,10 @@ ToxDatabase& Toxmm::database() {
 
 ToxProfile& Toxmm::profile() {
     return m_profile;
+}
+
+gToxFileManager& Toxmm::filemanager() {
+    return *m_filemanager;
 }
 
 void Toxmm::save() {
@@ -573,18 +585,23 @@ void Toxmm::inject_event(ToxEvent ev) {
                 }
             }
 
-            data.filename = cpath;
+            //TODO: CORNER CASE ! IN SAME EVENT LOOP SAME NAME WILL ALSO GENERATE SAME PATH !
+            data.filepath = cpath;
             ev = ToxEvent(data);
 
             ToxLogEntity entity;
             entity.type = EToxLogType::LOG_FILE_RECV;
             entity.friendaddr = to_hex(addr.data(), addr.size());
             entity.data = data.filename;
-            entity.filesize = data.file_size;
+            /*entity.filesize = data.file_size;
             entity.filenumber = data.file_number;
-            entity.fileid = file_get_file_id(data.nr, data.file_number);
-            m_db.toxcore_log_add(entity);
+            entity.fileid = file_get_file_id(data.nr, data.file_number);*/
+            //m_db.toxcore_log_add(entity);
         }
+    }
+
+    if (m_filemanager) {
+        m_filemanager->observer_handle(ev);
     }
 
     m_events.push_back(ev);
@@ -693,10 +710,10 @@ Toxmm::FileNr Toxmm::file_send(FriendNr nr, TOX_FILE_KIND kind, Glib::ustring pa
     auto addr = get_address(nr);
     entity.friendaddr = to_hex(addr.data(), addr.size());
     entity.data = path;
-    entity.filesize = info->get_size();
+    /*entity.filesize = info->get_size();
     entity.filenumber = res;
-    entity.fileid = file_get_file_id(nr, res);
-    m_db.toxcore_log_add(entity);
+    entity.fileid = file_get_file_id(nr, res);*/
+    //m_db.toxcore_log_add(entity);
 
     return res;
 }

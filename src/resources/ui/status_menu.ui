@@ -1,0 +1,27 @@
+<interface>
+ <requires lib='gtk+' version='3.16'/>
+ <menu id='status-menu'>
+   <section>
+     <item>
+       <attribute name='label' translatable='yes'>ONLINE</attribute>
+       <attribute name='action'>status.online</attribute>
+       <attribute name='icon'>status_online</attribute>
+     </item>
+     <item>
+       <attribute name='label' translatable='yes'>BUSY</attribute>
+       <attribute name='action'>status.busy</attribute>
+       <attribute name='icon'>status_busy</attribute>
+     </item>
+     <item>
+       <attribute name='label' translatable='yes'>AWAY</attribute>
+       <attribute name='action'>status.away</attribute>
+       <attribute name='icon'>status_away</attribute>
+     </item>
+     <item>
+       <attribute name='label' translatable='yes'>EXIT</attribute>
+       <attribute name='action'>status.offline</attribute>
+       <attribute name='icon'>status_offline</attribute>
+     </item>
+   </section>
+ </menu>
+</interface>

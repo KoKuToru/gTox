@@ -28,6 +28,7 @@ uint64_t operator "" _kib(unsigned long long input) {
 gToxFileRecv::gToxFileRecv(gToxObservable* observable,
                            Toxmm::EventFileRecv file)
     : gToxObserver(observable), m_file(file) {
+    return;
     if (m_file.file_number < 0) {
         m_path = m_file.filename;
         m_position = file.file_size;
@@ -112,10 +113,10 @@ void gToxFileRecv::emit_progress() {
             m_fd = -1;
 
             auto addr = tox().get_address(m_file.nr);
-            tox().database().toxcore_log_set_file_received(
+            tox().database().toxcore_log_set_file_complete(
                         Toxmm::to_hex(addr.data(), addr.size()),
-                        m_file.filename,
-                        m_file.file_number);
+                        m_file.file_number,
+                        tox().file_get_file_id(m_file.nr, m_file.file_number));
         }
     }
     observer_notify(ToxEvent(EventFileProgress{
@@ -151,10 +152,10 @@ void gToxFileRecv::cancel() {
 
     auto addr = tox().get_address(m_file.nr);
 
-    tox().database().toxcore_log_set_file_received(
+    tox().database().toxcore_log_set_file_aborted(
                 Toxmm::to_hex(addr.data(), addr.size()),
-                m_file.filename,
-                m_file.file_number);
+                m_file.file_number,
+                tox().file_get_file_id(m_file.nr, m_file.file_number));
 
     unlink(m_file.filename.c_str());
     close(m_fd);

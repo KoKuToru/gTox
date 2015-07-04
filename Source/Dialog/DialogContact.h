@@ -28,6 +28,7 @@
 #include "Helper/gToxObservable.h"
 #include "Helper/gToxBuilder.h"
 #include "Helper/gToxFileRecv.h"
+#include "Helper/gToxFileManager.h"
 
 // contact list with pinned chat
 class DialogContact : public Gtk::Window, public gToxObservable {
@@ -55,8 +56,6 @@ class DialogContact : public Gtk::Window, public gToxObservable {
     gToxObservable::Handler m_tox_callback;
 
     bool is_chat_open(Toxmm::FriendNr nr);
-
-    std::vector<gToxFileRecv> m_file_receivers;
 
     Glib::RefPtr<Glib::Binding> m_position_binding;
 
