@@ -24,19 +24,24 @@
 #include "types.h"
 
 namespace toxmm2 {
+    class receipt;
     class contact : public Glib::Object, public std::enable_shared_from_this<contact> {
             friend class contact_manager;
         public:
             //signals
             typedef sigc::signal<void, receiptNr>     type_signal_receipt;
-            typedef sigc::signal<void, Glib::ustring> type_signal_new_message;
-            typedef sigc::signal<void, Glib::ustring> type_signal_new_action;
-            typedef sigc::signal<void>                type_signal_new_file;
+            typedef sigc::signal<void, Glib::ustring> type_signal_recv_message;
+            typedef sigc::signal<void, Glib::ustring> type_signal_recv_action;
+            typedef sigc::signal<void>                type_signal_recv_file;
+            typedef sigc::signal<void, Glib::ustring, std::shared_ptr<receipt>> type_signal_send_message;
+            typedef sigc::signal<void, Glib::ustring, std::shared_ptr<receipt>> type_signal_send_action;
 
-            type_signal_receipt     signal_receipt();
-            type_signal_new_message signal_new_message();
-            type_signal_new_action  signal_new_action();
-            type_signal_new_file    signal_new_file();
+            type_signal_receipt      signal_receipt();
+            type_signal_recv_message signal_recv_message();
+            type_signal_recv_action  signal_recv_action();
+            type_signal_recv_file    signal_recv_file();
+            type_signal_send_message signal_send_message();
+            type_signal_send_action  signal_send_action();
 
             //props
             Glib::PropertyProxy_ReadOnly<contactNr>         property_nr();
@@ -47,6 +52,10 @@ namespace toxmm2 {
             Glib::PropertyProxy_ReadOnly<TOX_USER_STATUS>   property_status();
             Glib::PropertyProxy_ReadOnly<TOX_CONNECTION>    property_connection();
             Glib::PropertyProxy_ReadOnly<bool>              property_typing();
+
+            //functions
+            std::shared_ptr<receipt> send_message(const Glib::ustring& message);
+            std::shared_ptr<receipt> send_action (const Glib::ustring& action);
 
         private:
             std::shared_ptr<core> m_core;
@@ -60,10 +69,12 @@ namespace toxmm2 {
             Glib::Property<TOX_CONNECTION>    m_property_connection;
             Glib::Property<bool>              m_property_typing;
 
-            type_signal_receipt     m_signal_receipt;
-            type_signal_new_message m_signal_new_message;
-            type_signal_new_action  m_signal_new_action;
-            type_signal_new_file    m_signal_new_file;
+            type_signal_receipt      m_signal_receipt;
+            type_signal_recv_message m_signal_recv_message;
+            type_signal_recv_action  m_signal_recv_action;
+            type_signal_recv_file    m_signal_recv_file;
+            type_signal_send_message m_signal_send_message;
+            type_signal_send_action  m_signal_send_action;
 
             contact(std::shared_ptr<core> core, contactNr nr);
             contact(const contact&) = delete;

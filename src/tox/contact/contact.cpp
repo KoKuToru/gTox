@@ -20,13 +20,16 @@
 #include "manager.h"
 #include "core.h"
 #include "exception.h"
+#include "receipt.h"
 
 using namespace toxmm2;
 
-contact::type_signal_receipt     contact::signal_receipt()     { return m_signal_receipt; }
-contact::type_signal_new_message contact::signal_new_message() { return m_signal_new_message; }
-contact::type_signal_new_action  contact::signal_new_action()  { return m_signal_new_action; }
-contact::type_signal_new_file    contact::signal_new_file()    { return m_signal_new_file; }
+contact::type_signal_receipt      contact::signal_receipt()      { return m_signal_receipt; }
+contact::type_signal_recv_message contact::signal_recv_message() { return m_signal_recv_message; }
+contact::type_signal_recv_action  contact::signal_recv_action()  { return m_signal_recv_action; }
+contact::type_signal_recv_file    contact::signal_recv_file()    { return m_signal_recv_file; }
+contact::type_signal_send_message contact::signal_send_message() { return m_signal_send_message; }
+contact::type_signal_send_action  contact::signal_send_action()  { return m_signal_send_action; }
 
 Glib::PropertyProxy_ReadOnly<contactNr>         contact::property_nr()
 { return Glib::PropertyProxy_ReadOnly<contactNr>(this, "contact-nr"); }
@@ -131,4 +134,26 @@ TOX_CONNECTION contact::toxcore_get_connection() {
         throw exception(error);
     }
     return con;
+}
+
+std::shared_ptr<receipt> contact::send_message(const Glib::ustring& message) {
+    TOX_ERR_FRIEND_SEND_MESSAGE error;
+    auto receipt = tox_friend_send_message(m_core->toxcore(), property_nr().get_value(), TOX_MESSAGE_TYPE_NORMAL, (const uint8_t*)message.data(), message.size(), &error);
+    if (error != TOX_ERR_FRIEND_SEND_MESSAGE_OK) {
+        throw exception(error);
+    }
+    auto r = std::shared_ptr<toxmm2::receipt>(new toxmm2::receipt(shared_from_this(), receipt));
+    m_signal_send_message.emit(message, r);
+    return r;
+}
+
+std::shared_ptr<receipt> contact::send_action (const Glib::ustring& action) {
+    TOX_ERR_FRIEND_SEND_MESSAGE error;
+    auto receipt = tox_friend_send_message(m_core->toxcore(), property_nr().get_value(), TOX_MESSAGE_TYPE_ACTION, (const uint8_t*)action.data(), action.size(), &error);
+    if (error != TOX_ERR_FRIEND_SEND_MESSAGE_OK) {
+        throw exception(error);
+    }
+    auto r = std::shared_ptr<toxmm2::receipt>(new toxmm2::receipt(shared_from_this(), receipt));
+    m_signal_send_action.emit(action, r);
+    return r;
 }

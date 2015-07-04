@@ -124,9 +124,9 @@ contact::contact(BaseObjectType* cobject,
         m_spin->start();
     };
 
-    m_contact->signal_new_message().connect(sigc::hide(sigc::track_obj(display_spinner, *this)));
-    m_contact->signal_new_action().connect(sigc::hide(sigc::track_obj(display_spinner, *this)));
-    m_contact->signal_new_file().connect(sigc::track_obj(display_spinner, *this));
+    m_contact->signal_recv_message().connect(sigc::hide(sigc::track_obj(display_spinner, *this)));
+    m_contact->signal_recv_action().connect(sigc::hide(sigc::track_obj(display_spinner, *this)));
+    m_contact->signal_recv_file().connect(sigc::track_obj(display_spinner, *this));
 
     if (!for_active_chats) {
         m_contact_list_grid_mini->hide();

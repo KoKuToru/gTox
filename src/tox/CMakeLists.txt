@@ -28,6 +28,7 @@ set(SOURCES
     profile.cpp
     contact/manager.cpp
     contact/contact.cpp
+    contact/receipt.cpp
 
     #Toxmm.cpp
     #ToxDatabase.cpp

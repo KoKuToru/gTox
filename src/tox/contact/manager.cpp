@@ -39,14 +39,14 @@ void contact_manager::init() {
     m_core->signal_contact_message().connect(sigc::track_obj([this](contactNr contact_nr, Glib::ustring message) {
                                                  auto contact = find(contact_nr);
                                                  if (contact) {
-                                                     contact->m_signal_new_message.emit(message);
+                                                     contact->m_signal_recv_message.emit(message);
                                                  }
                                              }, *this));
 
     m_core->signal_contact_action().connect(sigc::track_obj([this](contactNr contact_nr, Glib::ustring action) {
                                                 auto contact = find(contact_nr);
                                                 if (contact) {
-                                                    contact->m_signal_new_action.emit(action);
+                                                    contact->m_signal_recv_action.emit(action);
                                                 }
                                             }, *this));
 
