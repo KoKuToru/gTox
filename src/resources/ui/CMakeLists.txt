@@ -16,7 +16,8 @@ set(SRC
     popover_settings.ui
     dialog_settings.ui
     chat_filerecv.ui
-    chat_filepreview.ui)
+    chat_filepreview.ui
+    status_menu.ui)
 
 set(LAYOUT ${SRC} PARENT_SCOPE)
 
@@ -43,5 +44,5 @@ set (GRESOURCE ${GRESOURCE} "${CMAKE_CURRENT_BINARY_DIR}/${NAME}.c" PARENT_SCOPE
 
 ADD_CUSTOM_TARGET(gtox-ui-resource ALL
     DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/${NAME}.c")
-    
+
 

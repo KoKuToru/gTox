@@ -31,7 +31,7 @@ namespace dialog {
             //Glib::RefPtr<Gtk::StatusIcon> m_status_icon;
 
             Gtk::HeaderBar* m_headerbar;
-            Gtk::Button* m_btn_status;
+            Gtk::MenuButton* m_btn_status;
             Gtk::Stack* m_stack_header;
             Gtk::Stack* m_stack;
             Gtk::ListBox* m_list_contact;
@@ -52,6 +52,8 @@ namespace dialog {
             Gtk::Menu m_popup_menu;
 
             std::shared_ptr<toxmm2::core> m_toxcore;
+
+            Glib::RefPtr<Gio::SimpleActionGroup> m_action;
 
         public:
             main(BaseObjectType* cobject,
