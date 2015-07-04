@@ -29,17 +29,22 @@ namespace toxmm2 {
         public:
             typedef sigc::signal<void, contactAddr, Glib::ustring> type_signal_request;
             typedef sigc::signal<void, std::shared_ptr<contact>>   type_signal_removed;
+            typedef sigc::signal<void, std::shared_ptr<contact>>   type_signal_added;
 
             type_signal_request signal_request();
             type_signal_removed signal_removed();
+            type_signal_added   signal_added();
 
-            std::shared_ptr<contact> find(contactAddr addr);
+            std::shared_ptr<contact> find(contactAddrPublic addr);
             std::shared_ptr<contact> find(contactNr nr);
+
+            const std::vector<std::shared_ptr<contact>>& get_all();
+
+            void add_contact(contactAddrPublic addr_public);
+            void add_contact(contactAddr addr, const Glib::ustring& message);
 
             void destroy();
             ~contact_manager();
-
-            const std::vector<std::shared_ptr<contact>>& get_all();
 
         private:
             std::shared_ptr<core> m_core;
@@ -54,6 +59,7 @@ namespace toxmm2 {
 
             type_signal_request m_signal_request;
             type_signal_removed m_signal_removed;
+            type_signal_added   m_signal_added;
     };
 
 }

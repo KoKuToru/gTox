@@ -34,7 +34,7 @@ namespace widget {
 
         public:
             avatar(BaseObjectType* cobject, utils::builder,
-                   toxmm2::contactPublicAddr addr);
+                   toxmm2::contactAddrPublic addr);
 
             ~avatar();
 
@@ -42,7 +42,7 @@ namespace widget {
 
             static Glib::RefPtr<Gdk::Pixbuf> get_avatar(Glib::ustring path, bool force_reload = false);
             static void set_avatar(Glib::ustring path, Glib::RefPtr<Gdk::Pixbuf> pix);
-            static Glib::ustring get_avatar_path(toxmm2::contactPublicAddr addr);
+            static Glib::ustring get_avatar_path(toxmm2::contactAddrPublic addr);
 
             utils::dispatcher m_dispatcher;
             int m_version = 0;

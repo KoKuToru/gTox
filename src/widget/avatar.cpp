@@ -25,7 +25,7 @@ using namespace widget;
 
 avatar::avatar(BaseObjectType* cobject,
                utils::builder,
-               toxmm2::contactPublicAddr addr)
+               toxmm2::contactAddrPublic addr)
     : Gtk::Image(cobject),
       m_path(get_avatar_path(addr)) {
     //load image
@@ -134,7 +134,7 @@ void avatar::set_avatar(Glib::ustring path, Glib::RefPtr<Gdk::Pixbuf> pix) {
     get_avatar(path, true);
 }
 
-Glib::ustring avatar::get_avatar_path(toxmm2::contactPublicAddr addr) {
+Glib::ustring avatar::get_avatar_path(toxmm2::contactAddrPublic addr) {
     //load avatar from disk !
     auto avatar_path = Glib::build_filename(
                            Glib::get_user_config_dir(),

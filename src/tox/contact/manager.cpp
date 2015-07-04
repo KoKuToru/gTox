@@ -19,11 +19,13 @@
 #include "manager.h"
 #include "core.h"
 #include "contact.h"
+#include "exception.h"
 
 using namespace toxmm2;
 
 contact_manager::type_signal_request contact_manager::signal_request() { return m_signal_request; }
 contact_manager::type_signal_removed contact_manager::signal_removed() { return m_signal_removed; }
+contact_manager::type_signal_removed contact_manager::signal_added  () { return m_signal_added; }
 
 contact_manager::contact_manager(std::shared_ptr<core> core):
     m_core(core) {
@@ -106,7 +108,7 @@ void contact_manager::destroy() {
 contact_manager::~contact_manager() {
 }
 
-std::shared_ptr<contact> contact_manager::find(contactAddr addr) {
+std::shared_ptr<contact> contact_manager::find(contactAddrPublic addr) {
     std::shared_ptr<contact> res;
     auto iter = std::find_if(m_contact.begin(), m_contact.end(), [addr](auto contact) {
         return contact->m_property_addr.get_value() == addr;
@@ -130,4 +132,26 @@ std::shared_ptr<contact> contact_manager::find(contactNr nr) {
 
 const std::vector<std::shared_ptr<contact>>& contact_manager::get_all() {
     return m_contact;
+}
+
+void contact_manager::add_contact(contactAddrPublic addr_public) {
+    TOX_ERR_FRIEND_ADD error;
+    auto nr = tox_friend_add_norequest(m_core->toxcore(), addr_public, &error);
+    if (error != TOX_ERR_FRIEND_ADD_OK) {
+        throw exception(error);
+    }
+    auto contact = std::shared_ptr<toxmm2::contact>(new toxmm2::contact(m_core, contactNr(nr)));
+    m_contact.push_back(contact);
+    m_signal_added.emit(contact);
+}
+
+void contact_manager::add_contact(contactAddr addr, const Glib::ustring& message) {
+    TOX_ERR_FRIEND_ADD error;
+    auto nr = tox_friend_add(m_core->toxcore(), addr, (const uint8_t*)message.data(), message.size(), &error);
+    if (error != TOX_ERR_FRIEND_ADD_OK) {
+        throw exception(error);
+    }
+    auto contact = std::shared_ptr<toxmm2::contact>(new toxmm2::contact(m_core, contactNr(nr)));
+    m_contact.push_back(contact);
+    m_signal_added.emit(contact);
 }

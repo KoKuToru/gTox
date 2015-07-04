@@ -43,13 +43,13 @@ contact::contact(BaseObjectType* cobject,
     builder.get_widget("revealer", m_revealer);
 
     //builder.get_widget("avatar", m_avatar);
-    m_avatar = builder.get_widget_derived<widget::avatar>("avatar", contact->property_addr());
+    m_avatar = builder.get_widget_derived<widget::avatar>("avatar", contact->property_addr_public());
     builder.get_widget("name", m_name);
     builder.get_widget("status", m_status_msg);
     builder.get_widget("status_icon", m_status_icon);
     builder.get_widget("spinner", m_spin);
 
-    m_avatar_mini = builder.get_widget_derived<widget::avatar>("avatar_mini", contact->property_addr());
+    m_avatar_mini = builder.get_widget_derived<widget::avatar>("avatar_mini", contact->property_addr_public());
     builder.get_widget("name_mini", m_name_mini);
     builder.get_widget("status_mini", m_status_msg_mini);
     builder.get_widget("status_icon_mini", m_status_icon_mini);
@@ -256,4 +256,8 @@ void contact::on_hide() {
     } else {
         Gtk::Widget::on_hide();
     }
+}
+
+std::shared_ptr<toxmm2::contact> contact::get_contact() {
+    return m_contact;
 }

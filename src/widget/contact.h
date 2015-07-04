@@ -68,6 +68,8 @@ namespace widget {
             //! for sort
             int compare(contact* other);
 
+            std::shared_ptr<toxmm2::contact> get_contact();
+
         protected:
             void on_show();
             void on_hide();

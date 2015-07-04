@@ -119,7 +119,7 @@ void profile_selection::set_accounts(const std::vector<std::string>& accounts) {
     m_thread = Glib::Thread::create([this, accounts](){
         Glib::ustring tox_name;
         Glib::ustring tox_status;
-        toxmm2::contactPublicAddr tox_addr;
+        toxmm2::contactAddrPublic tox_addr;
 
         for (auto acc : accounts) {
             int tox_error = 0;
