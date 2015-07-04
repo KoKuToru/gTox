@@ -26,6 +26,7 @@
 #include "tox/contact/manager.h"
 #include "tox/contact/contact.h"
 
+#include "dialog/main.h"
 #include "widget/contact.h"
 
 namespace sigc {
@@ -102,13 +103,15 @@ main::main(BaseObjectType* cobject,
         m_menu.set_visible();
     });
 
-    /*auto activated = [this](Gtk::ListBoxRow* row) {
+    auto activated = [this](Gtk::ListBoxRow* row) {
         //FORWARD SIGNAL TO THE ITEM
-        auto item = dynamic_cast<WidgetContactListItem*>(row);
-        observer_notify(ToxEvent(WidgetContactListItem::EventActivated{item->get_friend_nr()}));
+        auto item = dynamic_cast<widget::contact*>(row);
+        if (item) {
+            item->activated();
+        }
     };
     m_list_contact->signal_row_activated().connect(activated);
-    m_list_contact_active->signal_row_activated().connect(activated);*/
+    m_list_contact_active->signal_row_activated().connect(activated);
 
     auto sort_func = [this](Gtk::ListBoxRow* a, Gtk::ListBoxRow* b){
         auto item_a = dynamic_cast<widget::contact*>(a);
@@ -238,11 +241,11 @@ main::main(BaseObjectType* cobject,
 
     m_toxcore->contact_manager()->signal_added().connect(sigc::track_obj([this](std::shared_ptr<toxmm2::contact> contact) {
         //add contact to list
-        auto item_builder = widget::contact::create(contact);
+        auto item_builder = widget::contact::create(Glib::RefPtr<dialog::main>(this), contact);
         auto item = Gtk::manage(item_builder.raw());
         m_list_contact->add(*item);
 
-        item_builder = widget::contact::create(contact, true);
+        item_builder = widget::contact::create(Glib::RefPtr<dialog::main>(this), contact, true);
         item = Gtk::manage(item_builder.raw());
         m_list_contact_active->add(*item);
 
@@ -290,12 +293,12 @@ void main::load_contacts() {
 
     for (auto contact : m_toxcore->contact_manager()->get_all()) {
         //normal contact list:
-        auto item_builder = widget::contact::create(contact);
+        auto item_builder = widget::contact::create(Glib::RefPtr<dialog::main>(this), contact);
         auto item = Gtk::manage(item_builder.raw());
         m_list_contact->add(*item);
 
         //active chat list:
-        item_builder = widget::contact::create(contact, true);
+        item_builder = widget::contact::create(Glib::RefPtr<dialog::main>(this), contact, true);
         item = Gtk::manage(item_builder.raw());
         m_list_contact_active->add(*item);
     }
@@ -305,6 +308,12 @@ void main::load_contacts() {
 }
 
 main::~main() {
+    for (auto item : m_list_contact->get_children()) {
+        delete item;
+    }
+    for (auto item : m_list_contact_active->get_children()) {
+        delete item;
+    }
     // save ?
     //tox().save();
 }
@@ -468,3 +477,85 @@ void main::exit() {
     // TODO: ask for confirmation
     hide();
 }
+
+void main::chat_add(Gtk::Widget& headerbar, Gtk::Widget& body, Gtk::Button& prev, Gtk::Button& next) {
+    headerbar.get_style_context()->add_class("gtox-headerbar-left");
+
+    m_stack_header->add(headerbar);
+    m_stack->add(body);
+
+    m_stack_header->set_visible_child(headerbar);
+    m_stack->set_visible_child(body);
+
+    m_stack_data.push_back({&headerbar, &body});
+
+    next.signal_clicked().connect(sigc::track_obj([this]() {
+        auto visible_child = m_stack_header->get_visible_child();
+        size_t i = 0;
+        for (; i < m_stack_data.size(); ++i) {
+            if (m_stack_data[i].first == visible_child) {
+                break;
+            }
+        }
+        if (i < m_stack_data.size()) {
+            i = (i + 1) % m_stack_data.size();
+            m_stack_header->set_visible_child(*m_stack_data[i].first);
+            m_stack->set_visible_child(*m_stack_data[i].second);
+        }
+    }, *this));
+
+    prev.signal_clicked().connect(sigc::track_obj([this]() {
+        auto visible_child = m_stack_header->get_visible_child();
+        size_t i = 0;
+        for (; i < m_stack_data.size(); ++i) {
+            if (m_stack_data[i].first == visible_child) {
+                break;
+            }
+        }
+        if (i < m_stack_data.size()) {
+            i = (i > 0) ? (i - 1) : (m_stack_data.size() - 1);
+            m_stack_header->set_visible_child(*m_stack_data[i].first);
+            m_stack->set_visible_child(*m_stack_data[i].second);
+        }
+    }, *this));
+
+    //present
+    property_gravity() = Gdk::GRAVITY_NORTH_EAST;
+    if (!m_stack_header->is_visible()) {
+        resize(800 + get_width(), get_height());
+    }
+
+    m_stack_header->show();
+    m_stack->show();
+}
+
+void main::chat_remove(Gtk::Widget& headerbar, Gtk::Widget& body) {
+    for (size_t i = 0; i < m_stack_data.size(); ++i) {
+        if (m_stack_data[i].first == &headerbar && m_stack_data[i].second == &body) {
+            m_stack_header->remove(headerbar);
+            m_stack->remove(body);
+            m_stack_data.erase(m_stack_data.begin() + i);
+            break;
+        }
+    }
+
+    if (m_stack_data.empty()) {
+        property_gravity() = Gdk::GRAVITY_NORTH_EAST;
+        if (m_stack_header->is_visible()) {
+            resize(m_headerbar->get_width(), get_height());
+        }
+        m_stack_header->hide();
+        m_stack->hide();
+    }
+}
+
+void main::chat_show(Gtk::Widget& headerbar, Gtk::Widget& body) {
+    for (size_t i = 0; i < m_stack_data.size(); ++i) {
+        if (m_stack_data[i].first == &headerbar && m_stack_data[i].second == &body) {
+            m_stack_header->set_visible_child(headerbar);
+            m_stack->set_visible_child(body);
+            break;
+        }
+    }
+}
+

@@ -37,6 +37,7 @@ set(SOURCES
     dialog/profile_selection.cpp
     dialog/profile_create.cpp
     dialog/main.cpp
+    dialog/chat.cpp
 
     widget/avatar.cpp
     widget/contact.cpp
