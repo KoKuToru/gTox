@@ -19,12 +19,15 @@
 **/
 #include "contact.h"
 #include "tox/contact/contact.h"
+#include "dialog/chat.h"
+#include "dialog/main.h"
 
 using namespace widget;
 
-utils::builder::ref<contact> contact::create(std::shared_ptr<toxmm2::contact> contact, bool for_notify) {
+utils::builder::ref<contact> contact::create(Glib::RefPtr<dialog::main> main, std::shared_ptr<toxmm2::contact> contact, bool for_notify) {
     return utils::builder(Gtk::Builder::create_from_resource("/org/gtox/ui/list_item_contact.ui"))
             .get_widget_derived<widget::contact>("contact_list_item",
+                                                 main,
                                                  contact,
                                                  for_notify);
 }
@@ -32,9 +35,11 @@ utils::builder::ref<contact> contact::create(std::shared_ptr<toxmm2::contact> co
 
 contact::contact(BaseObjectType* cobject,
                  utils::builder builder,
+                 Glib::RefPtr<dialog::main> main,
                  std::shared_ptr<toxmm2::contact> contact,
                  bool for_active_chats)
     : Gtk::ListBoxRow(cobject),
+      m_main(main),
       m_contact(contact),
       m_for_active_chats(for_active_chats) {
 
@@ -260,4 +265,12 @@ void contact::on_hide() {
 
 std::shared_ptr<toxmm2::contact> contact::get_contact() {
     return m_contact;
+}
+
+void contact::activated() {
+    if (m_chat) {
+        m_chat->activated();
+    } else {
+        m_chat = Glib::RefPtr<dialog::chat>(new dialog::chat(m_main, m_contact));
+    }
 }

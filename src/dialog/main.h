@@ -58,6 +58,8 @@ namespace dialog {
 
             Glib::RefPtr<Gio::SimpleActionGroup> m_action;
 
+            std::vector<std::pair<Gtk::Widget*, Gtk::Widget*>> m_stack_data;
+
         public:
             main(BaseObjectType* cobject,
                  utils::builder builder,
@@ -65,6 +67,10 @@ namespace dialog {
             ~main();
 
             static utils::builder::ref<main> create(const Glib::ustring& file);
+
+            void chat_add   (Gtk::Widget& headerbar, Gtk::Widget& body, Gtk::Button& prev, Gtk::Button& next);
+            void chat_remove(Gtk::Widget& headerbar, Gtk::Widget& body);
+            void chat_show  (Gtk::Widget& headerbar, Gtk::Widget& body);
 
             void exit();
 

@@ -17,7 +17,8 @@ set(SRC
     dialog_settings.ui
     chat_filerecv.ui
     chat_filepreview.ui
-    status_menu.ui)
+    status_menu.ui
+    dialog_chat.ui)
 
 set(LAYOUT ${SRC} PARENT_SCOPE)
 
