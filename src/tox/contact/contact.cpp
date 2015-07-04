@@ -29,40 +29,50 @@ contact::type_signal_new_action  contact::signal_new_action()  { return m_signal
 contact::type_signal_new_file    contact::signal_new_file()    { return m_signal_new_file; }
 
 Glib::PropertyProxy_ReadOnly<contactNr>         contact::property_nr()
-{ return Glib::PropertyProxy_ReadOnly<contactNr>(this, "contact_nr"); }
+{ return Glib::PropertyProxy_ReadOnly<contactNr>(this, "contact-nr"); }
 Glib::PropertyProxy_ReadOnly<contactPublicAddr> contact::property_addr()
-{ return Glib::PropertyProxy_ReadOnly<contactPublicAddr>(this, "contact_addr"); }
+{ return Glib::PropertyProxy_ReadOnly<contactPublicAddr>(this, "contact-addr"); }
 Glib::PropertyProxy_ReadOnly<Glib::ustring>     contact::property_name()
-{ return Glib::PropertyProxy_ReadOnly<Glib::ustring>(this, "contact_name"); }
+{ return Glib::PropertyProxy_ReadOnly<Glib::ustring>(this, "contact-name"); }
+Glib::PropertyProxy_ReadOnly<Glib::ustring>     contact::property_name_or_addr()
+{ return Glib::PropertyProxy_ReadOnly<Glib::ustring>(this, "contact-name-or-addr"); }
 Glib::PropertyProxy_ReadOnly<Glib::ustring>     contact::property_status_message()
-{ return Glib::PropertyProxy_ReadOnly<Glib::ustring>(this, "contact_status_message"); }
+{ return Glib::PropertyProxy_ReadOnly<Glib::ustring>(this, "contact-status-message"); }
 Glib::PropertyProxy_ReadOnly<TOX_USER_STATUS>   contact::property_status()
-{ return Glib::PropertyProxy_ReadOnly<TOX_USER_STATUS>(this, "contact_status"); }
+{ return Glib::PropertyProxy_ReadOnly<TOX_USER_STATUS>(this, "contact-status"); }
 Glib::PropertyProxy_ReadOnly<TOX_CONNECTION>    contact::property_connection()
-{ return Glib::PropertyProxy_ReadOnly<TOX_CONNECTION>(this, "contact_connection"); }
+{ return Glib::PropertyProxy_ReadOnly<TOX_CONNECTION>(this, "contact-connection"); }
 Glib::PropertyProxy_ReadOnly<bool>              contact::property_typing()
-{ return Glib::PropertyProxy_ReadOnly<bool>(this, "contact_typing"); }
+{ return Glib::PropertyProxy_ReadOnly<bool>(this, "contact-typing"); }
 
 contact::contact(std::shared_ptr<core> core, contactNr nr):
+    Glib::ObjectBase(typeid(contact)),
     m_core(core),
-    m_property_nr  (*this, "contact_nr"),
-    m_property_addr(*this, "contact_addr"),
-    m_property_name(*this, "contact_name"),
-    m_property_status_message(*this, "contact_status_message"),
-    m_property_status(*this, "contact_status"),
-    m_property_connection(*this, "contact_connection"),
-    m_property_typing(*this, "contact_typing")
+    m_property_nr  (*this, "contact-nr"),
+    m_property_addr(*this, "contact-addr"),
+    m_property_name(*this, "contact-name"),
+    m_property_name_or_addr(*this, "contact-name-or-addr"),
+    m_property_status_message(*this, "contact-status-message"),
+    m_property_status(*this, "contact-status"),
+    m_property_connection(*this, "contact-connection"),
+    m_property_typing(*this, "contact-typing")
 {
+    auto update_name_or_addr = [this]() {
+        if (property_name().get_value().empty()) {
+            m_property_name_or_addr = Glib::ustring(m_property_addr.get_value());
+        } else {
+            m_property_name_or_addr = property_name().get_value();
+        }
+    };
+    property_name().signal_changed().connect(sigc::track_obj(update_name_or_addr, *this));
+    property_addr().signal_changed().connect(sigc::track_obj(update_name_or_addr, *this));
+
     m_property_nr = nr;
     m_property_addr = toxcore_get_addr();
     m_property_name = toxcore_get_name();
     m_property_status_message = toxcore_get_status_message();
     m_property_status = toxcore_get_status();
     m_property_connection = toxcore_get_connection();
-}
-
-void contact::init() {
-
 }
 
 contactPublicAddr contact::toxcore_get_addr() {
