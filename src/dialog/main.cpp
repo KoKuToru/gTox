@@ -216,6 +216,30 @@ main::main(BaseObjectType* cobject,
             update_status_icon();
         }
     }, *this));
+
+    //setup status change menu
+    m_btn_status->set_use_popover(true);
+    auto menu_builder = Gtk::Builder::create_from_resource("/org/gtox/ui/status_menu.ui");
+    Glib::RefPtr<Glib::Object> object = menu_builder->get_object("status-menu");
+    Glib::RefPtr<Gio::Menu> gmenu = Glib::RefPtr<Gio::Menu>::cast_dynamic(object);
+    m_btn_status->set_menu_model(gmenu);
+    m_btn_status->set_sensitive(false);
+
+    m_action = Gio::SimpleActionGroup::create();
+    m_action->add_action("online", [this]() {
+        m_toxcore->property_status() = TOX_USER_STATUS_NONE;
+    });
+    m_action->add_action("busy", [this]() {
+        m_toxcore->property_status() = TOX_USER_STATUS_BUSY;
+    });
+    m_action->add_action("away", [this]() {
+        m_toxcore->property_status() = TOX_USER_STATUS_AWAY;
+    });
+    m_action->add_action("offline", [this]() {
+        hide();
+    });
+
+    insert_action_group("status", m_action);
 }
 
 utils::builder::ref<main> main::create(const Glib::ustring& file) {
