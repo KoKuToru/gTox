@@ -38,7 +38,8 @@ main::main(BaseObjectType* cobject,
            utils::builder builder,
            const Glib::ustring& file)
     : Gtk::Window(cobject),
-      m_toxcore(toxmm2::core::create(file)){
+      m_toxcore(toxmm2::core::create(file)),
+      m_menu(m_toxcore) {
 
     builder.get_widget("headerbar", m_headerbar);
     builder.get_widget("status_btn", m_btn_status);
@@ -96,12 +97,10 @@ main::main(BaseObjectType* cobject,
     });*/
 
     auto setting_btn = builder.get_widget<Gtk::Button>("setting_btn");
-    /*setting_btn->signal_clicked().connect([this, setting_btn]() {
-        if (!m_popover_settings) {
-            m_popover_settings = std::make_shared<PopoverSettings>(this, *setting_btn);
-        }
-        m_popover_settings->set_visible();
-    });*/
+    setting_btn->signal_clicked().connect([this, setting_btn]() {
+        m_menu.set_relative_to(*setting_btn);
+        m_menu.set_visible();
+    });
 
     /*auto activated = [this](Gtk::ListBoxRow* row) {
         //FORWARD SIGNAL TO THE ITEM
@@ -217,6 +216,40 @@ main::main(BaseObjectType* cobject,
         }
     }, *this));
 
+    m_toxcore->contact_manager()->signal_removed().connect(sigc::track_obj([this](std::shared_ptr<toxmm2::contact> contact) {
+        //remove contact from list
+        for (auto item_ : m_list_contact->get_children()) {
+            auto item = dynamic_cast<widget::contact*>(item_);
+            if (item && item->get_contact() == contact) {
+                delete item;
+                break;
+            }
+        }
+        for (auto item_ : m_list_contact_active->get_children()) {
+            auto item = dynamic_cast<widget::contact*>(item_);
+            if (item && item->get_contact() == contact) {
+                delete item;
+                break;
+            }
+        }
+        m_list_contact->invalidate_sort();
+        m_list_contact_active->invalidate_sort();
+    }, *this));
+
+    m_toxcore->contact_manager()->signal_added().connect(sigc::track_obj([this](std::shared_ptr<toxmm2::contact> contact) {
+        //add contact to list
+        auto item_builder = widget::contact::create(contact);
+        auto item = Gtk::manage(item_builder.raw());
+        m_list_contact->add(*item);
+
+        item_builder = widget::contact::create(contact, true);
+        item = Gtk::manage(item_builder.raw());
+        m_list_contact_active->add(*item);
+
+        m_list_contact->invalidate_sort();
+        m_list_contact_active->invalidate_sort();
+    }, *this));
+
     //setup status change menu
     m_btn_status->set_use_popover(true);
     auto menu_builder = Gtk::Builder::create_from_resource("/org/gtox/ui/status_menu.ui");
@@ -249,6 +282,9 @@ utils::builder::ref<main> main::create(const Glib::ustring& file) {
 
 void main::load_contacts() {
     for (auto item : m_list_contact->get_children()) {
+        delete item;
+    }
+    for (auto item : m_list_contact_active->get_children()) {
         delete item;
     }
 

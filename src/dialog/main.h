@@ -23,11 +23,14 @@
 #include <gtkmm.h>
 #include "utils/builder.h"
 #include "tox/types.h"
+#include "widget/main_menu.h"
 
 namespace dialog {
     // contact list with pinned chat
     class main : public Gtk::Window {
         private:
+            std::shared_ptr<toxmm2::core> m_toxcore;
+
             //Glib::RefPtr<Gtk::StatusIcon> m_status_icon;
 
             Gtk::HeaderBar* m_headerbar;
@@ -51,7 +54,7 @@ namespace dialog {
 
             Gtk::Menu m_popup_menu;
 
-            std::shared_ptr<toxmm2::core> m_toxcore;
+            widget::main_menu m_menu;
 
             Glib::RefPtr<Gio::SimpleActionGroup> m_action;
 

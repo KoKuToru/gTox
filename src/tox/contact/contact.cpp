@@ -30,8 +30,8 @@ contact::type_signal_new_file    contact::signal_new_file()    { return m_signal
 
 Glib::PropertyProxy_ReadOnly<contactNr>         contact::property_nr()
 { return Glib::PropertyProxy_ReadOnly<contactNr>(this, "contact-nr"); }
-Glib::PropertyProxy_ReadOnly<contactPublicAddr> contact::property_addr()
-{ return Glib::PropertyProxy_ReadOnly<contactPublicAddr>(this, "contact-addr"); }
+Glib::PropertyProxy_ReadOnly<contactAddrPublic> contact::property_addr_public()
+{ return Glib::PropertyProxy_ReadOnly<contactAddrPublic>(this, "contact-addr"); }
 Glib::PropertyProxy_ReadOnly<Glib::ustring>     contact::property_name()
 { return Glib::PropertyProxy_ReadOnly<Glib::ustring>(this, "contact-name"); }
 Glib::PropertyProxy_ReadOnly<Glib::ustring>     contact::property_name_or_addr()
@@ -65,7 +65,7 @@ contact::contact(std::shared_ptr<core> core, contactNr nr):
         }
     };
     property_name().signal_changed().connect(sigc::track_obj(update_name_or_addr, *this));
-    property_addr().signal_changed().connect(sigc::track_obj(update_name_or_addr, *this));
+    property_addr_public().signal_changed().connect(sigc::track_obj(update_name_or_addr, *this));
 
     m_property_nr = nr;
     m_property_addr = toxcore_get_addr();
@@ -75,8 +75,8 @@ contact::contact(std::shared_ptr<core> core, contactNr nr):
     m_property_connection = toxcore_get_connection();
 }
 
-contactPublicAddr contact::toxcore_get_addr() {
-    contactPublicAddr addr;
+contactAddrPublic contact::toxcore_get_addr() {
+    contactAddrPublic addr;
     TOX_ERR_FRIEND_GET_PUBLIC_KEY error;
     auto res = tox_friend_get_public_key(m_core->toxcore(), m_property_nr.get_value(), addr, &error);
     if (error != TOX_ERR_FRIEND_GET_PUBLIC_KEY_OK) {

@@ -43,7 +43,7 @@ profile_create::profile_create(BaseObjectType* cobject,
 
     auto w = builder.get_widget<Gtk::Widget>("assistant_first_page");
     m_username->signal_changed().connect([this, w]() {
-        toxmm2::contactPublicAddr addr;
+        toxmm2::contactAddrPublic addr;
         m_last_toxcore = toxmm2::core::create_state(m_username->get_text(), m_status->get_text(), addr);
         m_file_gtox->set_text(Glib::build_filename(m_path, "gtox", std::string(addr) + ".sqlite"));
 
@@ -68,7 +68,7 @@ profile_create::profile_create(BaseObjectType* cobject,
     });
 
     m_status->signal_changed().connect([this, w]() {
-        toxmm2::contactPublicAddr addr;
+        toxmm2::contactAddrPublic addr;
         m_last_toxcore = toxmm2::core::create_state(m_username->get_text(), m_status->get_text(), addr);
         m_file_gtox->set_text(Glib::build_filename(m_path, "gtox", std::string(addr) + ".sqlite"));
     });

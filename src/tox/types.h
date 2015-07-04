@@ -65,8 +65,25 @@ namespace toxmm2 {
             bool operator==(const fileNr& o) { return m_nr == o.m_nr; }
             bool operator!=(const fileNr& o) { return m_nr != o.m_nr; }
     };
+    class contactAddrPublic {
+        private:
+            std::array<uint8_t, TOX_PUBLIC_KEY_SIZE> m_addr;
+            std::string to_hex();
+            decltype(m_addr) from_hex(const std::string& hex);
+        public:
+            operator decltype(m_addr)() { return m_addr; }
+            operator std::string() { return to_hex(); }
+            operator uint8_t*() { return m_addr.data(); }
+            contactAddrPublic(): m_addr() {}
+            contactAddrPublic(const uint8_t* addr) {
+                std::copy(addr, addr + m_addr.size(), m_addr.begin());
+            }
+            contactAddrPublic(decltype(m_addr) addr): m_addr(addr) {}
+            contactAddrPublic(const std::string& addr): m_addr(from_hex(addr)) {}
+            bool operator==(const contactAddrPublic& o) { return m_addr == o.m_addr; }
+            bool operator!=(const contactAddrPublic& o) { return m_addr != o.m_addr; }
+    };
     class contactAddr {
-            friend class contactPublicAddr;
         private:
            std::array<uint8_t, TOX_ADDRESS_SIZE> m_addr;
            std::string to_hex();
@@ -75,6 +92,7 @@ namespace toxmm2 {
            operator decltype(m_addr)() { return m_addr; }
            operator std::string() { return to_hex(); }
            operator uint8_t*() { return m_addr.data(); }
+           operator contactAddrPublic() { return contactAddrPublic(m_addr.data()); }
            contactAddr(): m_addr() {}
            contactAddr(const uint8_t* addr) {
                std::copy(addr, addr + m_addr.size(), m_addr.begin());
@@ -84,25 +102,6 @@ namespace toxmm2 {
            bool operator==(const contactAddr& o) { return m_addr == o.m_addr; }
            bool operator!=(const contactAddr& o) { return m_addr != o.m_addr; }
     };
-    class contactPublicAddr {
-        private:
-            std::array<uint8_t, TOX_PUBLIC_KEY_SIZE> m_addr;
-            std::string to_hex();
-            decltype(m_addr) from_hex(const std::string& hex);
-        public:
-            operator decltype(m_addr)() { return m_addr; }
-            operator std::string() { return to_hex(); }
-            operator uint8_t*() { return m_addr.data(); }
-            contactPublicAddr(): m_addr() {}
-            contactPublicAddr(const contactAddr& o) {
-                std::copy(o.m_addr.begin(), o.m_addr.begin() + m_addr.size(), m_addr.begin());
-            }
-            contactPublicAddr(decltype(m_addr) addr): m_addr(addr) {}
-            contactPublicAddr(const std::string& addr): m_addr(from_hex(addr)) {}
-            bool operator==(const contactPublicAddr& o) { return m_addr == o.m_addr; }
-            bool operator!=(const contactPublicAddr& o) { return m_addr != o.m_addr; }
-    };
-
     class fileId {
         private:
             std::array<uint8_t, TOX_FILE_ID_LENGTH> m_id;
