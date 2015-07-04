@@ -40,6 +40,7 @@ set(SOURCES
 
     widget/avatar.cpp
     widget/contact.cpp
+    widget/main_menu.cpp
 
     utils/builder.cpp
     utils/dispatcher.h

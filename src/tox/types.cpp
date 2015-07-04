@@ -32,12 +32,12 @@ decltype(contactAddr::m_addr) contactAddr::from_hex(const std::string& hex) {
     return tmp;
 }
 
-std::string contactPublicAddr::to_hex() {
+std::string contactAddrPublic::to_hex() {
     return core::to_hex(m_addr.begin(), m_addr.size());
 }
 
-decltype(contactPublicAddr::m_addr) contactPublicAddr::from_hex(const std::string& hex) {
-    decltype(contactPublicAddr::m_addr) tmp;
+decltype(contactAddrPublic::m_addr) contactAddrPublic::from_hex(const std::string& hex) {
+    decltype(contactAddrPublic::m_addr) tmp;
     auto tmp_hex = core::from_hex(hex);
     std::copy(tmp_hex.begin(), tmp_hex.begin() + std::min(tmp_hex.size(), tmp.size()), tmp.begin());
     return tmp;

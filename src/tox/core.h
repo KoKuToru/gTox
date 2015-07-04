@@ -46,7 +46,8 @@ namespace toxmm2 {
             std::shared_ptr<toxmm2::contact_manager> contact_manager();
 
             //props
-            Glib::PropertyProxy_ReadOnly<contactPublicAddr> property_addr();
+            Glib::PropertyProxy_ReadOnly<contactAddr>       property_addr();
+            Glib::PropertyProxy_ReadOnly<contactAddrPublic> property_addr_public();
             Glib::PropertyProxy<Glib::ustring>              property_name();
             Glib::PropertyProxy_ReadOnly<Glib::ustring>     property_name_or_addr();
             Glib::PropertyProxy<Glib::ustring>              property_status_message();
@@ -74,8 +75,8 @@ namespace toxmm2 {
             type_signal_contact_read_receipt      signal_contact_read_receipt();
             type_signal_contact_connection_status signal_contact_connection_status();
 
-            static void try_load(std::string path, Glib::ustring& out_name, Glib::ustring& out_status, contactPublicAddr& out_addr, bool& out_writeable);
-            static std::vector<uint8_t> create_state(std::string name, std::string status, contactPublicAddr& out_addr);
+            static void try_load(std::string path, Glib::ustring& out_name, Glib::ustring& out_status, contactAddrPublic& out_addr, bool& out_writeable);
+            static std::vector<uint8_t> create_state(std::string name, std::string status, contactAddrPublic& out_addr);
 
         private:
             Tox* m_toxcore;
@@ -89,7 +90,8 @@ namespace toxmm2 {
 
             void init();
 
-            Glib::Property<contactPublicAddr> m_property_addr;
+            Glib::Property<contactAddr>       m_property_addr;
+            Glib::Property<contactAddrPublic> m_property_addr_public;
             Glib::Property<Glib::ustring>     m_property_name;
             Glib::Property<Glib::ustring>     m_property_name_or_addr;
             Glib::Property<Glib::ustring>     m_property_status_message;

@@ -45,8 +45,10 @@ core::type_signal_contact_read_receipt      core::signal_contact_read_receipt() 
 core::type_signal_contact_connection_status core::signal_contact_connection_status()  { return m_signal_contact_connection_status; }
 
 
-Glib::PropertyProxy_ReadOnly<contactPublicAddr> core::property_addr()
+Glib::PropertyProxy_ReadOnly<contactAddr> core::property_addr()
 { return {this, "self-addr"}; }
+Glib::PropertyProxy_ReadOnly<contactAddrPublic> core::property_addr_public()
+{ return {this, "self-addr-public"}; }
 Glib::PropertyProxy<Glib::ustring>     core::property_name()
 { return m_property_name.get_proxy(); }
 Glib::PropertyProxy_ReadOnly<Glib::ustring> core::property_name_or_addr()
@@ -62,6 +64,7 @@ core::core(std::string path):
     Glib::ObjectBase(typeid(core)),
     m_path(path),
     m_property_addr(*this, "self-addr"),
+    m_property_addr_public(*this, "self-addr-public"),
     m_property_name(*this, "self-name"),
     m_property_name_or_addr(*this, "self-name-or-addr"),
     m_property_status_message(*this, "self-status-message"),
@@ -89,7 +92,7 @@ std::shared_ptr<core> core::create(std::string path) {
     return tmp;
 }
 
-std::vector<uint8_t> core::create_state(std::string name, std::string status, contactPublicAddr& out_addr) {
+std::vector<uint8_t> core::create_state(std::string name, std::string status, contactAddrPublic& out_addr_public) {
     TOX_ERR_OPTIONS_NEW nerror;
     auto options = std::shared_ptr<Tox_Options>(tox_options_new(&nerror),
                                                 [](Tox_Options* p) {
@@ -116,14 +119,14 @@ std::vector<uint8_t> core::create_state(std::string name, std::string status, co
         throw exception(error);
     }
     //get addr
-    tox_self_get_public_key(m_toxcore, out_addr);
+    tox_self_get_public_key(m_toxcore, out_addr_public);
     //get state
     std::vector<uint8_t> state(tox_get_savedata_size(m_toxcore));
     tox_get_savedata(m_toxcore, state.data());
     return state;
 }
 
-void core::try_load(std::string path, Glib::ustring& out_name, Glib::ustring& out_status, contactPublicAddr& out_addr, bool& out_writeable) {
+void core::try_load(std::string path, Glib::ustring& out_name, Glib::ustring& out_status, contactAddrPublic& out_addr_public, bool& out_writeable) {
     profile m_profile;
     m_profile.open(path);
     if (!m_profile.can_read()) {
@@ -160,7 +163,7 @@ void core::try_load(std::string path, Glib::ustring& out_name, Glib::ustring& ou
     tox_self_get_status_message(m_toxcore, (uint8_t*)out_status.raw().data());
     out_status = fix_utf8(out_status);
     //get addr
-    tox_self_get_public_key(m_toxcore, out_addr);
+    tox_self_get_public_key(m_toxcore, out_addr_public);
     //check writeable
     out_writeable = m_profile.can_write();
 }
@@ -254,9 +257,12 @@ void core::init() {
     property_addr().signal_changed().connect(sigc::track_obj(update_name_or_addr, *this));
 
     //get addr
-    contactPublicAddr addr;
-    tox_self_get_public_key(m_toxcore, addr);
+    contactAddr addr;
+    tox_self_get_address(m_toxcore, addr);
     m_property_addr = addr;
+    contactAddrPublic addr_public;
+    tox_self_get_public_key(m_toxcore, addr_public);
+    m_property_addr_public = addr_public;
     //get name
     std::string name(tox_self_get_name_size(m_toxcore), 0);
     tox_self_get_name(m_toxcore, (uint8_t*)name.data());
