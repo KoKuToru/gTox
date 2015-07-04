@@ -42,6 +42,7 @@ set(SOURCES
     widget/avatar.cpp
     widget/contact.cpp
     widget/main_menu.cpp
+    widget/chat_input.cpp
 
     utils/builder.cpp
     utils/dispatcher.h

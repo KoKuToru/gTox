@@ -20,6 +20,7 @@
 #include "chat.h"
 #include "main.h"
 #include "tox/contact/contact.h"
+#include "widget/chat_input.h"
 
 namespace sigc {
     SIGC_FUNCTORS_DEDUCE_RESULT_TYPE_WITH_DECLTYPE
@@ -35,7 +36,7 @@ chat::chat(Glib::RefPtr<dialog::main> main, std::shared_ptr<toxmm2::contact> con
     m_builder.get_widget("chat_headerbar_attached", m_headerbar_attached);
     m_builder.get_widget("chat_headerbar_detached", m_headerbar_detached);
     m_builder.get_widget("chat_body", m_body);
-    m_builder.get_widget("chat_input", m_input);
+    m_input = m_builder.get_widget_derived<widget::chat_input>("chat_input");
     m_builder.get_widget("chat_input_revealer", m_input_revealer);
     m_builder.get_widget("chat_input_format_revealer", m_input_format_revealer);
     m_builder.get_widget("btn_prev", m_btn_prev);
@@ -52,9 +53,9 @@ chat::chat(Glib::RefPtr<dialog::main> main, std::shared_ptr<toxmm2::contact> con
                                                      m_headerbar_detached->property_title(),
                                                      Glib::BINDING_DEFAULT | Glib::BINDING_SYNC_CREATE);
 
-    m_binding_name[0] = Glib::Binding::bind_property(m_contact->property_status_message(),
-                                                     m_headerbar_attached->property_subtitle(),
-                                                     Glib::BINDING_DEFAULT | Glib::BINDING_SYNC_CREATE);
+    m_binding_status[0] = Glib::Binding::bind_property(m_contact->property_status_message(),
+                                                       m_headerbar_attached->property_subtitle(),
+                                                       Glib::BINDING_DEFAULT | Glib::BINDING_SYNC_CREATE);
     m_binding_status[1] = Glib::Binding::bind_property(m_contact->property_status_message(),
                                                        m_headerbar_detached->property_subtitle(),
                                                        Glib::BINDING_DEFAULT | Glib::BINDING_SYNC_CREATE);
@@ -67,9 +68,9 @@ chat::chat(Glib::RefPtr<dialog::main> main, std::shared_ptr<toxmm2::contact> con
         return true;
     });
 
-    m_binding_focus = Glib::Binding::bind_property(m_input->property_has_focus(),
+    /*m_binding_focus = Glib::Binding::bind_property(m_input->property_has_focus(),
                                  m_input_format_revealer->property_reveal_child(),
-                                 Glib::BINDING_DEFAULT | Glib::BINDING_SYNC_CREATE);
+                                 Glib::BINDING_DEFAULT | Glib::BINDING_SYNC_CREATE);*/
 
     set_titlebar(*m_headerbar_detached);
     m_btn_detach->signal_clicked().connect(sigc::track_obj([this]() {
@@ -83,6 +84,27 @@ chat::chat(Glib::RefPtr<dialog::main> main, std::shared_ptr<toxmm2::contact> con
         hide();
         m_main->chat_add(*m_headerbar_attached, *m_body, *m_btn_prev, *m_btn_next);
     }, *this));
+
+    m_input->signal_key_press_event().connect(sigc::track_obj([this](GdkEventKey* event) {
+        auto text_buffer = m_input->get_buffer();
+        if (event->keyval == GDK_KEY_Return && !(event->state & GDK_SHIFT_MASK)) {
+            if (text_buffer->begin() != text_buffer->end()) {
+                 bool allow_send = text_buffer->get_text().find_first_not_of(" \t\n\v\f\r") != std::string::npos;
+                 if (allow_send) {
+                     if (Glib::str_has_prefix(text_buffer->get_text(), "/me ")) {
+                         m_contact->send_action(m_input->get_serialized_text());
+                         //todo add text to chat
+                     } else {
+                         m_contact->send_message(m_input->get_serialized_text());
+                         //todo add text to chat
+                     }
+                     text_buffer->set_text("");
+                     return true;
+                 }
+            }
+        }
+        return false;
+    }, *this), false);
 }
 
 chat::~chat() {

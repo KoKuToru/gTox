@@ -28,6 +28,10 @@
 #include "utils/dispatcher.h"
 #include <memory>
 
+namespace widget {
+    class chat_input;
+}
+
 namespace dialog {
     class main;
     class chat : public Gtk::Window {
@@ -47,7 +51,7 @@ namespace dialog {
             Gtk::Button* m_btn_prev;
             Gtk::Button* m_btn_next;
 
-            Gtk::TextView* m_input;
+            widget::chat_input* m_input;
             Gtk::Revealer* m_input_revealer;
             Gtk::Revealer* m_input_format_revealer;
 
