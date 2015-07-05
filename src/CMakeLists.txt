@@ -43,6 +43,11 @@ set(SOURCES
     widget/contact.cpp
     widget/main_menu.cpp
     widget/chat_input.cpp
+    widget/chat_row.cpp
+    widget/chat_message.cpp
+    widget/chat_action.cpp
+    widget/chat_bubble.cpp
+    widget/chat_date.cpp
 
     utils/builder.cpp
     utils/dispatcher.h

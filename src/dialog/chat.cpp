@@ -21,6 +21,7 @@
 #include "main.h"
 #include "tox/contact/contact.h"
 #include "widget/chat_input.h"
+#include "widget/chat_bubble.h"
 
 namespace sigc {
     SIGC_FUNCTORS_DEDUCE_RESULT_TYPE_WITH_DECLTYPE
@@ -43,6 +44,7 @@ chat::chat(Glib::RefPtr<dialog::main> main, std::shared_ptr<toxmm2::contact> con
     m_builder.get_widget("btn_next", m_btn_next);
     m_builder.get_widget("chat_attach", m_btn_attach);
     m_builder.get_widget("chat_detach", m_btn_detach);
+    m_builder.get_widget("chat_box", m_chat_box);
 
     m_main->chat_add(*m_headerbar_attached, *m_body, *m_btn_prev, *m_btn_next);
 
@@ -93,10 +95,8 @@ chat::chat(Glib::RefPtr<dialog::main> main, std::shared_ptr<toxmm2::contact> con
                  if (allow_send) {
                      if (Glib::str_has_prefix(text_buffer->get_text(), "/me ")) {
                          m_contact->send_action(m_input->get_serialized_text());
-                         //todo add text to chat
                      } else {
                          m_contact->send_message(m_input->get_serialized_text());
-                         //todo add text to chat
                      }
                      text_buffer->set_text("");
                      return true;
@@ -105,6 +105,42 @@ chat::chat(Glib::RefPtr<dialog::main> main, std::shared_ptr<toxmm2::contact> con
         }
         return false;
     }, *this), false);
+
+    m_contact->signal_send_message().connect(sigc::track_obj([this](Glib::ustring message, std::shared_ptr<toxmm2::receipt> receipt) {
+        auto timestamp = Glib::DateTime::create_now_utc().to_unix();
+        while(true) {
+            auto bubble = dynamic_cast<widget::chat_bubble*>(m_last_bubble.widget);
+            //check_timestamp(timestamp);
+            if (m_last_bubble.side == SIDE::OWN &&
+                bubble != nullptr) {
+                /*auto message_widget = widget::chat_message::create(receipt, message);
+                auto row_widget     = widget::chat_row::create(receipt, timestamp, Gtk::manage(message_widget.raw()));
+                bubble->add_row(*Gtk::manage(row_widget.raw()));
+                m_dispatcher.emit([]() {
+                    row_widget.raw()->property_reveal_child() = true;
+                });*/
+                m_last_bubble.timestamp = timestamp;
+                return;
+            }
+            //need a new bubble
+            auto bubble_widget = widget::chat_bubble::create(/*SIDE::OWN, */m_contact);
+            m_last_bubble.side = SIDE::OWN;
+            m_last_bubble.widget = Gtk::manage(bubble_widget.raw());
+            m_last_bubble.timestamp = timestamp;
+            m_chat_box->add(*m_last_bubble.widget);
+            //no goto.. thats why while(true) !
+        }
+    }, *this));
+
+    m_contact->signal_send_action().connect(sigc::track_obj([this](Glib::ustring action, std::shared_ptr<toxmm2::receipt> receipt) {
+        auto timestamp = Glib::DateTime::create_now_utc().to_unix();
+        /*auto action_widget = widget::chat_action(receipt, m_contact, action);
+        auto row_widget    = widget::chat_row::create(receipt, timestamp, Gtk::manage(action_widget.raw()));
+        m_last_bubble.side = SIDE::NONE;
+        m_last_bubble.widget = Gtk::manage(row_widget.raw());
+        m_last_bubble.timestamp = timestamp;
+        m_chat_box->add(*m_last_bubble.widget);*/
+    }, *this));
 }
 
 chat::~chat() {
