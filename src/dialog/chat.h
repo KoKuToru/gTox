@@ -55,10 +55,25 @@ namespace dialog {
             Gtk::Revealer* m_input_revealer;
             Gtk::Revealer* m_input_format_revealer;
 
+            Gtk::Box* m_chat_box;
+
             Glib::RefPtr<Glib::Binding> m_binding_name[2];
             Glib::RefPtr<Glib::Binding> m_binding_status[2];
             Glib::RefPtr<Glib::Binding> m_binding_online;
             Glib::RefPtr<Glib::Binding> m_binding_focus;
+
+            enum class SIDE {
+                NONE,
+                OWN,
+                OTHER
+            };
+
+            struct {
+                    uint64_t timestamp = 0;
+                    SIDE side = SIDE::NONE;
+                    Gtk::Widget* widget = nullptr;
+
+            } m_last_bubble;
 
         public:
             chat(Glib::RefPtr<main> main, std::shared_ptr<toxmm2::contact> contact);
