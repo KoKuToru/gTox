@@ -51,6 +51,8 @@ namespace dialog {
             Gtk::Button* m_btn_prev;
             Gtk::Button* m_btn_next;
 
+            Gtk::EventBox* m_eventbox;
+
             widget::chat_input* m_input;
             Gtk::Revealer* m_input_revealer;
             Gtk::Revealer* m_input_format_revealer;
@@ -74,6 +76,13 @@ namespace dialog {
                     Gtk::Widget* widget = nullptr;
 
             } m_last_bubble;
+
+            int from_x = -1;
+            int from_y = -1;
+
+            void update_children(GdkEventMotion* event,
+                                 std::vector<Gtk::Widget*> children);
+            Glib::ustring get_children_selection(std::vector<Gtk::Widget*> children);
 
         public:
             chat(Glib::RefPtr<main> main, std::shared_ptr<toxmm2::contact> contact);

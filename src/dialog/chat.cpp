@@ -22,6 +22,7 @@
 #include "tox/contact/contact.h"
 #include "widget/chat_input.h"
 #include "widget/chat_bubble.h"
+#include "widget/chat_message.h"
 
 namespace sigc {
     SIGC_FUNCTORS_DEDUCE_RESULT_TYPE_WITH_DECLTYPE
@@ -45,6 +46,7 @@ chat::chat(Glib::RefPtr<dialog::main> main, std::shared_ptr<toxmm2::contact> con
     m_builder.get_widget("chat_attach", m_btn_attach);
     m_builder.get_widget("chat_detach", m_btn_detach);
     m_builder.get_widget("chat_box", m_chat_box);
+    m_builder.get_widget("eventbox", m_eventbox);
 
     m_main->chat_add(*m_headerbar_attached, *m_body, *m_btn_prev, *m_btn_next);
 
@@ -113,8 +115,10 @@ chat::chat(Glib::RefPtr<dialog::main> main, std::shared_ptr<toxmm2::contact> con
             //check_timestamp(timestamp);
             if (m_last_bubble.side == SIDE::OWN &&
                 bubble != nullptr) {
-                /*auto message_widget = widget::chat_message::create(receipt, message);
-                auto row_widget     = widget::chat_row::create(receipt, timestamp, Gtk::manage(message_widget.raw()));
+                auto message_widget = Gtk::manage(new widget::chat_message(message));
+                bubble->add_row(*message_widget); //<- for testing only !
+                /*
+                auto row_widget     = widget::chat_row::create(receipt, timestamp, *message_widget));
                 bubble->add_row(*Gtk::manage(row_widget.raw()));
                 m_dispatcher.emit([]() {
                     row_widget.raw()->property_reveal_child() = true;
@@ -141,6 +145,60 @@ chat::chat(Glib::RefPtr<dialog::main> main, std::shared_ptr<toxmm2::contact> con
         m_last_bubble.timestamp = timestamp;
         m_chat_box->add(*m_last_bubble.widget);*/
     }, *this));
+
+    //logic for text-selection
+    m_eventbox->add_events(Gdk::BUTTON_PRESS_MASK |
+                           Gdk::BUTTON_RELEASE_MASK |
+                           Gdk::BUTTON1_MOTION_MASK |
+                           Gdk::KEY_PRESS_MASK);
+    m_eventbox->set_can_focus(true);
+    m_eventbox->signal_button_press_event().connect(sigc::track_obj([this](GdkEventButton* event) {
+        if (event->button != 1) {
+            return false;
+        }
+
+        from_x = event->x;
+        from_y = event->y;
+
+        // update all children, reset selection
+        GdkEventMotion dummy_event;
+        dummy_event.x = from_x;
+        dummy_event.y = from_y;
+        update_children(&dummy_event, m_chat_box->get_children());
+
+        grab_focus();
+
+        return true;
+    }, *this));
+    m_eventbox->signal_button_release_event().connect(sigc::track_obj([this](GdkEventButton* event) {
+        if (event->button != 1) {
+            return false;
+        }
+        from_x = -1;
+        from_y = -1;
+        return true;
+    }, *this));
+    m_eventbox->signal_motion_notify_event().connect(sigc::track_obj([this](GdkEventMotion* event) {
+        if (from_x < 0 && from_y < 0) {
+            return false;
+        }
+        // update all children
+        update_children(event, m_chat_box->get_children());
+        return true;
+    }, *this));
+    m_eventbox->signal_key_press_event().connect(sigc::track_obj([this](GdkEventKey* event) {
+        if (!(event->state & GDK_CONTROL_MASK)) {
+            return false;
+        }
+        if (event->keyval != 'c') {
+            return false;
+        }
+
+        // copy to clipboard
+        auto data = get_children_selection(m_chat_box->get_children());
+        Gtk::Clipboard::get()->set_text(data);
+        return true;
+    }, *this));
 }
 
 chat::~chat() {
@@ -153,4 +211,71 @@ void chat::activated() {
     } else {
         m_main->chat_show(*m_headerbar_attached, *m_body);
     }
+}
+
+void chat::update_children(GdkEventMotion* event,
+                           std::vector<Gtk::Widget*> children) {
+    for (auto c : children) {
+        // check if it's a container
+        auto c_container = dynamic_cast<Gtk::Container*>(c);
+        if (c_container) {
+            update_children(event, c_container->get_children());
+            continue;
+        }
+        // check if it's WidgetChatMessage
+        auto c_message = dynamic_cast<widget::chat_message*>(c);
+        if (!c_message) {
+            //
+            continue;
+        }
+        // correct x,y to widget x,y
+        int w_from_x, w_from_y, w_to_x, w_to_y;
+        int to_x = event->x;
+        int to_y = event->y;
+        if (m_chat_box->translate_coordinates(*c_message, from_x, from_y, w_from_x, w_from_y) &&
+            m_chat_box->translate_coordinates(*c_message, to_x, to_y, w_to_x, w_to_y)) {
+
+            // fix order
+            if (w_to_y < w_from_y) {
+                std::swap(w_to_y, w_from_y);
+                std::swap(w_to_x, w_from_x);
+            }
+
+            // check if within
+            if (w_from_y < c_message->get_allocated_height() && w_to_y > 0) {
+                c_message->on_selection(w_from_x, w_from_y, w_to_x, w_to_y);
+            } else {
+                c_message->on_selection(0, 0, 0, 0);
+            }
+        }
+    }
+}
+
+Glib::ustring chat::get_children_selection(
+    std::vector<Gtk::Widget*> children) {
+    Glib::ustring res;
+    Glib::ustring tmp;
+    for (auto c : children) {
+        tmp.clear();
+
+        // check if it's a container
+        auto c_container = dynamic_cast<Gtk::Container*>(c);
+        if (c_container) {
+            tmp = get_children_selection(c_container->get_children());
+        }
+        // check if it's WidgetChatMessage
+        auto c_message = dynamic_cast<widget::chat_message*>(c);
+        if (c_message) {
+            tmp = c_message->get_selection();
+        }
+
+        // add to result
+        if (!tmp.empty()) {
+            if (!res.empty()) {
+                res += '\n';
+            }
+            res += tmp;
+        }
+    }
+    return res;
 }
