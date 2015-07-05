@@ -44,7 +44,7 @@ chat_bubble::chat_bubble(BaseObjectType* cobject, utils::builder builder, std::s
                 m_avatar->set_size_request(w, w);
             });
         }
-    }, *this), true);
+    }, *this));
 }
 
 chat_bubble::~chat_bubble() {
