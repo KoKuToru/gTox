@@ -5,8 +5,8 @@
   <object class="GtkRevealer" id="chat_bubble">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="halign">start</property>
-    <property name="valign">end</property>
+    <property name="halign">end</property>
+    <property name="valign">start</property>
     <property name="reveal_child">True</property>
     <child>
       <object class="GtkBox" id="grid">
