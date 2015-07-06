@@ -42,6 +42,7 @@ set(SOURCES
     widget/avatar.cpp
     widget/contact.cpp
     widget/main_menu.cpp
+    widget/label.cpp
     widget/chat_input.cpp
     widget/chat_row.cpp
     widget/chat_message.cpp
