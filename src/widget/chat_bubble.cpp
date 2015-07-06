@@ -19,22 +19,18 @@
 #include "chat_bubble.h"
 #include "avatar.h"
 #include "tox/contact/contact.h"
+#include "tox/core.h"
 
 using namespace widget;
 
-chat_bubble::chat_bubble(BaseObjectType* cobject, utils::builder builder, std::shared_ptr<toxmm2::contact> contact): Gtk::Revealer(cobject) {
+void chat_bubble::init(utils::builder builder) {
     builder.get_widget("row_box", m_row_box);
-    m_avatar = builder.get_widget_derived<widget::avatar>("avatar", contact->property_addr_public());
     builder.get_widget("username", m_username);
 
     property_reveal_child() = false;
     m_dispatcher.emit([this]() {
         property_reveal_child() = true;
     });
-
-    m_binding_name = Glib::Binding::bind_property(contact->property_name_or_addr(),
-                                                  m_username->property_label(),
-                                                  Glib::BINDING_DEFAULT | Glib::BINDING_SYNC_CREATE);
 
     //change size of avatar based on the size of the rows in row_box
     m_row_box->signal_size_allocate().connect_notify(sigc::track_obj([this](Gtk::Allocation& allocation) {
@@ -47,12 +43,35 @@ chat_bubble::chat_bubble(BaseObjectType* cobject, utils::builder builder, std::s
     }, *this));
 }
 
+chat_bubble::chat_bubble(BaseObjectType* cobject, utils::builder builder, std::shared_ptr<toxmm2::core> core): Gtk::Revealer(cobject) {
+    m_avatar = builder.get_widget_derived<widget::avatar>("avatar", core->property_addr_public());
+    init(builder);
+
+    m_binding_name = Glib::Binding::bind_property(core->property_name_or_addr(),
+                                                  m_username->property_label(),
+                                                  Glib::BINDING_DEFAULT | Glib::BINDING_SYNC_CREATE);
+}
+
+chat_bubble::chat_bubble(BaseObjectType* cobject, utils::builder builder, std::shared_ptr<toxmm2::contact> contact): Gtk::Revealer(cobject) {
+    m_avatar = builder.get_widget_derived<widget::avatar>("avatar", contact->property_addr_public());
+    init(builder);
+
+    m_binding_name = Glib::Binding::bind_property(contact->property_name_or_addr(),
+                                                  m_username->property_label(),
+                                                  Glib::BINDING_DEFAULT | Glib::BINDING_SYNC_CREATE);
+}
+
 chat_bubble::~chat_bubble() {
     //
 }
 
-utils::builder::ref<chat_bubble> chat_bubble::create(std::shared_ptr<toxmm2::contact> contact) {
+utils::builder::ref<chat_bubble> chat_bubble::create(std::shared_ptr<toxmm2::core> contact) {
     return utils::builder(Gtk::Builder::create_from_resource("/org/gtox/ui/chat_bubble_right.ui"))
+            .get_widget_derived<chat_bubble>("chat_bubble", contact);
+}
+
+utils::builder::ref<chat_bubble> chat_bubble::create(std::shared_ptr<toxmm2::contact> contact) {
+    return utils::builder(Gtk::Builder::create_from_resource("/org/gtox/ui/chat_bubble_left.ui"))
             .get_widget_derived<chat_bubble>("chat_bubble", contact);
 }
 
