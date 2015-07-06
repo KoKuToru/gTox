@@ -19,7 +19,8 @@ set(SRC
     chat_filepreview.ui
     status_menu.ui
     dialog_chat.ui
-    chat_bubble_right.ui)
+    chat_bubble_right.ui
+    chat_bubble_left.ui)
 
 set(LAYOUT ${SRC} PARENT_SCOPE)
 

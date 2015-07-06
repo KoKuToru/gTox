@@ -66,6 +66,8 @@ namespace dialog {
                  const Glib::ustring& file);
             ~main();
 
+            std::shared_ptr<toxmm2::core> tox();
+
             static utils::builder::ref<main> create(const Glib::ustring& file);
 
             void chat_add   (Gtk::Widget& headerbar, Gtk::Widget& body, Gtk::Button& prev, Gtk::Button& next);
