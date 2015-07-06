@@ -223,7 +223,7 @@ void chat::update_children(GdkEventMotion* event,
             continue;
         }
         // check if it's WidgetChatMessage
-        auto c_message = dynamic_cast<widget::chat_message*>(c);
+        auto c_message = dynamic_cast<widget::label*>(c);
         if (!c_message) {
             //
             continue;
@@ -264,7 +264,7 @@ Glib::ustring chat::get_children_selection(
             tmp = get_children_selection(c_container->get_children());
         }
         // check if it's WidgetChatMessage
-        auto c_message = dynamic_cast<widget::chat_message*>(c);
+        auto c_message = dynamic_cast<widget::label*>(c);
         if (c_message) {
             tmp = c_message->get_selection();
         }
