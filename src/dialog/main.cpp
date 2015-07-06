@@ -559,3 +559,6 @@ void main::chat_show(Gtk::Widget& headerbar, Gtk::Widget& body) {
     }
 }
 
+std::shared_ptr<toxmm2::core> main::tox() {
+    return m_toxcore;
+}

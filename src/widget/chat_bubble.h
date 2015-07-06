@@ -36,14 +36,21 @@ namespace widget {
 
             Glib::RefPtr<Glib::Binding> m_binding_name;
 
+            void init(utils::builder builder);
+
         public:
             chat_bubble(BaseObjectType* cobject,
                         utils::builder builder,
+                        std::shared_ptr<toxmm2::core> contact);
+            chat_bubble(BaseObjectType* cobject,
+                        utils::builder builder,
                         std::shared_ptr<toxmm2::contact> contact);
+
             ~chat_bubble();
 
             void add_row(Gtk::Widget& widget);
 
+            static utils::builder::ref<chat_bubble> create(std::shared_ptr<toxmm2::core> core);
             static utils::builder::ref<chat_bubble> create(std::shared_ptr<toxmm2::contact> contact);
     };
 }
