@@ -117,16 +117,14 @@ std::string DialogError::get_stacktrace() {
             if (status == 0)
             {
                 ss << "[bt]: (" << i << ") " << messages[i] << " : "
-                   << real_name << "+" << offset_begin << offset_end
-                   << std::endl;
+                   << real_name << "+" << offset_begin << offset_end << "\n";
 
             }
             // otherwise, output the mangled function name
             else
             {
                 ss << "[bt]: (" << i << ") " << messages[i] << " : "
-                   << mangled_name << "+" << offset_begin << offset_end
-                   << std::endl;
+                   << mangled_name << "+" << offset_begin << offset_end << "\n";
             }
 
             if (mangled_name != real_name) {
@@ -136,10 +134,10 @@ std::string DialogError::get_stacktrace() {
         // otherwise, print the whole line
         else
         {
-            ss << "[bt]: (" << i << ") " << messages[i] << std::endl;
+            ss << "[bt]: (" << i << ") " << messages[i] << "\n";
         }
     }
-    ss << std::endl;
+    ss << "\n";
 
     free(messages);
 

@@ -195,13 +195,13 @@ int gTox::on_command_line(const Glib::RefPtr<Gio::ApplicationCommandLine>& comma
     for (auto value : arguments) {
         if (Glib::str_has_prefix(value, "tox://")) {
             invites.push_back(value.substr(strlen("tox://")));
-            std::clog << "Invite: " << invites.back() << std::endl;
+            std::clog << "Invite: " << invites.back() << "\n";
         } else if (Glib::str_has_prefix(value, "tox:")) {
             invites.push_back(value.substr(strlen("tox:")));
-            std::clog << "Invite: " << invites.back() << std::endl;
+            std::clog << "Invite: " << invites.back() << "\n";
         } else {
             files.push_back(Gio::File::create_for_path(value));
-            std::clog << "Open: " << value << std::endl;
+            std::clog << "Open: " << value << "\n";
         }
     }
 
