@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-06-21 13:09+0200\n"
+"POT-Creation-Date: 2015-07-10 21:42+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -10,7 +10,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.1\n"
+"X-Generator: Poedit 1.8.2\n"
 
 #: Layout/dialog_settings.ui
 msgid "ABOUT_SOFTWARE_COPYRIGHT"
@@ -110,6 +110,18 @@ msgstr "Busy"
 msgid "CONTACT_ADD"
 msgstr "Submit"
 
+#: Dialog/DialogContact.cpp
+msgid "CONTACT_DIALOG_REMOVE"
+msgstr "Are you sure you want to remove this contact?"
+
+#: Dialog/DialogContact.cpp
+msgid "CONTACT_DIALOG_REMOVE_TITLE"
+msgstr "Remove contact"
+
+#: Dialog/DialogContact.cpp
+msgid "CONTACT_MENU_REMOVE"
+msgstr "Remove contact"
+
 #: Widget/WidgetChat.cpp
 msgid "DATE_FORMAT"
 msgstr "%A, %e. %B %Y"
@@ -130,7 +142,7 @@ msgstr "Report"
 msgid "ERROR_REPORT_TEXT_INTRO"
 msgstr ""
 "gTox can't continue.\n"
-"The following problem occured:\n"
+"The following problem occurred:\n"
 "\n"
 "<i><b>"
 
@@ -146,6 +158,41 @@ msgstr ""
 msgid "EXIT"
 msgstr "Exit"
 
+#: Widget/Chat/WidgetChatFileRecv.cpp Widget/Chat/WidgetChatFileSend.cpp
+msgid "FILE_RECV_LESS_THAN_1_BYTES_EACH_SEC"
+msgstr "Less than 1 Byte/s"
+
+#. Open the downloaded file
+#: Layout/chat_filerecv.ui
+msgid "FILE_RECV_OPEN"
+msgstr "Open file"
+
+#. Open file with file-explorer
+#: Layout/chat_filerecv.ui
+msgid "FILE_RECV_OPEN_DIR"
+msgstr "Open containing folder"
+
+#. Pauses the download
+#: Layout/chat_filerecv.ui
+msgid "FILE_RECV_PAUSE"
+msgstr "Pause download"
+
+#. Starts the download
+#: Layout/chat_filerecv.ui
+msgid "FILE_RECV_START"
+msgstr "Start download"
+
+#. Stop/Remove the download
+#: Layout/chat_filerecv.ui
+msgid "FILE_RECV_STOP"
+msgstr "Remove download"
+
+#: Widget/WidgetContactListItem.cpp
+msgid "FRIEND_NEW_FILE_RECV"
+msgstr ""
+"File transfer request\n"
+"%1\t%2"
+
 #: Dialog/DialogContact.cpp
 msgid "FRIEND_REQUEST"
 msgstr "%1"
@@ -160,7 +207,7 @@ msgstr "Ignore"
 
 #: Popover/PopoverSettings.cpp
 msgid "IMAGE"
-msgstr ""
+msgstr "Image files"
 
 #: Popover/PopoverStatus.cpp
 msgid "ONLINE"
@@ -180,18 +227,30 @@ msgstr "Select new avatar"
 msgid "PROFILE_COPY_TOX_ID"
 msgstr "Copy Tox-ID to clipboard"
 
-#: Layout/list_item_profile.ui
+#: Dialog/DialogProfile.cpp Layout/list_item_profile.ui
 msgid "PROFILE_CORRUPTED"
 msgstr "Profile couldn't be loaded"
 
-#: Layout/list_item_profile.ui
+#: Dialog/DialogProfile.cpp Layout/list_item_profile.ui
 msgid "PROFILE_CORRUPTED_TITLE"
 msgstr "Corrupted profile"
+
+#: Dialog/DialogProfile.cpp
+msgid "PROFILE_CRYPTED"
+msgstr "Profile couldn't be loaded"
+
+#: Dialog/DialogProfile.cpp
+msgid "PROFILE_CRYPTED_TITLE"
+msgstr "Encrypted profile"
 
 #. Text next to the spinner, while profiles are loading
 #: Layout/dialog_profile.ui
 msgid "PROFILE_LOADING"
 msgstr "loading profiles..."
+
+#: Dialog/DialogProfile.cpp
+msgid "PROFILE_MENU_OPEN_IN_FILEMANAGER"
+msgstr "Open this profile in file manager"
 
 #. Button for creating a new profile
 #: Layout/dialog_profile.ui
@@ -222,6 +281,14 @@ msgstr "gTox"
 #: Layout/popover_settings.ui
 msgid "PROFILE_TOX_ID"
 msgstr "Tox-ID"
+
+#: Dialog/DialogProfile.cpp
+msgid "PROFILE_UNEXPECTED"
+msgstr "Profile couldn't be loaded"
+
+#: Dialog/DialogProfile.cpp
+msgid "PROFILE_UNEXPECTED_TITLE"
+msgstr "Profile not loaded for an unknown reason"
 
 #: Layout/popover_settings.ui
 msgid "PROFILE_USERNAME"
@@ -339,7 +406,7 @@ msgstr "Proxy port"
 
 #: Dialog/DialogSettings.cpp
 msgid "SETTINGS_SUBTITLE"
-msgstr ""
+msgstr "Configure gTox"
 
 #: Layout/dialog_settings.ui
 msgid "SETTINGS_SYSTEMTRAY_ON_CLOSE"
@@ -485,6 +552,69 @@ msgid "TOX_ERR_FILE_SEEK_NOT_FOUND"
 msgstr ""
 "TOX_ERR_FILE_SEEK_NOT_FOUND No file transfer with the given file number was "
 "found for the given friend."
+
+#: Tox/ToxException.cpp
+msgid "TOX_ERR_FILE_SEND_CHUNK_FRIEND_NOT_CONNECTED"
+msgstr ""
+"TOX_ERR_FILE_SEND_CHUNK_FRIEND_NOT_CONNECTED\n"
+"This client is currently not connected to the friend."
+
+#: Tox/ToxException.cpp
+msgid "TOX_ERR_FILE_SEND_CHUNK_FRIEND_NOT_FOUND"
+msgstr ""
+"TOX_ERR_FILE_SEND_CHUNK_FRIEND_NOT_FOUND\n"
+"The friend_number passed did not designate a valid friend."
+
+#: Tox/ToxException.cpp
+msgid "TOX_ERR_FILE_SEND_CHUNK_NOT_FOUND"
+msgstr ""
+"TOX_ERR_FILE_SEND_CHUNK_NOT_FOUND\n"
+"No file transfer with the given file number was found for the given friend."
+
+#: Tox/ToxException.cpp
+msgid "TOX_ERR_FILE_SEND_CHUNK_NOT_TRANSFERRING"
+msgstr ""
+"TOX_ERR_FILE_SEND_CHUNK_NOT_TRANSFERRING\n"
+"File transfer was found but isn't in a transferring state: (paused, done, "
+"broken, etc...) (happens only when not called from the request chunk "
+"callback)."
+
+#: Tox/ToxException.cpp
+msgid "TOX_ERR_FILE_SEND_CHUNK_NULL"
+msgstr ""
+"TOX_ERR_FILE_SEND_CHUNK_NULL\n"
+"The length parameter was non-zero, but data was NULL"
+
+#: Tox/ToxException.cpp
+msgid "TOX_ERR_FILE_SEND_FRIEND_NOT_CONNECTED"
+msgstr ""
+"TOX_ERR_FILE_SEND_FRIEND_NOT_CONNECTED\n"
+"This client is currently not connected to the friend."
+
+#: Tox/ToxException.cpp
+msgid "TOX_ERR_FILE_SEND_FRIEND_NOT_FOUND"
+msgstr ""
+"TOX_ERR_FILE_SEND_FRIEND_NOT_FOUND\n"
+"The friend_number passed did not designate a valid friend."
+
+#: Tox/ToxException.cpp
+msgid "TOX_ERR_FILE_SEND_NAME_TOO_LONG"
+msgstr ""
+"TOX_ERR_FILE_SEND_NAME_TOO_LONG\n"
+"Filename length exceeded TOX_MAX_FILENAME_LENGTH bytes."
+
+#: Tox/ToxException.cpp
+msgid "TOX_ERR_FILE_SEND_NULL"
+msgstr ""
+"TOX_ERR_FILE_SEND_NULL\n"
+"One of the arguments to the function was NULL when it was not expected."
+
+#: Tox/ToxException.cpp
+msgid "TOX_ERR_FILE_SEND_TOO_MANY"
+msgstr ""
+"TOX_ERR_FILE_SEND_TOO_MANY\n"
+"Too many ongoing transfers. The maximum number of concurrent file transfers "
+"is 256 per friend per direction (sending and receiving)."
 
 #: Tox/ToxException.cpp
 msgid "TOX_ERR_FRIEND_ADD_ALREADY_SENT"
@@ -739,39 +869,39 @@ msgstr "Okay"
 
 #: Layout/dialog_settings.ui
 msgid "after 1 hour"
-msgstr ""
+msgstr "After 1 hour"
 
 #: Layout/dialog_settings.ui
 msgid "after 1 min"
-msgstr ""
+msgstr "After 1 minute"
 
 #: Layout/dialog_settings.ui
 msgid "after 10 min"
-msgstr ""
+msgstr "After 10 minutes"
+
+#: Layout/dialog_settings.ui
+msgid "after 2 hours"
+msgstr "After 2 hours"
 
 #: Layout/dialog_settings.ui
 msgid "after 2 min"
-msgstr ""
+msgstr "After 2 minutes"
 
 #: Layout/dialog_settings.ui
 msgid "after 20 min"
-msgstr ""
-
-#: Layout/dialog_settings.ui
-msgid "after 2hours"
-msgstr ""
+msgstr "After 20 minutes"
 
 #: Layout/dialog_settings.ui
 msgid "after 30 min"
-msgstr ""
+msgstr "After 30 minutes"
 
 #: Layout/dialog_settings.ui
 msgid "after 5 min"
-msgstr ""
+msgstr "After 5 minutes"
 
 #: Layout/dialog_settings.ui
 msgid "never"
-msgstr ""
+msgstr "Never"
 
 #~ msgid "SETTINGS_CACHE_CLEAN_LOG"
 #~ msgstr ""
