@@ -128,7 +128,10 @@ DialogSettings::DialogSettings(gToxObservable* observable)
     }
     if (!settings_video_default_device->get_active()) {
         //select first device
-        settings_video_default_device->set_active(settings_video_default_device_model_store->children().begin());
+        if (!settings_video_default_device_model_store->children().empty())
+            settings_video_default_device->
+                set_active(settings_video_default_device_model_store->children()
+                        .begin());
     }
     auto video_changed = [this, settings_video_player, settings_video_default_device](){
         Glib::ustring value;
@@ -140,7 +143,9 @@ DialogSettings::DialogSettings(gToxObservable* observable)
         settings_video_player->play();
     };
     settings_video_default_device->signal_changed().connect(video_changed);
-    video_changed();
+
+    if (!settings_video_default_device_model_store->children().empty())
+        video_changed();
 
     auto filetransfer_save_to = m_builder.get_widget<Gtk::FileChooserButton>("settings_filetransfer_saveto");
     std::string path = tox().database().config_get("SETTINGS_FILETRANSFER_SAVE_TO",
