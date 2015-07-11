@@ -24,6 +24,7 @@
 #include "utils/builder.h"
 #include "tox/types.h"
 #include "widget/main_menu.h"
+#include "config.h"
 
 namespace dialog {
     // contact list with pinned chat
@@ -60,6 +61,8 @@ namespace dialog {
 
             std::vector<std::pair<Gtk::Widget*, Gtk::Widget*>> m_stack_data;
 
+            class config m_config;
+
         public:
             main(BaseObjectType* cobject,
                  utils::builder builder,
@@ -75,6 +78,8 @@ namespace dialog {
             void chat_show  (Gtk::Widget& headerbar, Gtk::Widget& body);
 
             void exit();
+
+            class config& config();
 
         protected:
             void load_contacts();
