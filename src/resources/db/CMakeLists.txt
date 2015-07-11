@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
 
-project(ToxmmResourcesDb)
-
 set(NAME "toxmm-db.gresource")
 set(CNAME "toxmm_db")
 set(PREFIX "/org/toxmm/db")
@@ -34,18 +32,16 @@ endif()
 
 add_custom_command(
     OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/${NAME}.xml" "${CMAKE_CURRENT_BINARY_DIR}/${NAME}.c" "${CMAKE_CURRENT_BINARY_DIR}/${NAME}.h"
-#   COMMAND "${BASH_EXECUTEABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/../Tools/gresource.sh" "${CMAKE_CURRENT_BINARY_DIR}/${NAME}.xml" "${PREFIX}" "${OPTIONS}" ${SRC}
     COMMAND "${BASH_EXECUTEABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/../gresource.sh" "${CMAKE_CURRENT_BINARY_DIR}/${NAME}.xml" "${PREFIX}" "${OPTIONS}" ${SRC}
-    COMMAND "${GLIB_COMPILE_RESOURCE_EXECUTEABLE}" --target="${NAME}.c" --sourcedir="${CMAKE_CURRENT_SOURCE_DIR}" --generate-source --c-name "${CNAME}"  --manual-register "${NAME}.xml"
-    COMMAND "${GLIB_COMPILE_RESOURCE_EXECUTEABLE}" --target="${NAME}.h" --sourcedir="${CMAKE_CURRENT_SOURCE_DIR}" --generate-header --c-name "${CNAME}"  --manual-register "${NAME}.xml"
+    COMMAND "${GLIB_COMPILE_RESOURCE_EXECUTEABLE}" --target="${NAME}.c" --sourcedir="${CMAKE_CURRENT_SOURCE_DIR}" --generate-source --c-name "${CNAME}" "${NAME}.xml"
+    COMMAND "${GLIB_COMPILE_RESOURCE_EXECUTEABLE}" --target="${NAME}.h" --sourcedir="${CMAKE_CURRENT_SOURCE_DIR}" --generate-header --c-name "${CNAME}" "${NAME}.xml"
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     DEPENDS ${SRC}
 )
 
-set (GRESOURCE_TOXMM_DB ${GRESOURCE_TOXMM_DB} "${CMAKE_CURRENT_BINARY_DIR}/${NAME}.c")
+set (GRESOURCE ${GRESOURCE} "${CMAKE_CURRENT_BINARY_DIR}/${NAME}.c")
 
-SET_SOURCE_FILES_PROPERTIES(${GRESOURCE_TOXMM_DB} PROPERTIES GENERATED 1)
+SET_SOURCE_FILES_PROPERTIES(${GRESOURCE} PROPERTIES GENERATED 1)
 
-add_library(${PROJECT_NAME} STATIC
-    ${GRESOURCE_TOXMM_DB}
-)
+ADD_CUSTOM_TARGET(gtox-db-resource ALL
+    DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/${NAME}.c")
