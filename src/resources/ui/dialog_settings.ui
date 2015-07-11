@@ -1,58 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.18.1 -->
+<!-- Generated with glade 3.19.0 -->
 <interface domain="gTox">
   <requires lib="gtk+" version="3.16"/>
-  <object class="GtkListStore" id="liststore1">
-    <columns>
-      <!-- column-name ID -->
-      <column type="gint"/>
-      <!-- column-name gchararray1 -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0">0</col>
-        <col id="1" translatable="yes">never</col>
-      </row>
-      <row>
-        <col id="0">1</col>
-        <col id="1" translatable="yes">after 1 min</col>
-      </row>
-      <row>
-        <col id="0">2</col>
-        <col id="1" translatable="yes">after 2 min</col>
-      </row>
-      <row>
-        <col id="0">5</col>
-        <col id="1" translatable="yes">after 5 min</col>
-      </row>
-      <row>
-        <col id="0">10</col>
-        <col id="1" translatable="yes">after 10 min</col>
-      </row>
-      <row>
-        <col id="0">20</col>
-        <col id="1" translatable="yes">after 20 min</col>
-      </row>
-      <row>
-        <col id="0">30</col>
-        <col id="1" translatable="yes">after 30 min</col>
-      </row>
-      <row>
-        <col id="0">60</col>
-        <col id="1" translatable="yes">after 1 hour</col>
-      </row>
-      <row>
-        <col id="0">120</col>
-        <col id="1" translatable="yes">after 2hours</col>
-      </row>
-    </data>
-  </object>
-  <object class="GtkHeaderBar" id="settings_headerbar">
+  <object class="GtkHeaderBar" id="headerbar_attached">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="title">SETTINGS_TITLE</property>
     <property name="subtitle">SETTINGS_SUBTITLE</property>
+    <child>
+      <object class="GtkButton" id="detach">
+        <property name="visible">True</property>
+        <property name="can_focus">True</property>
+        <property name="receives_default">True</property>
+        <child>
+          <object class="GtkImage" id="image4">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="icon_name">view-paged-symbolic</property>
+          </object>
+        </child>
+      </object>
+      <packing>
+        <property name="position">2</property>
+      </packing>
+    </child>
     <child>
       <object class="GtkBox" id="box1">
         <property name="visible">True</property>
@@ -100,6 +71,7 @@
       </object>
       <packing>
         <property name="pack_type">end</property>
+        <property name="position">1</property>
       </packing>
     </child>
     <child>
@@ -149,24 +121,143 @@
       </object>
       <packing>
         <property name="pack_type">end</property>
+        <property name="position">2</property>
+      </packing>
+    </child>
+  </object>
+  <object class="GtkHeaderBar" id="headerbar_detached">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="title">SETTINGS_TITLE</property>
+    <property name="subtitle">SETTINGS_SUBTITLE</property>
+    <child>
+      <object class="GtkButton" id="attach">
+        <property name="visible">True</property>
+        <property name="can_focus">True</property>
+        <property name="receives_default">True</property>
+        <child>
+          <object class="GtkImage" id="image5">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="icon_name">view-restore-symbolic</property>
+          </object>
+        </child>
+      </object>
+      <packing>
+        <property name="position">2</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkBox" id="box3">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="has_tooltip">True</property>
+        <property name="spacing">6</property>
+        <child>
+          <object class="GtkSeparator" id="separator8">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="orientation">vertical</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="close_btn_2">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="valign">center</property>
+            <child>
+              <object class="GtkImage" id="image3">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="icon_name">window-close-symbolic</property>
+              </object>
+            </child>
+            <style>
+              <class name="titlebutton"/>
+            </style>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <style>
+          <class name="right"/>
+        </style>
+      </object>
+      <packing>
+        <property name="pack_type">end</property>
         <property name="position">1</property>
       </packing>
     </child>
   </object>
-  <object class="GtkListStore" id="settings_theme_color_store">
+  <object class="GtkListStore" id="liststore1">
     <columns>
-      <!-- column-name id -->
-      <column type="gint"/>
-      <!-- column-name name -->
+      <!-- column-name ID -->
+      <column type="gchararray"/>
+      <!-- column-name gchararray1 -->
       <column type="gchararray"/>
     </columns>
     <data>
       <row>
         <col id="0">0</col>
-        <col id="1" translatable="yes" comments="dark theme">SETTINGS_THEME_COLOR_WHITE_ON_BLACK</col>
+        <col id="1" translatable="yes">never</col>
       </row>
       <row>
         <col id="0">1</col>
+        <col id="1" translatable="yes">after 1 min</col>
+      </row>
+      <row>
+        <col id="0">2</col>
+        <col id="1" translatable="yes">after 2 min</col>
+      </row>
+      <row>
+        <col id="0">5</col>
+        <col id="1" translatable="yes">after 5 min</col>
+      </row>
+      <row>
+        <col id="0">10</col>
+        <col id="1" translatable="yes">after 10 min</col>
+      </row>
+      <row>
+        <col id="0">20</col>
+        <col id="1" translatable="yes">after 20 min</col>
+      </row>
+      <row>
+        <col id="0">30</col>
+        <col id="1" translatable="yes">after 30 min</col>
+      </row>
+      <row>
+        <col id="0">60</col>
+        <col id="1" translatable="yes">after 1 hour</col>
+      </row>
+      <row>
+        <col id="0">120</col>
+        <col id="1" translatable="yes">after 2hours</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkListStore" id="settings_theme_color_store">
+    <columns>
+      <!-- column-name id -->
+      <column type="gchararray"/>
+      <!-- column-name name -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">0</col>
+        <col id="1" translatable="yes" comments="dark theme">SETTINGS_THEME_COLOR_WHITE_ON_BLACK</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">1</col>
         <col id="1" translatable="yes" comments="Light theme">SETTINGS_THEME_COLOR_BLACK_ON_WHITE</col>
       </row>
     </data>
@@ -177,7 +268,7 @@
       <column type="gchararray"/>
     </columns>
   </object>
-  <object class="GtkBox" id="settings_widget">
+  <object class="GtkBox" id="body">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <child>
@@ -441,7 +532,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkSwitch" id="switch4">
+                      <object class="GtkSwitch" id="tray_visible">
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
@@ -454,7 +545,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkSwitch" id="switch5">
+                      <object class="GtkSwitch" id="tray_on_start">
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
@@ -467,7 +558,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkSwitch" id="switch6">
+                      <object class="GtkSwitch" id="tray_on_close">
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
@@ -480,7 +571,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkSwitch" id="switch7">
+                      <object class="GtkSwitch" id="c_n_on_message">
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
@@ -493,7 +584,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkSwitch" id="switch8">
+                      <object class="GtkSwitch" id="c_n_with_audio">
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
@@ -506,7 +597,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkSwitch" id="switch9">
+                      <object class="GtkSwitch" id="c_send_typing">
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
@@ -519,7 +610,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkSwitch" id="switch10">
+                      <object class="GtkSwitch" id="c_chat_logging">
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
@@ -532,7 +623,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkSwitch" id="switch11">
+                      <object class="GtkSwitch" id="ft_auto_accept">
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
@@ -545,7 +636,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkSwitch" id="settings_contactlist_display_active">
+                      <object class="GtkSwitch" id="cl_display_active">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="halign">end</property>
@@ -557,7 +648,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkSwitch" id="settings_contactlist_use_compact">
+                      <object class="GtkSwitch" id="cl_use_compact">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="halign">end</property>
@@ -568,7 +659,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkSwitch" id="switch14">
+                      <object class="GtkSwitch" id="ft_display_inline">
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
@@ -581,7 +672,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkFileChooserButton" id="settings_filetransfer_saveto">
+                      <object class="GtkFileChooserButton" id="ft_saveto">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">end</property>
@@ -605,7 +696,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkComboBox" id="combobox3">
+                      <object class="GtkComboBox" id="c_auto_away">
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
                         <property name="can_focus">False</property>
@@ -810,7 +901,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkSwitch" id="switch1">
+                      <object class="GtkSwitch" id="connection_udp">
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
@@ -823,7 +914,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkSwitch" id="switch2">
+                      <object class="GtkSwitch" id="connection_tcp">
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
@@ -836,7 +927,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkSwitch" id="switch3">
+                      <object class="GtkSwitch" id="p_remember">
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
@@ -849,7 +940,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkComboBox" id="combobox1">
+                      <object class="GtkComboBox" id="proxy_type">
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
                         <property name="can_focus">False</property>
@@ -860,7 +951,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkEntry" id="entry1">
+                      <object class="GtkEntry" id="proxy_host">
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
@@ -871,7 +962,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkEntry" id="entry2">
+                      <object class="GtkEntry" id="proxy_port">
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
@@ -883,7 +974,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkComboBox" id="settings_theme_color">
+                      <object class="GtkComboBox" id="t_color">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="model">settings_theme_color_store</property>
@@ -959,7 +1050,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkComboBox" id="settings_video_default_device">
+                      <object class="GtkComboBox" id="video_default_device">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="model">settings_video_default_device_store</property>

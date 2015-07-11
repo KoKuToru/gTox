@@ -18,7 +18,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 **/
 #ifndef GTOX_APPLICATION
-
+#define GTOX_APPLICATION
 #include <gtkmm.h>
 
 class gTox : public Gtk::Application {
@@ -30,6 +30,8 @@ class gTox : public Gtk::Application {
         const std::string m_config_path;
         const std::string m_avatar_path;
         const std::string m_config_global_path;
+
+        Glib::RefPtr<Glib::Binding> m_theme_binding;
 
     protected:
         void on_activate() override;

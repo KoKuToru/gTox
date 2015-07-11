@@ -24,10 +24,16 @@
 #include "tox/core.h"
 #include "widget/avatar.h"
 
+namespace dialog {
+    class main;
+    class settings;
+}
+
 namespace widget {
     class main_menu : public Gtk::Popover {
         private:
-            std::shared_ptr<toxmm2::core> m_core;
+            Glib::RefPtr<dialog::main> m_main;
+            Glib::RefPtr<dialog::settings> m_settings;
 
             struct {
                     Gtk::Entry* username;
@@ -41,9 +47,10 @@ namespace widget {
             } m_add_contact;
 
             Gtk::Stack* m_stack;
+            Gtk::Button* m_settings_btn;
 
         public:
-            main_menu(std::shared_ptr<toxmm2::core> core);
+            main_menu(Glib::RefPtr<dialog::main> m_main);
             ~main_menu();
 
             void set_visible(bool visible = true);
