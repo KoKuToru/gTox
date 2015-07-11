@@ -28,7 +28,6 @@ add_subdirectory(i18n)
 add_subdirectory(resources/ui)
 add_subdirectory(resources/style)
 add_subdirectory(resources/icon)
-add_subdirectory(resources/db)
 
 set(SOURCES
     main.cpp
