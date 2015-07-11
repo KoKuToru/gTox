@@ -29,6 +29,10 @@
 
 #include "config.h"
 
+namespace sigc {
+    SIGC_FUNCTORS_DEDUCE_RESULT_TYPE_WITH_DECLTYPE
+}
+
 Glib::RefPtr<gTox> gTox::m_instance;
 
 gTox::gTox()
@@ -55,8 +59,17 @@ gTox::gTox()
     Gtk::IconTheme::get_default()
             ->add_resource_path("/org/gtox/icon");
 
-    Gtk::Settings::get_default()
-            ->property_gtk_application_prefer_dark_theme() = config::global().property_theme_color() == 0;
+    m_theme_binding = Glib::Binding::bind_property(config::global().property_theme_color(),
+                                                   Gtk::Settings::get_default()->property_gtk_application_prefer_dark_theme(),
+                                                   Glib::BINDING_DEFAULT | Glib::BINDING_BIDIRECTIONAL | Glib::BINDING_SYNC_CREATE,
+                                                   [](const int& value_in, bool& value_out) {
+                                                       value_out = value_in == 0;
+                                                       return true;
+                                                   },
+                                                   [](const bool& value_in, int& value_out) {
+                                                       value_out = value_in ? 0 : 1;
+                                                       return true;
+                                                   });
 
     auto css = Gtk::CssProvider::create();
     auto screen = Gdk::Screen::get_default();

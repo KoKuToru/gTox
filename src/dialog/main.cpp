@@ -40,7 +40,9 @@ main::main(BaseObjectType* cobject,
            const Glib::ustring& file)
     : Gtk::Window(cobject),
       m_toxcore(toxmm2::core::create(file)),
-      m_menu(m_toxcore) {
+      m_menu(Glib::RefPtr<main>(this)),
+      m_config(Glib::build_filename(Glib::get_user_config_dir(), "gotx", m_toxcore->property_addr_public().get_value(), "config.json"))
+{
 
     builder.get_widget("headerbar", m_headerbar);
     builder.get_widget("status_btn", m_btn_status);
@@ -561,4 +563,8 @@ void main::chat_show(Gtk::Widget& headerbar, Gtk::Widget& body) {
 
 std::shared_ptr<toxmm2::core> main::tox() {
     return m_toxcore;
+}
+
+class config& main::config() {
+    return m_config;
 }
