@@ -12,14 +12,6 @@ set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
 find_package(Tox)
 include_directories(${TOX_INCLUDE_DIR})
 
-option(SQLITECPP_RUN_CPPLINT OFF)
-option(SQLITECPP_RUN_CPPCHECK OFF)
-option(SQLITECPP_RUN_DOXYGEN OFF)
-option(SQLITECPP_BUILD_EXAMPLES OFF)
-option(SQLITECPP_BUILD_TESTS OFF)
-add_subdirectory(libs/SQLiteCpp)
-add_subdirectory(resources/db)
-
 set(SOURCES
 
     types.cpp
@@ -40,8 +32,7 @@ set(SOURCES
 add_library(${PROJECT_NAME} STATIC
     ${SOURCES}
 )
-target_link_libraries(${PROJECT_NAME} ${GLIBMM_LIBRARIES} ${TOX_LIBRARY} -lpthread -lsqlite3 SQLiteCpp ToxmmResourcesDb)
-target_include_directories(${PROJECT_NAME} PUBLIC libs/SQLiteCpp/include)
+target_link_libraries(${PROJECT_NAME} ${GLIBMM_LIBRARIES} ${TOX_LIBRARY})
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
-#add_dependencies(${PROJECT_NAME} ToxmmResourcesDb SQLiteCpp)
+#add_dependencies(${PROJECT_NAME})

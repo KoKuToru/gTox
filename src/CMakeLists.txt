@@ -28,6 +28,7 @@ add_subdirectory(i18n)
 add_subdirectory(resources/ui)
 add_subdirectory(resources/style)
 add_subdirectory(resources/icon)
+add_subdirectory(resources/db)
 
 set(SOURCES
     main.cpp
@@ -57,7 +58,7 @@ add_executable(${PROJECT_NAME}
     ${GRESOURCE}
 )
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(${PROJECT_NAME} ${GTKMM_LIBRARIES} ${LIBNOTIFYMM_LIBRARIES} ${LIBCANBERRA_LIBRARIES} ${GSTREAMERMM_LIBRARIES} ${TOX_LIBRARY} -lpthread -lsqlite3 SQLiteCpp Toxmm)
+target_link_libraries(${PROJECT_NAME} ${GTKMM_LIBRARIES} ${LIBNOTIFYMM_LIBRARIES} ${LIBCANBERRA_LIBRARIES} ${GSTREAMERMM_LIBRARIES} ${TOX_LIBRARY} -lpthread -lsqlite3 Toxmm)
 add_dependencies(${PROJECT_NAME} gtox-style-resource gtox-icon-resource gtox-ui-resource)
 install(PROGRAMS "${PROJECT_BINARY_DIR}/${PROJECT_NAME}"
         DESTINATION bin

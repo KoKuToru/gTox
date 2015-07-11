@@ -21,16 +21,6 @@
 #include "exception.h"
 #include <iostream>
 
-//STATIC LINKING REMOVES THIS, THATS WHY WE NEED TODO IT MANUALY
-#define G_DEFINE_CONSTRUCTOR(_func) static void __attribute__((constructor)) _func (void);
-G_DEFINE_CONSTRUCTOR(resource_constructor)
-extern "C" void toxmm_db_register_resource (void);
-static void resource_constructor (void)
-{
-   toxmm_db_register_resource();
-}
-
-
 using namespace toxmm2;
 
 //SIGNALS
