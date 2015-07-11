@@ -125,7 +125,7 @@ Glib::RefPtr<Gdk::Pixbuf> WidgetAvatar::get_avatar(Glib::ustring path, bool forc
     try {
         pix = Gdk::Pixbuf::create_from_file(path);
     } catch (...) {
-        std::clog << "Couldn't load " << path << std::endl;
+        std::clog << "Couldn't load " << path << "\n";
         return pix_default;
     }
 

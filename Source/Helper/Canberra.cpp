@@ -18,6 +18,5 @@ void Canberra::play(const std::string& name) {
         return;
     }
     // error:
-    std::clog << "libcanberra: Couln't play sound \"" << name << "\""
-              << std::endl;
+    std::clog << "libcanberra: Couln't play sound \"" << name << "\"\n";
 }
