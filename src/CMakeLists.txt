@@ -32,6 +32,7 @@ add_subdirectory(resources/icon)
 set(SOURCES
     main.cpp
     gTox.cpp
+    config.cpp
 
     dialog/error.cpp
     dialog/profile_selection.cpp

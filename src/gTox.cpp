@@ -27,6 +27,8 @@
 #include "dialog/profile_create.h"
 #include "dialog/main.h"
 
+#include "config.h"
+
 Glib::RefPtr<gTox> gTox::m_instance;
 
 gTox::gTox()
@@ -54,7 +56,7 @@ gTox::gTox()
             ->add_resource_path("/org/gtox/icon");
 
     Gtk::Settings::get_default()
-            ->property_gtk_application_prefer_dark_theme() = 0 == 0; //TODO: load from config
+            ->property_gtk_application_prefer_dark_theme() = config::global().property_theme_color() == 0;
 
     auto css = Gtk::CssProvider::create();
     auto screen = Gdk::Screen::get_default();
