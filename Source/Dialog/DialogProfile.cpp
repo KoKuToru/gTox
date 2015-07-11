@@ -99,8 +99,10 @@ DialogProfile::DialogProfile(BaseObjectType* cobject, gToxBuilder builder, const
     open_in_fm->signal_activate().connect([this, profile_list](){
         auto row = profile_list->get_selected_row();
         if (row) {
-            auto filemanager = Gio::AppInfo::get_default_for_type("inode/directory",
-                    true);
+            auto filemanager =
+                Gio::AppInfo::get_default_for_type("inode/directory", true);
+
+            // TODO Show user error if no filemanager
             if (filemanager)
                 filemanager->launch_uri(
                         Glib::filename_to_uri(m_accounts[row->get_index()]));
