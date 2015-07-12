@@ -50,6 +50,8 @@ namespace dialog {
             Gtk::Button* m_btn_detach;
             Gtk::Button* m_btn_prev;
             Gtk::Button* m_btn_next;
+            Gtk::Button* m_btn_close_attached;
+            Gtk::Button* m_btn_close_detached;
 
             Gtk::EventBox* m_eventbox;
 

@@ -40,6 +40,8 @@ settings::settings(Glib::RefPtr<main> main)
     m_builder.get_widget("detach", m_btn_detach);
     m_builder.get_widget("btn_prev", m_btn_prev);
     m_builder.get_widget("btn_next", m_btn_next);
+    m_builder.get_widget("close_btn_attached", m_btn_close_attached);
+    m_builder.get_widget("close_btn_detached", m_btn_close_detached);
 
     m_builder.get_widget("tray_visible" , m_tray_visible);
     m_builder.get_widget("tray_on_start", m_tray_on_start);
@@ -76,6 +78,26 @@ settings::settings(Glib::RefPtr<main> main)
     m_headerbar_detached->set_title(_("SETTINGS_TITLE"));
     m_headerbar_attached->set_subtitle(_("SETTINGS_SUBTITLE"));
     m_headerbar_detached->set_subtitle(_("SETTINGS_SUBTITLE"));
+
+    m_btn_detach->signal_clicked().connect(sigc::track_obj([this]() {
+        //TODO: take position w/h from main-window
+        m_main->chat_remove(*m_headerbar_attached, *m_body);
+        add(*m_body);
+        show();
+    }, *this));
+    m_btn_attach->signal_clicked().connect(sigc::track_obj([this]() {
+        remove();
+        hide();
+        m_main->chat_add(*m_headerbar_attached, *m_body, *m_btn_prev, *m_btn_next);
+    }, *this));
+    m_btn_close_attached->signal_clicked().connect(sigc::track_obj([this]() {
+        m_main->chat_remove(*m_headerbar_attached, *m_body);
+    }, *this));
+    m_btn_close_detached->signal_clicked().connect(sigc::track_obj([this]() {
+        remove();
+        hide();
+    }, *this));
+
 
     auto binding_flag = Glib::BINDING_DEFAULT |
                         Glib::BINDING_SYNC_CREATE |
@@ -265,7 +287,7 @@ void settings::activated() {
     if (is_visible()) {
         present();
     } else {
-        m_main->chat_show(*m_headerbar_attached, *m_body);
+        m_main->chat_show(*m_headerbar_attached, *m_body, *m_btn_prev, *m_btn_next);
     }
 }
 
