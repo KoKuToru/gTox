@@ -41,7 +41,7 @@ main::main(BaseObjectType* cobject,
     : Gtk::Window(cobject),
       m_toxcore(toxmm2::core::create(file)),
       m_menu(Glib::RefPtr<main>(this)),
-      m_config(Glib::build_filename(Glib::get_user_config_dir(), "gotx", m_toxcore->property_addr_public().get_value(), "config.json"))
+      m_config(Glib::build_filename(Glib::get_user_config_dir(), "gotx", m_toxcore->property_addr_public().get_value(), "config.bin"))
 {
 
     builder.get_widget("headerbar", m_headerbar);

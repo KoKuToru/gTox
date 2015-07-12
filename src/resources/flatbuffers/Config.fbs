@@ -1,0 +1,24 @@
+namespace flatbuffers.Config;
+
+//never reorder these properties !
+
+table Config {
+	systemtray_visible: bool;
+	systemtray_on_start: bool;
+	systemtray_on_close: bool;
+	
+	chat_notification_on_message: bool;
+	chat_notification_with_audio: bool;
+	chat_auto_away: int;
+	chat_send_typing: bool;
+	chat_logging: bool;
+	
+	file_save_path: string;
+	file_auto_accept: bool;
+	file_display_inline: bool;
+	
+	contacts_compact_list: bool;
+	contacts_display_active: bool;
+}
+
+root_type Config;

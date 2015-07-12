@@ -19,9 +19,9 @@
 #include "config.h"
 #include <iostream>
 #include <giomm.h>
-#include "libs/rapidjson/prettywriter.h"
-#include "libs/rapidjson/stringbuffer.h"
-#include "libs/rapidjson/allocators.h"
+
+#include "resources/flatbuffers/generated/ConfigGlobal_generated.h"
+#include "resources/flatbuffers/generated/Config_generated.h"
 
 //PROFILE:
 Glib::PropertyProxy<bool> config::property_systemtray_visible()
@@ -100,34 +100,10 @@ for_each_in_tuple(const std::tuple<Ts...> & tpl, Func func) {
     for_each_in_tuple<I + 1>(tpl,func);
 }
 
-Glib::ustring json_getValue(rapidjson::Value& value, const Glib::ustring&) {
-    return value.GetString();
-}
-
-bool json_getValue(rapidjson::Value& value, bool) {
-    return value.GetBool();
-}
-
-int json_getValue(rapidjson::Value& value, int) {
-    return value.GetInt();
-}
-
-void json_setValue(rapidjson::Value& value, const Glib::ustring& data, rapidjson::MemoryPoolAllocator<>& allocator) {
-    value.SetString(data.c_str(), data.size(), allocator);
-}
-
-void json_setValue(rapidjson::Value& value, int data, rapidjson::MemoryPoolAllocator<>&) {
-    value.SetInt(data);
-}
-
-void json_setValue(rapidjson::Value& value, bool data, rapidjson::MemoryPoolAllocator<>&) {
-    value.SetBool(data);
-}
-
 config_global::config_global():
     Glib::ObjectBase(typeid(class config_global)),
 
-    m_config_file(Glib::build_filename(Glib::get_user_config_dir(), "gtox", "config.json")),
+    m_config_file(Glib::build_filename(Glib::get_user_config_dir(), "gtox", "config.bin")),
 
     m_property_connection_udp(*this, "config-connection-udp", true),
     m_property_connection_tcp(*this, "config-connection-tcp", true),
@@ -138,23 +114,9 @@ config_global::config_global():
     m_property_profile_remember(*this, "config-profile-remember", false),
     m_property_video_default_device(*this, "config-video-default-device")
 {
-    //load json
-    if (Glib::file_test(m_config_file, Glib::FILE_TEST_IS_REGULAR)) {
-        auto file = Gio::File::create_for_path(m_config_file);
-        auto stream = file->read();
-        std::vector<char> json(stream->query_info()->get_size() + 1);
-        gsize size;
-        stream->read_all((void*)json.data(), json.size(), size);
-        if (size+1 != json.size()) {
-            //some thing went wrong
-            return;
-        }
-        m_config_json.Parse(json.data());
-    } else {
-        m_config_json.Parse("{}");
-    }
+    load_flatbuffer();
 
-    //load settings
+    //setup properties
     for_each_in_tuple(std::make_tuple(
                           property_connection_udp(),
                           property_connection_tcp(),
@@ -166,37 +128,9 @@ config_global::config_global():
                           property_profile_remember(),
                           property_video_default_device()),
                       [this](auto property) {
-        if (m_config_json.HasMember(property.get_name())) {
-            rapidjson::Value& value = m_config_json[property.get_name()];
-            if (value.IsNull() == false) {
-                property.set_value(json_getValue(value, property.get_value()));
-            }
-        } else {
-            //thats pretty ugly
-            rapidjson::Value name(property.get_name(), m_config_json.GetAllocator());
-            m_config_json.AddMember(name, rapidjson::Value(), m_config_json.GetAllocator());
-        }
-        property.signal_changed().connect([this, property]() {
-            rapidjson::Value& value = m_config_json[property.get_name()];
-            json_setValue(value, property.get_value(), m_config_json.GetAllocator());
-
-            //stringfy
-            rapidjson::StringBuffer buffer;
-            rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(buffer);
-            m_config_json.Accept(writer);
-
-            auto file = Gio::File::create_for_path(m_config_file);
-            auto parent = file->get_parent();
-            if (parent) {
-                if (!Glib::file_test(parent->get_path(), Glib::FILE_TEST_IS_DIR)) {
-                    parent->make_directory_with_parents();
-                }
-            }
-            auto stream = file->replace();
-            stream->truncate(0);
-            stream->write(buffer.GetString());
-            stream->close();
-        });
+        property.signal_changed().connect(sigc::track_obj([this]() {
+            this->save_flatbuffer();
+        }, *this));
     });
 }
 
@@ -218,27 +152,13 @@ config::config(Glib::ustring config_file):
     m_property_contacts_compact_list  (*this, "config-contacts-compact-list", false),
     m_property_contacts_display_active(*this, "config-contacts-display-active", true)
 {
-    //load json
-    if (Glib::file_test(m_config_file, Glib::FILE_TEST_IS_REGULAR)) {
-        auto file = Gio::File::create_for_path(m_config_file);
-        auto stream = file->read();
-        std::vector<char> json(stream->query_info()->get_size() + 1);
-        gsize size;
-        stream->read_all((void*)json.data(), json.size(), size);
-        if (size+1 != json.size()) {
-            //some thing went wrong
-            return;
-        }
-        m_config_json.Parse(json.data());
-    } else {
-        m_config_json.Parse("{}");
-    }
+    load_flatbuffer();
 
-    //load settings:
+    //setup settings:
     for_each_in_tuple(std::make_tuple(
                           property_systemtray_visible(),
                           property_systemtray_on_start(),
-                          property_file_display_inline(),
+                          property_systemtray_on_close(),
                           property_chat_notification_on_message(),
                           property_chat_notification_with_audio(),
                           property_chat_auto_away(),
@@ -250,41 +170,151 @@ config::config(Glib::ustring config_file):
                           property_contacts_compact_list(),
                           property_contacts_display_active()),
                       [this](auto property) {
-        if (m_config_json.HasMember(property.get_name())) {
-            rapidjson::Value& value = m_config_json[property.get_name()];
-            if (value.IsNull() == false) {
-                property.set_value(json_getValue(value, property.get_value()));
-            }
-        } else {
-            //thats pretty ugly
-            rapidjson::Value name(property.get_name(), m_config_json.GetAllocator());
-            m_config_json.AddMember(name, rapidjson::Value(), m_config_json.GetAllocator());
-        }
-        property.signal_changed().connect([this, property]() {
-            rapidjson::Value& value = m_config_json[property.get_name()];
-            json_setValue(value, property.get_value(), m_config_json.GetAllocator());
-
-            //stringfy
-            rapidjson::StringBuffer buffer;
-            rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(buffer);
-            m_config_json.Accept(writer);
-
-            auto file = Gio::File::create_for_path(m_config_file);
-            auto parent = file->get_parent();
-            if (parent) {
-                if (!Glib::file_test(parent->get_path(), Glib::FILE_TEST_IS_DIR)) {
-                    parent->make_directory_with_parents();
-                }
-            }
-            auto stream = file->replace();
-            stream->truncate(0);
-            stream->write(buffer.GetString());
-            stream->close();
-        });
+        property.signal_changed().connect(sigc::track_obj([this]() {
+            this->save_flatbuffer();
+        }, *this));
     });
 }
 
 class config_global& config::global() {
     static class config_global global;
     return global;
+}
+
+void config::load_flatbuffer() {
+    if (!Glib::file_test(m_config_file, Glib::FILE_TEST_IS_REGULAR)) {
+        save_flatbuffer();
+    }
+    auto file = Gio::File::create_for_path(m_config_file);
+    auto stream = file->read();
+    std::vector<uint8_t> content(stream->query_info()->get_size());
+    gsize size;
+    stream->read_all((void*)content.data(), content.size(), size);
+
+    auto verify = flatbuffers::Verifier(content.data(), content.size());
+    if (!flatbuffers::Config::VerifyConfigBuffer(verify)) {
+        throw std::runtime_error("flatbuffers::Config::VerifyGlobalBuffer failed");
+    }
+
+    auto conf = flatbuffers::Config::GetConfig(content.data());
+
+    property_systemtray_visible() = conf->systemtray_visible();
+    property_systemtray_on_start() = conf->systemtray_on_start();
+    property_systemtray_on_close() = conf->systemtray_on_close();
+
+    property_chat_notification_on_message() = conf->chat_notification_on_message();
+    property_chat_notification_with_audio() = conf->chat_notification_with_audio();
+    property_chat_auto_away() = conf->chat_auto_away();
+    property_chat_send_typing() = conf->chat_send_typing();
+    property_chat_logging() = conf->chat_logging();
+    property_file_save_path() = conf->file_save_path()->str();
+    property_file_auto_accept() = conf->file_auto_accept();
+    property_file_display_inline() = conf->file_display_inline();
+    property_contacts_compact_list() = conf->contacts_compact_list();
+    property_contacts_display_active() = conf->contacts_display_active();
+
+}
+
+void config::save_flatbuffer() {
+    flatbuffers::FlatBufferBuilder fbb;
+
+    auto file_save_path = fbb.CreateString(property_file_save_path().get_value());
+
+    auto builder = flatbuffers::Config::ConfigBuilder(fbb);
+
+    builder.add_systemtray_visible(property_systemtray_visible());
+    builder.add_systemtray_on_start(property_systemtray_on_start());
+    builder.add_systemtray_on_close(property_systemtray_on_close());
+
+    builder.add_chat_notification_on_message(property_chat_notification_on_message());
+    builder.add_chat_notification_with_audio(property_chat_notification_with_audio());
+    builder.add_chat_auto_away(property_chat_auto_away());
+    builder.add_chat_send_typing(property_chat_send_typing());
+    builder.add_chat_logging(property_chat_logging());
+
+    builder.add_file_save_path(file_save_path);
+    builder.add_file_auto_accept(property_file_auto_accept());
+    builder.add_file_display_inline(property_file_display_inline());
+
+    builder.add_contacts_compact_list(property_contacts_compact_list());
+    builder.add_contacts_display_active(property_contacts_display_active());
+
+    flatbuffers::Config::FinishConfigBuffer(fbb, builder.Finish());
+
+    //write to file
+    auto file = Gio::File::create_for_path(m_config_file);
+    auto parent = file->get_parent();
+    if (parent) {
+        if (!Glib::file_test(parent->get_path(), Glib::FILE_TEST_IS_DIR)) {
+            parent->make_directory_with_parents();
+        }
+    }
+    auto stream = file->replace();
+    stream->truncate(0);
+    stream->write_bytes(Glib::Bytes::create(fbb.GetBufferPointer(), fbb.GetSize()));
+    stream->close();
+}
+
+void config_global::load_flatbuffer() {
+    if (!Glib::file_test(m_config_file, Glib::FILE_TEST_IS_REGULAR)) {
+        save_flatbuffer();
+    }
+    auto file = Gio::File::create_for_path(m_config_file);
+    auto stream = file->read();
+    std::vector<uint8_t> content(stream->query_info()->get_size());
+    gsize size;
+    stream->read_all((void*)content.data(), content.size(), size);
+
+    auto verify = flatbuffers::Verifier(content.data(), content.size());
+    if (!flatbuffers::Config::VerifyGlobalBuffer(verify)) {
+        throw std::runtime_error("flatbuffers::Config::VerifyGlobalBuffer failed");
+    }
+
+    auto conf = flatbuffers::Config::GetGlobal(content.data());
+
+    property_connection_udp() = conf->connection_udp();
+    property_connection_tcp() = conf->connection_tcp();
+
+    property_proxy_type() = conf->proxy_type();
+    property_proxy_host() = conf->proxy_host()->str();
+    property_proxy_port() = conf->proxy_port();
+
+    property_theme_color() = conf->theme_color();
+
+    property_video_default_device() = conf->av_video_default()->str();
+}
+
+void config_global::save_flatbuffer() {
+    flatbuffers::FlatBufferBuilder fbb;
+
+    auto proxy_host = fbb.CreateString(property_proxy_host().get_value());
+    auto video_default = fbb.CreateString(property_video_default_device().get_value());
+
+    auto builder = flatbuffers::Config::GlobalBuilder(fbb);
+
+    builder.add_connection_udp(property_connection_udp());
+    builder.add_connection_tcp(property_connection_tcp());
+
+    builder.add_proxy_type(property_proxy_type());
+    builder.add_proxy_host(proxy_host);
+    builder.add_proxy_port(property_proxy_port());
+
+    builder.add_theme_color(property_theme_color());
+
+    builder.add_av_video_default(video_default);
+
+    flatbuffers::Config::FinishGlobalBuffer(fbb, builder.Finish());
+
+    //write to file
+    auto file = Gio::File::create_for_path(m_config_file);
+    auto parent = file->get_parent();
+    if (parent) {
+        if (!Glib::file_test(parent->get_path(), Glib::FILE_TEST_IS_DIR)) {
+            parent->make_directory_with_parents();
+        }
+    }
+    auto stream = file->replace();
+    stream->truncate(0);
+    stream->write_bytes(Glib::Bytes::create(fbb.GetBufferPointer(), fbb.GetSize()));
+    stream->close();
 }
