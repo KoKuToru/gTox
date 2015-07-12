@@ -278,6 +278,11 @@ main::main(BaseObjectType* cobject,
     });
 
     insert_action_group("status", m_action);
+
+    m_binding_contact_active = Glib::Binding::bind_property(
+                                   config().property_contacts_display_active(),
+                                   m_list_contact_active->property_visible(),
+                                   Glib::BINDING_DEFAULT | Glib::BINDING_SYNC_CREATE);
 }
 
 utils::builder::ref<main> main::create(const Glib::ustring& file) {
