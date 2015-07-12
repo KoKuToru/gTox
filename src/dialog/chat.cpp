@@ -45,6 +45,8 @@ chat::chat(Glib::RefPtr<dialog::main> main, std::shared_ptr<toxmm2::contact> con
     m_builder.get_widget("btn_next", m_btn_next);
     m_builder.get_widget("chat_attach", m_btn_attach);
     m_builder.get_widget("chat_detach", m_btn_detach);
+    m_builder.get_widget("close_btn_attached", m_btn_close_attached);
+    m_builder.get_widget("close_btn_detached", m_btn_close_detached);
     m_builder.get_widget("chat_box", m_chat_box);
     m_builder.get_widget("eventbox", m_eventbox);
 
@@ -87,6 +89,13 @@ chat::chat(Glib::RefPtr<dialog::main> main, std::shared_ptr<toxmm2::contact> con
         remove();
         hide();
         m_main->chat_add(*m_headerbar_attached, *m_body, *m_btn_prev, *m_btn_next);
+    }, *this));
+    m_btn_close_attached->signal_clicked().connect(sigc::track_obj([this]() {
+        m_main->chat_remove(*m_headerbar_attached, *m_body);
+    }, *this));
+    m_btn_close_detached->signal_clicked().connect(sigc::track_obj([this]() {
+        remove();
+        hide();
     }, *this));
 
     m_input->signal_key_press_event().connect(sigc::track_obj([this](GdkEventKey* event) {
@@ -239,7 +248,7 @@ void chat::activated() {
     if (is_visible()) {
         present();
     } else {
-        m_main->chat_show(*m_headerbar_attached, *m_body);
+        m_main->chat_show(*m_headerbar_attached, *m_body, *m_btn_prev, *m_btn_next);
     }
 }
 

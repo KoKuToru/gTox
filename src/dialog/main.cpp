@@ -551,7 +551,7 @@ void main::chat_remove(Gtk::Widget& headerbar, Gtk::Widget& body) {
     }
 }
 
-void main::chat_show(Gtk::Widget& headerbar, Gtk::Widget& body) {
+void main::chat_show(Gtk::Widget& headerbar, Gtk::Widget& body, Gtk::Button& prev, Gtk::Button& next) {
     for (size_t i = 0; i < m_stack_data.size(); ++i) {
         if (m_stack_data[i].first == &headerbar && m_stack_data[i].second == &body) {
             m_stack_header->set_visible_child(headerbar);
@@ -559,6 +559,7 @@ void main::chat_show(Gtk::Widget& headerbar, Gtk::Widget& body) {
             break;
         }
     }
+    chat_add(headerbar, body, prev, next);
 }
 
 std::shared_ptr<toxmm2::core> main::tox() {
