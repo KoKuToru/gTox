@@ -1,0 +1,20 @@
+namespace flatbuffers.Config;
+
+//never reorder these properties !
+
+table Global {
+	connection_udp: bool;
+	connection_tcp: bool;
+	
+	proxy_type: int;
+	proxy_host: string;
+	proxy_port: int;
+	
+	theme_color: int;
+	
+	profile_remember: bool;
+	
+	av_video_default: string;
+}
+
+root_type Global;

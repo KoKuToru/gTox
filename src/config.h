@@ -19,8 +19,6 @@
 #ifndef GTOX_CONFIG_H
 #define GTOX_CONFIG_H
 #include <glibmm.h>
-#define RAPIDJSON_HAS_STDSTRING 1
-#include "libs/rapidjson/document.h"
 
 class config_global: public Glib::Object {
         friend class config;
@@ -41,8 +39,10 @@ class config_global: public Glib::Object {
     private:
         config_global();
 
+        void load_flatbuffer();
+        void save_flatbuffer();
+
         std::string m_config_file;
-        rapidjson::Document m_config_json;
 
         Glib::Property<bool> m_property_connection_udp;
         Glib::Property<bool> m_property_connection_tcp;
@@ -82,8 +82,10 @@ class config: public Glib::Object {
         static config_global& global();
 
     private:
+        void load_flatbuffer();
+        void save_flatbuffer();
+
         std::string m_config_file;
-        rapidjson::Document m_config_json;
 
         Glib::Property<bool> m_property_systemtray_visible;
         Glib::Property<bool> m_property_systemtray_on_start;
