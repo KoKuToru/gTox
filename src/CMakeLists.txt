@@ -14,20 +14,20 @@ link_directories(
 include_directories(
     ${GTKMM_INCLUDE_DIRS} ${LIBNOTIFYMM_INCLUDE_DIRS} ${LIBCANBERRA_INCLUDE_DIRS} ${GSTREAMERMM_INCLUDE_DIRS})
 
-option(TOXCORE_BUNDLE "TOXCORE_BUNDLE" OFF)
-if(TOXCORE_BUNDLE)
+set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
 
-else()
-  set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
-  find_package(Tox)
-  include_directories(${TOX_INCLUDE_DIR})
-endif()
+find_package(Tox)
+include_directories(${TOX_INCLUDE_DIR})
+
+find_package(Flatbuffers)
+include_directories(${FLATBUFFERS_INCLUDE_DIR})
 
 add_subdirectory(tox)
 add_subdirectory(i18n)
 add_subdirectory(resources/ui)
 add_subdirectory(resources/style)
 add_subdirectory(resources/icon)
+add_subdirectory(resources/flatbuffers)
 
 set(SOURCES
     main.cpp
@@ -60,7 +60,12 @@ add_executable(${PROJECT_NAME}
 )
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(${PROJECT_NAME} ${GTKMM_LIBRARIES} ${LIBNOTIFYMM_LIBRARIES} ${LIBCANBERRA_LIBRARIES} ${GSTREAMERMM_LIBRARIES} ${TOX_LIBRARY} -lpthread -lsqlite3 Toxmm)
-add_dependencies(${PROJECT_NAME} gtox-style-resource gtox-icon-resource gtox-ui-resource)
+add_dependencies(${PROJECT_NAME}
+     gtox-style-resource
+     gtox-icon-resource
+     gtox-ui-resource
+     gtox-flatbuffers-resource
+)
 install(PROGRAMS "${PROJECT_BINARY_DIR}/${PROJECT_NAME}"
         DESTINATION bin
         PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ WORLD_EXECUTE WORLD_READ)
