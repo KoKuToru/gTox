@@ -128,14 +128,22 @@ contact::contact(BaseObjectType* cobject,
     m_contact->signal_recv_action().connect(sigc::hide(sigc::track_obj(display_spinner, *this)));
     m_contact->signal_recv_file().connect(sigc::track_obj(display_spinner, *this));
 
-    if (!for_active_chats) {
-        m_contact_list_grid_mini->hide();
-        m_contact_list_grid->show();
-        show();
-    } else {
-        m_contact_list_grid->hide();
-        m_contact_list_grid_mini->show();
-    }
+    auto update_visibility = [this]() {
+        if (!m_for_active_chats &&
+                !m_main->config().property_contacts_compact_list().get_value()) {
+            m_contact_list_grid_mini->hide();
+            m_contact_list_grid->show();
+        } else {
+            m_contact_list_grid->hide();
+            m_contact_list_grid_mini->show();
+        }
+        if (!m_for_active_chats) {
+            show();
+        }
+    };
+    update_visibility();
+    m_main->config().property_contacts_compact_list()
+            .signal_changed().connect(sigc::track_obj(update_visibility, *this));
 }
 
 /*
