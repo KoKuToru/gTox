@@ -43,7 +43,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkButton" id="close_btn">
+          <object class="GtkButton" id="close_btn_attached">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
@@ -166,7 +166,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkButton" id="close_btn_2">
+          <object class="GtkButton" id="close_btn_detached">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
