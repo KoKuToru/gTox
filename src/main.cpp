@@ -57,46 +57,54 @@ void print_copyright() {
         << std::endl;
 }
 
-static const char* TRANSLATION_CHECK = "TRANSLATION_CHECKER";
+bool translation_working() {
+    const char* TRANSLATION_CHECK = "TRANSLATION_CHECKER";
+    return !(_(TRANSLATION_CHECK) == TRANSLATION_CHECK);
+}
 
-bool try_setup_translation(const char* lng) {
+bool find_translation_domain() {
+    // Translation search locations in order of preference
+    std::vector<std::string> locations {"./i18n",
+        bindtextdomain("gTox", nullptr), // default location
+        "/usr/local/share/locale"};
+
+    for (auto l : locations) {
+        bindtextdomain("gTox", l.c_str());
+        if (translation_working())
+            return true;
+    }
+
+    return false;
+}
+
+bool change_language(const std::string& lang) {
     // https://www.gnu.org/software/gettext/manual/html_node/gettext-grok.html
 
-    if (lng != nullptr) {
-        /* Change language.  */
-        setenv("LANGUAGE", lng, 1);
+    /* Change language */
+    setenv("LANGUAGE", lang.c_str(), true);
 
-        /* Make change known.  */
-        {
-            extern int _nl_msg_cat_cntr;
-            ++_nl_msg_cat_cntr;
-        }
+    /* Make change known. */
+    {
+        extern int _nl_msg_cat_cntr;
+        ++_nl_msg_cat_cntr;
     }
 
+    // Find the prefered domain for this language
+    return find_translation_domain();
+}
+
+bool setup_translation() {
+
+    // Translations returns in UTF-8
     bind_textdomain_codeset("gTox", "UTF-8");
+
     textdomain("gTox");
 
-    static std::string original_locale = bindtextdomain("gTox", nullptr);
+    if (find_translation_domain())
+        return true;
 
-    // use ./Locale if possible
-    if (Glib::file_test("./Locale", Glib::FILE_TEST_IS_DIR)) {
-        bindtextdomain("gTox", "./Locale");
-    }
-    // try if default is loading
-    if (gettext(TRANSLATION_CHECK) == TRANSLATION_CHECK) {
-        // change to /usr/local/share/locale ..
-        bindtextdomain("gTox", "/usr/local/share/locale");
-        // try again
-        if (gettext(TRANSLATION_CHECK) == TRANSLATION_CHECK) {
-            // back to original
-            bindtextdomain("gTox", original_locale.c_str());
-            return false;
-        }
-    }
-
-    _("TRANSLATION_CHECKER");
-
-    return true;
+    // Fallback to English if preffered lang not available
+    return change_language("en");
 }
 
 void terminate_handler() {
@@ -112,7 +120,8 @@ void terminate_handler() {
     } catch (const std::string &ex) {
         dialog::error(true, "Fatal Unexpected String Exception", ex).run();
     } catch (...) {
-        dialog::error(true, "Fatal Unexpected Exception", "unknow exception !").run();
+        dialog::error(true, "Fatal Unexpected Exception", "unknow exception !")
+            .run();
     }
     abort();
 }
@@ -125,8 +134,9 @@ int main(int argc, char* argv[]) {
     Gst::init(argc, argv);
     Notify::init("gTox");
 
-    if (!try_setup_translation(nullptr) && !try_setup_translation("en")) {
-        dialog::error(false, "Fatal Error", "Couldn't find translation files").run();
+    if (!setup_translation()) {
+        dialog::error(false, "Fatal Error", "Couldn't find translation files")
+            .run();
         return -1;
     }
 
