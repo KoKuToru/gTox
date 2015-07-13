@@ -105,29 +105,29 @@ settings::settings(Glib::RefPtr<main> main)
 
     //SYSTEMTRAY SETTINGS
     m_bindings.push_back(Glib::Binding::bind_property(
-                             m_main->config().property_systemtray_visible(),
+                             m_main->config()->property_systemtray_visible(),
                              m_tray_visible->property_active(),
                              binding_flag));
     m_bindings.push_back(Glib::Binding::bind_property(
-                             m_main->config().property_systemtray_on_start(),
+                             m_main->config()->property_systemtray_on_start(),
                              m_tray_on_start->property_active(),
                              binding_flag));
     m_bindings.push_back(Glib::Binding::bind_property(
-                             m_main->config().property_systemtray_on_close(),
+                             m_main->config()->property_systemtray_on_close(),
                              m_tray_on_close->property_active(),
                              binding_flag));
 
     //CHAT-SETTINGS
     m_bindings.push_back(Glib::Binding::bind_property(
-                             m_main->config().property_chat_notification_on_message(),
+                             m_main->config()->property_chat_notification_on_message(),
                              m_c_n_on_message->property_active(),
                              binding_flag));
     m_bindings.push_back(Glib::Binding::bind_property(
-                             m_main->config().property_chat_notification_with_audio(),
+                             m_main->config()->property_chat_notification_with_audio(),
                              m_c_n_with_audio->property_active(),
                              binding_flag));
     m_bindings.push_back(Glib::Binding::bind_property(
-                             m_main->config().property_chat_auto_away(),
+                             m_main->config()->property_chat_auto_away(),
                              m_c_auto_away->property_active_id(),
                              binding_flag,
                              [](const int& value_in, Glib::ustring& value_out) {
@@ -139,38 +139,38 @@ settings::settings(Glib::RefPtr<main> main)
                                  return true;
                              }));
     m_bindings.push_back(Glib::Binding::bind_property(
-                             m_main->config().property_chat_send_typing(),
+                             m_main->config()->property_chat_send_typing(),
                              m_c_send_typing->property_active(),
                              binding_flag));
     m_bindings.push_back(Glib::Binding::bind_property(
-                             m_main->config().property_chat_logging(),
+                             m_main->config()->property_chat_logging(),
                              m_c_logging->property_active(),
                              binding_flag));
 
     //FILETRANSFER-SETTINGS
-    m_main->config().property_file_save_path().signal_changed().connect(sigc::track_obj([this]() {
-        m_ft_save_to->set_file(Gio::File::create_for_path(m_main->config().property_file_save_path().get_value()));
+    m_main->config()->property_file_save_path().signal_changed().connect(sigc::track_obj([this]() {
+        m_ft_save_to->set_file(Gio::File::create_for_path(m_main->config()->property_file_save_path().get_value()));
     }, *this));
-    m_ft_save_to->set_file(Gio::File::create_for_path(m_main->config().property_file_save_path().get_value()));
+    m_ft_save_to->set_file(Gio::File::create_for_path(m_main->config()->property_file_save_path().get_value()));
     m_ft_save_to->signal_file_set().connect(sigc::track_obj([this]() {
-        m_main->config().property_file_save_path() = m_ft_save_to->get_file()->get_path();
+        m_main->config()->property_file_save_path() = m_ft_save_to->get_file()->get_path();
     }, *this));
     m_bindings.push_back(Glib::Binding::bind_property(
-                             m_main->config().property_file_auto_accept(),
+                             m_main->config()->property_file_auto_accept(),
                              m_ft_auto_accept->property_active(),
                              binding_flag));
     m_bindings.push_back(Glib::Binding::bind_property(
-                             m_main->config().property_file_display_inline(),
+                             m_main->config()->property_file_display_inline(),
                              m_ft_display_inline->property_active(),
                              binding_flag));
 
     //CONTACTLIST-SETTINGS
     m_bindings.push_back(Glib::Binding::bind_property(
-                             m_main->config().property_contacts_compact_list(),
+                             m_main->config()->property_contacts_compact_list(),
                              m_cl_use_compact->property_active(),
                              binding_flag));
     m_bindings.push_back(Glib::Binding::bind_property(
-                             m_main->config().property_contacts_display_active(),
+                             m_main->config()->property_contacts_display_active(),
                              m_cl_display_active->property_active(),
                              binding_flag));
 
