@@ -50,9 +50,9 @@ Glib::PropertyProxy<TOX_USER_STATUS>   core::property_status()
 Glib::PropertyProxy_ReadOnly<TOX_CONNECTION>    core::property_connection()
 { return {this, "self-connection"}; }
 
-core::core(std::string path):
+core::core(std::shared_ptr<toxmm2::storage> storage):
     Glib::ObjectBase(typeid(core)),
-    m_path(path),
+    m_storage(storage),
     m_property_addr(*this, "self-addr"),
     m_property_addr_public(*this, "self-addr-public"),
     m_property_name(*this, "self-name"),
@@ -76,8 +76,8 @@ core::~core() {
     tox_kill(m_toxcore);
 }
 
-std::shared_ptr<core> core::create(std::string path) {
-    auto tmp = std::shared_ptr<core>(new core(path));
+std::shared_ptr<core> core::create(std::shared_ptr<toxmm2::storage> storage) {
+    auto tmp = std::shared_ptr<core>(new core(storage));
     tmp->init();
     return tmp;
 }
@@ -159,11 +159,6 @@ void core::try_load(std::string path, Glib::ustring& out_name, Glib::ustring& ou
 }
 
 void core::init() {
-    m_profile.open(m_path);
-    if (!m_profile.can_read()) {
-        throw std::runtime_error("Couldn't read toxcore profile");
-    }
-
     TOX_ERR_OPTIONS_NEW nerror;
     auto options = std::shared_ptr<Tox_Options>(tox_options_new(&nerror),
                                                 [](Tox_Options* p) {
@@ -176,7 +171,8 @@ void core::init() {
     options->ipv6_enabled = true;
     options->udp_enabled  = true;
 
-    auto state = m_profile.read();
+    std::vector<uint8_t> state;
+    m_storage->load({"core"}, state);
     if (state.empty()) {
         options->savedata_type   = TOX_SAVEDATA_TYPE_NONE;
     } else {

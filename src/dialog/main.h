@@ -25,6 +25,7 @@
 #include "tox/types.h"
 #include "widget/main_menu.h"
 #include "config.h"
+#include "storage.h"
 
 namespace dialog {
     // contact list with pinned chat
@@ -56,13 +57,13 @@ namespace dialog {
 
             Gtk::Menu m_popup_menu;
 
-            widget::main_menu m_menu;
+            Glib::RefPtr<widget::main_menu> m_menu;
 
             Glib::RefPtr<Gio::SimpleActionGroup> m_action;
 
             std::vector<std::pair<Gtk::Widget*, Gtk::Widget*>> m_stack_data;
 
-            class config m_config;
+            std::shared_ptr<class config> m_config;
 
         public:
             main(BaseObjectType* cobject,
@@ -70,7 +71,7 @@ namespace dialog {
                  const Glib::ustring& file);
             ~main();
 
-            std::shared_ptr<toxmm2::core> tox();
+            std::shared_ptr<toxmm2::core>& tox();
 
             static utils::builder::ref<main> create(const Glib::ustring& file);
 
@@ -80,10 +81,27 @@ namespace dialog {
 
             void exit();
 
-            class config& config();
+            std::shared_ptr<class config>& config();
 
         protected:
             void load_contacts();
+
+            class storage : public toxmm2::storage {
+                    friend class main;
+                private:
+                    std::string m_profile_path;
+
+                public:
+                    storage(const std::string& profile_path);
+
+                protected:
+                    void load(const std::initializer_list<std::string>& key, std::vector<uint8_t>& data);
+                    void save(const std::initializer_list<std::string>& key, const std::vector<uint8_t>& data);
+
+                    std::string get_path_for_key(const std::initializer_list<std::string>& key);
+            };
+
+            std::shared_ptr<storage> m_storage;
     };
 }
 #endif

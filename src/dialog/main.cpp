@@ -38,11 +38,15 @@ using namespace dialog;
 main::main(BaseObjectType* cobject,
            utils::builder builder,
            const Glib::ustring& file)
-    : Gtk::Window(cobject),
-      m_toxcore(toxmm2::core::create(file)),
-      m_menu(Glib::RefPtr<main>(this)),
-      m_config(Glib::build_filename(Glib::get_user_config_dir(), "gotx", m_toxcore->property_addr_public().get_value(), "config.bin"))
+    : Gtk::Window(cobject)
 {
+    m_storage = std::make_shared<storage>(file);
+    m_toxcore = toxmm2::core::create(m_storage);
+    m_menu = Glib::RefPtr<widget::main_menu>(new widget::main_menu(Glib::RefPtr<main>(this)));
+    m_config = std::make_shared<class config>(Glib::build_filename(Glib::get_user_config_dir(),
+                                                                   "gotx",
+                                                                   m_toxcore->property_addr_public().get_value(),
+                                                                   "config.bin"));
 
     builder.get_widget("headerbar", m_headerbar);
     builder.get_widget("status_btn", m_btn_status);
@@ -101,8 +105,8 @@ main::main(BaseObjectType* cobject,
 
     auto setting_btn = builder.get_widget<Gtk::Button>("setting_btn");
     setting_btn->signal_clicked().connect([this, setting_btn]() {
-        m_menu.set_relative_to(*setting_btn);
-        m_menu.set_visible();
+        m_menu->set_relative_to(*setting_btn);
+        m_menu->set_visible();
     });
 
     auto activated = [this](Gtk::ListBoxRow* row) {
@@ -280,7 +284,7 @@ main::main(BaseObjectType* cobject,
     insert_action_group("status", m_action);
 
     m_binding_contact_active = Glib::Binding::bind_property(
-                                   config().property_contacts_display_active(),
+                                   config()->property_contacts_display_active(),
                                    m_list_contact_active->property_visible(),
                                    Glib::BINDING_DEFAULT | Glib::BINDING_SYNC_CREATE);
 }
@@ -567,10 +571,65 @@ void main::chat_show(Gtk::Widget& headerbar, Gtk::Widget& body, Gtk::Button& pre
     chat_add(headerbar, body, prev, next);
 }
 
-std::shared_ptr<toxmm2::core> main::tox() {
+std::shared_ptr<toxmm2::core>& main::tox() {
     return m_toxcore;
 }
 
-class config& main::config() {
+std::shared_ptr<class config>& main::config() {
     return m_config;
+}
+
+main::storage::storage(const std::string& profile_path):
+    m_profile_path(profile_path) {
+}
+
+void main::storage::load(const std::initializer_list<std::string>& key, std::vector<uint8_t>& data) {
+   auto file_path = get_path_for_key(key);
+
+    //open file
+    auto file = Gio::File::create_for_path(file_path);
+    //read file
+    auto stream = file->read();
+    if (!stream) {
+        //file not found
+        data.clear();
+        return;
+    }
+    data.resize(stream->query_info()->get_size());
+    gsize size;
+    stream->read_all((void*)data.data(), data.size(), size);
+}
+
+void main::storage::save(const std::initializer_list<std::string>& key, const std::vector<uint8_t>& data) {
+    auto file_path = get_path_for_key(key);
+
+    //open file
+    auto file = Gio::File::create_for_path(file_path);
+    auto parent = file->get_parent();
+    //make sure folder exists
+    if (parent) {
+        if (!Glib::file_test(parent->get_path(), Glib::FILE_TEST_IS_DIR)) {
+            parent->make_directory_with_parents();
+        }
+    }
+    //replace file
+    auto stream = file->replace();
+    stream->truncate(0);
+    stream->write_bytes(Glib::Bytes::create((gconstpointer)data.data(), data.size()));
+    stream->close();
+}
+
+std::string main::storage::get_path_for_key(const std::initializer_list<std::string>& key) {
+    std::string file_path = Glib::build_filename(Glib::get_user_config_dir(),
+                                                 "gtox");
+    if (key.size() == 1 && *key.begin() == "core") {
+        //special handling for core file
+        file_path = m_profile_path;
+    } else {
+        for(auto item : key) {
+            file_path = Glib::build_filename(file_path, item);
+        }
+        file_path += ".bin";
+    }
+    return file_path;
 }
