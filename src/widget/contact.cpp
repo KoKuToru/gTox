@@ -130,7 +130,7 @@ contact::contact(BaseObjectType* cobject,
 
     auto update_visibility = [this]() {
         if (!m_for_active_chats &&
-                !m_main->config().property_contacts_compact_list().get_value()) {
+                !m_main->config()->property_contacts_compact_list().get_value()) {
             m_contact_list_grid_mini->hide();
             m_contact_list_grid->show();
         } else {
@@ -142,7 +142,7 @@ contact::contact(BaseObjectType* cobject,
         }
     };
     update_visibility();
-    m_main->config().property_contacts_compact_list()
+    m_main->config()->property_contacts_compact_list()
             .signal_changed().connect(sigc::track_obj(update_visibility, *this));
 }
 
