@@ -18,15 +18,10 @@ set(SOURCES
     core.cpp
     exception.cpp
     profile.cpp
+    storage.cpp
     contact/manager.cpp
     contact/contact.cpp
     contact/receipt.cpp
-
-    #Toxmm.cpp
-    #ToxDatabase.cpp
-    #ToxEvent.cpp
-    #ToxException.cpp
-    #ToxProfile.cpp
 )
 
 add_library(${PROJECT_NAME} STATIC
