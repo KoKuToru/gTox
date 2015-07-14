@@ -43,6 +43,10 @@ foreach(trans ${TRANSLATIONS})
     set(mo_files
         ${mo_files} ${CMAKE_CURRENT_BINARY_DIR}/${trans}/LC_MESSAGES/gTox.mo
     )
+
+    install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/${trans}"
+        DESTINATION share/locale
+        FILE_PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)
 endforeach()
 
 # Create a target that's accessible form parent directory
