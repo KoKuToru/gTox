@@ -66,6 +66,7 @@ add_dependencies(${PROJECT_NAME}
      gtox-ui-resource
      gtox-flatbuffers-resource
      gtox-locale
+     gtox-icon
 )
 install(PROGRAMS "${PROJECT_BINARY_DIR}/${PROJECT_NAME}"
         DESTINATION bin

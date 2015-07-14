@@ -45,11 +45,12 @@ set (GRESOURCE ${GRESOURCE} "${CMAKE_CURRENT_BINARY_DIR}/${NAME}.c" PARENT_SCOPE
 
 ADD_CUSTOM_TARGET(gtox-icon-resource ALL
     DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/${NAME}.c")
-    
+
 find_program(RSVG_CONVERT_EXECUTEABLE rsvg-convert)
 if(NOT RSVG_CONVERT_EXECUTEABLE)
     message(FATAL_ERROR "rsvg-convert not found")
 endif()
+
 #Application icon
 SET(SIZES
     14
@@ -67,30 +68,44 @@ SET(SIZES
     256
     512
 )
-foreach(_size ${SIZES})
+foreach(size ${SIZES})
+    set(icon_path
+        "${CMAKE_CURRENT_BINARY_DIR}/build/${size}x${size}/apps"
+    )
+
+    #convert svg to png with rsvg
     add_custom_command(
-        COMMENT "Generate Icon '${_size}x${_size}'"
-        OUTPUT "${PROJECT_BINARY_DIR}/share/icons/hicolor/${_size}x${_size}/apps/gTox.png"
-        COMMAND mkdir -p "${PROJECT_BINARY_DIR}/share/icons/hicolor/${_size}x${_size}/apps"
-        #COMMAND convert -density 1024 Icons/icon.svg -resize "${_size}^" "${PROJECT_BINARY_DIR}/share/icons/hicolor/${_size}x${_size}/apps/gTox.png"
-        COMMAND ${RSVG_CONVERT_EXECUTEABLE} Icons/icon.svg -w ${_size} -h ${_size} -f png -o "${PROJECT_BINARY_DIR}/share/icons/hicolor/${_size}x${_size}/apps/gTox.png"
-        POST_BUILD
+        COMMENT "Generate Icon '${size}x${size}'"
+        OUTPUT "${icon_path}/gTox.png"
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-        DEPENDS Icons/icon.svg)
-    install(DIRECTORY "${PROJECT_BINARY_DIR}/share/icons/hicolor/${_size}x${_size}"
-           DESTINATION share/icons/hicolor
-           FILE_PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)
+        POST_BUILD
+
+        #make sure folder exists
+        COMMAND mkdir -p "${icon_path}"
+
+        # convert
+        COMMAND ${RSVG_CONVERT_EXECUTEABLE} "icon.svg" -w ${size} -h ${size} -f png -o "${icon_path}/gTox.png"
+
+        DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/icon.svg"
+    )
+
+    set(icons
+        ${icons} "${icon_path}/gTox.png"
+    )
 endforeach()
 
 add_custom_command(
     COMMENT "Generate Icon 'scalable'"
-    OUTPUT "${PROJECT_BINARY_DIR}/share/icons/hicolor/scalable/apps/gTox.svg"
-    COMMAND mkdir -p "${PROJECT_BINARY_DIR}/share/icons/hicolor/scalable/apps"
-    COMMAND cp Icons/icon.svg "${PROJECT_BINARY_DIR}/share/icons/hicolor/scalable/apps/gTox.svg"
+    OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/scalable/apps/gTox.svg"
+    COMMAND mkdir -p "${CMAKE_CURRENT_BINARY_DIR}/scalable/apps"
+    COMMAND cp "${CMAKE_CURRENT_SOURCE_DIR}/icon.svg" "${CMAKE_CURRENT_BINARY_DIR}/scalable/apps/gTox.svg"
     POST_BUILD
     WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-    DEPENDS Icons/icon.svg)
-install(DIRECTORY "${PROJECT_BINARY_DIR}/share/icons/hicolor/scalable"
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/icon.svg)
+
+add_custom_target(gtox-icon DEPENDS ${icons} ${CMAKE_CURRENT_BINARY_DIR}/scalable/apps/gTox.svg)
+
+install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/build"
     DESTINATION share/icons/hicolor
     FILE_PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)
 
