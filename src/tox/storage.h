@@ -30,12 +30,20 @@ namespace toxmm2 {
     class storage {
         public:
             /**
+             * @brief set_prefix_key, main unique-key value
+             *
+             * @param prefix
+             */
+            virtual void set_prefix_key(const std::string& prefix) = 0;
+
+            /**
              * @brief saves the data somehow
              *
              * @param unique key for the data
              * @param data
              */
             virtual void save(const std::initializer_list<std::string>& key, const std::vector<uint8_t>& data) = 0;
+
             /**
              * @brief loads the data somehow
              *
@@ -46,6 +54,8 @@ namespace toxmm2 {
              * @param data
              */
             virtual void load(const std::initializer_list<std::string>& key, std::vector<uint8_t>& data) = 0;
+
+            virtual ~storage() {}
     };
 }
 

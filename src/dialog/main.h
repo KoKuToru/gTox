@@ -89,14 +89,15 @@ namespace dialog {
             class storage : public toxmm2::storage {
                     friend class main;
                 private:
-                    std::string m_profile_path;
+                    std::string m_prefix;
 
                 public:
-                    storage(const std::string& profile_path);
+                    storage();
 
                 protected:
-                    void load(const std::initializer_list<std::string>& key, std::vector<uint8_t>& data);
-                    void save(const std::initializer_list<std::string>& key, const std::vector<uint8_t>& data);
+                    void set_prefix_key(const std::string& prefix) override;
+                    void load(const std::initializer_list<std::string>& key, std::vector<uint8_t>& data) override;
+                    void save(const std::initializer_list<std::string>& key, const std::vector<uint8_t>& data) override;
 
                     std::string get_path_for_key(const std::initializer_list<std::string>& key);
             };

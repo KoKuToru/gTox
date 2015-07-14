@@ -40,8 +40,8 @@ main::main(BaseObjectType* cobject,
            const Glib::ustring& file)
     : Gtk::Window(cobject)
 {
-    m_storage = std::make_shared<storage>(file);
-    m_toxcore = toxmm2::core::create(m_storage);
+    m_storage = std::make_shared<storage>();
+    m_toxcore = toxmm2::core::create(file, m_storage);
     m_menu = Glib::RefPtr<widget::main_menu>(new widget::main_menu(Glib::RefPtr<main>(this)));
     m_config = std::make_shared<class config>(Glib::build_filename(Glib::get_user_config_dir(),
                                                                    "gotx",
@@ -579,8 +579,11 @@ std::shared_ptr<class config>& main::config() {
     return m_config;
 }
 
-main::storage::storage(const std::string& profile_path):
-    m_profile_path(profile_path) {
+main::storage::storage() {
+}
+
+void main::storage::set_prefix_key(const std::string& prefix) {
+    m_prefix = prefix;
 }
 
 void main::storage::load(const std::initializer_list<std::string>& key, std::vector<uint8_t>& data) {
@@ -622,14 +625,12 @@ void main::storage::save(const std::initializer_list<std::string>& key, const st
 std::string main::storage::get_path_for_key(const std::initializer_list<std::string>& key) {
     std::string file_path = Glib::build_filename(Glib::get_user_config_dir(),
                                                  "gtox");
-    if (key.size() == 1 && *key.begin() == "core") {
-        //special handling for core file
-        file_path = m_profile_path;
-    } else {
-        for(auto item : key) {
-            file_path = Glib::build_filename(file_path, item);
-        }
-        file_path += ".bin";
+    for(auto item : key) {
+        file_path = Glib::build_filename(file_path, item);
+    }
+    file_path += ".bin";
+    if (!m_prefix.empty()) {
+        file_path = Glib::build_filename(m_prefix, file_path);
     }
     return file_path;
 }

@@ -28,7 +28,8 @@
 namespace toxmm2 {
     class core : public Glib::Object, public std::enable_shared_from_this<core> {
         public:
-            static std::shared_ptr<core> create(std::shared_ptr<storage> storage);
+            static std::shared_ptr<core> create(const std::string& profile_path,
+                                                const std::shared_ptr<storage>& storage);
             void save();
 
             void update();
@@ -81,10 +82,12 @@ namespace toxmm2 {
 
         private:
             Tox* m_toxcore;
+            std::string m_profile_path;
             std::shared_ptr<toxmm2::storage> m_storage;
             std::shared_ptr<toxmm2::contact_manager> m_contact_manager;
+            profile m_profile;
 
-            core(std::shared_ptr<toxmm2::storage> storage);
+            core(const std::string& profile_path, const std::shared_ptr<toxmm2::storage>& storage);
             core(const core&) = delete;
             void operator=(const core&) = delete;
 

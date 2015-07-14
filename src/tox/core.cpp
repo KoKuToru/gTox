@@ -50,8 +50,9 @@ Glib::PropertyProxy<TOX_USER_STATUS>   core::property_status()
 Glib::PropertyProxy_ReadOnly<TOX_CONNECTION>    core::property_connection()
 { return {this, "self-connection"}; }
 
-core::core(std::shared_ptr<toxmm2::storage> storage):
+core::core(const std::string& profile_path, const std::shared_ptr<storage>& storage):
     Glib::ObjectBase(typeid(core)),
+    m_profile_path(profile_path),
     m_storage(storage),
     m_property_addr(*this, "self-addr"),
     m_property_addr_public(*this, "self-addr-public"),
@@ -76,8 +77,9 @@ core::~core() {
     tox_kill(m_toxcore);
 }
 
-std::shared_ptr<core> core::create(std::shared_ptr<toxmm2::storage> storage) {
-    auto tmp = std::shared_ptr<core>(new core(storage));
+std::shared_ptr<core> core::create(const std::string& profile_path,
+                                   const std::shared_ptr<toxmm2::storage>& storage) {
+    auto tmp = std::shared_ptr<core>(new core(profile_path, storage));
     tmp->init();
     return tmp;
 }
@@ -159,6 +161,11 @@ void core::try_load(std::string path, Glib::ustring& out_name, Glib::ustring& ou
 }
 
 void core::init() {
+    m_profile.open(m_profile_path);
+    if (!m_profile.can_read()) {
+        throw std::runtime_error("Couldn't read toxcore profile");
+    }
+
     TOX_ERR_OPTIONS_NEW nerror;
     auto options = std::shared_ptr<Tox_Options>(tox_options_new(&nerror),
                                                 [](Tox_Options* p) {
@@ -171,8 +178,7 @@ void core::init() {
     options->ipv6_enabled = true;
     options->udp_enabled  = true;
 
-    std::vector<uint8_t> state;
-    m_storage->load({"core"}, state);
+    std::vector<uint8_t> state = m_profile.read();
     if (state.empty()) {
         options->savedata_type   = TOX_SAVEDATA_TYPE_NONE;
     } else {
@@ -282,6 +288,9 @@ void core::init() {
     property_status().signal_changed().connect(sigc::track_obj([this]() {
         tox_self_set_status(m_toxcore, property_status());
     }, *this));
+
+    //set prefix for storage
+    m_storage->set_prefix_key(property_addr_public().get_value());
 
     //start sub systems:
     m_contact_manager = std::shared_ptr<toxmm2::contact_manager>(new toxmm2::contact_manager(shared_from_this()));
