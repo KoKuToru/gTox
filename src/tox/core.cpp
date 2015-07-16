@@ -33,6 +33,9 @@ core::type_signal_contact_status            core::signal_contact_status()  { ret
 core::type_signal_contact_typing            core::signal_contact_typing()  { return m_signal_contact_typing; }
 core::type_signal_contact_read_receipt      core::signal_contact_read_receipt()  { return m_signal_contact_read_receipt; }
 core::type_signal_contact_connection_status core::signal_contact_connection_status()  { return m_signal_contact_connection_status; }
+core::type_signal_file_chunk_request        core::signal_file_chunk_request()  { return m_signal_file_chunk_request; }
+core::type_signal_file_recv                 core::signal_file_recv()  { return m_signal_file_recv; }
+core::type_signal_file_recv_chunk           core::signal_file_recv_chunk()  { return m_signal_file_recv_chunk; }
 
 
 Glib::PropertyProxy_ReadOnly<contactAddr> core::property_addr()
@@ -235,6 +238,15 @@ void core::init() {
     }, this);
     tox_callback_self_connection_status(toxcore(), [](Tox *, TOX_CONNECTION connection_status, void* _this) {
         ((core*)_this)->m_property_connection = connection_status;
+    }, this);
+    tox_callback_file_chunk_request(toxcore(), [](Tox*, uint32_t nr, uint32_t file_number, uint64_t position, size_t length, void *_this) {
+        ((core*)_this)->signal_file_chunk_request().emit(contactNr(nr), fileNr(file_number), position, length);
+    }, this);
+    tox_callback_file_recv(toxcore(), [](Tox*, uint32_t nr, uint32_t file_number, uint32_t kind, uint64_t file_size, const uint8_t *filename, size_t filename_length, void *_this) {
+        ((core*)_this)->signal_file_recv().emit(contactNr(nr), fileNr(file_number), TOX_FILE_KIND(kind), file_size, core::fix_utf8(filename, filename_length));
+    }, this);
+    tox_callback_file_recv_chunk(toxcore(), [](Tox*, uint32_t nr, uint32_t file_number, uint64_t position, const uint8_t *data, size_t length, void *_this) {
+        ((core*)_this)->signal_file_recv_chunk().emit(contactNr(nr), fileNr(file_number), position, std::vector<uint8_t>(data, data+length));
     }, this);
 
     //install logic for name_or_addr

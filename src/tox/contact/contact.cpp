@@ -21,15 +21,18 @@
 #include "core.h"
 #include "exception.h"
 #include "receipt.h"
+#include "file/manager.h"
 
 using namespace toxmm2;
 
-contact::type_signal_receipt      contact::signal_receipt()      { return m_signal_receipt; }
-contact::type_signal_recv_message contact::signal_recv_message() { return m_signal_recv_message; }
-contact::type_signal_recv_action  contact::signal_recv_action()  { return m_signal_recv_action; }
-contact::type_signal_recv_file    contact::signal_recv_file()    { return m_signal_recv_file; }
-contact::type_signal_send_message contact::signal_send_message() { return m_signal_send_message; }
-contact::type_signal_send_action  contact::signal_send_action()  { return m_signal_send_action; }
+contact::type_signal_receipt            contact::signal_receipt() { return m_signal_receipt; }
+contact::type_signal_recv_message       contact::signal_recv_message() { return m_signal_recv_message; }
+contact::type_signal_recv_action        contact::signal_recv_action() { return m_signal_recv_action; }
+contact::type_signal_send_message       contact::signal_send_message() { return m_signal_send_message; }
+contact::type_signal_send_action        contact::signal_send_action() { return m_signal_send_action; }
+contact::type_signal_send_file_chunk_rq contact::signal_send_file_chunk_request() { return m_signal_send_file_chunk_rq; }
+contact::type_signal_recv_file          contact::signal_recv_file() { return m_signal_recv_file; }
+contact::type_signal_recv_file_chunk    contact::signal_recv_file_chunk() { return m_signal_recv_file_chunk; }
 
 Glib::PropertyProxy_ReadOnly<contactNr>         contact::property_nr()
 { return Glib::PropertyProxy_ReadOnly<contactNr>(this, "contact-nr"); }
@@ -48,9 +51,9 @@ Glib::PropertyProxy_ReadOnly<TOX_CONNECTION>    contact::property_connection()
 Glib::PropertyProxy_ReadOnly<bool>              contact::property_typing()
 { return Glib::PropertyProxy_ReadOnly<bool>(this, "contact-typing"); }
 
-contact::contact(std::shared_ptr<core> core, contactNr nr):
+contact::contact(std::shared_ptr<toxmm2::contact_manager> manager, contactNr nr):
     Glib::ObjectBase(typeid(contact)),
-    m_core(core),
+    m_contact_manager(manager),
     m_property_nr  (*this, "contact-nr"),
     m_property_addr(*this, "contact-addr"),
     m_property_name(*this, "contact-name"),
@@ -58,8 +61,8 @@ contact::contact(std::shared_ptr<core> core, contactNr nr):
     m_property_status_message(*this, "contact-status-message"),
     m_property_status(*this, "contact-status"),
     m_property_connection(*this, "contact-connection"),
-    m_property_typing(*this, "contact-typing")
-{
+    m_property_typing(*this, "contact-typing") {
+
     auto update_name_or_addr = [this]() {
         if (property_name().get_value().empty()) {
             m_property_name_or_addr = Glib::ustring(m_property_addr.get_value());
@@ -78,10 +81,15 @@ contact::contact(std::shared_ptr<core> core, contactNr nr):
     m_property_connection = toxcore_get_connection();
 }
 
+void contact::init() {
+    //start sub systems:
+    m_file_manager = std::shared_ptr<toxmm2::file_manager>(new toxmm2::file_manager(shared_from_this()));
+}
+
 contactAddrPublic contact::toxcore_get_addr() {
     contactAddrPublic addr;
     TOX_ERR_FRIEND_GET_PUBLIC_KEY error;
-    auto res = tox_friend_get_public_key(m_core->toxcore(), m_property_nr.get_value(), addr, &error);
+    auto res = tox_friend_get_public_key(core()->toxcore(), m_property_nr.get_value(), addr, &error);
     if (error != TOX_ERR_FRIEND_GET_PUBLIC_KEY_OK) {
         throw exception(error);
     }
@@ -93,7 +101,7 @@ contactAddrPublic contact::toxcore_get_addr() {
 
 Glib::ustring contact::toxcore_get_name() {
     TOX_ERR_FRIEND_QUERY error;
-    auto size = tox_friend_get_name_size(m_core->toxcore(), m_property_nr.get_value(), &error);
+    auto size = tox_friend_get_name_size(core()->toxcore(), m_property_nr.get_value(), &error);
     if (error != TOX_ERR_FRIEND_QUERY_OK) {
         throw exception(error);
     }
@@ -101,7 +109,7 @@ Glib::ustring contact::toxcore_get_name() {
         throw exception(TOX_ERR_FRIEND_QUERY(~0));
     }
     std::string name(size, 0);
-    auto res = tox_friend_get_name(m_core->toxcore(), m_property_nr.get_value(), (uint8_t*)name.data(), &error);
+    auto res = tox_friend_get_name(core()->toxcore(), m_property_nr.get_value(), (uint8_t*)name.data(), &error);
     if (error != TOX_ERR_FRIEND_QUERY_OK) {
         throw exception(error);
     }
@@ -112,15 +120,15 @@ Glib::ustring contact::toxcore_get_name() {
 }
 
 Glib::ustring contact::toxcore_get_status_message() {
-    auto size = tox_self_get_status_message_size(m_core->toxcore());
+    auto size = tox_self_get_status_message_size(core()->toxcore());
     std::string name(size, 0);
-    tox_self_get_status_message(m_core->toxcore(), (unsigned char*)name.data());
+    tox_self_get_status_message(core()->toxcore(), (unsigned char*)name.data());
     return core::fix_utf8((uint8_t*)name.data(), name.size());
 }
 
 TOX_USER_STATUS contact::toxcore_get_status() {
     TOX_ERR_FRIEND_QUERY error;
-    auto status = tox_friend_get_status(m_core->toxcore(), m_property_nr.get_value(), &error);
+    auto status = tox_friend_get_status(core()->toxcore(), m_property_nr.get_value(), &error);
     if (error != TOX_ERR_FRIEND_QUERY_OK) {
         throw exception(error);
     }
@@ -129,7 +137,7 @@ TOX_USER_STATUS contact::toxcore_get_status() {
 
 TOX_CONNECTION contact::toxcore_get_connection() {
     TOX_ERR_FRIEND_QUERY error;
-    auto con = tox_friend_get_connection_status(m_core->toxcore(), m_property_nr.get_value(), &error);
+    auto con = tox_friend_get_connection_status(core()->toxcore(), m_property_nr.get_value(), &error);
     if (error != TOX_ERR_FRIEND_QUERY_OK) {
         throw exception(error);
     }
@@ -138,7 +146,7 @@ TOX_CONNECTION contact::toxcore_get_connection() {
 
 std::shared_ptr<receipt> contact::send_message(const Glib::ustring& message) {
     TOX_ERR_FRIEND_SEND_MESSAGE error;
-    auto receipt = tox_friend_send_message(m_core->toxcore(), property_nr().get_value(), TOX_MESSAGE_TYPE_NORMAL, (const uint8_t*)message.data(), message.size(), &error);
+    auto receipt = tox_friend_send_message(core()->toxcore(), property_nr().get_value(), TOX_MESSAGE_TYPE_NORMAL, (const uint8_t*)message.data(), message.size(), &error);
     if (error != TOX_ERR_FRIEND_SEND_MESSAGE_OK) {
         throw exception(error);
     }
@@ -149,11 +157,23 @@ std::shared_ptr<receipt> contact::send_message(const Glib::ustring& message) {
 
 std::shared_ptr<receipt> contact::send_action (const Glib::ustring& action) {
     TOX_ERR_FRIEND_SEND_MESSAGE error;
-    auto receipt = tox_friend_send_message(m_core->toxcore(), property_nr().get_value(), TOX_MESSAGE_TYPE_ACTION, (const uint8_t*)action.data(), action.size(), &error);
+    auto receipt = tox_friend_send_message(core()->toxcore(), property_nr().get_value(), TOX_MESSAGE_TYPE_ACTION, (const uint8_t*)action.data(), action.size(), &error);
     if (error != TOX_ERR_FRIEND_SEND_MESSAGE_OK) {
         throw exception(error);
     }
     auto r = std::shared_ptr<toxmm2::receipt>(new toxmm2::receipt(shared_from_this(), receipt));
     m_signal_send_action.emit(action, r);
     return r;
+}
+
+std::shared_ptr<toxmm2::core> contact::core() {
+    return contact_manager()->core();
+}
+
+std::shared_ptr<toxmm2::contact_manager> contact::contact_manager() {
+    return m_contact_manager;
+}
+
+std::shared_ptr<toxmm2::file_manager> contact::file_manager() {
+    return m_file_manager;
 }

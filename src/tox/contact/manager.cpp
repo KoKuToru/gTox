@@ -27,7 +27,7 @@ contact_manager::type_signal_request contact_manager::signal_request() { return 
 contact_manager::type_signal_removed contact_manager::signal_removed() { return m_signal_removed; }
 contact_manager::type_signal_removed contact_manager::signal_added  () { return m_signal_added; }
 
-contact_manager::contact_manager(std::shared_ptr<core> core):
+contact_manager::contact_manager(std::shared_ptr<toxmm2::core> core):
     m_core(core) {
 }
 
@@ -37,67 +37,89 @@ void contact_manager::init() {
     }, *this));
 
     m_core->signal_contact_message().connect(sigc::track_obj([this](contactNr contact_nr, Glib::ustring message) {
-                                                 auto contact = find(contact_nr);
-                                                 if (contact) {
-                                                     contact->m_signal_recv_message.emit(message);
-                                                 }
-                                             }, *this));
+        auto contact = find(contact_nr);
+        if (contact) {
+            contact->m_signal_recv_message.emit(message);
+        }
+    }, *this));
 
     m_core->signal_contact_action().connect(sigc::track_obj([this](contactNr contact_nr, Glib::ustring action) {
-                                                auto contact = find(contact_nr);
-                                                if (contact) {
-                                                    contact->m_signal_recv_action.emit(action);
-                                                }
-                                            }, *this));
+        auto contact = find(contact_nr);
+        if (contact) {
+            contact->m_signal_recv_action.emit(action);
+        }
+    }, *this));
 
     m_core->signal_contact_name().connect(sigc::track_obj([this](contactNr contact_nr, Glib::ustring name) {
-                                              auto contact = find(contact_nr);
-                                              if (contact) {
-                                                  contact->m_property_name = name;
-                                              }
-                                          }, *this));
+        auto contact = find(contact_nr);
+        if (contact) {
+            contact->m_property_name = name;
+        }
+    }, *this));
 
     m_core->signal_contact_status_message().connect(sigc::track_obj([this](contactNr contact_nr, Glib::ustring message) {
-                                                        auto contact = find(contact_nr);
-                                                        if (contact) {
-                                                            contact->m_property_status_message = message;
-                                                        }
-                                                    }, *this));
+        auto contact = find(contact_nr);
+        if (contact) {
+            contact->m_property_status_message = message;
+        }
+    }, *this));
 
     m_core->signal_contact_status().connect(sigc::track_obj([this](contactNr contact_nr, TOX_USER_STATUS status) {
-                                                auto contact = find(contact_nr);
-                                                if (contact) {
-                                                    contact->m_property_status = status;
-                                                }
-                                            }, *this));
+        auto contact = find(contact_nr);
+        if (contact) {
+            contact->m_property_status = status;
+        }
+    }, *this));
 
     m_core->signal_contact_typing().connect(sigc::track_obj([this](contactNr contact_nr, bool is_typing) {
-                                                auto contact = find(contact_nr);
-                                                if (contact) {
-                                                    contact->m_property_typing = is_typing;
-                                                }
-                                            }, *this));
+        auto contact = find(contact_nr);
+        if (contact) {
+            contact->m_property_typing = is_typing;
+        }
+    }, *this));
 
     m_core->signal_contact_read_receipt().connect(sigc::track_obj([this](contactNr contact_nr, receiptNr receipt_nr) {
-                                                      auto contact = find(contact_nr);
-                                                      if (contact) {
-                                                          contact->m_signal_receipt.emit(receipt_nr);
-                                                      }
-                                                  }, *this));
+        auto contact = find(contact_nr);
+        if (contact) {
+            contact->m_signal_receipt.emit(receipt_nr);
+        }
+    }, *this));
 
     m_core->signal_contact_connection_status().connect(sigc::track_obj([this](contactNr contact_nr, TOX_CONNECTION connection) {
-                                                           auto contact = find(contact_nr);
-                                                           if (contact) {
-                                                               contact->m_property_connection = connection;
-                                                           }
-                                                       }, *this));
+        auto contact = find(contact_nr);
+        if (contact) {
+            contact->m_property_connection = connection;
+        }
+    }, *this));
+
+    m_core->signal_file_chunk_request().connect(sigc::track_obj([this](contactNr contact_nr, fileNr file_nr, uint64_t position, size_t length) {
+        auto contact = find(contact_nr);
+        if (contact) {
+            contact->m_signal_send_file_chunk_rq(file_nr, position, length);
+        }
+    }, *this));
+
+    m_core->signal_file_recv().connect(sigc::track_obj([this](contactNr contact_nr, fileNr file_nr, TOX_FILE_KIND file_kind, size_t file_size, Glib::ustring file_name) {
+        auto contact = find(contact_nr);
+        if (contact) {
+            contact->m_signal_recv_file(file_nr, file_kind, file_size, file_name);
+        }
+    }, *this));
+
+    m_core->signal_file_recv_chunk().connect(sigc::track_obj([this](contactNr contact_nr, fileNr file_nr, uint64_t position, const std::vector<uint8_t>& content) {
+        auto contact = find(contact_nr);
+        if (contact) {
+            contact->m_signal_recv_file_chunk(file_nr, position, content);
+        }
+    }, *this));
 
     //load contacts
     m_contact.resize(tox_self_get_friend_list_size(m_core->toxcore()));
     std::vector<uint32_t> tmp(m_contact.size());
     tox_self_get_friend_list(m_core->toxcore(), tmp.data());
     for (size_t i = 0; i < tmp.size(); ++i) {
-        m_contact[i] = std::shared_ptr<contact>(new contact(m_core, contactNr(tmp[i])));
+        m_contact[i] = std::shared_ptr<contact>(new contact(shared_from_this(), contactNr(tmp[i])));
+        m_contact[i]->init();
     }
 }
 
@@ -140,7 +162,7 @@ void contact_manager::add_contact(contactAddrPublic addr_public) {
     if (error != TOX_ERR_FRIEND_ADD_OK) {
         throw exception(error);
     }
-    auto contact = std::shared_ptr<toxmm2::contact>(new toxmm2::contact(m_core, contactNr(nr)));
+    auto contact = std::shared_ptr<toxmm2::contact>(new toxmm2::contact(shared_from_this(), contactNr(nr)));
     m_contact.push_back(contact);
     m_signal_added.emit(contact);
 }
@@ -151,7 +173,11 @@ void contact_manager::add_contact(contactAddr addr, const Glib::ustring& message
     if (error != TOX_ERR_FRIEND_ADD_OK) {
         throw exception(error);
     }
-    auto contact = std::shared_ptr<toxmm2::contact>(new toxmm2::contact(m_core, contactNr(nr)));
+    auto contact = std::shared_ptr<toxmm2::contact>(new toxmm2::contact(shared_from_this(), contactNr(nr)));
     m_contact.push_back(contact);
     m_signal_added.emit(contact);
+}
+
+std::shared_ptr<toxmm2::core> contact_manager::core() {
+    return m_core;
 }

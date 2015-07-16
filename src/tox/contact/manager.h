@@ -27,9 +27,9 @@ namespace toxmm2 {
     class contact_manager : public std::enable_shared_from_this<contact_manager> {
             friend class core;
         public:
-            typedef sigc::signal<void, contactAddr, Glib::ustring> type_signal_request;
-            typedef sigc::signal<void, std::shared_ptr<contact>>   type_signal_removed;
-            typedef sigc::signal<void, std::shared_ptr<contact>>   type_signal_added;
+            using type_signal_request = sigc::signal<void, contactAddr, Glib::ustring>;
+            using type_signal_removed = sigc::signal<void, std::shared_ptr<contact>>;
+            using type_signal_added   = sigc::signal<void, std::shared_ptr<contact>>;
 
             type_signal_request signal_request();
             type_signal_removed signal_removed();
@@ -46,20 +46,22 @@ namespace toxmm2 {
             void destroy();
             ~contact_manager();
 
+            std::shared_ptr<toxmm2::core> core();
+
         private:
-            std::shared_ptr<core> m_core;
+            std::shared_ptr<toxmm2::core> m_core;
 
             std::vector<std::shared_ptr<contact>> m_contact;
-
-            contact_manager(std::shared_ptr<core> core);
-            contact_manager(const contact_manager&) = delete;
-            void operator=(const contact_manager&) = delete;
-
-            void init();
 
             type_signal_request m_signal_request;
             type_signal_removed m_signal_removed;
             type_signal_added   m_signal_added;
+
+            contact_manager(std::shared_ptr<toxmm2::core> core);
+            contact_manager(const contact_manager&) = delete;
+            void operator=(const contact_manager&) = delete;
+
+            void init();
     };
 
 }

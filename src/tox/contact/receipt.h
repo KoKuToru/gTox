@@ -35,16 +35,16 @@ namespace toxmm2 {
             Glib::PropertyProxy_ReadOnly<receiptNr> property_nr();
 
         private:
-            receipt(std::shared_ptr<contact> contact, receiptNr nr);
-            receipt(const receipt&) = delete;
-            void operator=(const receipt&) = delete;
-
             Glib::Property<receiptNr> m_property_nr;
 
             type_signal_okay m_signal_okay;
             type_signal_lost m_signal_lost;
 
             sigc::connection m_connection;
+
+            receipt(std::shared_ptr<contact> contact, receiptNr nr);
+            receipt(const receipt&) = delete;
+            void operator=(const receipt&) = delete;
     };
 }
 

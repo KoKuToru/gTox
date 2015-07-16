@@ -28,24 +28,11 @@
 namespace toxmm2 {
     class core : public Glib::Object, public std::enable_shared_from_this<core> {
         public:
-            static std::shared_ptr<core> create(const std::string& profile_path,
-                                                const std::shared_ptr<storage>& storage);
-            void save();
-
-            void update();
-            uint32_t update_optimal_interval();
-
             static Glib::ustring fix_utf8(const std::string& input);
             static Glib::ustring fix_utf8(const uint8_t* input, int size);
             static Glib::ustring fix_utf8(const int8_t* input, int size);
             static Glib::ustring to_hex(const uint8_t* data, size_t len);
             static std::vector<uint8_t> from_hex(std::string data);
-
-            void destroy();
-            ~core();
-
-            Tox* toxcore();
-            std::shared_ptr<toxmm2::contact_manager> contact_manager();
 
             //props
             Glib::PropertyProxy_ReadOnly<contactAddr>       property_addr();
@@ -57,15 +44,18 @@ namespace toxmm2 {
             Glib::PropertyProxy_ReadOnly<TOX_CONNECTION>    property_connection();
 
             //Signals
-            typedef sigc::signal<void, contactAddr, Glib::ustring> type_signal_contact_request;
-            typedef sigc::signal<void, contactNr, Glib::ustring>   type_signal_contact_message;
-            typedef sigc::signal<void, contactNr, Glib::ustring>   type_signal_contact_action;
-            typedef sigc::signal<void, contactNr, Glib::ustring>   type_signal_contact_name;
-            typedef sigc::signal<void, contactNr, Glib::ustring>   type_signal_contact_status_message;
-            typedef sigc::signal<void, contactNr, TOX_USER_STATUS> type_signal_contact_status;
-            typedef sigc::signal<void, contactNr, bool>            type_signal_contact_typing;
-            typedef sigc::signal<void, contactNr, receiptNr>       type_signal_contact_read_receipt;
-            typedef sigc::signal<void, contactNr, TOX_CONNECTION>  type_signal_contact_connection_status;
+            using type_signal_contact_request           = sigc::signal<void, contactAddr, Glib::ustring>;
+            using type_signal_contact_message           = sigc::signal<void, contactNr, Glib::ustring>;
+            using type_signal_contact_action            = sigc::signal<void, contactNr, Glib::ustring>;
+            using type_signal_contact_name              = sigc::signal<void, contactNr, Glib::ustring>;
+            using type_signal_contact_status_message    = sigc::signal<void, contactNr, Glib::ustring>;
+            using type_signal_contact_status            = sigc::signal<void, contactNr, TOX_USER_STATUS>;
+            using type_signal_contact_typing            = sigc::signal<void, contactNr, bool>;
+            using type_signal_contact_read_receipt      = sigc::signal<void, contactNr, receiptNr>;
+            using type_signal_contact_connection_status = sigc::signal<void, contactNr, TOX_CONNECTION>;
+            using type_signal_file_chunk_request        = sigc::signal<void, contactNr, fileNr, uint64_t, size_t>;
+            using type_signal_file_recv                 = sigc::signal<void, contactNr, fileNr, TOX_FILE_KIND, size_t, Glib::ustring>;
+            using type_signal_file_recv_chunk           = sigc::signal<void, contactNr, fileNr, uint64_t, const std::vector<uint8_t>&>;
 
             type_signal_contact_request           signal_contact_request();
             type_signal_contact_message           signal_contact_message();
@@ -76,7 +66,19 @@ namespace toxmm2 {
             type_signal_contact_typing            signal_contact_typing();
             type_signal_contact_read_receipt      signal_contact_read_receipt();
             type_signal_contact_connection_status signal_contact_connection_status();
+            type_signal_file_chunk_request        signal_file_chunk_request();
+            type_signal_file_recv                 signal_file_recv();
+            type_signal_file_recv_chunk           signal_file_recv_chunk();
 
+            static std::shared_ptr<core> create(const std::string& profile_path,
+                                                const std::shared_ptr<storage>& storage);
+            void save();
+            void update();
+            uint32_t update_optimal_interval();
+            void destroy();
+            ~core();
+            Tox* toxcore();
+            std::shared_ptr<toxmm2::contact_manager> contact_manager();
             static void try_load(std::string path, Glib::ustring& out_name, Glib::ustring& out_status, contactAddrPublic& out_addr, bool& out_writeable);
             static std::vector<uint8_t> create_state(std::string name, std::string status, contactAddrPublic& out_addr);
 
@@ -86,12 +88,6 @@ namespace toxmm2 {
             std::shared_ptr<toxmm2::storage> m_storage;
             std::shared_ptr<toxmm2::contact_manager> m_contact_manager;
             profile m_profile;
-
-            core(const std::string& profile_path, const std::shared_ptr<toxmm2::storage>& storage);
-            core(const core&) = delete;
-            void operator=(const core&) = delete;
-
-            void init();
 
             Glib::Property<contactAddr>       m_property_addr;
             Glib::Property<contactAddrPublic> m_property_addr_public;
@@ -110,6 +106,15 @@ namespace toxmm2 {
             type_signal_contact_typing            m_signal_contact_typing;
             type_signal_contact_read_receipt      m_signal_contact_read_receipt;
             type_signal_contact_connection_status m_signal_contact_connection_status;
+            type_signal_file_chunk_request        m_signal_file_chunk_request;
+            type_signal_file_recv                 m_signal_file_recv;
+            type_signal_file_recv_chunk           m_signal_file_recv_chunk;
+
+            core(const std::string& profile_path, const std::shared_ptr<toxmm2::storage>& storage);
+            core(const core&) = delete;
+            void operator=(const core&) = delete;
+
+            void init();
     };
 
 }

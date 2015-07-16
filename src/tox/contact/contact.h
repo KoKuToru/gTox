@@ -24,24 +24,30 @@
 #include "types.h"
 
 namespace toxmm2 {
+    class file_manager;
     class receipt;
     class contact : public Glib::Object, public std::enable_shared_from_this<contact> {
             friend class contact_manager;
+            friend class file_manager;
         public:
             //signals
-            typedef sigc::signal<void, receiptNr>     type_signal_receipt;
-            typedef sigc::signal<void, Glib::ustring> type_signal_recv_message;
-            typedef sigc::signal<void, Glib::ustring> type_signal_recv_action;
-            typedef sigc::signal<void>                type_signal_recv_file;
-            typedef sigc::signal<void, Glib::ustring, std::shared_ptr<receipt>> type_signal_send_message;
-            typedef sigc::signal<void, Glib::ustring, std::shared_ptr<receipt>> type_signal_send_action;
+            using type_signal_receipt            = sigc::signal<void, receiptNr>;
+            using type_signal_recv_message       = sigc::signal<void, Glib::ustring>;
+            using type_signal_recv_action        = sigc::signal<void, Glib::ustring>;
+            using type_signal_send_message       = sigc::signal<void, Glib::ustring, std::shared_ptr<receipt>>;
+            using type_signal_send_action        = sigc::signal<void, Glib::ustring, std::shared_ptr<receipt>>;
+            using type_signal_send_file_chunk_rq = sigc::signal<void, fileNr, uint64_t, size_t>;
+            using type_signal_recv_file          = sigc::signal<void, fileNr, TOX_FILE_KIND, size_t, Glib::ustring>;
+            using type_signal_recv_file_chunk    = sigc::signal<void, fileNr, uint64_t, const std::vector<uint8_t>&>;
 
-            type_signal_receipt      signal_receipt();
-            type_signal_recv_message signal_recv_message();
-            type_signal_recv_action  signal_recv_action();
-            type_signal_recv_file    signal_recv_file();
-            type_signal_send_message signal_send_message();
-            type_signal_send_action  signal_send_action();
+            type_signal_receipt            signal_receipt();
+            type_signal_recv_message       signal_recv_message();
+            type_signal_recv_action        signal_recv_action();
+            type_signal_send_message       signal_send_message();
+            type_signal_send_action        signal_send_action();
+            type_signal_send_file_chunk_rq signal_send_file_chunk_request();
+            type_signal_recv_file          signal_recv_file();
+            type_signal_recv_file_chunk    signal_recv_file_chunk();
 
             //props
             Glib::PropertyProxy_ReadOnly<contactNr>         property_nr();
@@ -57,8 +63,13 @@ namespace toxmm2 {
             std::shared_ptr<receipt> send_message(const Glib::ustring& message);
             std::shared_ptr<receipt> send_action (const Glib::ustring& action);
 
+            std::shared_ptr<toxmm2::core> core();
+            std::shared_ptr<toxmm2::contact_manager> contact_manager();
+            std::shared_ptr<toxmm2::file_manager> file_manager();
+
         private:
-            std::shared_ptr<core> m_core;
+            std::shared_ptr<toxmm2::contact_manager> m_contact_manager;
+            std::shared_ptr<toxmm2::file_manager> m_file_manager;
 
             Glib::Property<contactNr>         m_property_nr;
             Glib::Property<contactAddrPublic> m_property_addr;
@@ -69,16 +80,20 @@ namespace toxmm2 {
             Glib::Property<TOX_CONNECTION>    m_property_connection;
             Glib::Property<bool>              m_property_typing;
 
-            type_signal_receipt      m_signal_receipt;
-            type_signal_recv_message m_signal_recv_message;
-            type_signal_recv_action  m_signal_recv_action;
-            type_signal_recv_file    m_signal_recv_file;
-            type_signal_send_message m_signal_send_message;
-            type_signal_send_action  m_signal_send_action;
+            type_signal_receipt            m_signal_receipt;
+            type_signal_recv_message       m_signal_recv_message;
+            type_signal_recv_action        m_signal_recv_action;
+            type_signal_send_message       m_signal_send_message;
+            type_signal_send_action        m_signal_send_action;
+            type_signal_send_file_chunk_rq m_signal_send_file_chunk_rq;
+            type_signal_recv_file          m_signal_recv_file;
+            type_signal_recv_file_chunk    m_signal_recv_file_chunk;
 
-            contact(std::shared_ptr<core> core, contactNr nr);
+            contact(std::shared_ptr<toxmm2::contact_manager> manager, contactNr nr);
             contact(const contact&) = delete;
             void operator=(const contact&) = delete;
+
+            void init();
 
             contactAddrPublic toxcore_get_addr();
             Glib::ustring     toxcore_get_name();
