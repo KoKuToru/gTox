@@ -16,10 +16,10 @@ receipt::receipt(std::shared_ptr<contact> contact, receiptNr nr):
 
     m_connection = contact->signal_receipt().connect(sigc::track_obj([this](receiptNr nr) {
         if (property_nr().get_value() < nr) {
-            m_signal_lost.emit();
+            m_signal_lost();
             m_connection.disconnect();
         } else if (property_nr().get_value() == nr) {
-            m_signal_okay.emit();
+            m_signal_okay();
             m_connection.disconnect();
         }
     }, *this));

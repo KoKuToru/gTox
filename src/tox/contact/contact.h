@@ -39,6 +39,7 @@ namespace toxmm2 {
             using type_signal_send_file_chunk_rq = sigc::signal<void, fileNr, uint64_t, size_t>;
             using type_signal_recv_file          = sigc::signal<void, fileNr, TOX_FILE_KIND, size_t, Glib::ustring>;
             using type_signal_recv_file_chunk    = sigc::signal<void, fileNr, uint64_t, const std::vector<uint8_t>&>;
+            using type_signal_recv_file_control  = sigc::signal<void, fileNr, TOX_FILE_CONTROL>;
 
             type_signal_receipt            signal_receipt();
             type_signal_recv_message       signal_recv_message();
@@ -48,6 +49,7 @@ namespace toxmm2 {
             type_signal_send_file_chunk_rq signal_send_file_chunk_request();
             type_signal_recv_file          signal_recv_file();
             type_signal_recv_file_chunk    signal_recv_file_chunk();
+            type_signal_recv_file_control  signal_recv_file_control();
 
             //props
             Glib::PropertyProxy_ReadOnly<contactNr>         property_nr();
@@ -88,6 +90,7 @@ namespace toxmm2 {
             type_signal_send_file_chunk_rq m_signal_send_file_chunk_rq;
             type_signal_recv_file          m_signal_recv_file;
             type_signal_recv_file_chunk    m_signal_recv_file_chunk;
+            type_signal_recv_file_control  m_signal_recv_file_control;
 
             contact(std::shared_ptr<toxmm2::contact_manager> manager, contactNr nr);
             contact(const contact&) = delete;

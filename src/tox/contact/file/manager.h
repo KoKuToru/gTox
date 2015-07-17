@@ -35,7 +35,7 @@ namespace toxmm2 {
             using type_signal_send          = sigc::signal<void, std::shared_ptr<file>&>;
             using type_signal_recv_chunk    = sigc::signal<void, std::shared_ptr<file>&, const std::vector<uint8_t>&>;
             using type_signal_send_chunk    = sigc::signal<void, std::shared_ptr<file>&, const std::vector<uint8_t>&>;
-            using type_signal_send_chunk_rq = sigc::signal<void, std::shared_ptr<file>&>;
+            using type_signal_send_chunk_rq = sigc::signal<void, std::shared_ptr<file>&, uint64_t, size_t>;
             using type_signal_recv_control  = sigc::signal<void, std::shared_ptr<file>&, TOX_FILE_CONTROL>;
             using type_signal_send_control  = sigc::signal<void, std::shared_ptr<file>&, TOX_FILE_CONTROL>;
 
@@ -55,6 +55,8 @@ namespace toxmm2 {
             type_signal_send_control  signal_send_control();
 
             //functions
+            std::shared_ptr<file> find(fileNr nr);
+
             std::shared_ptr<file> send_file(Glib::ustring& path, bool avatar);
 
             std::shared_ptr<toxmm2::core> core();
@@ -63,6 +65,7 @@ namespace toxmm2 {
 
         private:
             std::weak_ptr<toxmm2::contact> m_contact;
+            std::vector<std::shared_ptr<file>> m_file;
 
             type_signal_recv          m_signal_recv_file;
             type_signal_send          m_signal_send_file;

@@ -56,6 +56,7 @@ namespace toxmm2 {
             using type_signal_file_chunk_request        = sigc::signal<void, contactNr, fileNr, uint64_t, size_t>;
             using type_signal_file_recv                 = sigc::signal<void, contactNr, fileNr, TOX_FILE_KIND, size_t, Glib::ustring>;
             using type_signal_file_recv_chunk           = sigc::signal<void, contactNr, fileNr, uint64_t, const std::vector<uint8_t>&>;
+            using type_signal_file_recv_control         = sigc::signal<void, contactNr, fileNr, TOX_FILE_CONTROL>;
 
             type_signal_contact_request           signal_contact_request();
             type_signal_contact_message           signal_contact_message();
@@ -69,6 +70,7 @@ namespace toxmm2 {
             type_signal_file_chunk_request        signal_file_chunk_request();
             type_signal_file_recv                 signal_file_recv();
             type_signal_file_recv_chunk           signal_file_recv_chunk();
+            type_signal_file_recv_control         signal_file_recv_control();
 
             static std::shared_ptr<core> create(const std::string& profile_path,
                                                 const std::shared_ptr<storage>& storage);
@@ -109,6 +111,7 @@ namespace toxmm2 {
             type_signal_file_chunk_request        m_signal_file_chunk_request;
             type_signal_file_recv                 m_signal_file_recv;
             type_signal_file_recv_chunk           m_signal_file_recv_chunk;
+            type_signal_file_recv_control         m_signal_file_recv_control;
 
             core(const std::string& profile_path, const std::shared_ptr<toxmm2::storage>& storage);
             core(const core&) = delete;

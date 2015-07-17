@@ -33,6 +33,7 @@ contact::type_signal_send_action        contact::signal_send_action() { return m
 contact::type_signal_send_file_chunk_rq contact::signal_send_file_chunk_request() { return m_signal_send_file_chunk_rq; }
 contact::type_signal_recv_file          contact::signal_recv_file() { return m_signal_recv_file; }
 contact::type_signal_recv_file_chunk    contact::signal_recv_file_chunk() { return m_signal_recv_file_chunk; }
+contact::type_signal_recv_file_control  contact::signal_recv_file_control() { return m_signal_recv_file_control; }
 
 Glib::PropertyProxy_ReadOnly<contactNr>         contact::property_nr()
 { return Glib::PropertyProxy_ReadOnly<contactNr>(this, "contact-nr"); }
@@ -151,7 +152,7 @@ std::shared_ptr<receipt> contact::send_message(const Glib::ustring& message) {
         throw exception(error);
     }
     auto r = std::shared_ptr<toxmm2::receipt>(new toxmm2::receipt(shared_from_this(), receipt));
-    m_signal_send_message.emit(message, r);
+    m_signal_send_message(message, r);
     return r;
 }
 
@@ -162,7 +163,7 @@ std::shared_ptr<receipt> contact::send_action (const Glib::ustring& action) {
         throw exception(error);
     }
     auto r = std::shared_ptr<toxmm2::receipt>(new toxmm2::receipt(shared_from_this(), receipt));
-    m_signal_send_action.emit(action, r);
+    m_signal_send_action(action, r);
     return r;
 }
 

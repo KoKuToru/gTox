@@ -39,14 +39,14 @@ void contact_manager::init() {
     m_core->signal_contact_message().connect(sigc::track_obj([this](contactNr contact_nr, Glib::ustring message) {
         auto contact = find(contact_nr);
         if (contact) {
-            contact->m_signal_recv_message.emit(message);
+            contact->m_signal_recv_message(message);
         }
     }, *this));
 
     m_core->signal_contact_action().connect(sigc::track_obj([this](contactNr contact_nr, Glib::ustring action) {
         auto contact = find(contact_nr);
         if (contact) {
-            contact->m_signal_recv_action.emit(action);
+            contact->m_signal_recv_action(action);
         }
     }, *this));
 
@@ -81,7 +81,7 @@ void contact_manager::init() {
     m_core->signal_contact_read_receipt().connect(sigc::track_obj([this](contactNr contact_nr, receiptNr receipt_nr) {
         auto contact = find(contact_nr);
         if (contact) {
-            contact->m_signal_receipt.emit(receipt_nr);
+            contact->m_signal_receipt(receipt_nr);
         }
     }, *this));
 
@@ -110,6 +110,13 @@ void contact_manager::init() {
         auto contact = find(contact_nr);
         if (contact) {
             contact->m_signal_recv_file_chunk(file_nr, position, content);
+        }
+    }, *this));
+
+    m_core->signal_file_recv_control().connect(sigc::track_obj([this](contactNr contact_nr, fileNr file_nr, TOX_FILE_CONTROL state) {
+        auto contact = find(contact_nr);
+        if (contact) {
+            contact->m_signal_recv_file_control(file_nr, state);
         }
     }, *this));
 
@@ -164,7 +171,7 @@ void contact_manager::add_contact(contactAddrPublic addr_public) {
     }
     auto contact = std::shared_ptr<toxmm2::contact>(new toxmm2::contact(shared_from_this(), contactNr(nr)));
     m_contact.push_back(contact);
-    m_signal_added.emit(contact);
+    m_signal_added(contact);
 }
 
 void contact_manager::add_contact(contactAddr addr, const Glib::ustring& message) {
@@ -175,7 +182,7 @@ void contact_manager::add_contact(contactAddr addr, const Glib::ustring& message
     }
     auto contact = std::shared_ptr<toxmm2::contact>(new toxmm2::contact(shared_from_this(), contactNr(nr)));
     m_contact.push_back(contact);
-    m_signal_added.emit(contact);
+    m_signal_added(contact);
 }
 
 std::shared_ptr<toxmm2::core> contact_manager::core() {

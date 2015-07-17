@@ -20,6 +20,8 @@
 #include "contact/contact.h"
 #include "contact/manager.h"
 #include "core.h"
+#include "exception.h"
+#include "file.h"
 
 using namespace toxmm2;
 
@@ -43,41 +45,89 @@ void file_manager::init() {
     }
 
     ct->signal_send_file_chunk_request().connect(sigc::track_obj([this](fileNr nr, uint64_t position, size_t length) {
-       /*auto file = find(nr);
-       if (file) {
-           file->
-       }*/
+        auto file = find(nr);
+        if (file) {
+            file->send_chunk_request(position, length);
+            m_signal_send_chunk_rq(file, position, length);
+        }
     }, *this));
 
     ct->signal_recv_file().connect(sigc::track_obj([this](fileNr nr, TOX_FILE_KIND kind, size_t size, Glib::ustring name) {
-       /*auto file = find(nr);
-       if (file) {
-           file->
-       }*/
+       auto c = core();
+       auto ct = contact();
+       if (!c || !ct) {
+           return;
+       }
+
+       fileId id;
+       TOX_ERR_FILE_GET error;
+       tox_file_get_file_id(c->toxcore(),
+                            ct->property_nr().get_value(),
+                            nr,
+                            id,
+                            &error);
+       if (error != TOX_ERR_FILE_GET_OK) {
+           throw toxmm2::exception(error);
+       }
+
+       auto iter = std::find_if(m_file.begin(), m_file.end(), [&](auto file) {
+           return file->m_property_id.get_value() == id &&
+                  file->m_property_size.get_value() == size &&
+                  file->m_property_kind.get_value() == kind &&
+                  file->m_property_name.get_value() == name;
+       });
+       if (iter != m_file.end()) {
+           //resume file
+           auto f = *iter;
+           f->m_property_nr = nr;
+           f->m_property_state = TOX_FILE_CONTROL_PAUSE;
+           f->m_property_state_remote = TOX_FILE_CONTROL_RESUME;
+           return;
+       }
+
+       //new file
+       /*auto f = std::shared_ptr<toxmm2::file>(new toxmm2::file(shared_from_this()));
+       f->m_property_id = id;
+       f->m_property_nr = nr;
+       f->m_property_kind = kind,
+       f->m_property_name = name;
+       //f->m_property_path = ...
+       f->m_property_state = TOX_FILE_CONTROL_PAUSE;
+       f->m_property_state_remote = TOX_FILE_CONTROL_RESUME;
+       f->init();
+
+       m_file.push_back(f);
+
+       m_signal_recv_file(f);*/
     }, *this));
 
     ct->signal_recv_file_chunk().connect(sigc::track_obj([this](fileNr nr, uint64_t position, const std::vector<uint8_t>& content) {
-       /*auto file = find(nr);
+       auto file = find(nr);
        if (file) {
-           file->
-       }*/
+           file->recv_chunk(position, content);
+           m_signal_recv_chunk(file, content);
+       }
     }, *this));
+}
+
+std::shared_ptr<file> file_manager::find(fileNr nr) {
+    auto iter = std::find_if(m_file.begin(), m_file.end(), [&](auto file) {
+        return file->m_property_nr.get_value() == nr;
+    });
+    if (iter == m_file.end()) {
+        return nullptr;
+    }
+    return *iter;
 }
 
 std::shared_ptr<toxmm2::core> file_manager::core() {
     auto ct = contact();
-    if (!ct) {
-        return nullptr;
-    }
-    return ct->core();
+    return ct ? ct->core() : nullptr;
 }
 
 std::shared_ptr<toxmm2::contact_manager> file_manager::contact_manager() {
     auto ct = contact();
-    if (!ct) {
-        return nullptr;
-    }
-    return ct->contact_manager();
+    return ct ? ct->contact_manager() : nullptr;
 }
 
 std::shared_ptr<toxmm2::contact> file_manager::contact() {

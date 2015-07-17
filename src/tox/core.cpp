@@ -36,7 +36,7 @@ core::type_signal_contact_connection_status core::signal_contact_connection_stat
 core::type_signal_file_chunk_request        core::signal_file_chunk_request()  { return m_signal_file_chunk_request; }
 core::type_signal_file_recv                 core::signal_file_recv()  { return m_signal_file_recv; }
 core::type_signal_file_recv_chunk           core::signal_file_recv_chunk()  { return m_signal_file_recv_chunk; }
-
+core::type_signal_file_recv_control         core::signal_file_recv_control() { return m_signal_file_recv_control; }
 
 Glib::PropertyProxy_ReadOnly<contactAddr> core::property_addr()
 { return {this, "self-addr"}; }
@@ -209,44 +209,47 @@ void core::init() {
 
     //install events:
     tox_callback_friend_request(toxcore(), [](Tox*, const uint8_t* addr, const uint8_t* data, size_t len, void* _this) {
-        ((core*)_this)->signal_contact_request().emit(contactAddr(addr), core::fix_utf8(data, len));
+        ((core*)_this)->m_signal_contact_request(contactAddr(addr), core::fix_utf8(data, len));
     }, this);
     tox_callback_friend_message(toxcore(), [](Tox*, uint32_t nr, TOX_MESSAGE_TYPE type, const uint8_t* message, size_t len, void* _this) {
         if (type == TOX_MESSAGE_TYPE_NORMAL) {
-            ((core*)_this)->signal_contact_message().emit(contactNr(nr), core::fix_utf8(message, len));
+            ((core*)_this)->m_signal_contact_message(contactNr(nr), core::fix_utf8(message, len));
         } else {
-            ((core*)_this)->signal_contact_action().emit(contactNr(nr), core::fix_utf8(message, len));
+            ((core*)_this)->m_signal_contact_action(contactNr(nr), core::fix_utf8(message, len));
         }
     }, this);
     tox_callback_friend_name(toxcore(), [](Tox*, uint32_t nr, const uint8_t* name, size_t len, void* _this) {
-        ((core*)_this)->signal_contact_name().emit(contactNr(nr), core::fix_utf8(name, len));
+        ((core*)_this)->m_signal_contact_name(contactNr(nr), core::fix_utf8(name, len));
     }, this);
     tox_callback_friend_status_message(toxcore(), [](Tox*, uint32_t nr, const uint8_t* status_message, size_t len, void* _this) {
-        ((core*)_this)->signal_contact_status_message().emit(contactNr(nr), core::fix_utf8(status_message, len));
+        ((core*)_this)->m_signal_contact_status_message(contactNr(nr), core::fix_utf8(status_message, len));
     }, this);
     tox_callback_friend_status(toxcore(), [](Tox*, uint32_t nr, TOX_USER_STATUS status, void* _this) {
-        ((core*)_this)->signal_contact_status().emit(contactNr(nr), status);
+        ((core*)_this)->m_signal_contact_status(contactNr(nr), status);
     }, this);
     tox_callback_friend_typing(toxcore(), [](Tox*, uint32_t nr, bool is_typing, void* _this) {
-        ((core*)_this)->signal_contact_typing().emit(contactNr(nr), is_typing);
+        ((core*)_this)->m_signal_contact_typing(contactNr(nr), is_typing);
     }, this);
     tox_callback_friend_read_receipt(toxcore(), [](Tox*, uint32_t nr, uint32_t receipt, void* _this) {
-        ((core*)_this)->signal_contact_read_receipt().emit(contactNr(nr), receiptNr(receipt));
+        ((core*)_this)->m_signal_contact_read_receipt(contactNr(nr), receiptNr(receipt));
     }, this);
     tox_callback_friend_connection_status(toxcore(), [](Tox*, uint32_t nr, TOX_CONNECTION status, void* _this) {
-        ((core*)_this)->signal_contact_connection_status().emit(contactNr(nr), status);
+        ((core*)_this)->m_signal_contact_connection_status(contactNr(nr), status);
     }, this);
     tox_callback_self_connection_status(toxcore(), [](Tox *, TOX_CONNECTION connection_status, void* _this) {
         ((core*)_this)->m_property_connection = connection_status;
     }, this);
     tox_callback_file_chunk_request(toxcore(), [](Tox*, uint32_t nr, uint32_t file_number, uint64_t position, size_t length, void *_this) {
-        ((core*)_this)->signal_file_chunk_request().emit(contactNr(nr), fileNr(file_number), position, length);
+        ((core*)_this)->m_signal_file_chunk_request(contactNr(nr), fileNr(file_number), position, length);
     }, this);
     tox_callback_file_recv(toxcore(), [](Tox*, uint32_t nr, uint32_t file_number, uint32_t kind, uint64_t file_size, const uint8_t *filename, size_t filename_length, void *_this) {
-        ((core*)_this)->signal_file_recv().emit(contactNr(nr), fileNr(file_number), TOX_FILE_KIND(kind), file_size, core::fix_utf8(filename, filename_length));
+        ((core*)_this)->m_signal_file_recv(contactNr(nr), fileNr(file_number), TOX_FILE_KIND(kind), file_size, core::fix_utf8(filename, filename_length));
     }, this);
     tox_callback_file_recv_chunk(toxcore(), [](Tox*, uint32_t nr, uint32_t file_number, uint64_t position, const uint8_t *data, size_t length, void *_this) {
-        ((core*)_this)->signal_file_recv_chunk().emit(contactNr(nr), fileNr(file_number), position, std::vector<uint8_t>(data, data+length));
+        ((core*)_this)->m_signal_file_recv_chunk(contactNr(nr), fileNr(file_number), position, std::vector<uint8_t>(data, data+length));
+    }, this);
+    tox_callback_file_recv_control(toxcore(), [](Tox*, uint32_t nr, uint32_t file_number, TOX_FILE_CONTROL state, void* _this) {
+       ((core*)_this)->m_signal_file_recv_control(contactNr(nr), fileNr(file_number), state);
     }, this);
 
     //install logic for name_or_addr
