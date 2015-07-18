@@ -29,7 +29,7 @@ namespace toxmm2 {
     class contact;
     class core;
 
-    class file: public Glib::Object, public std::enable_shared_from_this<file> {
+    class file: virtual public Glib::Object, public std::enable_shared_from_this<file> {
             friend class file_manager;
             friend class file_recv;
 

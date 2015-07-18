@@ -20,6 +20,11 @@
 
 using namespace toxmm2;
 
+file_recv::file_recv(std::shared_ptr<toxmm2::file_manager> manager):
+    Glib::ObjectBase(typeid(file_recv)),
+    file(manager) {
+}
+
 void file_recv::resume() {
     if (m_stream) {
         m_stream.reset();
