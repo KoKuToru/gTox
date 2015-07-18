@@ -85,6 +85,7 @@ contact::contact(std::shared_ptr<toxmm2::contact_manager> manager, contactNr nr)
 void contact::init() {
     //start sub systems:
     m_file_manager = std::shared_ptr<toxmm2::file_manager>(new toxmm2::file_manager(shared_from_this()));
+    m_file_manager->init();
 }
 
 contactAddrPublic contact::toxcore_get_addr() {
