@@ -32,8 +32,8 @@ template<bool writeable = true, typename T> constexpr PropProxy<T, writeable> pr
                 return PropertyBase::get_name_internal();
             }
     };
-
-    return {self, ((Hack*)&prop)->get_name_internal()};
+    const Glib::PropertyBase* base = &prop;
+    return {self, ((const Hack*)base)->get_name_internal()};
 }
 
 namespace toxmm2 {
