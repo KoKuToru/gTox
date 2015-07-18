@@ -24,6 +24,7 @@ set(SOURCES
     contact/receipt.cpp
     contact/file/manager.cpp
     contact/file/file.cpp
+    contact/file/file_recv.cpp
 )
 
 add_library(${PROJECT_NAME} STATIC

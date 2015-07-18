@@ -42,6 +42,8 @@ namespace toxmm2 {
             Glib::PropertyProxy<Glib::ustring>              property_status_message();
             Glib::PropertyProxy<TOX_USER_STATUS>            property_status();
             Glib::PropertyProxy_ReadOnly<TOX_CONNECTION>    property_connection();
+            Glib::PropertyProxy<Glib::ustring>              property_download_path();
+            Glib::PropertyProxy<Glib::ustring>              property_avatar_path();
 
             //Signals
             using type_signal_contact_request           = sigc::signal<void, contactAddr, Glib::ustring>;
@@ -98,6 +100,8 @@ namespace toxmm2 {
             Glib::Property<Glib::ustring>     m_property_status_message;
             Glib::Property<TOX_USER_STATUS>   m_property_status;
             Glib::Property<TOX_CONNECTION>    m_property_connection;
+            Glib::Property<Glib::ustring>     m_property_download_path;
+            Glib::Property<Glib::ustring>     m_property_avatar_path;
 
             type_signal_contact_request           m_signal_contact_request;
             type_signal_contact_message           m_signal_contact_message;

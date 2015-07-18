@@ -31,6 +31,8 @@ namespace toxmm2 {
 
     class file: public Glib::Object, public std::enable_shared_from_this<file> {
             friend class file_manager;
+            friend class file_recv;
+
         public:
             //props
             Glib::PropertyProxy_ReadOnly<fileId>           property_id();
@@ -48,10 +50,15 @@ namespace toxmm2 {
             std::shared_ptr<toxmm2::contact_manager> contact_manager();
             std::shared_ptr<toxmm2::contact> contact();
 
+            ~file() {}
+
         protected:
+            virtual void resume() = 0;
             virtual void send_chunk_request(uint64_t position, size_t length) = 0;
             virtual void recv_chunk(uint64_t position, const std::vector<uint8_t>& data) = 0;
             virtual void finish() = 0;
+            virtual void abort() = 0;
+            virtual bool is_recv() = 0;
 
         private:
             std::weak_ptr<toxmm2::file_manager> m_file_manager;

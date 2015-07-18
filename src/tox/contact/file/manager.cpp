@@ -22,6 +22,7 @@
 #include "core.h"
 #include "exception.h"
 #include "file.h"
+#include "file_recv.h"
 
 using namespace toxmm2;
 
@@ -71,7 +72,8 @@ void file_manager::init() {
        }
 
        auto iter = std::find_if(m_file.begin(), m_file.end(), [&](auto file) {
-           return file->m_property_id.get_value() == id &&
+           return file->is_recv() &&
+                  file->m_property_id.get_value() == id &&
                   file->m_property_size.get_value() == size &&
                   file->m_property_kind.get_value() == kind &&
                   file->m_property_name.get_value() == name;
@@ -86,19 +88,57 @@ void file_manager::init() {
        }
 
        //new file
-       /*auto f = std::shared_ptr<toxmm2::file>(new toxmm2::file(shared_from_this()));
+       auto f = std::shared_ptr<toxmm2::file>(new toxmm2::file_recv(shared_from_this()));
        f->m_property_id = id;
        f->m_property_nr = nr;
        f->m_property_kind = kind,
        f->m_property_name = name;
-       //f->m_property_path = ...
        f->m_property_state = TOX_FILE_CONTROL_PAUSE;
        f->m_property_state_remote = TOX_FILE_CONTROL_RESUME;
+
+       //setup path
+       auto fname = name;
+       size_t index = 0;
+       while ((index = fname.find_first_of(Glib::ustring("/"), index))
+                                       != Glib::ustring::npos) {
+           fname.replace(index, 1, Glib::ustring(" "));
+       }
+       while(!fname.empty() && fname[0] == '.') {
+           fname.erase(0);
+       }
+       if (fname.empty()) {
+           fname = "download";
+       }
+       //make sure path doesn't exists
+       index = 0;
+       std::string fpath;
+       do {
+           Glib::ustring ffname;
+           if (index == 0) {
+               ffname = fname;
+           } else {
+               auto last_point = fname.find_last_of('.');
+               ffname = (last_point == std::string::npos)?
+                   Glib::ustring::compose("%1 (%2)",
+                                               ffname,
+                                               index):
+                   Glib::ustring::compose("%1 (%2)%3",
+                                               ffname.substr(0, last_point),
+                                               index,
+                                               ffname.substr(last_point));
+           }
+           fpath = Glib::build_filename(
+               core()->property_download_path().get_value(),
+               fname);
+           ++index;
+       } while (Glib::file_test(fpath, Glib::FILE_TEST_EXISTS));
+       f->m_property_path = fpath;
+
        f->init();
 
        m_file.push_back(f);
 
-       m_signal_recv_file(f);*/
+       m_signal_recv_file(f);
     }, *this));
 
     ct->signal_recv_file_chunk().connect(sigc::track_obj([this](fileNr nr, uint64_t position, const std::vector<uint8_t>& content) {

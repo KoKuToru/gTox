@@ -38,20 +38,33 @@ core::type_signal_file_recv                 core::signal_file_recv()  { return m
 core::type_signal_file_recv_chunk           core::signal_file_recv_chunk()  { return m_signal_file_recv_chunk; }
 core::type_signal_file_recv_control         core::signal_file_recv_control() { return m_signal_file_recv_control; }
 
-Glib::PropertyProxy_ReadOnly<contactAddr> core::property_addr()
-{ return {this, "self-addr"}; }
-Glib::PropertyProxy_ReadOnly<contactAddrPublic> core::property_addr_public()
-{ return {this, "self-addr-public"}; }
-Glib::PropertyProxy<Glib::ustring>     core::property_name()
-{ return m_property_name.get_proxy(); }
-Glib::PropertyProxy_ReadOnly<Glib::ustring> core::property_name_or_addr()
-{ return {this, "self-name-or-addr"}; }
-Glib::PropertyProxy<Glib::ustring>     core::property_status_message()
-{ return m_property_status_message.get_proxy(); }
-Glib::PropertyProxy<TOX_USER_STATUS>   core::property_status()
-{ return m_property_status.get_proxy(); }
-Glib::PropertyProxy_ReadOnly<TOX_CONNECTION>    core::property_connection()
-{ return {this, "self-connection"}; }
+Glib::PropertyProxy_ReadOnly<contactAddr> core::property_addr() {
+    return {this, "self-addr"};
+}
+Glib::PropertyProxy_ReadOnly<contactAddrPublic> core::property_addr_public() {
+    return {this, "self-addr-public"};
+}
+Glib::PropertyProxy<Glib::ustring> core::property_name() {
+    return m_property_name.get_proxy();
+}
+Glib::PropertyProxy_ReadOnly<Glib::ustring> core::property_name_or_addr() {
+    return {this, "self-name-or-addr"};
+}
+Glib::PropertyProxy<Glib::ustring> core::property_status_message() {
+    return m_property_status_message.get_proxy();
+}
+Glib::PropertyProxy<TOX_USER_STATUS> core::property_status() {
+    return m_property_status.get_proxy();
+}
+Glib::PropertyProxy_ReadOnly<TOX_CONNECTION> core::property_connection() {
+    return {this, "self-connection"};
+}
+Glib::PropertyProxy<Glib::ustring> core::property_download_path() {
+    return m_property_download_path.get_proxy();
+}
+Glib::PropertyProxy<Glib::ustring> core::property_avatar_path() {
+    return m_property_avatar_path.get_proxy();
+}
 
 core::core(const std::string& profile_path, const std::shared_ptr<storage>& storage):
     Glib::ObjectBase(typeid(core)),
@@ -63,12 +76,20 @@ core::core(const std::string& profile_path, const std::shared_ptr<storage>& stor
     m_property_name_or_addr(*this, "self-name-or-addr"),
     m_property_status_message(*this, "self-status-message"),
     m_property_status(*this, "self-status"),
-    m_property_connection(*this, "self-connection") {
-    //load
+    m_property_connection(*this, "self-connection"),
+    m_property_download_path(*this, "core-download-path",
+                             Glib::get_user_special_dir(
+                                 GUserDirectory::G_USER_DIRECTORY_DOWNLOAD)),
+    m_property_avatar_path(*this, "core-avatar-path",
+                           Glib::build_filename(
+                               Glib::get_user_config_dir(),
+                               "tox",
+                               "avatars")) {
+    //rest is done in init()
 }
 
 void core::save() {
-    //save
+    //TODO: save
 }
 
 void core::destroy() {
