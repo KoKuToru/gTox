@@ -25,24 +25,39 @@
 
 using namespace toxmm2;
 
-Glib::PropertyProxy_ReadOnly<fileId>           file::property_id()
-{ return Glib::PropertyProxy_ReadOnly<fileId>(this, "file-id"); }
-Glib::PropertyProxy_ReadOnly<fileNr>           file::property_nr()
-{ return Glib::PropertyProxy_ReadOnly<fileNr>(this, "file-nr"); }
-Glib::PropertyProxy_ReadOnly<TOX_FILE_KIND>    file::property_kind()
-{ return Glib::PropertyProxy_ReadOnly<TOX_FILE_KIND>(this, "file-kind"); }
-Glib::PropertyProxy_ReadOnly<uint64_t>         file::property_position()
-{ return Glib::PropertyProxy_ReadOnly<uint64_t>(this, "file-position"); }
-Glib::PropertyProxy_ReadOnly<size_t>           file::property_size()
-{ return Glib::PropertyProxy_ReadOnly<size_t>(this, "file-size"); }
-Glib::PropertyProxy_ReadOnly<Glib::ustring>    file::property_name()
-{ return Glib::PropertyProxy_ReadOnly<Glib::ustring>(this, "file-name"); }
-Glib::PropertyProxy_ReadOnly<Glib::ustring>    file::property_path()
-{ return Glib::PropertyProxy_ReadOnly<Glib::ustring>(this, "file-path"); }
-Glib::PropertyProxy<TOX_FILE_CONTROL>          file::property_state()
-{ return m_property_state.get_proxy(); }
-Glib::PropertyProxy_ReadOnly<TOX_FILE_CONTROL> file::property_state_remote()
-{ return Glib::PropertyProxy_ReadOnly<TOX_FILE_CONTROL>(this, "file-state-remote"); }
+auto file::property_id()           -> PropProxy<fileId, false> {
+    return proxy<false>(this, m_property_id);
+}
+auto file::property_nr()           -> PropProxy<fileNr, false> {
+    return proxy<false>(this, m_property_nr);
+}
+auto file::property_kind()         -> PropProxy<TOX_FILE_KIND, false> {
+    return proxy<false>(this, m_property_kind);
+}
+auto file::property_position()     -> PropProxy<uint64_t, false> {
+    return proxy<false>(this, m_property_position);
+}
+auto file::property_size()         -> PropProxy<uint64_t, false> {
+    return proxy<false>(this, m_property_size);
+}
+auto file::property_name()         -> PropProxy<Glib::ustring, false> {
+    return proxy<false>(this, m_property_name);
+}
+auto file::property_path()         -> PropProxy<Glib::ustring, false> {
+    return proxy<false>(this, m_property_path);
+}
+auto file::property_state()        -> PropProxy<TOX_FILE_CONTROL> {
+    return proxy(this, m_property_state);
+}
+auto file::property_state_remote() -> PropProxy<TOX_FILE_CONTROL, false> {
+    return proxy<false>(this, m_property_state_remote);
+}
+auto file::property_progress()     -> PropProxy<double, false> {
+    return proxy<false>(this, m_property_progress);
+}
+auto file::property_complete()     -> PropProxy<bool, false> {
+    return proxy<false>(this, m_property_complete);
+}
 
 file::file(std::shared_ptr<toxmm2::file_manager> manager):
     Glib::ObjectBase(typeid(file)),
@@ -51,11 +66,13 @@ file::file(std::shared_ptr<toxmm2::file_manager> manager):
     m_property_nr  (*this, "file-nr"),
     m_property_kind(*this, "file-kind"),
     m_property_position(*this, "file-position"),
-    m_property_size (*this, "file-position"),
+    m_property_size (*this, "file-size"),
     m_property_name (*this, "file-name"),
     m_property_path (*this, "file-path"),
-    m_property_state(*this, "file-state"),
-    m_property_state_remote(*this, "file-state-remote") {
+    m_property_state(*this, "file-state", TOX_FILE_CONTROL_PAUSE),
+    m_property_state_remote(*this, "file-state-remote", TOX_FILE_CONTROL_RESUME),
+    m_property_progress(*this, "file-progress", 0.0),
+    m_property_complete(*this, "file-complete", false) {
 }
 
 void file::init() {
@@ -75,7 +92,44 @@ void file::init() {
         if (error != TOX_ERR_FILE_CONTROL_OK) {
             throw toxmm2::exception(error);
         }
+        switch (property_state().get_value()) {
+            case TOX_FILE_CONTROL_RESUME:
+                resume();
+                break;
+            case TOX_FILE_CONTROL_CANCEL:
+                abort();
+                m_property_complete = true;
+                break;
+            default:
+                break;
+        }
     });
+    property_state_remote().signal_changed().connect([this]() {
+        if (property_state_remote().get_value() ==  TOX_FILE_CONTROL_CANCEL) {
+            abort();
+            m_property_complete = true;
+        }
+    });
+
+    auto position_update = [this]() {
+        m_property_progress = double(property_position().get_value()) /
+                              double(property_size().get_value());
+    };
+    property_position().signal_changed().connect(sigc::track_obj(position_update, *this));
+    position_update();
+}
+
+void file::pre_send_chunk_request(uint64_t position, size_t length) {
+    send_chunk_request(position, length);
+    m_property_position = std::max(m_property_position.get_value(), position);
+}
+
+void file::pre_recv_chunk(uint64_t position, const std::vector<uint8_t>& data) {
+    recv_chunk(position, data);
+    if (data.size() == 0) {
+        m_property_complete = true;
+    }
+    m_property_position = std::max(m_property_position.get_value(), position);
 }
 
 std::shared_ptr<toxmm2::core> file::core() {

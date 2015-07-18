@@ -48,7 +48,7 @@ void file_manager::init() {
     ct->signal_send_file_chunk_request().connect(sigc::track_obj([this](fileNr nr, uint64_t position, size_t length) {
         auto file = find(nr);
         if (file) {
-            file->send_chunk_request(position, length);
+            file->pre_send_chunk_request(position, length);
             m_signal_send_chunk_rq(file, position, length);
         }
     }, *this));
@@ -82,7 +82,6 @@ void file_manager::init() {
            //resume file
            auto f = *iter;
            f->m_property_nr = nr;
-           f->m_property_state = TOX_FILE_CONTROL_PAUSE;
            f->m_property_state_remote = TOX_FILE_CONTROL_RESUME;
            return;
        }
@@ -93,8 +92,7 @@ void file_manager::init() {
        f->m_property_nr = nr;
        f->m_property_kind = kind,
        f->m_property_name = name;
-       f->m_property_state = TOX_FILE_CONTROL_PAUSE;
-       f->m_property_state_remote = TOX_FILE_CONTROL_RESUME;
+       f->m_property_size = size;
 
        //setup path
        auto fname = name;
@@ -119,17 +117,17 @@ void file_manager::init() {
            } else {
                auto last_point = fname.find_last_of('.');
                ffname = (last_point == std::string::npos)?
-                   Glib::ustring::compose("%1 (%2)",
-                                               ffname,
+                   Glib::ustring::compose("%1(%2)",
+                                               fname,
                                                index):
-                   Glib::ustring::compose("%1 (%2)%3",
-                                               ffname.substr(0, last_point),
+                   Glib::ustring::compose("%1(%2)%3",
+                                               fname.substr(0, last_point),
                                                index,
-                                               ffname.substr(last_point));
+                                               fname.substr(last_point));
            }
            fpath = Glib::build_filename(
                core()->property_download_path().get_value(),
-               fname);
+               ffname);
            ++index;
        } while (Glib::file_test(fpath, Glib::FILE_TEST_EXISTS));
        f->m_property_path = fpath;
@@ -144,9 +142,16 @@ void file_manager::init() {
     ct->signal_recv_file_chunk().connect(sigc::track_obj([this](fileNr nr, uint64_t position, const std::vector<uint8_t>& content) {
        auto file = find(nr);
        if (file) {
-           file->recv_chunk(position, content);
+           file->pre_recv_chunk(position, content);
            m_signal_recv_chunk(file, content);
        }
+    }, *this));
+
+    ct->signal_recv_file_control().connect(sigc::track_obj([this](fileNr nr, TOX_FILE_CONTROL state) {
+        auto file = find(nr);
+        if (file) {
+            file->m_property_state_remote = state;
+        }
     }, *this));
 }
 

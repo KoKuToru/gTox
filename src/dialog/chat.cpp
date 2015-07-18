@@ -20,9 +20,11 @@
 #include "chat.h"
 #include "main.h"
 #include "tox/contact/contact.h"
+#include "tox/contact/file/manager.h"
 #include "widget/chat_input.h"
 #include "widget/chat_bubble.h"
 #include "widget/chat_message.h"
+#include "widget/chat_file.h"
 
 namespace sigc {
     SIGC_FUNCTORS_DEDUCE_RESULT_TYPE_WITH_DECLTYPE
@@ -184,6 +186,29 @@ chat::chat(Glib::RefPtr<dialog::main> main, std::shared_ptr<toxmm2::contact> con
         m_last_bubble.timestamp = timestamp;
         m_chat_box->add(*m_last_bubble.widget);
     }, *this));
+
+    m_contact->file_manager()->signal_recv_file().connect([this](std::shared_ptr<toxmm2::file>& file) {
+        auto timestamp = Glib::DateTime::create_now_utc().to_unix();
+        while(true) {
+            auto bubble = dynamic_cast<widget::chat_bubble*>(m_last_bubble.widget);
+            //check_timestamp(timestamp);
+            if (m_last_bubble.side == SIDE::OTHER &&
+                bubble != nullptr) {
+                auto b_ref = widget::file::create(file);
+                auto widget = Gtk::manage(b_ref.raw());
+                bubble->add_row(*widget);
+                m_last_bubble.timestamp = timestamp;
+                return;
+            }
+            //need a new bubble
+            auto bubble_widget = widget::chat_bubble::create(/*SIDE::OWN, */m_contact/*, timestamp*/); //<- not correct !
+            m_last_bubble.side = SIDE::OTHER;
+            m_last_bubble.widget = Gtk::manage(bubble_widget.raw());
+            m_last_bubble.timestamp = timestamp;
+            m_chat_box->add(*m_last_bubble.widget);
+            //no goto.. thats why while(true) !
+        }
+    });
 
     //logic for text-selection
     m_eventbox->add_events(Gdk::BUTTON_PRESS_MASK |

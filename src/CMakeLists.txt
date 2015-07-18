@@ -49,6 +49,7 @@ set(SOURCES
     widget/chat_message.cpp
     widget/chat_action.cpp
     widget/chat_bubble.cpp
+    widget/chat_file.cpp
 
     utils/builder.cpp
     utils/dispatcher.h

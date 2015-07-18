@@ -23,32 +23,50 @@
 #include <memory>
 #include "types.h"
 
+template<typename T, bool writeable = true> using PropProxy = typename std::conditional<writeable, Glib::PropertyProxy<T>, Glib::PropertyProxy_ReadOnly<T>>::type;
+template<typename T> using Prop = typename Glib::Property<T>;
+template<bool writeable = true, typename T> constexpr PropProxy<T, writeable> proxy(Glib::ObjectBase* self, Glib::Property<T>& prop) {
+    class Hack: public Glib::PropertyBase {
+        public:
+            const char* get_name_internal() const {
+                return PropertyBase::get_name_internal();
+            }
+    };
+
+    return {self, ((Hack*)&prop)->get_name_internal()};
+}
+
 namespace toxmm2 {
     class file_manager;
     class contact_manager;
     class contact;
     class core;
 
-    class file: virtual public Glib::Object, public std::enable_shared_from_this<file> {
+    class file:
+            virtual public Glib::Object,
+            public std::enable_shared_from_this<file> {
+
             friend class file_manager;
             friend class file_recv;
 
         public:
             //props
-            Glib::PropertyProxy_ReadOnly<fileId>           property_id();
-            Glib::PropertyProxy_ReadOnly<fileNr>           property_nr();
-            Glib::PropertyProxy_ReadOnly<TOX_FILE_KIND>    property_kind();
-            Glib::PropertyProxy_ReadOnly<uint64_t>         property_position();
-            Glib::PropertyProxy_ReadOnly<uint64_t>         property_size();
-            Glib::PropertyProxy_ReadOnly<Glib::ustring>    property_name();
-            Glib::PropertyProxy_ReadOnly<Glib::ustring>    property_path();
-            Glib::PropertyProxy<TOX_FILE_CONTROL>          property_state();
-            Glib::PropertyProxy_ReadOnly<TOX_FILE_CONTROL> property_state_remote();
+            auto property_id()           -> PropProxy<fileId, false>;
+            auto property_nr()           -> PropProxy<fileNr, false>;
+            auto property_kind()         -> PropProxy<TOX_FILE_KIND, false>;
+            auto property_position()     -> PropProxy<uint64_t, false>;
+            auto property_size()         -> PropProxy<uint64_t, false>;
+            auto property_name()         -> PropProxy<Glib::ustring, false>;
+            auto property_path()         -> PropProxy<Glib::ustring, false>;
+            auto property_state()        -> PropProxy<TOX_FILE_CONTROL>;
+            auto property_state_remote() -> PropProxy<TOX_FILE_CONTROL, false>;
+            auto property_progress()     -> PropProxy<double, false>;
+            auto property_complete()     -> PropProxy<bool, false>;
 
-            std::shared_ptr<toxmm2::core> core();
-            std::shared_ptr<toxmm2::file_manager> file_manager();
-            std::shared_ptr<toxmm2::contact_manager> contact_manager();
-            std::shared_ptr<toxmm2::contact> contact();
+            auto core()            -> std::shared_ptr<toxmm2::core>;
+            auto file_manager()    -> std::shared_ptr<toxmm2::file_manager>;
+            auto contact_manager() -> std::shared_ptr<toxmm2::contact_manager>;
+            auto contact()         -> std::shared_ptr<toxmm2::contact>;
 
             ~file() {}
 
@@ -60,18 +78,23 @@ namespace toxmm2 {
             virtual void abort() = 0;
             virtual bool is_recv() = 0;
 
+            void pre_send_chunk_request(uint64_t position, size_t length);
+            void pre_recv_chunk(uint64_t position, const std::vector<uint8_t>& data);
+
         private:
             std::weak_ptr<toxmm2::file_manager> m_file_manager;
 
-            Glib::Property<fileId>           m_property_id;
-            Glib::Property<fileNr>           m_property_nr;
-            Glib::Property<TOX_FILE_KIND>    m_property_kind;
-            Glib::Property<uint64_t>         m_property_position;
-            Glib::Property<uint64_t>         m_property_size;
-            Glib::Property<Glib::ustring>    m_property_name;
-            Glib::Property<Glib::ustring>    m_property_path;
-            Glib::Property<TOX_FILE_CONTROL> m_property_state;
-            Glib::Property<TOX_FILE_CONTROL> m_property_state_remote;
+            Prop<fileId>           m_property_id;
+            Prop<fileNr>           m_property_nr;
+            Prop<TOX_FILE_KIND>    m_property_kind;
+            Prop<uint64_t>         m_property_position;
+            Prop<uint64_t>         m_property_size;
+            Prop<Glib::ustring>    m_property_name;
+            Prop<Glib::ustring>    m_property_path;
+            Prop<TOX_FILE_CONTROL> m_property_state;
+            Prop<TOX_FILE_CONTROL> m_property_state_remote;
+            Prop<double>           m_property_progress;
+            Prop<bool>             m_property_complete;
 
             file(std::shared_ptr<toxmm2::file_manager> manager);
             file(const file&) = delete;
