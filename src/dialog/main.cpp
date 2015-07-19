@@ -572,7 +572,7 @@ void main::chat_show(Gtk::Widget& headerbar, Gtk::Widget& body, Gtk::Button& pre
         if (m_stack_data[i].first == &headerbar && m_stack_data[i].second == &body) {
             m_stack_header->set_visible_child(headerbar);
             m_stack->set_visible_child(body);
-            break;
+            return;
         }
     }
     chat_add(headerbar, body, prev, next);
