@@ -20,12 +20,18 @@
 #include "avatar.h"
 #include "tox/contact/contact.h"
 #include "tox/core.h"
+#include <glibmm/i18n.h>
+
+namespace sigc {
+    SIGC_FUNCTORS_DEDUCE_RESULT_TYPE_WITH_DECLTYPE
+}
 
 using namespace widget;
 
 void chat_bubble::init(utils::builder builder) {
     builder.get_widget("row_box", m_row_box);
     builder.get_widget("username", m_username);
+    builder.get_widget("frame", m_frame);
 
     property_reveal_child() = false;
     m_dispatcher.emit([this]() {
@@ -33,7 +39,7 @@ void chat_bubble::init(utils::builder builder) {
     });
 
     //change size of avatar based on the size of the rows in row_box
-    m_row_box->signal_size_allocate().connect_notify(sigc::track_obj([this](Gtk::Allocation& allocation) {
+    m_frame->signal_size_allocate().connect_notify(sigc::track_obj([this](Gtk::Allocation& allocation) {
         auto w = std::min(64, allocation.get_height() - 5); //5px radius
         if (w != m_avatar->get_width()) {
             m_dispatcher.emit([this, w]() {
@@ -44,21 +50,63 @@ void chat_bubble::init(utils::builder builder) {
 }
 
 chat_bubble::chat_bubble(BaseObjectType* cobject, utils::builder builder, std::shared_ptr<toxmm2::core> core): Gtk::Revealer(cobject) {
-    m_avatar = builder.get_widget_derived<widget::avatar>("avatar", core->property_addr_public());
+    m_avatar = builder
+               .get_widget_derived<avatar>("avatar",
+                                           core->property_addr_public());
     init(builder);
 
-    m_binding_name = Glib::Binding::bind_property(core->property_name_or_addr(),
+    auto username = core->property_name_or_addr();
+    auto format = m_username->property_label().get_value();
+    auto transform_text = [this, format](const Glib::ustring& input,
+                          Glib::ustring& output) {
+        auto escaped_username = Glib::Markup::escape_text(input);
+        auto date = Glib::DateTime::create_now_local(
+                        Glib::DateTime::create_now_utc().to_unix())
+                    .format(_("DATE_FORMAT"));
+        //TODO: use right timestamp
+        //TODO: only show month,year when different than today
+        output = Glib::ustring::compose(format,
+                                        escaped_username,
+                                        date);
+        return true;
+    };
+
+    auto flag = Glib::BINDING_DEFAULT | Glib::BINDING_SYNC_CREATE;
+    m_binding_name = Glib::Binding::bind_property(username,
                                                   m_username->property_label(),
-                                                  Glib::BINDING_DEFAULT | Glib::BINDING_SYNC_CREATE);
+                                                  flag,
+                                                  sigc::track_obj(transform_text,
+                                                                  *this));
 }
 
 chat_bubble::chat_bubble(BaseObjectType* cobject, utils::builder builder, std::shared_ptr<toxmm2::contact> contact): Gtk::Revealer(cobject) {
-    m_avatar = builder.get_widget_derived<widget::avatar>("avatar", contact->property_addr_public());
+    m_avatar = builder
+               .get_widget_derived<avatar>("avatar",
+                                           contact->property_addr_public());
     init(builder);
 
-    m_binding_name = Glib::Binding::bind_property(contact->property_name_or_addr(),
+    auto username = contact->property_name_or_addr();
+    auto format = m_username->property_label().get_value();
+    auto transform_text = [this, format](const Glib::ustring& input,
+                          Glib::ustring& output) {
+        auto escaped_username = Glib::Markup::escape_text(input);
+        auto date = Glib::DateTime::create_now_local(
+                        Glib::DateTime::create_now_utc().to_unix())
+                    .format(_("DATE_FORMAT"));
+        //TODO: use right timestamp
+        //TODO: only show month,year when different than today
+        output = Glib::ustring::compose(format,
+                                        escaped_username,
+                                        date);
+        return true;
+    };
+
+    auto flag = Glib::BINDING_DEFAULT | Glib::BINDING_SYNC_CREATE;
+    m_binding_name = Glib::Binding::bind_property(username,
                                                   m_username->property_label(),
-                                                  Glib::BINDING_DEFAULT | Glib::BINDING_SYNC_CREATE);
+                                                  flag,
+                                                  sigc::track_obj(transform_text,
+                                                                  *this));
 }
 
 chat_bubble::~chat_bubble() {

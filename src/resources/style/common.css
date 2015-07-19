@@ -73,12 +73,13 @@ GtkListBoxRow {
 **/
 
 .gtox-chat {
-    
+  padding: 5px;  
 }
 
 .gtox-bubble {
     border-radius: 7px;
     background-color: rgba(0,0,0,0.2);
+    padding: 5px;
 }
 
 .gtox-left .gtox-bubble {
@@ -89,14 +90,16 @@ GtkListBoxRow {
     border-bottom-right-radius: 0;
 }
 
-.gtox-right #Avatar {
+.gtox-right .gtox-avatar {
 	border-left: none;
 	border-radius: 0px 5px 5px 0px;
+	background: white;
 }
 
-.gtox-left #Avatar {
+.gtox-left .gtox-avatar {
 	border-right: none;
 	border-radius: 5px 0px 0px 5px;
+	background: white;
 }
 
 .bubble_chat_line {

@@ -33,6 +33,7 @@ namespace widget {
             avatar*     m_avatar;
             Gtk::Box*   m_row_box;
             Gtk::Label* m_username;
+            Gtk::Frame* m_frame;
 
             Glib::RefPtr<Glib::Binding> m_binding_name;
 

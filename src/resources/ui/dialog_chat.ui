@@ -33,6 +33,9 @@
                 </child>
               </object>
             </child>
+            <style>
+              <class name="gtox-chat"/>
+            </style>
           </object>
         </child>
       </object>
