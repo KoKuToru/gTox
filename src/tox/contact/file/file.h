@@ -48,6 +48,7 @@ namespace toxmm2 {
 
             friend class file_manager;
             friend class file_recv;
+            friend class file_send;
 
         public:
             //props

@@ -25,6 +25,7 @@ set(SOURCES
     contact/file/manager.cpp
     contact/file/file.cpp
     contact/file/file_recv.cpp
+    contact/file/file_send.cpp
 )
 
 add_library(${PROJECT_NAME} STATIC
