@@ -57,7 +57,7 @@ namespace toxmm2 {
             //functions
             std::shared_ptr<file> find(fileNr nr);
 
-            std::shared_ptr<file> send_file(Glib::ustring& path, bool avatar);
+            std::shared_ptr<file> send_file(const Glib::ustring& path, bool avatar = false);
 
             std::shared_ptr<toxmm2::core> core();
             std::shared_ptr<toxmm2::contact_manager> contact_manager();

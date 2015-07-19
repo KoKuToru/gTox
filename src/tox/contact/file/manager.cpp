@@ -23,6 +23,7 @@
 #include "exception.h"
 #include "file.h"
 #include "file_recv.h"
+#include "file_send.h"
 
 using namespace toxmm2;
 
@@ -54,7 +55,7 @@ void file_manager::init() {
     }, *this));
 
     ct->signal_recv_file().connect(sigc::track_obj([this](fileNr nr, TOX_FILE_KIND kind, size_t size, Glib::ustring name) {
-       auto c = core();
+       auto c  = core();
        auto ct = contact();
        if (!c || !ct) {
            return;
@@ -84,7 +85,6 @@ void file_manager::init() {
            //resume file
            auto f = *iter;
            f->m_property_nr = nr;
-           f->m_property_state_remote = TOX_FILE_CONTROL_RESUME;
            f->m_property_active = true;
            return;
        }
@@ -191,7 +191,7 @@ void file_manager::init() {
 
        //remove file from list when complete
        std::weak_ptr<toxmm2::file> fw = f;
-       f->property_complete().signal_changed().connect([this, fw]() {
+       f->property_complete().signal_changed().connect(sigc::track_obj([this, fw]() {
            auto f = fw.lock();
            if (f && f->property_complete()) {
                auto iter = std::find(m_file.begin(), m_file.end(), f);
@@ -199,7 +199,7 @@ void file_manager::init() {
                    m_file.erase(iter);
                }
            }
-       });
+       }, this));
 
        //add file to list
        m_file.push_back(f);
@@ -232,6 +232,77 @@ std::shared_ptr<file> file_manager::find(fileNr nr) {
         return nullptr;
     }
     return *iter;
+}
+
+std::shared_ptr<file> file_manager::send_file(const Glib::ustring& path, bool avatar) {
+    //new file
+    auto c  = core();
+    auto ct = contact();
+    if (!c || !ct) {
+        return nullptr;
+    }
+
+    auto file  = Gio::File::create_for_path(path);
+    auto f = std::shared_ptr<toxmm2::file>(new toxmm2::file_send(shared_from_this()));
+
+    f->m_property_kind = avatar?TOX_FILE_KIND_AVATAR:TOX_FILE_KIND_DATA,
+    f->m_property_name = file->get_basename();
+    f->m_property_size = file->query_info()->get_size();
+    f->m_property_path = path;
+
+    TOX_ERR_FILE_SEND error;
+
+    f->m_property_nr = tox_file_send(
+                           c->toxcore(),
+                           ct->property_nr().get_value(),
+                           f->property_kind(),
+                           f->property_size(),
+                           nullptr,
+                           (const uint8_t*)f->property_name().get_value().c_str(),
+                           f->property_name().get_value().bytes(),
+                           &error);
+    if (error != TOX_ERR_FILE_SEND_OK) {
+        throw toxmm2::exception(error);
+    }
+
+    fileId id;
+    TOX_ERR_FILE_GET ferror;
+    tox_file_get_file_id(c->toxcore(),
+                         ct->property_nr().get_value(),
+                         f->property_nr().get_value(),
+                         id,
+                         &ferror);
+    if (ferror != TOX_ERR_FILE_GET_OK) {
+        throw toxmm2::exception(error);
+    }
+
+    f->m_property_id = id;
+    f->m_property_active = true;
+    f->m_property_state = TOX_FILE_CONTROL_PAUSE;
+    f->m_property_state_remote = TOX_FILE_CONTROL_PAUSE;
+    f->init();
+
+    //remove file from list when complete
+    std::weak_ptr<toxmm2::file> fw = f;
+    f->property_complete().signal_changed().connect(sigc::track_obj([this, fw]() {
+        auto f = fw.lock();
+        if (f && f->property_complete()) {
+            auto iter = std::find(m_file.begin(), m_file.end(), f);
+            if (iter != m_file.end()) {
+                m_file.erase(iter);
+            }
+        }
+    }, this));
+
+    //add file to list
+    m_file.push_back(f);
+
+    //emit signal
+    m_signal_send_file(f);
+
+    f->property_state() = TOX_FILE_CONTROL_RESUME;
+
+    return f;
 }
 
 std::shared_ptr<toxmm2::core> file_manager::core() {

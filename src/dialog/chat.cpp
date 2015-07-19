@@ -307,8 +307,18 @@ chat::chat(Glib::RefPtr<dialog::main> main, std::shared_ptr<toxmm2::contact> con
                               Gtk::DEST_DEFAULT_MOTION | Gtk::DEST_DEFAULT_DROP,
                               Gdk::ACTION_COPY | Gdk::ACTION_MOVE);
     m_scrolled->signal_drag_data_received().connect(sigc::track_obj([this](const Glib::RefPtr<Gdk::DragContext>&, int, int, const Gtk::SelectionData& data, guint, guint) {
+        auto ct = m_contact; //.lock();
+        auto fmng = ct->file_manager();
+        if (!ct | !fmng) {
+            return;
+        }
+        if (ct->property_connection() == TOX_CONNECTION_NONE) {
+            //TODO: error message, user offline
+            return;
+        }
         for (auto uri : data.get_uris()) {
             //do something with the files
+            fmng->send_file(Glib::filename_from_uri(uri));
         }
     }, this));
 }

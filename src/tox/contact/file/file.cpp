@@ -124,10 +124,32 @@ void file::init() {
     auto ct = contact();
     if (ct) {
         auto update_con = [this]() {
+            auto  c = core();
             auto ct = contact();
-            if (ct && ct->property_connection() == TOX_CONNECTION_NONE) {
-                m_property_state = TOX_FILE_CONTROL_PAUSE;
+            if (!c || !ct) {
+                return;
+            }
+            if (ct->property_connection() == TOX_CONNECTION_NONE) {
+                m_property_state_remote = TOX_FILE_CONTROL_PAUSE;
                 m_property_active = false;
+            } else if (!property_active().get_value() && is_recv() == false) {
+                //resend offer
+                TOX_ERR_FILE_SEND error;
+
+                m_property_nr = tox_file_send(
+                                    c->toxcore(),
+                                    ct->property_nr().get_value(),
+                                    property_kind(),
+                                    property_size(),
+                                    property_id().get_value(),
+                                    (const uint8_t*)property_name().get_value().c_str(),
+                                    property_name().get_value().bytes(),
+                                    &error);
+                if (error != TOX_ERR_FILE_SEND_OK) {
+                    throw toxmm2::exception(error);
+                }
+                m_property_state = property_state();
+                m_property_active = true;
             }
         };
 
@@ -146,13 +168,21 @@ void file::init() {
 }
 
 void file::pre_send_chunk_request(uint64_t position, size_t length) {
-    send_chunk_request(position, length);
+    if (length > 0) {
+        send_chunk_request(position, length);
+    }
     m_property_position = std::max(m_property_position.get_value(), position);
+    if (length == 0) {
+        //upload complete
+        m_property_complete = true;
+        m_property_active = false;
+    }
 }
 
 void file::pre_recv_chunk(uint64_t position, const std::vector<uint8_t>& data) {
     recv_chunk(position, data);
     if (data.size() == 0) {
+        //download complete
         m_property_complete = true;
         m_property_active = false;
     }
