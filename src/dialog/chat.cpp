@@ -299,6 +299,18 @@ chat::chat(Glib::RefPtr<dialog::main> main, std::shared_ptr<toxmm2::contact> con
     auto dummy_adj = Gtk::Adjustment::create(0, 0, 0);
     m_viewport->set_focus_hadjustment(dummy_adj);
     m_viewport->set_focus_vadjustment(dummy_adj);
+
+    //drag and drop
+    std::vector<Gtk::TargetEntry> targets;
+    targets.push_back(Gtk::TargetEntry("text/uri-list"));
+    m_scrolled->drag_dest_set(targets,
+                              Gtk::DEST_DEFAULT_MOTION | Gtk::DEST_DEFAULT_DROP,
+                              Gdk::ACTION_COPY | Gdk::ACTION_MOVE);
+    m_scrolled->signal_drag_data_received().connect(sigc::track_obj([this](const Glib::RefPtr<Gdk::DragContext>&, int, int, const Gtk::SelectionData& data, guint, guint) {
+        for (auto uri : data.get_uris()) {
+            //do something with the files
+        }
+    }, this));
 }
 
 chat::~chat() {
