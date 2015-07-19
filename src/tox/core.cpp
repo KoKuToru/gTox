@@ -391,3 +391,9 @@ std::vector<uint8_t> core::from_hex(std::string data) {
 Tox* core::toxcore() {
     return m_toxcore;
 }
+
+toxmm2::hash core::hash(const std::vector<uint8_t>& data) {
+    toxmm2::hash res;
+    tox_hash(res, data.data(), data.size());
+    return res;
+}

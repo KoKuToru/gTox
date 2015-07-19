@@ -25,6 +25,7 @@
 #include "widget/chat_bubble.h"
 #include "widget/chat_message.h"
 #include "widget/chat_file.h"
+#include "tox/contact/file/file.h"
 
 namespace sigc {
     SIGC_FUNCTORS_DEDUCE_RESULT_TYPE_WITH_DECLTYPE
@@ -190,6 +191,9 @@ chat::chat(Glib::RefPtr<dialog::main> main, std::shared_ptr<toxmm2::contact> con
     }, *this));
 
     m_contact->file_manager()->signal_recv_file().connect([this](std::shared_ptr<toxmm2::file>& file) {
+        if (file->property_kind() != TOX_FILE_KIND_DATA) {
+            return;
+        }
         auto timestamp = Glib::DateTime::create_now_utc().to_unix();
         while(true) {
             auto bubble = dynamic_cast<widget::chat_bubble*>(m_last_bubble.widget);

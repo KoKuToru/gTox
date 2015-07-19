@@ -27,25 +27,11 @@
 
 namespace widget {
     class avatar : public Gtk::Image {
-        private:
-            Glib::ustring m_path;
-
-            void load(bool force_reload=false);
-
         public:
-            avatar(BaseObjectType* cobject, utils::builder,
+            avatar(BaseObjectType* cobject,
+                   utils::builder,
                    toxmm2::contactAddrPublic addr);
-
             ~avatar();
-
-            void set_size_request(int width =  -1, int height =  -1);
-
-            static Glib::RefPtr<Gdk::Pixbuf> get_avatar(Glib::ustring path, bool force_reload = false);
-            static void set_avatar(Glib::ustring path, Glib::RefPtr<Gdk::Pixbuf> pix);
-            static Glib::ustring get_avatar_path(toxmm2::contactAddrPublic addr);
-
-            utils::dispatcher m_dispatcher;
-            int m_version = 0;
 
         protected:
             bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
@@ -54,6 +40,26 @@ namespace widget {
                                            int& natural_width) const override;
             void get_preferred_height_vfunc(int& minimum_height,
                                             int& natural_height) const override;
+
+        private:
+            class image: public Glib::Object {
+                public:
+                    Glib::PropertyProxy<Glib::RefPtr<Gdk::Pixbuf>> property_pixbuf();
+
+                    image(toxmm2::contactAddrPublic addr);
+
+                private:
+                    Glib::Property<Glib::RefPtr<Gdk::Pixbuf>> m_property_pixbuf;
+
+                    Glib::RefPtr<Gio::File> m_file;
+                    Glib::RefPtr<Gio::FileMonitor> m_monitor;
+                    utils::dispatcher m_dispatcher;
+                    int m_version = 0;
+
+                    void load();
+            };
+
+            Glib::RefPtr<Glib::Binding> m_binding;
     };
 }
 #endif

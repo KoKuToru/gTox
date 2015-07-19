@@ -38,8 +38,12 @@ namespace toxmm2 {
             contactNr(): m_nr() {}
             contactNr(decltype(m_nr) nr): m_nr(nr) {}
             contactNr(const std::string& nr): m_nr(std::stoi(nr)) {}
-            bool operator==(const contactNr& o) { return m_nr == o.m_nr; }
-            bool operator!=(const contactNr& o) { return m_nr != o.m_nr; }
+            bool operator==(const contactNr& o) const { return m_nr == o.m_nr; }
+            bool operator!=(const contactNr& o) const { return m_nr != o.m_nr; }
+            bool operator< (const contactNr& o) const { return m_nr <  o.m_nr; }
+            bool operator<=(const contactNr& o) const { return m_nr <= o.m_nr; }
+            bool operator> (const contactNr& o) const { return m_nr >  o.m_nr; }
+            bool operator>=(const contactNr& o) const { return m_nr >= o.m_nr; }
     };
     class receiptNr {
         private:
@@ -50,8 +54,12 @@ namespace toxmm2 {
             receiptNr(): m_nr() {}
             receiptNr(decltype(m_nr) nr): m_nr(nr) {}
             receiptNr(const std::string& nr): m_nr(std::stoi(nr)) {}
-            bool operator==(const receiptNr& o) { return m_nr == o.m_nr; }
-            bool operator!=(const receiptNr& o) { return m_nr != o.m_nr; }
+            bool operator==(const receiptNr& o) const { return m_nr == o.m_nr; }
+            bool operator!=(const receiptNr& o) const { return m_nr != o.m_nr; }
+            bool operator< (const receiptNr& o) const { return m_nr <  o.m_nr; }
+            bool operator<=(const receiptNr& o) const { return m_nr <= o.m_nr; }
+            bool operator> (const receiptNr& o) const { return m_nr >  o.m_nr; }
+            bool operator>=(const receiptNr& o) const { return m_nr >= o.m_nr; }
     };
     class fileNr {
         private:
@@ -62,8 +70,12 @@ namespace toxmm2 {
             fileNr(): m_nr() {}
             fileNr(decltype(m_nr) nr): m_nr(nr) {}
             fileNr(const std::string& nr): m_nr(std::stoi(nr)) {}
-            bool operator==(const fileNr& o) { return m_nr == o.m_nr; }
-            bool operator!=(const fileNr& o) { return m_nr != o.m_nr; }
+            bool operator==(const fileNr& o) const { return m_nr == o.m_nr; }
+            bool operator!=(const fileNr& o) const { return m_nr != o.m_nr; }
+            bool operator< (const fileNr& o) const { return m_nr <  o.m_nr; }
+            bool operator<=(const fileNr& o) const { return m_nr <= o.m_nr; }
+            bool operator> (const fileNr& o) const { return m_nr >  o.m_nr; }
+            bool operator>=(const fileNr& o) const { return m_nr >= o.m_nr; }
     };
     class contactAddrPublic {
         private:
@@ -80,8 +92,12 @@ namespace toxmm2 {
             }
             contactAddrPublic(decltype(m_addr) addr): m_addr(addr) {}
             contactAddrPublic(const std::string& addr): m_addr(from_hex(addr)) {}
-            bool operator==(const contactAddrPublic& o) { return m_addr == o.m_addr; }
-            bool operator!=(const contactAddrPublic& o) { return m_addr != o.m_addr; }
+            bool operator==(const contactAddrPublic& o) const { return m_addr == o.m_addr; }
+            bool operator!=(const contactAddrPublic& o) const { return m_addr != o.m_addr; }
+            bool operator< (const contactAddrPublic& o) const { return m_addr <  o.m_addr; }
+            bool operator<=(const contactAddrPublic& o) const { return m_addr <= o.m_addr; }
+            bool operator> (const contactAddrPublic& o) const { return m_addr >  o.m_addr; }
+            bool operator>=(const contactAddrPublic& o) const { return m_addr >= o.m_addr; }
     };
     class contactAddr {
         private:
@@ -99,8 +115,12 @@ namespace toxmm2 {
            }
            contactAddr(decltype(m_addr) addr): m_addr(addr) {}
            contactAddr(const std::string& addr): m_addr(from_hex(addr)) {}
-           bool operator==(const contactAddr& o) { return m_addr == o.m_addr; }
-           bool operator!=(const contactAddr& o) { return m_addr != o.m_addr; }
+           bool operator==(const contactAddr& o) const { return m_addr == o.m_addr; }
+           bool operator!=(const contactAddr& o) const { return m_addr != o.m_addr; }
+           bool operator< (const contactAddr& o) const { return m_addr <  o.m_addr; }
+           bool operator<=(const contactAddr& o) const { return m_addr <= o.m_addr; }
+           bool operator> (const contactAddr& o) const { return m_addr >  o.m_addr; }
+           bool operator>=(const contactAddr& o) const { return m_addr >= o.m_addr; }
     };
     class fileId {
         private:
@@ -117,8 +137,12 @@ namespace toxmm2 {
             }
             fileId(decltype(m_id) id): m_id(id) {}
             fileId(const std::string& id): m_id(from_hex(id)) {}
-            bool operator==(const fileId& o) { return m_id == o.m_id; }
-            bool operator!=(const fileId& o) { return m_id != o.m_id; }
+            bool operator==(const fileId& o) const { return m_id == o.m_id; }
+            bool operator!=(const fileId& o) const { return m_id != o.m_id; }
+            bool operator< (const fileId& o) const { return m_id <  o.m_id; }
+            bool operator<=(const fileId& o) const { return m_id <= o.m_id; }
+            bool operator> (const fileId& o) const { return m_id >  o.m_id; }
+            bool operator>=(const fileId& o) const { return m_id >= o.m_id; }
     };
     class hash {
          private:
@@ -135,8 +159,12 @@ namespace toxmm2 {
             }
             hash(decltype(m_hash) hash): m_hash(hash) {}
             hash(const std::string& hash): m_hash(from_hex(hash)) {}
-            bool operator==(const hash& o) { return m_hash == o.m_hash; }
-            bool operator!=(const hash& o) { return m_hash != o.m_hash; }
+            bool operator==(const hash& o) const { return m_hash == o.m_hash; }
+            bool operator!=(const hash& o) const { return m_hash != o.m_hash; }
+            bool operator< (const hash& o) const { return m_hash <  o.m_hash; }
+            bool operator<=(const hash& o) const { return m_hash <= o.m_hash; }
+            bool operator> (const hash& o) const { return m_hash >  o.m_hash; }
+            bool operator>=(const hash& o) const { return m_hash >= o.m_hash; }
     };
 }
 

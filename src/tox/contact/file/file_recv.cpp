@@ -31,6 +31,13 @@ void file_recv::resume() {
     }
     auto file = Gio::File::create_for_path(property_path().get_value());
     m_stream = file->append_to();
+    m_stream->seek(0, Glib::SEEK_TYPE_END);
+    m_stream->seek(std::min(goffset(property_size()), m_stream->tell()),
+                   Glib::SEEK_TYPE_SET);
+    m_stream->truncate(m_stream->tell());
+    if (uint64_t(m_stream->tell()) != property_position()) {
+        //TODO: seek
+    }
 }
 
 void file_recv::send_chunk_request(uint64_t, size_t) {

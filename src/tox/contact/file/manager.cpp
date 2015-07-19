@@ -97,49 +97,114 @@ void file_manager::init() {
        f->m_property_name = name;
        f->m_property_size = size;
        f->m_property_active = true;
-
-       //setup path
-       auto fname = name;
-       size_t index = 0;
-       while ((index = fname.find_first_of(Glib::ustring("/"), index))
-                                       != Glib::ustring::npos) {
-           fname.replace(index, 1, Glib::ustring(" "));
-       }
-       while(!fname.empty() && fname[0] == '.') {
-           fname.erase(0);
-       }
-       if (fname.empty()) {
-           fname = "download";
-       }
-       //make sure path doesn't exists
-       index = 0;
-       std::string fpath;
-       do {
-           Glib::ustring ffname;
-           if (index == 0) {
-               ffname = fname;
-           } else {
-               auto last_point = fname.find_last_of('.');
-               ffname = (last_point == std::string::npos)?
-                   Glib::ustring::compose("%1(%2)",
-                                               fname,
-                                               index):
-                   Glib::ustring::compose("%1(%2)%3",
-                                               fname.substr(0, last_point),
-                                               index,
-                                               fname.substr(last_point));
-           }
-           fpath = Glib::build_filename(
-               core()->property_download_path().get_value(),
-               ffname);
-           ++index;
-       } while (Glib::file_test(fpath, Glib::FILE_TEST_EXISTS));
-       f->m_property_path = fpath;
-
        f->init();
 
+       if (kind == TOX_FILE_KIND_DATA) {
+           //setup path
+           auto fname = name;
+           size_t index = 0;
+           while ((index = fname.find_first_of(Glib::ustring("/"), index))
+           != Glib::ustring::npos) {
+               fname.replace(index, 1, Glib::ustring(" "));
+           }
+           while(!fname.empty() && fname[0] == '.') {
+               fname.erase(0);
+           }
+           if (fname.empty()) {
+               fname = "download";
+           }
+           //make sure path doesn't exists
+           index = 0;
+           std::string fpath;
+           do {
+               Glib::ustring ffname;
+               if (index == 0) {
+                   ffname = fname;
+               } else {
+                   //find the last point before file extension
+                   // demo.img.gz
+                   //     ^ find this point
+                   auto last_point = fname.size();
+                   while(true) {
+                       auto lp = fname.find_last_of('.', last_point);
+                       if (lp == std::string::npos || last_point - lp > 3) {
+                           break;
+                       }
+                       last_point = lp;
+                   }
+
+                   ffname = Glib::ustring::compose("%1(%2)%3",
+                                              fname.substr(0, last_point),
+                                              index,
+                                              fname.substr(last_point));
+               }
+               fpath = Glib::build_filename(
+                                 c->property_download_path().get_value(),
+                                 ffname);
+               ++index;
+           } while (Glib::file_test(fpath, Glib::FILE_TEST_EXISTS));
+           f->m_property_path = fpath;
+       } else if (kind == TOX_FILE_KIND_AVATAR && size < 65*1024) {
+           //check if file exists
+           f->m_property_path = Glib::build_filename(
+                  c->property_avatar_path().get_value(),
+                  std::string(ct->property_addr_public().get_value()) + ".png");
+           if (Glib::file_test(f->property_path().get_value(),
+                               Glib::FILE_TEST_IS_REGULAR)) {
+               //check if hash is different
+               auto file = Gio::File::create_for_path(f->property_path()
+                                               .get_value());
+               std::vector<uint8_t> content(file->query_info()->get_size());
+               gsize dummy;
+               file->read()->read_all((void*)content.data(),
+                                      content.size(),
+                                      dummy);
+
+               if (c->hash(content) == f->property_id().get_value()) {
+                   //it is the same avatar, don't download it again
+                   f->property_state() = TOX_FILE_CONTROL_CANCEL;
+                   return;
+               }
+
+               //hash is different, remove this file
+               Gio::File::create_for_path(f->property_path().get_value())
+                                               ->remove();
+           }
+           //when user goes offline remote this file
+           std::weak_ptr<toxmm2::file> fw = f;
+           ct->property_connection().signal_changed().connect(
+                                           sigc::track_obj([this, fw]() {
+               auto ct = contact();
+               if (ct && ct->property_connection() == TOX_CONNECTION_NONE) {
+                   auto f = fw.lock();
+                   if (f) {
+                       f->property_state() = TOX_FILE_CONTROL_CANCEL;
+                   }
+               }
+           }, this));
+           //start download !
+           f->property_state() = TOX_FILE_CONTROL_RESUME;
+       } else {
+           f->property_state() = TOX_FILE_CONTROL_CANCEL;
+           return;
+       }
+
+       //remove file from list when complete
+       std::weak_ptr<toxmm2::file> fw = f;
+       f->property_complete().signal_changed().connect([this, fw]() {
+           auto f = fw.lock();
+           if (f && f->property_complete()) {
+               auto iter = std::find(m_file.begin(), m_file.end(), f);
+               if (iter != m_file.end()) {
+                   m_file.erase(iter);
+               }
+           }
+       });
+
+       //add file to list
        m_file.push_back(f);
 
+       //emit signal
        m_signal_recv_file(f);
     }, *this));
 

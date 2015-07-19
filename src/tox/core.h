@@ -86,6 +86,9 @@ namespace toxmm2 {
             static void try_load(std::string path, Glib::ustring& out_name, Glib::ustring& out_status, contactAddrPublic& out_addr, bool& out_writeable);
             static std::vector<uint8_t> create_state(std::string name, std::string status, contactAddrPublic& out_addr);
 
+            //toxcore functionality
+            toxmm2::hash hash(const std::vector<uint8_t>& data);
+
         private:
             Tox* m_toxcore;
             std::string m_profile_path;

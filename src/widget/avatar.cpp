@@ -23,124 +23,112 @@
 
 using namespace widget;
 
-avatar::avatar(BaseObjectType* cobject,
-               utils::builder,
-               toxmm2::contactAddrPublic addr)
-    : Gtk::Image(cobject),
-      m_path(get_avatar_path(addr)) {
-    //load image
+Glib::PropertyProxy<Glib::RefPtr<Gdk::Pixbuf>> avatar::image::property_pixbuf() {
+    return m_property_pixbuf.get_proxy();
+}
+
+avatar::image::image(toxmm2::contactAddrPublic addr):
+    Glib::ObjectBase(typeid(avatar::image)),
+    m_property_pixbuf(*this,
+                      "image-pixbuf") {
+
+    auto path = Glib::build_filename(
+                    Glib::get_user_config_dir(),
+                    "tox", "avatars",
+                    std::string(addr) + ".png");
+    m_file = Gio::File::create_for_path(path);
+    m_monitor = m_file->monitor_file();
+
+    m_monitor->signal_changed().connect(sigc::track_obj([this](const Glib::RefPtr<Gio::File>&,
+                                        const Glib::RefPtr<Gio::File>&,
+                                        Gio::FileMonitorEvent event_type) {
+        switch (event_type) {
+            case Gio::FILE_MONITOR_EVENT_CREATED:
+            case Gio::FILE_MONITOR_EVENT_CHANGES_DONE_HINT:
+            case Gio::FILE_MONITOR_EVENT_DELETED:
+                load();
+                break;
+            default:
+                //ignore
+                break;
+        }
+    }, this));
+
     load();
-    show();
 }
 
-avatar::~avatar() {
-}
-
-
-void avatar::load(bool force_reload) {
-    int widget_w;
-    int widget_h;
-    get_size_request(widget_w, widget_h);
-
-    if (widget_w <= 0 || widget_h <= 0) {
+void avatar::image::load() {
+    property_pixbuf() =
+            Gdk::Pixbuf::create_from_resource("/org/gtox/icon/avatar.svg");
+    if (!m_file->query_exists()) {
         return;
     }
-
-    //display placeholder
-    set(get_avatar(std::string()));
-
-    //load avatar async
-    int version = ++m_version;
-    auto path = m_path;
-    auto self = this;
+    //load async
     utils::dispatcher::ref dispatcher(m_dispatcher); //take a reference
-    Glib::Thread::create([self, dispatcher, force_reload, path, version](){
+    auto file = m_file;
+    auto version = ++m_version;
+    auto self = this;
+    Glib::Thread::create([dispatcher, file, self, version](){
         static std::mutex mutex;
         std::lock_guard<std::mutex> lg(mutex); //limit parallel load
-        auto pix = get_avatar(path, force_reload);
-        //dispatch to gtk main loop
-        //also makes sure the class which uses the dispatcher still exists
-        dispatcher.emit([self, pix, version](){
-            //make sure we are the "latest" version
-            if (self->m_version == version) {
-                self->set(pix);
+
+        //todo try to read w/h first. And block too big dimensions !
+        Glib::RefPtr<Gdk::Pixbuf> pix;
+        try {
+            pix = Gdk::Pixbuf::create_from_file(file->get_path());
+        } catch (...) {
+            //couldn't load it
+            return;
+        }
+
+        //scale to 128x128
+        int w = pix->get_width();
+        int h = pix->get_height();
+        if (w < h) {
+            h = h * 128 / w;
+            w = 128;
+        } else {
+            w = w * 128 / h;
+            h = 128;
+        }
+        pix = pix->scale_simple(w, h ,Gdk::INTERP_BILINEAR);
+
+        //crop
+        int src_x = pix->get_width()/2 - 128/2;
+        int src_y = pix->get_height()/2 - 128/2;
+        pix = Gdk::Pixbuf::create_subpixbuf(pix, src_x, src_y, 128, 128);
+
+        dispatcher.emit([pix, self, version]() {
+            if (version == self->m_version) {
+                self->property_pixbuf() = pix;
             }
         });
     }, false);
 }
 
-void avatar::set_size_request(int width, int height) {
-    Gtk::Widget::set_size_request(width, height);
-    load();
+avatar::avatar(BaseObjectType* cobject,
+               utils::builder,
+               toxmm2::contactAddrPublic addr)
+    : Gtk::Image(cobject) {
+    //load image
+    static std::map<toxmm2::contactAddrPublic, std::shared_ptr<image>> m_image;
+    auto iter = m_image.find(addr);
+    if (iter == m_image.end()) {
+        //create new
+        iter = m_image.insert({addr, std::make_shared<image>(addr)}).first;
+    }
+
+    m_binding = Glib::Binding::bind_property(
+                    iter->second->property_pixbuf(),
+                    property_pixbuf(),
+                    Glib::BINDING_DEFAULT |
+                    Glib::BINDING_SYNC_CREATE |
+                    Glib::BINDING_BIDIRECTIONAL);
+
+    show();
 }
 
-Glib::RefPtr<Gdk::Pixbuf> avatar::get_avatar(Glib::ustring path, bool force_reload) {
-    static auto pix_default = Gdk::Pixbuf::create_from_resource("/org/gtox/icon/avatar.svg");
-    static std::map<std::string, Glib::RefPtr<Gdk::Pixbuf>> pix_cache;
-
-    if (!force_reload) {
-        auto pix_iter = pix_cache.find(path);
-        if (pix_iter != pix_cache.end()) {
-            return pix_iter->second;
-        }
-    }
-
-    if (path.empty() || !Glib::file_test(path, Glib::FILE_TEST_IS_REGULAR)) {
-        return pix_default;
-    }
-
-    //todo try to read w/h first. And block too big dimensions !
-    Glib::RefPtr<Gdk::Pixbuf> pix;
-    try {
-        pix = Gdk::Pixbuf::create_from_file(path);
-    } catch (...) {
-        std::clog << "Couldn't load " << path << std::endl;
-        return pix_default;
-    }
-
-    //scale to 128x128
-    int w = pix->get_width();
-    int h = pix->get_height();
-    if (w < h) {
-        h = h * 128 / w;
-        w = 128;
-    } else {
-        w = w * 128 / h;
-        h = 128;
-    }
-    pix = pix->scale_simple(w, h ,Gdk::INTERP_BILINEAR);
-
-    //crop
-    int src_x = pix->get_width()/2 - 128/2;
-    int src_y = pix->get_height()/2 - 128/2;
-    pix = Gdk::Pixbuf::create_subpixbuf(pix, src_x, src_y, 128, 128);
-
-    //add to cache
-    auto pix_iter = pix_cache.find(path);
-    if (pix_iter == pix_cache.end()) {
-        pix_cache.insert({path, pix});
-    } else {
-        pix_iter->second = pix;
-    }
-
-    return pix;
-}
-
-void avatar::set_avatar(Glib::ustring path, Glib::RefPtr<Gdk::Pixbuf> pix) {
-    unlink(path.c_str());
-    if (pix) {
-        pix->save(path, "png");
-    }
-    get_avatar(path, true);
-}
-
-Glib::ustring avatar::get_avatar_path(toxmm2::contactAddrPublic addr) {
-    //load avatar from disk !
-    auto avatar_path = Glib::build_filename(
-                           Glib::get_user_config_dir(),
-                           "tox", "avatars",
-                           std::string(addr) + ".png");
-    return avatar_path;
+avatar::~avatar() {
 }
 
 bool avatar::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
