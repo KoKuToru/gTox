@@ -215,6 +215,31 @@ chat::chat(Glib::RefPtr<dialog::main> main, std::shared_ptr<toxmm2::contact> con
             //no goto.. thats why while(true) !
         }
     });
+    m_contact->file_manager()->signal_send_file().connect([this](std::shared_ptr<toxmm2::file>& file) {
+        if (file->property_kind() != TOX_FILE_KIND_DATA) {
+            return;
+        }
+        auto timestamp = Glib::DateTime::create_now_utc().to_unix();
+        while(true) {
+            auto bubble = dynamic_cast<widget::chat_bubble*>(m_last_bubble.widget);
+            //check_timestamp(timestamp);
+            if (m_last_bubble.side == SIDE::OTHER &&
+                bubble != nullptr) {
+                auto b_ref = widget::file::create(file);
+                auto widget = Gtk::manage(b_ref.raw());
+                bubble->add_row(*widget);
+                m_last_bubble.timestamp = timestamp;
+                return;
+            }
+            //need a new bubble
+            auto bubble_widget = widget::chat_bubble::create(/*SIDE::OWN, */m_main->tox()/*, timestamp*/); //<- not correct !
+            m_last_bubble.side = SIDE::OTHER;
+            m_last_bubble.widget = Gtk::manage(bubble_widget.raw());
+            m_last_bubble.timestamp = timestamp;
+            m_chat_box->add(*m_last_bubble.widget);
+            //no goto.. thats why while(true) !
+        }
+    });
 
     //logic for text-selection
     m_eventbox->add_events(Gdk::BUTTON_PRESS_MASK |
