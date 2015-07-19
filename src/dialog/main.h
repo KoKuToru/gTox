@@ -54,6 +54,7 @@ namespace dialog {
             Glib::RefPtr<Glib::Binding> m_binding_subtitle;
             Glib::RefPtr<Glib::Binding> m_binding_position;
             Glib::RefPtr<Glib::Binding> m_binding_contact_active;
+            Glib::RefPtr<Glib::Binding> m_binding_download_path;
 
             Gtk::Menu m_popup_menu;
 

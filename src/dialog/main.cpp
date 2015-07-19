@@ -42,11 +42,18 @@ main::main(BaseObjectType* cobject,
 {
     m_storage = std::make_shared<storage>();
     m_toxcore = toxmm2::core::create(file, m_storage);
-    m_menu = Glib::RefPtr<widget::main_menu>(new widget::main_menu(Glib::RefPtr<main>(this)));
-    m_config = std::make_shared<class config>(Glib::build_filename(Glib::get_user_config_dir(),
-                                                                   "gotx",
-                                                                   m_toxcore->property_addr_public().get_value(),
-                                                                   "config.bin"));
+    m_menu = Glib::RefPtr<widget::main_menu>(
+                 new widget::main_menu(Glib::RefPtr<main>(this)));
+    m_config = std::make_shared<class config>(
+                   Glib::build_filename(
+                       Glib::get_user_config_dir(),
+                       "gotx",
+                       m_toxcore->property_addr_public().get_value(),
+                       "config.bin"));
+    m_binding_download_path = Glib::Binding::bind_property(
+                                  m_config->property_file_save_path(),
+                                  m_toxcore->property_download_path(),
+                                  Glib::BINDING_DEFAULT | Glib::BINDING_SYNC_CREATE);
 
     builder.get_widget("headerbar", m_headerbar);
     builder.get_widget("status_btn", m_btn_status);
