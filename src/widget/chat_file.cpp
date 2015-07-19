@@ -103,24 +103,82 @@ file::file(BaseObjectType* cobject,
                              m_file_cancel->property_sensitive(),
                              binding_flags | Glib::BINDING_INVERT_BOOLEAN));
 
-    m_file_resume->signal_clicked().connect([this]() {
+    m_file_resume->signal_clicked().connect(sigc::track_obj([this]() {
         if (m_file_resume->property_active() &&
                 m_file->property_state() != TOX_FILE_CONTROL_RESUME) {
             m_file->property_state() = TOX_FILE_CONTROL_RESUME;
         }
-    });
-    m_file_pause->signal_clicked().connect([this]() {
+    }, *this));
+    m_file_pause->signal_clicked().connect(sigc::track_obj([this]() {
         if (m_file_pause->property_active() &&
                 m_file->property_state() != TOX_FILE_CONTROL_PAUSE) {
             m_file->property_state() = TOX_FILE_CONTROL_PAUSE;
         }
-    });
-    m_file_cancel->signal_clicked().connect([this]() {
+    }, *this));
+    m_file_cancel->signal_clicked().connect(sigc::track_obj([this]() {
         if (m_file_cancel->property_active() &&
                 m_file->property_state() != TOX_FILE_CONTROL_CANCEL) {
             m_file->property_state() = TOX_FILE_CONTROL_CANCEL;
         }
+    }, *this));
+
+    //Buttons when file complete
+    m_file_dir->signal_clicked().connect([this]() {
+        auto filemanager = Gio::AppInfo::get_default_for_type("inode/directory",
+                                                              true);
+
+        try {
+            if (!filemanager) {
+                throw std::runtime_error("No filemanager found");
+            }
+            filemanager->launch_uri(
+                    Glib::filename_to_uri(m_file->property_path().get_value()));
+        } catch (...) {
+            // TODO Show user error if no filemanager
+        }
     });
+    m_file_open->signal_clicked().connect([this]() {
+        try {
+            Gio::AppInfo::launch_default_for_uri(
+                        Glib::filename_to_uri(
+                            m_file->property_path().get_value()));
+        } catch (...) {
+            // TODO Show user error if no filemanager
+        }
+    });
+    //Handle button visibility for open/dir
+    auto update_complete = [this]() {
+        if (!m_file->property_complete().get_value()) {
+            m_file_open_bar->hide();
+            return;
+        }
+        auto file = Gio::File::create_for_path(
+                        m_file->property_path().get_value());
+        m_file_open_bar->set_visible(
+                    Glib::file_test(file->get_path(),Glib::FILE_TEST_EXISTS));
+
+        //install monitor
+        auto update_file = [this](const Glib::RefPtr<Gio::File>&,
+                           const Glib::RefPtr<Gio::File>&,
+                           Gio::FileMonitorEvent event_type) {
+            switch (event_type) {
+                case Gio::FILE_MONITOR_EVENT_DELETED:
+                case Gio::FILE_MONITOR_EVENT_MOVED :
+                    m_file_open_bar->hide();
+                    m_monitor.reset();
+                    break;
+                default:
+                    //Ignore
+                    break;
+            }
+        };
+        m_monitor = file->monitor_file(Gio::FILE_MONITOR_SEND_MOVED);
+        m_monitor->signal_changed().connect(sigc::track_obj(update_file, *this, m_monitor));
+    };
+    m_file->property_complete()
+            .signal_changed()
+            .connect(sigc::track_obj(update_complete, *this));
+    update_complete();
 
     //Display control
     m_dispatcher.emit([this, binding_flags]() {

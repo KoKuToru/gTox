@@ -48,6 +48,8 @@ namespace widget {
             Gtk::Button*       m_file_open;
 
             std::vector<Glib::RefPtr<Glib::Binding>> m_bindings;
+            Glib::RefPtr<Gio::FileMonitor> m_monitor;
+
         public:
             file(BaseObjectType* cobject,
                  utils::builder builder,
