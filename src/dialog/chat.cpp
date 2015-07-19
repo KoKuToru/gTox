@@ -51,6 +51,8 @@ chat::chat(Glib::RefPtr<dialog::main> main, std::shared_ptr<toxmm2::contact> con
     m_builder.get_widget("close_btn_detached", m_btn_close_detached);
     m_builder.get_widget("chat_box", m_chat_box);
     m_builder.get_widget("eventbox", m_eventbox);
+    m_builder.get_widget("scrolled", m_scrolled);
+    m_builder.get_widget("viewport", m_viewport);
 
     m_main->chat_add(*m_headerbar_attached, *m_body, *m_btn_prev, *m_btn_next);
 
@@ -263,6 +265,36 @@ chat::chat(Glib::RefPtr<dialog::main> main, std::shared_ptr<toxmm2::contact> con
         Gtk::Clipboard::get()->set_text(data);
         return true;
     }, *this));
+
+    //auto scroll
+    m_scrolled->get_vadjustment()->signal_value_changed()
+            .connect_notify(sigc::track_obj([this]() {
+        // check if lowest position
+        auto adj = m_scrolled->get_vadjustment();
+        m_autoscroll = adj->get_upper() - adj->get_page_size()
+                       == adj->get_value();
+    }, *this));
+    m_chat_box->signal_size_allocate()
+            .connect_notify(sigc::track_obj([this](Gtk::Allocation&) {
+        // auto scroll:
+        if (m_autoscroll) {
+            auto adj = m_scrolled->get_vadjustment();
+            adj->set_value(adj->get_upper() - adj->get_page_size());
+        }
+    }, *this));
+    m_scrolled->signal_size_allocate()
+            .connect_notify(sigc::track_obj([this](Gtk::Allocation&) {
+        // auto scroll:
+        if (m_autoscroll) {
+            auto adj = m_scrolled->get_vadjustment();
+            adj->set_value(adj->get_upper() - adj->get_page_size());
+        }
+    }, *this));
+
+    // Disable auto scroll to focused child
+    auto dummy_adj = Gtk::Adjustment::create(0, 0, 0);
+    m_viewport->set_focus_hadjustment(dummy_adj);
+    m_viewport->set_focus_vadjustment(dummy_adj);
 }
 
 chat::~chat() {

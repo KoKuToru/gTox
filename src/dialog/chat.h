@@ -55,6 +55,9 @@ namespace dialog {
 
             Gtk::EventBox* m_eventbox;
 
+            Gtk::ScrolledWindow* m_scrolled;
+            Gtk::Viewport*       m_viewport;
+
             widget::chat_input* m_input;
             Gtk::Revealer* m_input_revealer;
             Gtk::Revealer* m_input_format_revealer;
@@ -81,6 +84,8 @@ namespace dialog {
 
             int from_x = -1;
             int from_y = -1;
+
+            bool m_autoscroll = true;
 
             void update_children(GdkEventMotion* event,
                                  std::vector<Gtk::Widget*> children);
