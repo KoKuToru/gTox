@@ -44,6 +44,7 @@ namespace toxmm2 {
             bool operator<=(const contactNr& o) const { return m_nr <= o.m_nr; }
             bool operator> (const contactNr& o) const { return m_nr >  o.m_nr; }
             bool operator>=(const contactNr& o) const { return m_nr >= o.m_nr; }
+            decltype(m_nr) get()                const { return m_nr; }
     };
     class receiptNr {
         private:
@@ -60,6 +61,7 @@ namespace toxmm2 {
             bool operator<=(const receiptNr& o) const { return m_nr <= o.m_nr; }
             bool operator> (const receiptNr& o) const { return m_nr >  o.m_nr; }
             bool operator>=(const receiptNr& o) const { return m_nr >= o.m_nr; }
+            decltype(m_nr) get()                const { return m_nr; }
     };
     class fileNr {
         private:
@@ -76,6 +78,7 @@ namespace toxmm2 {
             bool operator<=(const fileNr& o) const { return m_nr <= o.m_nr; }
             bool operator> (const fileNr& o) const { return m_nr >  o.m_nr; }
             bool operator>=(const fileNr& o) const { return m_nr >= o.m_nr; }
+            decltype(m_nr) get()             const { return m_nr; }
     };
     class contactAddrPublic {
         private:
@@ -98,6 +101,7 @@ namespace toxmm2 {
             bool operator<=(const contactAddrPublic& o) const { return m_addr <= o.m_addr; }
             bool operator> (const contactAddrPublic& o) const { return m_addr >  o.m_addr; }
             bool operator>=(const contactAddrPublic& o) const { return m_addr >= o.m_addr; }
+            decltype(m_addr) get()                      const { return m_addr; }
     };
     class contactAddr {
         private:
@@ -121,6 +125,7 @@ namespace toxmm2 {
            bool operator<=(const contactAddr& o) const { return m_addr <= o.m_addr; }
            bool operator> (const contactAddr& o) const { return m_addr >  o.m_addr; }
            bool operator>=(const contactAddr& o) const { return m_addr >= o.m_addr; }
+           decltype(m_addr) get()                const { return m_addr; }
     };
     class fileId {
         private:
@@ -143,6 +148,7 @@ namespace toxmm2 {
             bool operator<=(const fileId& o) const { return m_id <= o.m_id; }
             bool operator> (const fileId& o) const { return m_id >  o.m_id; }
             bool operator>=(const fileId& o) const { return m_id >= o.m_id; }
+            decltype(m_id) get()             const { return m_id; }
     };
     class hash {
          private:
@@ -165,6 +171,7 @@ namespace toxmm2 {
             bool operator<=(const hash& o) const { return m_hash <= o.m_hash; }
             bool operator> (const hash& o) const { return m_hash >  o.m_hash; }
             bool operator>=(const hash& o) const { return m_hash >= o.m_hash; }
+            decltype(m_hash) get()         const { return m_hash; }
     };
 }
 

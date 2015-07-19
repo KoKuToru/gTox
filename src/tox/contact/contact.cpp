@@ -22,6 +22,7 @@
 #include "exception.h"
 #include "receipt.h"
 #include "file/manager.h"
+#include "file/file.h"
 
 using namespace toxmm2;
 
@@ -86,6 +87,52 @@ void contact::init() {
     //start sub systems:
     m_file_manager = std::shared_ptr<toxmm2::file_manager>(new toxmm2::file_manager(shared_from_this()));
     m_file_manager->init();
+
+    property_connection().signal_changed().connect(sigc::track_obj([this]() {
+        auto c = core();
+        if (!c) {
+            return;
+        }
+
+        if (property_connection() != TOX_CONNECTION_NONE && !m_avatar_send) {
+            auto path = Glib::build_filename(
+                            c->property_avatar_path().get_value(),
+                            std::string(c->property_addr_public()
+                                        .get_value()) + ".png");
+            m_avatar_send = file_manager()->send_file(path, true);
+            m_avatar_send_monitor = Gio::File::create_for_path(path)
+                                    ->monitor_file();
+            m_avatar_send_monitor->signal_changed()
+                    .connect(sigc::track_obj(
+                                 [this, path](
+                                      const Glib::RefPtr<Gio::File>&,
+                                      const Glib::RefPtr<Gio::File>&,
+                                      Gio::FileMonitorEvent event_type) {
+                switch (event_type) {
+                    case Gio::FILE_MONITOR_EVENT_CREATED:
+                    case Gio::FILE_MONITOR_EVENT_CHANGES_DONE_HINT:
+                    case Gio::FILE_MONITOR_EVENT_DELETED:
+                        //resend:
+                        if (m_avatar_send) {
+                            m_avatar_send->property_state() = TOX_FILE_CONTROL_CANCEL;
+                            m_avatar_send.reset();
+                        }
+                        if (event_type == Gio::FILE_MONITOR_EVENT_DELETED) {
+                            m_avatar_send = file_manager()->send_file("", true);
+                        } else {
+                            m_avatar_send = file_manager()->send_file(path, true);
+                        }
+                        break;
+                    default:
+                        //ignore
+                        break;
+                }
+            }, this));
+        } else {
+            m_avatar_send->property_state() = TOX_FILE_CONTROL_CANCEL;
+            m_avatar_send.reset();
+        }
+    }, this));
 }
 
 contactAddrPublic contact::toxcore_get_addr() {

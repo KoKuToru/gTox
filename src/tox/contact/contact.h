@@ -22,6 +22,7 @@
 #include <glibmm.h>
 #include <memory>
 #include "types.h"
+#include <giomm.h>
 
 namespace toxmm2 {
     class file_manager;
@@ -91,6 +92,9 @@ namespace toxmm2 {
             type_signal_recv_file          m_signal_recv_file;
             type_signal_recv_file_chunk    m_signal_recv_file_chunk;
             type_signal_recv_file_control  m_signal_recv_file_control;
+
+            std::shared_ptr<toxmm2::file>  m_avatar_send;
+            Glib::RefPtr<Gio::FileMonitor> m_avatar_send_monitor;
 
             contact(std::shared_ptr<toxmm2::contact_manager> manager, contactNr nr);
             contact(const contact&) = delete;

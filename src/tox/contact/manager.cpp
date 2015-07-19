@@ -170,6 +170,7 @@ void contact_manager::add_contact(contactAddrPublic addr_public) {
         throw exception(error);
     }
     auto contact = std::shared_ptr<toxmm2::contact>(new toxmm2::contact(shared_from_this(), contactNr(nr)));
+    contact->init();
     m_contact.push_back(contact);
     m_signal_added(contact);
 }
@@ -181,6 +182,7 @@ void contact_manager::add_contact(contactAddr addr, const Glib::ustring& message
         throw exception(error);
     }
     auto contact = std::shared_ptr<toxmm2::contact>(new toxmm2::contact(shared_from_this(), contactNr(nr)));
+    contact->init();
     m_contact.push_back(contact);
     m_signal_added(contact);
 }

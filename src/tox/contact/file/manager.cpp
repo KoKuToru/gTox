@@ -160,7 +160,7 @@ void file_manager::init() {
                                       content.size(),
                                       dummy);
 
-               if (c->hash(content) == f->property_id().get_value()) {
+               if (c->hash(content).get() == f->property_id().get_value().get()) {
                    //it is the same avatar, don't download it again
                    f->property_state() = TOX_FILE_CONTROL_CANCEL;
                    return;
@@ -247,8 +247,25 @@ std::shared_ptr<file> file_manager::send_file(const Glib::ustring& path, bool av
 
     f->m_property_kind = avatar?TOX_FILE_KIND_AVATAR:TOX_FILE_KIND_DATA,
     f->m_property_name = file->get_basename();
-    f->m_property_size = file->query_info()->get_size();
+    if (!path.empty()) {
+        f->m_property_size = file->query_info()->get_size();
+    } else {
+        f->m_property_size = 0;
+    }
+
     f->m_property_path = path;
+
+    if (avatar && !path.empty()) {
+        //get hash
+        auto file = Gio::File::create_for_path(f->property_path()
+                                        .get_value());
+        std::vector<uint8_t> content(file->query_info()->get_size());
+        gsize dummy;
+        file->read()->read_all((void*)content.data(),
+                               content.size(),
+                               dummy);
+        f->m_property_id.set_value(c->hash(content).get());
+    }
 
     TOX_ERR_FILE_SEND error;
 
@@ -257,7 +274,7 @@ std::shared_ptr<file> file_manager::send_file(const Glib::ustring& path, bool av
                            ct->property_nr().get_value(),
                            f->property_kind(),
                            f->property_size(),
-                           nullptr,
+                           avatar?f->property_id().get_value():nullptr,
                            (const uint8_t*)f->property_name().get_value().c_str(),
                            f->property_name().get_value().bytes(),
                            &error);
@@ -300,7 +317,11 @@ std::shared_ptr<file> file_manager::send_file(const Glib::ustring& path, bool av
     //emit signal
     m_signal_send_file(f);
 
-    f->property_state() = TOX_FILE_CONTROL_RESUME;
+    if (!path.empty()) {
+        f->property_state() = TOX_FILE_CONTROL_RESUME;
+    } else {
+        f->property_state() = TOX_FILE_CONTROL_CANCEL;
+    }
 
     return f;
 }
