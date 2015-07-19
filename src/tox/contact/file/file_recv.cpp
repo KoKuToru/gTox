@@ -57,7 +57,11 @@ void file_recv::abort() {
         m_stream.reset();
     }
     auto file = Gio::File::create_for_path(property_path().get_value());
-    file->remove();
+    try {
+        file->remove();
+    } catch (...) {
+        //ignore
+    }
 }
 
 bool file_recv::is_recv() {

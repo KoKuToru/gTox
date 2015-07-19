@@ -62,6 +62,7 @@ namespace toxmm2 {
             auto property_state_remote() -> PropProxy<TOX_FILE_CONTROL, false>;
             auto property_progress()     -> PropProxy<double, false>;
             auto property_complete()     -> PropProxy<bool, false>;
+            auto property_active()       -> PropProxy<bool, false>;
 
             auto core()            -> std::shared_ptr<toxmm2::core>;
             auto file_manager()    -> std::shared_ptr<toxmm2::file_manager>;
@@ -95,6 +96,7 @@ namespace toxmm2 {
             Prop<TOX_FILE_CONTROL> m_property_state_remote;
             Prop<double>           m_property_progress;
             Prop<bool>             m_property_complete;
+            Prop<bool>             m_property_active;
 
             file(std::shared_ptr<toxmm2::file_manager> manager);
             file(const file&) = delete;

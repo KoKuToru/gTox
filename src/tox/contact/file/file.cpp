@@ -58,6 +58,9 @@ auto file::property_progress()     -> PropProxy<double, false> {
 auto file::property_complete()     -> PropProxy<bool, false> {
     return proxy<false>(this, m_property_complete);
 }
+auto file::property_active()     -> PropProxy<bool, false> {
+    return proxy<false>(this, m_property_active);
+}
 
 file::file(std::shared_ptr<toxmm2::file_manager> manager):
     Glib::ObjectBase(typeid(file)),
@@ -72,7 +75,8 @@ file::file(std::shared_ptr<toxmm2::file_manager> manager):
     m_property_state(*this, "file-state", TOX_FILE_CONTROL_PAUSE),
     m_property_state_remote(*this, "file-state-remote", TOX_FILE_CONTROL_RESUME),
     m_property_progress(*this, "file-progress", 0.0),
-    m_property_complete(*this, "file-complete", false) {
+    m_property_complete(*this, "file-complete", false),
+    m_property_active(*this, "file-active", false) {
 }
 
 void file::init() {
@@ -89,7 +93,12 @@ void file::init() {
                          property_nr().get_value(),
                          property_state(),
                          &error);
-        if (error != TOX_ERR_FILE_CONTROL_OK) {
+        if (error != TOX_ERR_FILE_CONTROL_OK &&
+                error != TOX_ERR_FILE_CONTROL_FRIEND_NOT_CONNECTED &&
+                error != TOX_ERR_FILE_CONTROL_NOT_FOUND &&
+                error != TOX_ERR_FILE_CONTROL_NOT_PAUSED &&
+                error != TOX_ERR_FILE_CONTROL_DENIED &&
+                error != TOX_ERR_FILE_CONTROL_ALREADY_PAUSED) {
             throw toxmm2::exception(error);
         }
         switch (property_state().get_value()) {
@@ -99,6 +108,7 @@ void file::init() {
             case TOX_FILE_CONTROL_CANCEL:
                 abort();
                 m_property_complete = true;
+                m_property_active = false;
                 break;
             default:
                 break;
@@ -110,6 +120,22 @@ void file::init() {
             m_property_complete = true;
         }
     });
+
+    auto ct = contact();
+    if (ct) {
+        auto update_con = [this]() {
+            auto ct = contact();
+            if (ct && ct->property_connection() == TOX_CONNECTION_NONE) {
+                m_property_state = TOX_FILE_CONTROL_PAUSE;
+                m_property_active = false;
+            }
+        };
+
+        ct->property_connection()
+                .signal_changed()
+                .connect(sigc::track_obj(update_con, this));
+        update_con();
+    }
 
     auto position_update = [this]() {
         m_property_progress = double(property_position().get_value()) /
@@ -128,6 +154,7 @@ void file::pre_recv_chunk(uint64_t position, const std::vector<uint8_t>& data) {
     recv_chunk(position, data);
     if (data.size() == 0) {
         m_property_complete = true;
+        m_property_active = false;
     }
     m_property_position = std::max(m_property_position.get_value(), position);
 }

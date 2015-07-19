@@ -73,6 +73,8 @@ void file_manager::init() {
 
        auto iter = std::find_if(m_file.begin(), m_file.end(), [&](auto file) {
            return file->is_recv() &&
+                  file->m_property_active.get_value() == false &&
+                  file->m_property_complete.get_value() == false &&
                   file->m_property_id.get_value() == id &&
                   file->m_property_size.get_value() == size &&
                   file->m_property_kind.get_value() == kind &&
@@ -83,6 +85,7 @@ void file_manager::init() {
            auto f = *iter;
            f->m_property_nr = nr;
            f->m_property_state_remote = TOX_FILE_CONTROL_RESUME;
+           f->m_property_active = true;
            return;
        }
 
@@ -93,6 +96,7 @@ void file_manager::init() {
        f->m_property_kind = kind,
        f->m_property_name = name;
        f->m_property_size = size;
+       f->m_property_active = true;
 
        //setup path
        auto fname = name;

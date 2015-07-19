@@ -44,6 +44,7 @@ namespace widget {
             Gtk::Box*          m_widget_list;
             Gtk::Widget*       m_file_info_box_1;
             Gtk::Widget*       m_file_info_box_2;
+            Gtk::Widget*       m_file_control;
             Gtk::Button*       m_file_dir;
             Gtk::Button*       m_file_open;
 

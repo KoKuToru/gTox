@@ -47,6 +47,7 @@ file::file(BaseObjectType* cobject,
     builder.get_widget("file_info_box_2", m_file_info_box_2);
     builder.get_widget("file_dir", m_file_dir);
     builder.get_widget("file_open", m_file_open);
+    builder.get_widget("file_control", m_file_control);
 
     auto binding_flags = Glib::BINDING_DEFAULT | Glib::BINDING_SYNC_CREATE;
 
@@ -59,8 +60,11 @@ file::file(BaseObjectType* cobject,
                              m_file_size->property_label(),
                              binding_flags,
                              [](const uint64_t& input, Glib::ustring& output) {
-        //TODO: human readable string
-        output = std::to_string(input);
+        //TODO: Replace the following line with
+        //      Glib::format_size(input, G_FORMAT_SIZE_DEFAULT)
+        //      but will need Glib 2.45.31 or newer
+        output = Glib::convert_return_gchar_ptr_to_ustring(
+                     g_format_size_full(input, G_FORMAT_SIZE_DEFAULT));
         return true;
     }));
     m_bindings.push_back(Glib::Binding::bind_property(
@@ -70,19 +74,19 @@ file::file(BaseObjectType* cobject,
 
     //Button handling
     auto proprety_state_update = [this]() {
-        m_file_resume->property_active() = false;
-        m_file_pause ->property_active() = false;
-        m_file_cancel->property_active() = false;
-        switch (m_file->property_state().get_value()) {
-            case TOX_FILE_CONTROL_RESUME:
-                m_file_resume->property_active() = true;
-                break;
-            case TOX_FILE_CONTROL_PAUSE:
-                m_file_pause ->property_active() = true;
-                break;
-            case TOX_FILE_CONTROL_CANCEL:
-                m_file_cancel->property_active() = true;
-                break;
+        auto state = m_file->property_state().get_value();
+        bool file_resume = state == TOX_FILE_CONTROL_RESUME;
+        bool file_pause  = state == TOX_FILE_CONTROL_PAUSE;
+        bool file_cancel = state == TOX_FILE_CONTROL_CANCEL;
+
+        if (file_resume != m_file_resume->property_active()) {
+            m_file_resume->property_active() = file_resume;
+        }
+        if (file_pause != m_file_pause->property_active()) {
+            m_file_pause->property_active() = file_pause;
+        }
+        if (file_cancel != m_file_cancel->property_active()) {
+            m_file_cancel->property_active() = file_cancel;
         }
     };
     m_file->property_state()
@@ -104,23 +108,25 @@ file::file(BaseObjectType* cobject,
                              binding_flags | Glib::BINDING_INVERT_BOOLEAN));
 
     m_file_resume->signal_clicked().connect(sigc::track_obj([this]() {
-        if (m_file_resume->property_active() &&
-                m_file->property_state() != TOX_FILE_CONTROL_RESUME) {
+        if (m_file_resume->property_active()) {
             m_file->property_state() = TOX_FILE_CONTROL_RESUME;
         }
     }, *this));
     m_file_pause->signal_clicked().connect(sigc::track_obj([this]() {
-        if (m_file_pause->property_active() &&
-                m_file->property_state() != TOX_FILE_CONTROL_PAUSE) {
+        if (m_file_pause->property_active()) {
             m_file->property_state() = TOX_FILE_CONTROL_PAUSE;
         }
     }, *this));
     m_file_cancel->signal_clicked().connect(sigc::track_obj([this]() {
-        if (m_file_cancel->property_active() &&
-                m_file->property_state() != TOX_FILE_CONTROL_CANCEL) {
+        if (m_file_cancel->property_active()) {
             m_file->property_state() = TOX_FILE_CONTROL_CANCEL;
         }
     }, *this));
+
+    m_bindings.push_back(Glib::Binding::bind_property(
+                             m_file->property_active(),
+                             m_file_control->property_sensitive(),
+                             binding_flags));
 
     //Buttons when file complete
     m_file_dir->signal_clicked().connect([this]() {
