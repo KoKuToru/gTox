@@ -156,6 +156,22 @@ namespace toxmm2 {
             bool operator>=(const fileId& o) const { return m_id >= o.m_id; }
             decltype(m_id) get()             const { return m_id; }
     };
+    class uniqueId {
+        private:
+            std::string m_id;
+        public:
+            operator decltype(m_id)() { return m_id; }
+            uniqueId(): m_id() {}
+            uniqueId(decltype(m_id) id): m_id(id) {}
+            static uniqueId create_random();
+            bool operator==(const uniqueId& o) const { return m_id == o.m_id; }
+            bool operator!=(const uniqueId& o) const { return m_id != o.m_id; }
+            bool operator< (const uniqueId& o) const { return m_id <  o.m_id; }
+            bool operator<=(const uniqueId& o) const { return m_id <= o.m_id; }
+            bool operator> (const uniqueId& o) const { return m_id >  o.m_id; }
+            bool operator>=(const uniqueId& o) const { return m_id >= o.m_id; }
+            decltype(m_id) get()               const { return m_id; }
+    };
     class hash {
          private:
             std::array<uint8_t, TOX_HASH_LENGTH> m_hash;

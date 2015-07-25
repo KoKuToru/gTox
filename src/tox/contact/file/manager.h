@@ -56,6 +56,7 @@ namespace toxmm2 {
 
             //functions
             std::shared_ptr<file> find(fileNr nr);
+            std::shared_ptr<file> find(uniqueId id);
 
             std::shared_ptr<file> send_file(const Glib::ustring& path, bool avatar = false);
 

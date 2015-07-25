@@ -3,8 +3,8 @@ namespace flatbuffers.File;
 //never reorder these properties !
 
 table File {
+    uuid:string;
     id:string;
-    nr:uint;
     kind:int;
     position:ulong;
     size:ulong;

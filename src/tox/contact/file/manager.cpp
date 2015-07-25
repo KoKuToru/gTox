@@ -240,6 +240,16 @@ std::shared_ptr<file> file_manager::find(fileNr nr) {
     return *iter;
 }
 
+std::shared_ptr<file> file_manager::find(uniqueId id) {
+    auto iter = std::find_if(m_file.begin(), m_file.end(), [&](auto file) {
+        return file->m_property_uuid.get_value() == id;
+    });
+    if (iter == m_file.end()) {
+        return nullptr;
+    }
+    return *iter;
+}
+
 std::shared_ptr<file> file_manager::send_file(const Glib::ustring& path, bool avatar) {
     //new file
     auto c  = core();
@@ -379,14 +389,13 @@ void file_manager::load() {
             f = decltype(f)(new toxmm2::file_send(shared_from_this()));
             //todo check if file size is still the same
         }
+        f->m_property_uuid = file->uuid()->str();
         f->m_property_id = file->id()->str();
-        f->m_property_nr = file->nr();
         f->m_property_kind = TOX_FILE_KIND(file->kind()),
         f->m_property_name = file->name()->str();
         f->m_property_path = file->path()->str();
         f->m_property_size = file->size();
         f->m_property_active = false;
-        auto sate = TOX_FILE_CONTROL(file->state());
         f->m_property_state = TOX_FILE_CONTROL(file->state());
         f->m_property_state_remote = TOX_FILE_CONTROL_PAUSE;
         f->init();
@@ -425,13 +434,13 @@ void file_manager::save() {
     vec.clear();
     FlatBufferBuilder fbb;
     for(auto file: m_file) {
-        auto id   =  fbb.CreateString(std::string(file->property_id()
-                                                  .get_value()));
-        auto name =  fbb.CreateString(file->property_name().get_value());
-        auto path =  fbb.CreateString(file->property_path().get_value());
+        auto uuid = fbb.CreateString(file->property_uuid().get_value());
+        auto id   = fbb.CreateString(file->property_id().get_value());
+        auto name = fbb.CreateString(file->property_name().get_value());
+        auto path = fbb.CreateString(file->property_path().get_value());
         FileBuilder fb(fbb);
+        fb.add_uuid(uuid);
         fb.add_id(id);
-        fb.add_nr(file->property_nr().get_value().get());
         fb.add_kind(int(file->property_kind()));
         fb.add_position(file->property_position());
         fb.add_size(file->property_size());

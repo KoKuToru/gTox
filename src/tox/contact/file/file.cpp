@@ -25,6 +25,10 @@
 
 using namespace toxmm2;
 
+auto file::property_uuid()          -> PropProxy<uniqueId, false> {
+    return proxy<false>(this, m_property_uuid);
+}
+
 auto file::property_id()           -> PropProxy<fileId, false> {
     return proxy<false>(this, m_property_id);
 }
@@ -65,6 +69,7 @@ auto file::property_active()     -> PropProxy<bool, false> {
 file::file(std::shared_ptr<toxmm2::file_manager> manager):
     Glib::ObjectBase(typeid(file)),
     m_file_manager(manager),
+    m_property_uuid (*this, "file-gid"),
     m_property_id  (*this, "file-id"),
     m_property_nr  (*this, "file-nr"),
     m_property_kind(*this, "file-kind"),
@@ -77,6 +82,8 @@ file::file(std::shared_ptr<toxmm2::file_manager> manager):
     m_property_progress(*this, "file-progress", 0.0),
     m_property_complete(*this, "file-complete", false),
     m_property_active(*this, "file-active", false) {
+    //set gid
+    m_property_uuid = uniqueId::create_random();
 }
 
 void file::init() {

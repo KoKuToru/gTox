@@ -52,6 +52,7 @@ namespace toxmm2 {
 
         public:
             //props
+            auto property_uuid()         -> PropProxy<uniqueId, false>;
             auto property_id()           -> PropProxy<fileId, false>;
             auto property_nr()           -> PropProxy<fileNr, false>;
             auto property_kind()         -> PropProxy<TOX_FILE_KIND, false>;
@@ -86,6 +87,7 @@ namespace toxmm2 {
         private:
             std::weak_ptr<toxmm2::file_manager> m_file_manager;
 
+            Prop<uniqueId>         m_property_uuid;
             Prop<fileId>           m_property_id;
             Prop<fileNr>           m_property_nr;
             Prop<TOX_FILE_KIND>    m_property_kind;

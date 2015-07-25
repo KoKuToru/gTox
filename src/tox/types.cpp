@@ -19,6 +19,15 @@
 #include "types.h"
 #include "core.h"
 
+extern "C"
+{
+#ifdef WIN32
+#include <Rpc.h>
+#else
+#include <uuid/uuid.h>
+#endif
+}
+
 using namespace toxmm2;
 
 std::string contactAddr::to_hex() {
@@ -63,4 +72,24 @@ decltype(hash::m_hash) hash::from_hex(const std::string& hex) {
     auto tmp_hex = core::from_hex(hex);
     std::copy(tmp_hex.begin(), tmp_hex.begin() + std::min(tmp_hex.size(), tmp.size()), tmp.begin());
     return tmp;
+}
+
+uniqueId uniqueId::create_random() {
+#ifdef WIN32
+    UUID uuid;
+    UuidCreate(&uuid);
+
+    unsigned char* str;
+    UuidToStringA(&uuid, &str );
+
+    std::string s((char*) str );
+
+    RpcStringFreeA(&str );
+#else
+    uuid_t uuid;
+    uuid_generate(uuid);
+    char s[37];
+    uuid_unparse(uuid, s);
+#endif
+    return uniqueId(s);
 }
