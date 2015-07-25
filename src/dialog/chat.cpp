@@ -345,7 +345,7 @@ chat::chat(Glib::RefPtr<dialog::main> main, std::shared_ptr<toxmm2::contact> con
             //do something with the files
             fmng->send_file(Glib::filename_from_uri(uri));
         }
-    }, this));
+    }, *this));
 }
 
 chat::~chat() {

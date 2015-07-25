@@ -182,7 +182,7 @@ void file_manager::init() {
                        f->property_state() = TOX_FILE_CONTROL_CANCEL;
                    }
                }
-           }, this));
+           }, *this));
            //start download !
            f->property_state() = TOX_FILE_CONTROL_RESUME;
        } else {
@@ -201,7 +201,7 @@ void file_manager::init() {
                    save();
                }
            }
-       }, this));
+       }, *this));
 
        //add file to list
        m_file.push_back(f);
@@ -315,7 +315,7 @@ std::shared_ptr<file> file_manager::send_file(const Glib::ustring& path, bool av
                 save();
             }
         }
-    }, this));
+    }, *this));
 
     //add file to list
     m_file.push_back(f);
@@ -385,7 +385,8 @@ void file_manager::load() {
         f->m_property_path = file->path()->str();
         f->m_property_size = file->size();
         f->m_property_active = false;
-        f->m_property_state = TOX_FILE_CONTROL_PAUSE;
+        auto sate = TOX_FILE_CONTROL(file->state());
+        f->m_property_state = TOX_FILE_CONTROL(file->state());
         f->m_property_state_remote = TOX_FILE_CONTROL_PAUSE;
         f->init();
 
@@ -400,7 +401,7 @@ void file_manager::load() {
                     save();
                 }
             }
-        }, this));
+        }, *this));
 
         //add file to list
         m_file.push_back(f);
@@ -437,6 +438,7 @@ void file_manager::save() {
         fb.add_path(path);
         fb.add_progress(file->property_progress());
         fb.add_is_recv(file->is_recv());
+        fb.add_state(int(file->property_state()));
         vec.push_back(fb.Finish());
     }
 

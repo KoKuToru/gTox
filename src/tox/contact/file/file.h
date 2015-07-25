@@ -70,7 +70,7 @@ namespace toxmm2 {
             auto contact_manager() -> std::shared_ptr<toxmm2::contact_manager>;
             auto contact()         -> std::shared_ptr<toxmm2::contact>;
 
-            ~file() {}
+            virtual ~file() {}
 
         protected:
             virtual void resume() = 0;

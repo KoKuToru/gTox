@@ -49,7 +49,7 @@ namespace toxmm2 {
             std::shared_ptr<toxmm2::core> core();
 
         private:
-            std::shared_ptr<toxmm2::core> m_core;
+            std::weak_ptr<toxmm2::core> m_core;
 
             std::vector<std::shared_ptr<contact>> m_contact;
 

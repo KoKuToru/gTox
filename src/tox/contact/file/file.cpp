@@ -80,7 +80,7 @@ file::file(std::shared_ptr<toxmm2::file_manager> manager):
 }
 
 void file::init() {
-    property_state().signal_changed().connect([this]() {
+    property_state().signal_changed().connect(sigc::track_obj([this]() {
         //send changes
         auto c  = core();
         auto ct = contact();
@@ -113,13 +113,13 @@ void file::init() {
             default:
                 break;
         }
-    });
-    property_state_remote().signal_changed().connect([this]() {
+    }, *this));
+    property_state_remote().signal_changed().connect(sigc::track_obj([this]() {
         if (property_state_remote().get_value() ==  TOX_FILE_CONTROL_CANCEL) {
             abort();
             m_property_complete = true;
         }
-    });
+    }, *this));
 
     auto ct = contact();
     if (ct) {
@@ -155,7 +155,7 @@ void file::init() {
 
         ct->property_connection()
                 .signal_changed()
-                .connect(sigc::track_obj(update_con, this));
+                .connect(sigc::track_obj(update_con, *this));
         update_con();
     }
 

@@ -12,6 +12,7 @@ table File {
     path:string;
     progress:double;
     is_recv:bool;
+    state:int;
 }
 
 table Manager {

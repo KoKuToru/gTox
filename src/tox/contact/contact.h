@@ -71,8 +71,8 @@ namespace toxmm2 {
             std::shared_ptr<toxmm2::file_manager> file_manager();
 
         private:
-            std::shared_ptr<toxmm2::contact_manager> m_contact_manager;
-            std::shared_ptr<toxmm2::file_manager> m_file_manager;
+            std::weak_ptr<toxmm2::contact_manager> m_contact_manager;
+            std::shared_ptr<toxmm2::file_manager>  m_file_manager;
 
             Glib::Property<contactNr>         m_property_nr;
             Glib::Property<contactAddrPublic> m_property_addr;

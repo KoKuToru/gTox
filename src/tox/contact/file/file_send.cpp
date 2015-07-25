@@ -81,7 +81,7 @@ void file_send::iterate() {
             //try again later !
             Glib::signal_idle().connect_once(sigc::track_obj([this]() {
                 iterate();
-            }, this));
+            }, *this));
             return;
         case TOX_ERR_FILE_SEND_CHUNK_OK:
             break;

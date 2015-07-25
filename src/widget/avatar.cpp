@@ -52,7 +52,7 @@ avatar::image::image(toxmm2::contactAddrPublic addr):
                 //ignore
                 break;
         }
-    }, this));
+    }, *this));
 
     load();
 }

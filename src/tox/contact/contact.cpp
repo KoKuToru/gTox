@@ -94,7 +94,13 @@ void contact::init() {
             return;
         }
 
-        if (property_connection() != TOX_CONNECTION_NONE && !m_avatar_send) {
+        if (m_avatar_send) {
+            //handle disconnect
+            if (property_connection() == TOX_CONNECTION_NONE) {
+                m_avatar_send->property_state() = TOX_FILE_CONTROL_CANCEL;
+                m_avatar_send.reset();
+            }
+        } else if (property_connection() != TOX_CONNECTION_NONE) {
             auto path = Glib::build_filename(
                             c->property_avatar_path().get_value(),
                             std::string(c->property_addr_public()
@@ -127,18 +133,20 @@ void contact::init() {
                         //ignore
                         break;
                 }
-            }, this));
-        } else {
-            m_avatar_send->property_state() = TOX_FILE_CONTROL_CANCEL;
-            m_avatar_send.reset();
+            }, *this));
         }
-    }, this));
+    }, *this));
 }
 
 contactAddrPublic contact::toxcore_get_addr() {
+    auto c = core();
+    if (!c) {
+        throw std::runtime_error("core() is nullptr");
+    }
+
     contactAddrPublic addr;
     TOX_ERR_FRIEND_GET_PUBLIC_KEY error;
-    auto res = tox_friend_get_public_key(core()->toxcore(), m_property_nr.get_value(), addr, &error);
+    auto res = tox_friend_get_public_key(c->toxcore(), m_property_nr.get_value(), addr, &error);
     if (error != TOX_ERR_FRIEND_GET_PUBLIC_KEY_OK) {
         throw exception(error);
     }
@@ -149,8 +157,13 @@ contactAddrPublic contact::toxcore_get_addr() {
 }
 
 Glib::ustring contact::toxcore_get_name() {
+    auto c = core();
+    if (!c) {
+        throw std::runtime_error("core() is nullptr");
+    }
+
     TOX_ERR_FRIEND_QUERY error;
-    auto size = tox_friend_get_name_size(core()->toxcore(), m_property_nr.get_value(), &error);
+    auto size = tox_friend_get_name_size(c->toxcore(), m_property_nr.get_value(), &error);
     if (error != TOX_ERR_FRIEND_QUERY_OK) {
         throw exception(error);
     }
@@ -158,7 +171,7 @@ Glib::ustring contact::toxcore_get_name() {
         throw exception(TOX_ERR_FRIEND_QUERY(~0));
     }
     std::string name(size, 0);
-    auto res = tox_friend_get_name(core()->toxcore(), m_property_nr.get_value(), (uint8_t*)name.data(), &error);
+    auto res = tox_friend_get_name(c->toxcore(), m_property_nr.get_value(), (uint8_t*)name.data(), &error);
     if (error != TOX_ERR_FRIEND_QUERY_OK) {
         throw exception(error);
     }
@@ -169,15 +182,25 @@ Glib::ustring contact::toxcore_get_name() {
 }
 
 Glib::ustring contact::toxcore_get_status_message() {
-    auto size = tox_self_get_status_message_size(core()->toxcore());
+    auto c = core();
+    if (!c) {
+        throw std::runtime_error("core() is nullptr");
+    }
+
+    auto size = tox_self_get_status_message_size(c->toxcore());
     std::string name(size, 0);
-    tox_self_get_status_message(core()->toxcore(), (unsigned char*)name.data());
+    tox_self_get_status_message(c->toxcore(), (unsigned char*)name.data());
     return core::fix_utf8((uint8_t*)name.data(), name.size());
 }
 
 TOX_USER_STATUS contact::toxcore_get_status() {
+    auto c = core();
+    if (!c) {
+        throw std::runtime_error("core() is nullptr");
+    }
+
     TOX_ERR_FRIEND_QUERY error;
-    auto status = tox_friend_get_status(core()->toxcore(), m_property_nr.get_value(), &error);
+    auto status = tox_friend_get_status(c->toxcore(), m_property_nr.get_value(), &error);
     if (error != TOX_ERR_FRIEND_QUERY_OK) {
         throw exception(error);
     }
@@ -185,8 +208,13 @@ TOX_USER_STATUS contact::toxcore_get_status() {
 }
 
 TOX_CONNECTION contact::toxcore_get_connection() {
+    auto c = core();
+    if (!c) {
+        throw std::runtime_error("core() is nullptr");
+    }
+
     TOX_ERR_FRIEND_QUERY error;
-    auto con = tox_friend_get_connection_status(core()->toxcore(), m_property_nr.get_value(), &error);
+    auto con = tox_friend_get_connection_status(c->toxcore(), m_property_nr.get_value(), &error);
     if (error != TOX_ERR_FRIEND_QUERY_OK) {
         throw exception(error);
     }
@@ -194,8 +222,13 @@ TOX_CONNECTION contact::toxcore_get_connection() {
 }
 
 std::shared_ptr<receipt> contact::send_message(const Glib::ustring& message) {
+    auto c = core();
+    if (!c) {
+        throw std::runtime_error("core() is nullptr");
+    }
+
     TOX_ERR_FRIEND_SEND_MESSAGE error;
-    auto receipt = tox_friend_send_message(core()->toxcore(), property_nr().get_value(), TOX_MESSAGE_TYPE_NORMAL, (const uint8_t*)message.data(), message.size(), &error);
+    auto receipt = tox_friend_send_message(c->toxcore(), property_nr().get_value(), TOX_MESSAGE_TYPE_NORMAL, (const uint8_t*)message.data(), message.size(), &error);
     if (error != TOX_ERR_FRIEND_SEND_MESSAGE_OK) {
         throw exception(error);
     }
@@ -205,8 +238,13 @@ std::shared_ptr<receipt> contact::send_message(const Glib::ustring& message) {
 }
 
 std::shared_ptr<receipt> contact::send_action (const Glib::ustring& action) {
+    auto c = core();
+    if (!c) {
+        throw std::runtime_error("core() is nullptr");
+    }
+
     TOX_ERR_FRIEND_SEND_MESSAGE error;
-    auto receipt = tox_friend_send_message(core()->toxcore(), property_nr().get_value(), TOX_MESSAGE_TYPE_ACTION, (const uint8_t*)action.data(), action.size(), &error);
+    auto receipt = tox_friend_send_message(c->toxcore(), property_nr().get_value(), TOX_MESSAGE_TYPE_ACTION, (const uint8_t*)action.data(), action.size(), &error);
     if (error != TOX_ERR_FRIEND_SEND_MESSAGE_OK) {
         throw exception(error);
     }
@@ -216,11 +254,12 @@ std::shared_ptr<receipt> contact::send_action (const Glib::ustring& action) {
 }
 
 std::shared_ptr<toxmm2::core> contact::core() {
-    return contact_manager()->core();
+    auto m = contact_manager();
+    return m ? m->core() : nullptr;
 }
 
 std::shared_ptr<toxmm2::contact_manager> contact::contact_manager() {
-    return m_contact_manager;
+    return m_contact_manager.lock();
 }
 
 std::shared_ptr<toxmm2::file_manager> contact::file_manager() {
