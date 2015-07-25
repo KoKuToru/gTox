@@ -34,4 +34,5 @@ add_library(${PROJECT_NAME} STATIC
 target_link_libraries(${PROJECT_NAME} ${GLIBMM_LIBRARIES} ${TOX_LIBRARY})
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
-#add_dependencies(${PROJECT_NAME})
+add_subdirectory(flatbuffers)
+add_dependencies(${PROJECT_NAME} toxmm-flatbuffers)

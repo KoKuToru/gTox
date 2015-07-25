@@ -24,6 +24,7 @@
 #include "file.h"
 #include "file_recv.h"
 #include "file_send.h"
+#include "flatbuffers/generated/File_generated.h"
 
 using namespace toxmm2;
 
@@ -197,12 +198,14 @@ void file_manager::init() {
                auto iter = std::find(m_file.begin(), m_file.end(), f);
                if (iter != m_file.end()) {
                    m_file.erase(iter);
+                   save();
                }
            }
        }, this));
 
        //add file to list
        m_file.push_back(f);
+       save();
 
        //emit signal
        m_signal_recv_file(f);
@@ -222,6 +225,8 @@ void file_manager::init() {
             file->m_property_state_remote = state;
         }
     }, *this));
+
+    load();
 }
 
 std::shared_ptr<file> file_manager::find(fileNr nr) {
@@ -307,12 +312,14 @@ std::shared_ptr<file> file_manager::send_file(const Glib::ustring& path, bool av
             auto iter = std::find(m_file.begin(), m_file.end(), f);
             if (iter != m_file.end()) {
                 m_file.erase(iter);
+                save();
             }
         }
     }, this));
 
     //add file to list
     m_file.push_back(f);
+    save();
 
     //emit signal
     m_signal_send_file(f);
@@ -338,4 +345,109 @@ std::shared_ptr<toxmm2::contact_manager> file_manager::contact_manager() {
 
 std::shared_ptr<toxmm2::contact> file_manager::contact() {
     return m_contact.lock();
+}
+
+void file_manager::load() {
+    auto c  = core();
+    auto ct = contact();
+    if (!c || !ct) {
+        return;
+    }
+
+    //load old data if possible
+    std::vector<uint8_t> content;
+    c->storage()->load({ct->property_addr_public().get_value(),
+                        "file-manager"}, content);
+    if (content.empty()) {
+        return;
+    }
+
+    auto verify = flatbuffers::Verifier(content.data(), content.size());
+    if (!flatbuffers::File::VerifyManagerBuffer(verify)) {
+        throw std::runtime_error("flatbuffers::Config::VerifyManagerBuffer failed");
+    }
+
+    auto data = flatbuffers::File::GetManager(content.data());
+
+    for(auto file: *data->files()) {
+        std::shared_ptr<toxmm2::file> f;
+        if (file->is_recv()) {
+            f = decltype(f)(new toxmm2::file_recv(shared_from_this()));
+            //todo check if file size is still the same
+        } else {
+            f = decltype(f)(new toxmm2::file_send(shared_from_this()));
+            //todo check if file size is still the same
+        }
+        f->m_property_id = file->id()->str();
+        f->m_property_nr = file->nr();
+        f->m_property_kind = TOX_FILE_KIND(file->kind()),
+        f->m_property_name = file->name()->str();
+        f->m_property_path = file->path()->str();
+        f->m_property_size = file->size();
+        f->m_property_active = false;
+        f->m_property_state = TOX_FILE_CONTROL_PAUSE;
+        f->m_property_state_remote = TOX_FILE_CONTROL_PAUSE;
+        f->init();
+
+        //remove file from list when complete
+        std::weak_ptr<toxmm2::file> fw = f;
+        f->property_complete().signal_changed().connect(sigc::track_obj([this, fw]() {
+            auto f = fw.lock();
+            if (f && f->property_complete()) {
+                auto iter = std::find(m_file.begin(), m_file.end(), f);
+                if (iter != m_file.end()) {
+                    m_file.erase(iter);
+                    save();
+                }
+            }
+        }, this));
+
+        //add file to list
+        m_file.push_back(f);
+    }
+}
+
+void file_manager::save() {
+    auto c  = core();
+    auto ct = contact();
+    if (!c || !ct) {
+        return;
+    }
+
+    using namespace flatbuffers;
+    using File = flatbuffers::File::File;
+    using FileBuilder = flatbuffers::File::FileBuilder;
+    using FileManagerBuilder = flatbuffers::File::ManagerBuilder;
+
+    std::vector<Offset<File>> vec(m_file.size());
+    vec.clear();
+    FlatBufferBuilder fbb;
+    for(auto file: m_file) {
+        auto id   =  fbb.CreateString(std::string(file->property_id()
+                                                  .get_value()));
+        auto name =  fbb.CreateString(file->property_name().get_value());
+        auto path =  fbb.CreateString(file->property_path().get_value());
+        FileBuilder fb(fbb);
+        fb.add_id(id);
+        fb.add_nr(file->property_nr().get_value().get());
+        fb.add_kind(int(file->property_kind()));
+        fb.add_position(file->property_position());
+        fb.add_size(file->property_size());
+        fb.add_name(name);
+        fb.add_path(path);
+        fb.add_progress(file->property_progress());
+        fb.add_is_recv(file->is_recv());
+        vec.push_back(fb.Finish());
+    }
+
+    auto f_vec = fbb.CreateVector(vec);
+    FileManagerBuilder fmb(fbb);
+    fmb.add_files(f_vec);
+
+    flatbuffers::File::FinishManagerBuffer(fbb, fmb.Finish());
+
+    std::vector<uint8_t> content(fbb.GetBufferPointer(),
+                                 fbb.GetBufferPointer() + fbb.GetSize());
+    c->storage()->save({ct->property_addr_public().get_value(),
+                        "file-manager"}, content);
 }

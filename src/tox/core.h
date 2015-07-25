@@ -83,6 +83,7 @@ namespace toxmm2 {
             ~core();
             Tox* toxcore();
             std::shared_ptr<toxmm2::contact_manager> contact_manager();
+            std::shared_ptr<toxmm2::storage> storage();
             static void try_load(std::string path, Glib::ustring& out_name, Glib::ustring& out_status, contactAddrPublic& out_addr, bool& out_writeable);
             static std::vector<uint8_t> create_state(std::string name, std::string status, contactAddrPublic& out_addr);
 
@@ -125,6 +126,7 @@ namespace toxmm2 {
             void operator=(const core&) = delete;
 
             void init();
+
     };
 
 }

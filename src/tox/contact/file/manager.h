@@ -80,6 +80,8 @@ namespace toxmm2 {
             void operator=(const file_manager&) = delete;
 
             void init();
+            void load();
+            void save();
     };
 }
 

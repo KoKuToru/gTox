@@ -66,7 +66,7 @@ Glib::PropertyProxy<Glib::ustring> core::property_avatar_path() {
     return m_property_avatar_path.get_proxy();
 }
 
-core::core(const std::string& profile_path, const std::shared_ptr<storage>& storage):
+core::core(const std::string& profile_path, const std::shared_ptr<toxmm2::storage>& storage):
     Glib::ObjectBase(typeid(core)),
     m_profile_path(profile_path),
     m_storage(storage),
@@ -90,6 +90,7 @@ core::core(const std::string& profile_path, const std::shared_ptr<storage>& stor
 
 void core::save() {
     //TODO: save
+
 }
 
 void core::destroy() {
@@ -335,6 +336,10 @@ void core::init() {
 
 std::shared_ptr<toxmm2::contact_manager> core::contact_manager() {
     return m_contact_manager;
+}
+
+std::shared_ptr<toxmm2::storage> core::storage() {
+    return m_storage;
 }
 
 void core::update() {

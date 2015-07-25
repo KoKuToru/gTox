@@ -599,7 +599,12 @@ void main::storage::load(const std::initializer_list<std::string>& key, std::vec
     //open file
     auto file = Gio::File::create_for_path(file_path);
     //read file
-    auto stream = file->read();
+    Glib::RefPtr<Gio::FileInputStream> stream;
+    try {
+        stream = file->read();
+    } catch (Gio::Error) {
+        //ignore
+    }
     if (!stream) {
         //file not found
         data.clear();

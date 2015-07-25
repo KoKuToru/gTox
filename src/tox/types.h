@@ -91,7 +91,9 @@ namespace toxmm2 {
             operator uint8_t*() { return m_addr.data(); }
             contactAddrPublic(): m_addr() {}
             contactAddrPublic(const uint8_t* addr) {
-                std::copy(addr, addr + m_addr.size(), m_addr.begin());
+                if (addr != nullptr) {
+                    std::copy(addr, addr + m_addr.size(), m_addr.begin());
+                }
             }
             contactAddrPublic(decltype(m_addr) addr): m_addr(addr) {}
             contactAddrPublic(const std::string& addr): m_addr(from_hex(addr)) {}
@@ -115,7 +117,9 @@ namespace toxmm2 {
            operator contactAddrPublic() { return contactAddrPublic(m_addr.data()); }
            contactAddr(): m_addr() {}
            contactAddr(const uint8_t* addr) {
-               std::copy(addr, addr + m_addr.size(), m_addr.begin());
+               if (addr != nullptr) {
+                   std::copy(addr, addr + m_addr.size(), m_addr.begin());
+               }
            }
            contactAddr(decltype(m_addr) addr): m_addr(addr) {}
            contactAddr(const std::string& addr): m_addr(from_hex(addr)) {}
@@ -138,7 +142,9 @@ namespace toxmm2 {
             operator uint8_t*() { return m_id.data(); }
             fileId(): m_id() {}
             fileId(const uint8_t* id) {
-                std::copy(id, id + m_id.size(), m_id.begin());
+                if (id != nullptr) {
+                    std::copy(id, id + m_id.size(), m_id.begin());
+                }
             }
             fileId(decltype(m_id) id): m_id(id) {}
             fileId(const std::string& id): m_id(from_hex(id)) {}
@@ -161,7 +167,9 @@ namespace toxmm2 {
             operator uint8_t*() { return m_hash.data(); }
             hash(): m_hash() {}
             hash(const uint8_t* hash) {
-                std::copy(hash, hash + m_hash.size(), m_hash.begin());
+                if (hash != nullptr) {
+                    std::copy(hash, hash + m_hash.size(), m_hash.begin());
+                }
             }
             hash(decltype(m_hash) hash): m_hash(hash) {}
             hash(const std::string& hash): m_hash(from_hex(hash)) {}
