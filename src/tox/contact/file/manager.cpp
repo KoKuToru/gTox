@@ -231,7 +231,8 @@ void file_manager::init() {
 
 std::shared_ptr<file> file_manager::find(fileNr nr) {
     auto iter = std::find_if(m_file.begin(), m_file.end(), [&](auto file) {
-        return file->m_property_nr.get_value() == nr;
+        return file->m_property_active.get_value() &&
+               file->m_property_nr.get_value() == nr;
     });
     if (iter == m_file.end()) {
         return nullptr;
