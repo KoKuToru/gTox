@@ -600,10 +600,13 @@ void main::storage::load(const std::initializer_list<std::string>& key, std::vec
     auto file = Gio::File::create_for_path(file_path);
     //read file
     Glib::RefPtr<Gio::FileInputStream> stream;
-    try {
-        stream = file->read();
-    } catch (Gio::Error) {
-        //ignore
+    if (file->query_exists()) {
+        try {
+            stream = file->read();
+        } catch (Gio::Error) {
+            //couldn't read the file
+            //lets ignore it for now..
+        }
     }
     if (!stream) {
         //file not found
