@@ -26,6 +26,7 @@
 #include "widget/chat_message.h"
 #include "widget/chat_file.h"
 #include "tox/contact/file/file.h"
+#include "tox/contact/manager.h"
 
 namespace sigc {
     SIGC_FUNCTORS_DEDUCE_RESULT_TYPE_WITH_DECLTYPE
@@ -515,4 +516,171 @@ void chat::save_log() {
 
     //remove pending items
     pending_log.clear();
+}
+
+void chat::load_log() {
+    auto c = m_main->tox();
+    auto cm = c->contact_manager();
+    if (!c || !cm) {
+        return;
+    }
+
+    std::vector<uint8_t> content;
+
+    //TODO: storage will need a way to list keys..
+
+    //search logs to load..
+    std::deque<std::pair<Glib::Date, int>> log;
+    constexpr int max_lines = 100;
+    for (int d = 0; d <= 10 && log.size() < max_lines; ++d) {
+        auto date = Glib::Date();
+        date.set_time_current();
+        date.subtract_days(d);
+
+        std::initializer_list<std::string> key = {
+            m_contact->property_addr_public().get_value(),
+            "log",
+            date.format_string("%Y-%m-%d")
+        };
+
+        content.clear();
+        c->storage()->load(key, content);
+
+        if (content.empty()) {
+            continue;
+        }
+
+        auto verify = flatbuffers::Verifier(content.data(), content.size());
+        if (!flatbuffers::Log::VerifyCollectionBuffer(verify)) {
+            throw std::runtime_error("flatbuffers::Log::VerifyCollectionBuffer failed");
+        }
+        auto data = flatbuffers::Log::GetCollection(content.data());
+
+        //add all messages for this day to the chat
+        for (int i = data->items()->size(); i > 0 ; --i) {
+            auto index = i - 1;
+            log.push_front({date, index});
+            if (log.size() >= max_lines) {
+                break;
+            }
+        }
+    }
+
+    //load the selected lines
+    Glib::Date last_date;
+    const flatbuffers::Log::Collection* last_data = nullptr;
+
+    for (auto l : log) {
+        auto& date  = l.first;
+        auto& index = l.second;
+
+        if (date != last_date) {
+            last_date = date;
+
+            std::initializer_list<std::string> key = {
+                m_contact->property_addr_public().get_value(),
+                "log",
+                date.format_string("%Y-%m-%d")
+            };
+
+            content.clear();
+            c->storage()->load(key, content);
+
+            if (content.empty()) {
+                throw std::runtime_error("Log content is empty now..");
+            }
+
+            auto verify = flatbuffers::Verifier(content.data(), content.size());
+            if (!flatbuffers::Log::VerifyCollectionBuffer(verify)) {
+                throw std::runtime_error("flatbuffers::Log::VerifyCollectionBuffer failed");
+            }
+
+            last_data = flatbuffers::Log::GetCollection(content.data());
+        }
+
+        auto item = last_data->items()->Get(index);
+
+        //add message to chat
+        switch (item->data_type()) {
+            case flatbuffers::Log::Data_Message: {
+                auto f = reinterpret_cast<const flatbuffers::Log::Message*>(
+                             item->data());
+                auto contact = cm->find(toxmm2::contactAddrPublic(
+                                            item->sender()->str()));
+                if (contact) {
+                    auto widget = new widget::chat_message(
+                                      f->message()->str());
+
+                    add_chat_line(true,
+                                  contact,
+                                  Glib::DateTime::create_now_utc(
+                                      item->timestamp()),
+                                  Gtk::manage(widget));
+                } else {
+                    //not found
+                    //TODO: will probably need this for group chat
+                }
+            } break;
+            case flatbuffers::Log::Data_Action: {
+                auto f = reinterpret_cast<const flatbuffers::Log::Action*>(
+                             item->data());
+                auto contact = cm->find(toxmm2::contactAddrPublic(
+                                            item->sender()->str()));
+                if (contact) {
+                    auto widget = new widget::chat_message(
+                                      contact->property_name_or_addr() + " " +
+                                      f->action()->str());
+
+                    add_chat_line(true,
+                                  contact,
+                                  Glib::DateTime::create_now_utc(
+                                      item->timestamp()),
+                                  Gtk::manage(widget));
+                } else {
+                    //not found
+                    //TODO: will probably need this for group chat
+                }
+            } break;
+            case flatbuffers::Log::Data_File: {
+                auto f = reinterpret_cast<const flatbuffers::Log::File*>(
+                             item->data());
+                auto contact = cm->find(toxmm2::contactAddrPublic(
+                                            item->sender()->str()));
+                if (contact) {
+                    //search the file
+                    auto fm = contact->file_manager();
+                    if (!fm) {
+                        break;
+                    }
+
+                    auto file = fm->find(toxmm2::uniqueId(f->uuid()->str()));
+
+                    if (file) {
+                        auto b_ref = widget::file::create(file);
+                        auto widget = Gtk::manage(b_ref.raw());
+
+                        add_chat_line(true,
+                                      contact,
+                                      Glib::DateTime::create_now_utc(
+                                          item->timestamp()),
+                                      Gtk::manage(widget));
+                    } else {
+                        //TODO: file preview only
+                    }
+                } else {
+                    //not found
+                }
+            } break;
+            default:
+                //TODO: What should we do ?
+                break;
+        }
+    }
+}
+
+void chat::add_chat_line(bool append_bubble,
+                   std::shared_ptr<toxmm2::contact> contact,
+                   Glib::DateTime time,
+                   Gtk::Widget* widget) {
+    //does nothing yet
 }

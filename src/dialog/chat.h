@@ -107,8 +107,14 @@ namespace dialog {
               >
             > pending_log;
 
-            //void load_log(Glib::Date date);
+
+            void load_log();
             void save_log();
+
+            void add_chat_line(bool append_bubble,
+                               std::shared_ptr<toxmm2::contact> contact,
+                               Glib::DateTime time,
+                               Gtk::Widget* widget);
 
         public:
             chat(Glib::RefPtr<main> main, std::shared_ptr<toxmm2::contact> contact);
