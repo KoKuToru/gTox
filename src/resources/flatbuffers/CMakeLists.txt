@@ -7,8 +7,10 @@ set(OPTIONS "compressed=\\\"true\\\"")
 
 set(SRC
     Config.fbs
-    ConfigGlobal.fbs)
-    
+    ConfigGlobal.fbs
+    Log.fbs
+)
+
 ADD_CUSTOM_TARGET(gtox-flatbuffers-resource ALL
     DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/${NAME}.c")
 

@@ -27,6 +27,7 @@
 #include "utils/builder.h"
 #include "utils/dispatcher.h"
 #include <memory>
+#include "resources/flatbuffers/generated/Log_generated.h"
 
 namespace widget {
     class chat_input;
@@ -90,6 +91,24 @@ namespace dialog {
             void update_children(GdkEventMotion* event,
                                  std::vector<Gtk::Widget*> children);
             Glib::ustring get_children_selection(std::vector<Gtk::Widget*> children);
+
+            //pending log entries for storage
+            std::map<
+              Glib::Date,
+              std::shared_ptr<
+                std::pair<
+                  flatbuffers::FlatBufferBuilder,
+                  std::vector<
+                    flatbuffers::Offset<
+                      flatbuffers::Log::Item
+                    >
+                  >
+                >
+              >
+            > pending_log;
+
+            //void load_log(Glib::Date date);
+            void save_log();
 
         public:
             chat(Glib::RefPtr<main> main, std::shared_ptr<toxmm2::contact> contact);

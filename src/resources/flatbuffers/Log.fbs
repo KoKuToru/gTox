@@ -1,0 +1,47 @@
+namespace flatbuffers.Log;
+
+union Data {
+    Message,
+    Action,
+    File
+}
+
+enum MessageStatus: short {
+    PENDING,
+    DONE
+}
+
+table Message {
+    message:string;
+    status:MessageStatus;
+}
+
+table Action {
+    action:string;
+    status:MessageStatus;
+}
+
+enum FileStatus:short {
+    PENDING,
+    DONE,
+    ABORTED
+}
+
+table File {
+    uuid:string;
+    name:string;
+    path:string;
+    status:FileStatus;
+}
+
+table Item {
+    sender:string;
+    timestamp:ulong;
+    data:Data;
+}
+
+table Collection {
+    items:[Item];
+}
+
+root_type Collection;
