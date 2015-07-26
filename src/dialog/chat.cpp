@@ -718,7 +718,7 @@ void chat::add_chat_line(bool append_bubble,
     //need a new bubble
     auto bubble_builder  = widget::chat_bubble::create(contact);
     bubble               = bubble_builder.raw();
-    m_last_bubble.side   = SIDE::OTHER;
+    m_last_bubble.side   = side;
     m_last_bubble.widget = Gtk::manage(bubble);
     m_last_bubble.time   = time;
 
