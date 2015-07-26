@@ -78,6 +78,7 @@ namespace dialog {
 
             struct {
                     uint64_t timestamp = 0;
+                    Glib::DateTime time;
                     SIDE side = SIDE::NONE;
                     Gtk::Widget* widget = nullptr;
 
@@ -115,7 +116,10 @@ namespace dialog {
                                std::shared_ptr<toxmm2::contact> contact,
                                Glib::DateTime time,
                                Gtk::Widget* widget);
-
+            void add_chat_line(bool append_bubble,
+                               std::shared_ptr<toxmm2::core>,
+                               Glib::DateTime time,
+                               Gtk::Widget* widget);
         public:
             chat(Glib::RefPtr<main> main, std::shared_ptr<toxmm2::contact> contact);
             ~chat();

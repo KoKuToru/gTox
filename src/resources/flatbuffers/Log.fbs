@@ -32,6 +32,7 @@ table File {
     name:string;
     path:string;
     status:FileStatus;
+    receiver:string;
 }
 
 table Item {
