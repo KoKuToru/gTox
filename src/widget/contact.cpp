@@ -203,6 +203,9 @@ contact::contact(BaseObjectType* cobject,
     auto fm = m_contact->file_manager();
     if (fm) {
         fm->signal_send_file().connect(sigc::track_obj([this](std::shared_ptr<toxmm2::file>& file) {
+            if (file->property_kind() != TOX_FILE_KIND_DATA) {
+                return;
+            }
             dialog::chat::add_log(m_main->tox()->storage(), m_contact, [&](flatbuffers::FlatBufferBuilder& fbb) {
                 return flatbuffers::Log::CreateItem(fbb,
                                                     fbb.CreateString(m_main->tox()->property_addr_public().get_value()),
@@ -219,6 +222,9 @@ contact::contact(BaseObjectType* cobject,
             });
         }, *this));
         fm->signal_recv_file().connect(sigc::track_obj([this](std::shared_ptr<toxmm2::file>& file) {
+            if (file->property_kind() != TOX_FILE_KIND_DATA) {
+                return;
+            }
             dialog::chat::add_log(m_main->tox()->storage(), m_contact, [&](flatbuffers::FlatBufferBuilder& fbb) {
                 return flatbuffers::Log::CreateItem(fbb,
                                                     fbb.CreateString(m_contact->property_addr_public().get_value()),
