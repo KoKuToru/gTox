@@ -21,7 +21,9 @@
 #include "tox/contact/contact.h"
 #include "dialog/chat.h"
 #include "dialog/main.h"
-
+#include "tox/contact/file/file.h"
+#include "tox/contact/file/manager.h"
+#include <flatbuffers/flatbuffers.h>
 using namespace widget;
 
 utils::builder::ref<contact> contact::create(Glib::RefPtr<dialog::main> main, std::shared_ptr<toxmm2::contact> contact, bool for_notify) {
@@ -143,6 +145,96 @@ contact::contact(BaseObjectType* cobject,
     update_visibility();
     m_main->config()->property_contacts_compact_list()
             .signal_changed().connect(sigc::track_obj(update_visibility, *this));
+
+
+    if (m_for_active_chats) {
+        return;
+    }
+
+    //callbacks for logging
+    m_contact->signal_send_message().connect(sigc::track_obj([this](Glib::ustring message, std::shared_ptr<toxmm2::receipt>) {
+       dialog::chat::add_log(m_main->tox()->storage(), m_contact, [&](flatbuffers::FlatBufferBuilder& fbb) {
+           return flatbuffers::Log::CreateItem(fbb,
+                                               fbb.CreateString(m_main->tox()->property_addr_public().get_value()),
+                                               Glib::DateTime::create_now_utc().to_unix(),
+                                               flatbuffers::Log::Data_Message,
+                                               flatbuffers::Log::CreateMessage(
+                                                    fbb,
+                                                    fbb.CreateString(message))
+                                                     .Union());
+       });
+    }, *this));
+    m_contact->signal_recv_message().connect(sigc::track_obj([this](Glib::ustring message) {
+        dialog::chat::add_log(m_main->tox()->storage(), m_contact, [&](flatbuffers::FlatBufferBuilder& fbb) {
+            return flatbuffers::Log::CreateItem(fbb,
+                                                fbb.CreateString(m_contact->property_addr_public().get_value()),
+                                                Glib::DateTime::create_now_utc().to_unix(),
+                                                flatbuffers::Log::Data_Message,
+                                                flatbuffers::Log::CreateMessage(
+                                                     fbb,
+                                                     fbb.CreateString(message))
+                                                     .Union());
+        });
+    }, *this));
+    m_contact->signal_send_action().connect(sigc::track_obj([this](Glib::ustring action, std::shared_ptr<toxmm2::receipt>) {
+        dialog::chat::add_log(m_main->tox()->storage(), m_contact, [&](flatbuffers::FlatBufferBuilder& fbb) {
+            return flatbuffers::Log::CreateItem(fbb,
+                                                fbb.CreateString(m_main->tox()->property_addr_public().get_value()),
+                                                Glib::DateTime::create_now_utc().to_unix(),
+                                                flatbuffers::Log::Data_Action,
+                                                flatbuffers::Log::CreateAction(
+                                                     fbb,
+                                                     fbb.CreateString(action))
+                                                      .Union());
+        });
+    }, *this));
+    m_contact->signal_recv_action().connect(sigc::track_obj([this](Glib::ustring action) {
+        dialog::chat::add_log(m_main->tox()->storage(), m_contact, [&](flatbuffers::FlatBufferBuilder& fbb) {
+            return flatbuffers::Log::CreateItem(fbb,
+                                                fbb.CreateString(m_contact->property_addr_public().get_value()),
+                                                Glib::DateTime::create_now_utc().to_unix(),
+                                                flatbuffers::Log::Data_Action,
+                                                flatbuffers::Log::CreateAction(
+                                                     fbb,
+                                                     fbb.CreateString(action))
+                                                     .Union());
+        });
+    },*this));
+    auto fm = m_contact->file_manager();
+    if (fm) {
+        fm->signal_send_file().connect(sigc::track_obj([this](std::shared_ptr<toxmm2::file>& file) {
+            dialog::chat::add_log(m_main->tox()->storage(), m_contact, [&](flatbuffers::FlatBufferBuilder& fbb) {
+                return flatbuffers::Log::CreateItem(fbb,
+                                                    fbb.CreateString(m_main->tox()->property_addr_public().get_value()),
+                                                    Glib::DateTime::create_now_utc().to_unix(),
+                                                    flatbuffers::Log::Data_File,
+                                                    flatbuffers::Log::CreateFile(
+                                                         fbb,
+                                                         fbb.CreateString(file->property_uuid().get_value()),
+                                                         fbb.CreateString(file->property_name().get_value()),
+                                                         fbb.CreateString(file->property_path().get_value()),
+                                                         flatbuffers::Log::FileStatus_PENDING,
+                                                         fbb.CreateString(m_contact->property_addr_public().get_value()))
+                                                          .Union());
+            });
+        }, *this));
+        fm->signal_recv_file().connect(sigc::track_obj([this](std::shared_ptr<toxmm2::file>& file) {
+            dialog::chat::add_log(m_main->tox()->storage(), m_contact, [&](flatbuffers::FlatBufferBuilder& fbb) {
+                return flatbuffers::Log::CreateItem(fbb,
+                                                    fbb.CreateString(m_contact->property_addr_public().get_value()),
+                                                    Glib::DateTime::create_now_utc().to_unix(),
+                                                    flatbuffers::Log::Data_Action,
+                                                    flatbuffers::Log::CreateFile(
+                                                         fbb,
+                                                         fbb.CreateString(file->property_uuid().get_value()),
+                                                         fbb.CreateString(file->property_name().get_value()),
+                                                         fbb.CreateString(file->property_path().get_value()),
+                                                         flatbuffers::Log::FileStatus_PENDING,
+                                                         fbb.CreateString(m_contact->property_addr_public().get_value()))
+                                                          .Union());
+            });
+        }, *this));
+    }
 }
 
 /*

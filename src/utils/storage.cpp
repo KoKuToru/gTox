@@ -57,12 +57,13 @@ void storage::save(const std::initializer_list<std::string>& key, const std::vec
 std::string storage::get_path_for_key(const std::initializer_list<std::string>& key) {
     std::string file_path = Glib::build_filename(Glib::get_user_config_dir(),
                                                  "gtox");
+    if (!m_prefix.empty()) {
+        file_path = Glib::build_filename(file_path, m_prefix);
+    }
     for(auto item : key) {
         file_path = Glib::build_filename(file_path, item);
     }
     file_path += ".bin";
-    if (!m_prefix.empty()) {
-        file_path = Glib::build_filename(m_prefix, file_path);
-    }
+
     return file_path;
 }

@@ -24,8 +24,7 @@
 #include "utils/builder.h"
 #include "utils/dispatcher.h"
 #include "tox/types.h"
-#include "utils/builder.h"
-#include "utils/dispatcher.h"
+#include "tox/storage.h"
 #include <memory>
 #include "resources/flatbuffers/generated/Log_generated.h"
 
@@ -93,24 +92,7 @@ namespace dialog {
                                  std::vector<Gtk::Widget*> children);
             Glib::ustring get_children_selection(std::vector<Gtk::Widget*> children);
 
-            //pending log entries for storage
-            std::map<
-              Glib::Date,
-              std::shared_ptr<
-                std::pair<
-                  flatbuffers::FlatBufferBuilder,
-                  std::vector<
-                    flatbuffers::Offset<
-                      flatbuffers::Log::Item
-                    >
-                  >
-                >
-              >
-            > pending_log;
-
-
             void load_log();
-            void save_log();
 
             void add_chat_line(bool append_bubble,
                                std::shared_ptr<toxmm2::contact> contact,
@@ -123,6 +105,10 @@ namespace dialog {
         public:
             chat(Glib::RefPtr<main> main, std::shared_ptr<toxmm2::contact> contact);
             ~chat();
+
+            static void add_log(std::shared_ptr<toxmm2::storage> storage,
+                                std::shared_ptr<toxmm2::contact> contact,
+                                std::function<flatbuffers::Offset<flatbuffers::Log::Item>(flatbuffers::FlatBufferBuilder&)> create_func);
 
             void activated();
     };

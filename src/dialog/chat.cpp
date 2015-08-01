@@ -285,6 +285,8 @@ chat::chat(Glib::RefPtr<dialog::main> main, std::shared_ptr<toxmm2::contact> con
             fmng->send_file(Glib::filename_from_uri(uri));
         }
     }, *this));
+
+    load_log();
 }
 
 chat::~chat() {
@@ -366,97 +368,6 @@ Glib::ustring chat::get_children_selection(
     return res;
 }
 
-void chat::save_log() {
-    auto c = m_main->tox();
-    if (!c) {
-        return;
-    }
-
-    std::vector<uint8_t> content;
-    for (auto pending: pending_log) {
-        auto  date  = pending.first;
-        auto& fbb   = pending.second->first;
-        auto& items = pending.second->second;
-
-        std::initializer_list<std::string> key = {
-            m_contact->property_addr_public().get_value(),
-            "log",
-            date.format_string("%Y-%m-%d")
-        };
-
-        //try to load old log
-        content.clear();
-        c->storage()->load(key, content);
-
-        if (!content.empty()) {
-            auto verify = flatbuffers::Verifier(content.data(), content.size());
-            if (!flatbuffers::Log::VerifyCollectionBuffer(verify)) {
-                throw std::runtime_error("flatbuffers::Log::VerifyCollectionBuffer failed");
-            }
-            auto data = flatbuffers::Log::GetCollection(content.data());
-            //add all log entrys to the pending one
-            typename std::remove_reference<decltype(items)>::type full_log;
-            for (auto item : *data->items()) {
-                flatbuffers::Offset<void> subdata;
-                //is there a more efficent way to copy a flatbuffer directly ?
-                switch (item->data_type()) {
-                    case flatbuffers::Log::Data_Message: {
-                        auto f = reinterpret_cast<const flatbuffers::Log::Message*>(item->data());
-                        subdata = flatbuffers::Log::CreateMessage(
-                                      fbb,
-                                      fbb.CreateString(f->message()),
-                                      f->status()).Union();
-                    } break;
-                    case flatbuffers::Log::Data_Action: {
-                        auto f = reinterpret_cast<const flatbuffers::Log::Action*>(item->data());
-                        subdata = flatbuffers::Log::CreateAction(
-                                      fbb,
-                                      fbb.CreateString(f->action()),
-                                      f->status()).Union();
-                    } break;
-                    case flatbuffers::Log::Data_File: {
-                        auto f = reinterpret_cast<const flatbuffers::Log::File*>(item->data());
-                        subdata = flatbuffers::Log::CreateFile(
-                                      fbb,
-                                      fbb.CreateString(f->uuid()),
-                                      fbb.CreateString(f->name()),
-                                      fbb.CreateString(f->path()),
-                                      f->status(),
-                                      fbb.CreateString(f->receiver())).Union();
-                    } break;
-                    default:
-                        //TODO: What should we do ?
-                        break;
-                }
-                auto new_item = flatbuffers::Log::CreateItem(
-                                    fbb,
-                                    fbb.CreateString(item->sender()),
-                                    item->timestamp(),
-                                    item->data_type(),
-                                    subdata);
-                full_log.push_back(new_item);
-            }
-            full_log.insert(full_log.end(), items.begin(), items.end());
-            items = full_log;
-        }
-
-        flatbuffers::Log::FinishCollectionBuffer(
-                    fbb,
-                    flatbuffers::Log::CreateCollection(
-                        fbb,
-                        fbb.CreateVector(items)));
-
-        content.clear();
-        content.insert(content.end(),
-                       fbb.GetBufferPointer(),
-                       fbb.GetBufferPointer() + fbb.GetSize());
-        c->storage()->save(key, content);
-    }
-
-    //remove pending items
-    pending_log.clear();
-}
-
 void chat::load_log() {
     auto c = m_main->tox();
     auto cm = c->contact_manager();
@@ -513,7 +424,7 @@ void chat::load_log() {
         auto& date  = l.first;
         auto& index = l.second;
 
-        if (date != last_date) {
+        if (date != last_date || !last_data) {
             last_date = date;
 
             std::initializer_list<std::string> key = {
@@ -724,4 +635,88 @@ void chat::add_chat_line(bool append_bubble,
 
     bubble->add_row(*widget);
     m_chat_box->add(*m_last_bubble.widget);
+}
+
+void chat::add_log(std::shared_ptr<toxmm2::storage> storage,
+                   std::shared_ptr<toxmm2::contact> contact,
+                   std::function<flatbuffers::Offset<flatbuffers::Log::Item>(flatbuffers::FlatBufferBuilder&)> create_func) {
+    if (!storage || !contact) {
+        return;
+    }
+
+    auto  date = Glib::DateTime::create_now_utc();
+
+    std::initializer_list<std::string> key = {
+        contact->property_addr_public().get_value(),
+        "log",
+        date.format("%Y-%m-%d")
+    };
+
+    //try to load old log
+    std::vector<uint8_t> content;
+    storage->load(key, content);
+
+    flatbuffers::FlatBufferBuilder fbb;
+    std::vector<flatbuffers::Offset<flatbuffers::Log::Item>> items;
+    if (!content.empty()) {
+        auto verify = flatbuffers::Verifier(content.data(), content.size());
+        if (!flatbuffers::Log::VerifyCollectionBuffer(verify)) {
+            throw std::runtime_error("flatbuffers::Log::VerifyCollectionBuffer failed");
+        }
+        auto data = flatbuffers::Log::GetCollection(content.data());
+        for (auto item : *data->items()) {
+            flatbuffers::Offset<void> subdata;
+            //is there a more efficent way to copy a flatbuffer directly ?
+            switch (item->data_type()) {
+                case flatbuffers::Log::Data_Message: {
+                    auto f = reinterpret_cast<const flatbuffers::Log::Message*>(item->data());
+                    subdata = flatbuffers::Log::CreateMessage(
+                                  fbb,
+                                  fbb.CreateString(f->message()),
+                                  f->status()).Union();
+                } break;
+                case flatbuffers::Log::Data_Action: {
+                    auto f = reinterpret_cast<const flatbuffers::Log::Action*>(item->data());
+                    subdata = flatbuffers::Log::CreateAction(
+                                  fbb,
+                                  fbb.CreateString(f->action()),
+                                  f->status()).Union();
+                } break;
+                case flatbuffers::Log::Data_File: {
+                    auto f = reinterpret_cast<const flatbuffers::Log::File*>(item->data());
+                    subdata = flatbuffers::Log::CreateFile(
+                                  fbb,
+                                  fbb.CreateString(f->uuid()),
+                                  fbb.CreateString(f->name()),
+                                  fbb.CreateString(f->path()),
+                                  f->status(),
+                                  fbb.CreateString(f->receiver())).Union();
+                } break;
+                default:
+                    //TODO: What should we do ?
+                    break;
+            }
+            auto new_item = flatbuffers::Log::CreateItem(
+                                fbb,
+                                fbb.CreateString(item->sender()),
+                                item->timestamp(),
+                                item->data_type(),
+                                subdata);
+            items.push_back(new_item);
+        }
+    }
+
+    items.push_back(create_func(fbb));
+
+    flatbuffers::Log::FinishCollectionBuffer(
+                fbb,
+                flatbuffers::Log::CreateCollection(
+                    fbb,
+                    fbb.CreateVector(items)));
+
+    content.clear();
+    content.insert(content.end(),
+                   fbb.GetBufferPointer(),
+                   fbb.GetBufferPointer() + fbb.GetSize());
+    storage->save(key, content);
 }
