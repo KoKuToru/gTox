@@ -36,16 +36,12 @@ profile_create::profile_create(BaseObjectType* cobject,
 
     builder.get_widget("assistant_username", m_username);
     builder.get_widget("assistant_statusmessage", m_status);
-    builder.get_widget("assistant_logging", m_logging);
     builder.get_widget("assistant_file_tox", m_file_tox);
-    builder.get_widget("assistant_file_gtox", m_file_gtox);
-
 
     auto w = builder.get_widget<Gtk::Widget>("assistant_first_page");
     m_username->signal_changed().connect([this, w]() {
         toxmm2::contactAddrPublic addr;
         m_last_toxcore = toxmm2::core::create_state(m_username->get_text(), m_status->get_text(), addr);
-        m_file_gtox->set_text(Glib::build_filename(m_path, "gtox", std::string(addr) + ".sqlite"));
 
         if (!m_username->get_text().empty()) {
             int i = 0;
@@ -60,7 +56,6 @@ profile_create::profile_create(BaseObjectType* cobject,
             }
         } else {
             m_file_tox->set_text("");
-            m_file_gtox->set_text("");
             if (w) {
                 set_page_complete(*w, false);
             }
@@ -70,7 +65,6 @@ profile_create::profile_create(BaseObjectType* cobject,
     m_status->signal_changed().connect([this, w]() {
         toxmm2::contactAddrPublic addr;
         m_last_toxcore = toxmm2::core::create_state(m_username->get_text(), m_status->get_text(), addr);
-        m_file_gtox->set_text(Glib::build_filename(m_path, "gtox", std::string(addr) + ".sqlite"));
     });
 }
 

@@ -34,9 +34,7 @@ namespace dialog {
 
             Gtk::Entry  *m_username = nullptr;
             Gtk::Entry  *m_status = nullptr;
-            Gtk::Switch *m_logging = nullptr;
             Gtk::Entry  *m_file_tox = nullptr;
-            Gtk::Entry  *m_file_gtox = nullptr;
 
             void on_cancel();
             void on_close();
