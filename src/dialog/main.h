@@ -22,6 +22,7 @@
 
 #include <gtkmm.h>
 #include "utils/builder.h"
+#include "utils/storage.h"
 #include "tox/types.h"
 #include "widget/main_menu.h"
 #include "config.h"
@@ -87,23 +88,7 @@ namespace dialog {
         protected:
             void load_contacts();
 
-            class storage : public toxmm2::storage {
-                    friend class main;
-                private:
-                    std::string m_prefix;
-
-                public:
-                    storage();
-
-                protected:
-                    void set_prefix_key(const std::string& prefix) override;
-                    void load(const std::initializer_list<std::string>& key, std::vector<uint8_t>& data) override;
-                    void save(const std::initializer_list<std::string>& key, const std::vector<uint8_t>& data) override;
-
-                    std::string get_path_for_key(const std::initializer_list<std::string>& key);
-            };
-
-            std::shared_ptr<storage> m_storage;
+            std::shared_ptr<utils::storage> m_storage;
     };
 }
 #endif

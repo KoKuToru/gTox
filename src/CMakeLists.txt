@@ -54,6 +54,7 @@ set(SOURCES
 
     utils/builder.cpp
     utils/dispatcher.h
+    utils/storage.cpp
 )
 SET_SOURCE_FILES_PROPERTIES(${GRESOURCE} PROPERTIES GENERATED 1)
 add_executable(${PROJECT_NAME}
