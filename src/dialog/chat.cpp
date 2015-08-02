@@ -597,7 +597,7 @@ void chat::add_chat_line(bool append_bubble,
 
     auto side = SIDE::NONE;
     if (append_bubble) {
-        side = SIDE::OTHER;
+        side = SIDE::OWN;
     }
 
     auto bubble = dynamic_cast<widget::chat_bubble*>(m_last_bubble.widget);
