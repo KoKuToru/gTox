@@ -12,29 +12,15 @@
       <object class="GtkGrid" id="grid1">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-        <child>
-          <object class="GtkImage" id="avatar">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="halign">end</property>
-            <property name="valign">start</property>
-            <property name="stock">gtk-missing-image</property>
-            <style>
-              <class name="gtox-avatar"/>
-              <class name="frame"/>
-            </style>
-          </object>
-          <packing>
-            <property name="left_attach">0</property>
-            <property name="top_attach">0</property>
-          </packing>
-        </child>
+        <property name="margin_top">10</property>
         <child>
           <object class="GtkLabel" id="username">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="halign">start</property>
-            <property name="label">&lt;span size='small'&gt;%1 • %2&lt;/span&gt;</property>
+            <property name="margin_left">5</property>
+            <property name="margin_top">5</property>
+            <property name="label">&lt;span size='x-small'&gt;%1 • %2&lt;/span&gt;</property>
             <property name="use_markup">True</property>
             <property name="ellipsize">end</property>
             <property name="single_line_mode">True</property>
@@ -79,6 +65,38 @@
           </object>
           <packing>
             <property name="left_attach">1</property>
+            <property name="top_attach">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkBox" id="box1">
+            <property name="width_request">64</property>
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="halign">end</property>
+            <property name="valign">start</property>
+            <property name="orientation">vertical</property>
+            <child>
+              <object class="GtkImage" id="avatar">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="halign">end</property>
+                <property name="valign">start</property>
+                <property name="stock">gtk-missing-image</property>
+                <style>
+                  <class name="gtox-avatar"/>
+                  <class name="frame"/>
+                </style>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="left_attach">0</property>
             <property name="top_attach">0</property>
           </packing>
         </child>
