@@ -580,7 +580,7 @@ void chat::add_chat_line(bool append_bubble,
     }
 
     //need a new bubble
-    auto bubble_builder  = widget::chat_bubble::create(contact);
+    auto bubble_builder  = widget::chat_bubble::create(contact, time);
     bubble               = bubble_builder.raw();
     m_last_bubble.side   = SIDE::OTHER;
     m_last_bubble.widget = Gtk::manage(bubble);
@@ -607,15 +607,15 @@ void chat::add_chat_line(bool append_bubble,
         auto a_time = m_last_bubble.time;
         auto b_time = time;
 
-        bool same_day = a_time.get_year() != b_time.get_year() ||
-                        a_time.get_month() != b_time.get_month() ||
-                        a_time.get_day_of_month() != b_time.get_day_of_month();
+        bool same_day = a_time.get_year() == b_time.get_year() &&
+                        a_time.get_month() == b_time.get_month() &&
+                        a_time.get_day_of_month() == b_time.get_day_of_month();
 
         if (same_day) {
 
             //check if same time
-            bool same_time = a_time.get_hour() != b_time.get_hour() ||
-                             a_time.get_minute() != b_time.get_minute();
+            bool same_time = a_time.get_hour() == b_time.get_hour() &&
+                             a_time.get_minute() == b_time.get_minute();
 
             if (same_time) {
                 bubble->add_row(*widget);
@@ -627,7 +627,7 @@ void chat::add_chat_line(bool append_bubble,
     }
 
     //need a new bubble
-    auto bubble_builder  = widget::chat_bubble::create(contact);
+    auto bubble_builder  = widget::chat_bubble::create(contact, time);
     bubble               = bubble_builder.raw();
     m_last_bubble.side   = side;
     m_last_bubble.widget = Gtk::manage(bubble);
