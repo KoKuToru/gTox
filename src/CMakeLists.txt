@@ -51,6 +51,8 @@ set(SOURCES
     widget/chat_action.cpp
     widget/chat_bubble.cpp
     widget/chat_file.cpp
+    widget/imagescaled.cpp
+    widget/videoplayer.cpp
 
     utils/builder.cpp
     utils/dispatcher.h
