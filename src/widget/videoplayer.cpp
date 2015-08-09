@@ -128,7 +128,12 @@ videoplayer::videoplayer(BaseObjectType* cobject,
     m_stop_btn->signal_clicked().connect(sigc::track_obj([this]() {
         if (m_stop_btn->property_active()) {
             m_streamer.property_state() = Gst::STATE_NULL;
+            m_streamer.property_state() = Gst::STATE_PAUSED;
         }
+    }, *this));
+
+    m_streamer.property_uri().signal_changed().connect(sigc::track_obj([this]() {
+        m_streamer.property_state() = Gst::STATE_PAUSED;
     }, *this));
 
     //display frame

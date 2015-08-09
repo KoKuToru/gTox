@@ -67,8 +67,10 @@ gstreamer::gstreamer():
     m_appsink->property_drop() = true;
     m_appsink->property_emit_signals() = true;
 
+    utils::dispatcher::ref weak_dispatcher = m_dispatcher;
     auto resolution = std::make_shared<std::pair<int, int>>();
-    m_appsink->signal_new_preroll().connect(sigc::track_obj([sink = m_appsink, resolution]() {
+
+    m_appsink->signal_new_preroll().connect(sigc::track_obj([this, sink = m_appsink, weak_dispatcher, resolution]() {
         auto preroll = sink->pull_preroll();
         if (!preroll) {
             return Gst::FLOW_OK;
@@ -93,61 +95,25 @@ gstreamer::gstreamer():
         }
         resolution->first = w;
         resolution->second = h;
-        return Gst::FLOW_OK;
-    }, *this));
 
-    utils::dispatcher::ref weak_dispatcher = m_dispatcher;
+        auto frame = extract_frame(preroll, resolution);
+        weak_dispatcher.emit([this, frame]() {
+            gint64 pos, dur;
+            if (m_playbin
+                && m_playbin->query_position(Gst::FORMAT_TIME, pos)
+                && m_playbin->query_duration(Gst::FORMAT_TIME, dur)) {
+                //set
+                m_property_duration.set_value(dur);
+                m_property_position.set_value(pos);
+            }
+            m_property_pixbuf.set_value(frame);
+        });
+        return Gst::FLOW_OK;
+
+    }, *this));
     m_appsink->signal_new_sample().connect(sigc::track_obj([this, sink = m_appsink, weak_dispatcher, resolution]() {
         auto sample = sink->pull_sample();
-        if (!sample) {
-            return Gst::FLOW_OK;
-        }
-        /*
-        Generates crashes, not idea why
-        using "resolution" now..
-        gets filled by preroll
-
-        auto caps = sample->get_caps();
-        if (!caps) {
-            return Gst::FLOW_OK;
-        }
-        if (caps->empty()) {
-            return Gst::FLOW_OK;
-        }
-        if (caps->empty()) {
-            return Gst::FLOW_OK;
-        }
-        auto struc = caps->get_structure(0);
-        int w,h;
-        if (!struc.get_field("width", w)) {
-            return Gst::FLOW_OK;
-        }
-        if (!struc.get_field("height", h)) {
-            return Gst::FLOW_OK;
-        }
-        */
-        auto buffer = sample->get_buffer();
-        if (!buffer) {
-            return Gst::FLOW_OK;
-        }
-        auto map = Glib::RefPtr<Gst::MapInfo>(new Gst::MapInfo);
-        if (!buffer->map(map, Gst::MAP_READ)) {
-            return Gst::FLOW_OK;
-        }
-        auto mem = new uint8_t[map->get_size()];
-        std::copy(map->get_data(), map->get_data() + map->get_size(), mem);
-        buffer->unmap(map);
-
-        auto frame = Gdk::Pixbuf::create_from_data(mem,
-                                                   Gdk::COLORSPACE_RGB,
-                                                   false,
-                                                   8,
-                                                   resolution->first,
-                                                   resolution->second,
-                                                   GST_ROUND_UP_4( resolution->first*3 ),
-                                                   [](const guint8* data) {
-            delete[] data;
-        });
+        auto frame = extract_frame(sample, resolution);
         weak_dispatcher.emit([this, frame]() {
             gint64 pos, dur;
             if (m_playbin
@@ -256,4 +222,58 @@ std::pair<bool, bool> gstreamer::has_video_audio(Glib::ustring uri) {
     pipeline->set_state(Gst::STATE_NULL);
 
     return {found_video_stream, found_audio_stream};
+}
+
+Glib::RefPtr<Gdk::Pixbuf> gstreamer::extract_frame(Glib::RefPtr<Gst::Sample> sample,
+                                                   std::shared_ptr<std::pair<int, int>> resolution) {
+    static auto null = Glib::RefPtr<Gdk::Pixbuf>();
+    if (!sample) {
+        return null;
+    }
+    /*
+    Generates crashes, not idea why
+    using "resolution" now..
+    gets filled by preroll
+
+    auto caps = sample->get_caps();
+    if (!caps) {
+        return null;
+    }
+    if (caps->empty()) {
+        return null;
+    }
+    if (caps->empty()) {
+        return null;
+    }
+    auto struc = caps->get_structure(0);
+    int w,h;
+    if (!struc.get_field("width", w)) {
+        return null;
+    }
+    if (!struc.get_field("height", h)) {
+        return null;
+    }
+    */
+    auto buffer = sample->get_buffer();
+    if (!buffer) {
+        return null;
+    }
+    auto map = Glib::RefPtr<Gst::MapInfo>(new Gst::MapInfo);
+    if (!buffer->map(map, Gst::MAP_READ)) {
+        return null;
+    }
+    auto mem = new uint8_t[map->get_size()];
+    std::copy(map->get_data(), map->get_data() + map->get_size(), mem);
+    buffer->unmap(map);
+
+    return Gdk::Pixbuf::create_from_data(mem,
+                                               Gdk::COLORSPACE_RGB,
+                                               false,
+                                               8,
+                                               resolution->first,
+                                               resolution->second,
+                                               GST_ROUND_UP_4( resolution->first*3 ),
+                                               [](const guint8* data) {
+        delete[] data;
+    });
 }

@@ -65,6 +65,9 @@ namespace utils {
             Glib::Property<Glib::RefPtr<Gdk::Pixbuf>> m_property_pixbuf;
 
             type_signal_error m_signal_error;
+
+            static Glib::RefPtr<Gdk::Pixbuf> extract_frame(Glib::RefPtr<Gst::Sample> sample,
+                                                           std::shared_ptr<std::pair<int, int> > resolution);
     };
 }
 #endif
