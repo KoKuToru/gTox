@@ -117,19 +117,21 @@ chat_bubble::~chat_bubble() {
 }
 
 utils::builder::ref<chat_bubble> chat_bubble::create(std::shared_ptr<toxmm2::core> core, Glib::DateTime time) {
-    return utils::builder(Gtk::Builder::create_from_resource("/org/gtox/ui/chat_bubble_right.ui"))
-            .get_widget_derived<chat_bubble>("chat_bubble",
-                                             core->property_name_or_addr(),
-                                             core->property_addr_public(),
-                                             time);
+    return utils::builder::create_ref<chat_bubble>(
+                "/org/gtox/ui/chat_bubble_right.ui",
+                "chat_bubble",
+                core->property_name_or_addr(),
+                core->property_addr_public(),
+                time);
 }
 
 utils::builder::ref<chat_bubble> chat_bubble::create(std::shared_ptr<toxmm2::contact> contact, Glib::DateTime time) {
-    return utils::builder(Gtk::Builder::create_from_resource("/org/gtox/ui/chat_bubble_left.ui"))
-            .get_widget_derived<chat_bubble>("chat_bubble",
-                                             contact->property_name_or_addr(),
-                                             contact->property_addr_public(),
-                                             time);
+    return utils::builder::create_ref<chat_bubble>(
+                "/org/gtox/ui/chat_bubble_right.ui",
+                "chat_bubble",
+                contact->property_name_or_addr(),
+                contact->property_addr_public(),
+                time);
 }
 
 void chat_bubble::add_row(Gtk::Widget& widget) {

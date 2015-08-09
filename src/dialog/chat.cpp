@@ -35,7 +35,7 @@ namespace sigc {
 
 using namespace dialog;
 
-chat::chat(Glib::RefPtr<dialog::main> main, std::shared_ptr<toxmm2::contact> contact):
+chat::chat(dialog::main& main, std::shared_ptr<toxmm2::contact> contact):
     m_contact(contact),
     m_main(main),
     m_builder(Gtk::Builder::create_from_resource("/org/gtox/ui/dialog_chat.ui")) {
@@ -57,7 +57,7 @@ chat::chat(Glib::RefPtr<dialog::main> main, std::shared_ptr<toxmm2::contact> con
     m_builder.get_widget("scrolled", m_scrolled);
     m_builder.get_widget("viewport", m_viewport);
 
-    m_main->chat_add(*m_headerbar_attached, *m_body, *m_btn_prev, *m_btn_next);
+    m_main.chat_add(*m_headerbar_attached, *m_body, *m_btn_prev, *m_btn_next);
 
     m_binding_name[0] = Glib::Binding::bind_property(m_contact->property_name_or_addr(),
                                                      m_headerbar_attached->property_title(),
@@ -88,17 +88,17 @@ chat::chat(Glib::RefPtr<dialog::main> main, std::shared_ptr<toxmm2::contact> con
     set_titlebar(*m_headerbar_detached);
     m_btn_detach->signal_clicked().connect(sigc::track_obj([this]() {
         //TODO: take position w/h from main-window
-        m_main->chat_remove(*m_headerbar_attached, *m_body);
+        m_main.chat_remove(*m_headerbar_attached, *m_body);
         add(*m_body);
         show();
     }, *this));
     m_btn_attach->signal_clicked().connect(sigc::track_obj([this]() {
         remove();
         hide();
-        m_main->chat_add(*m_headerbar_attached, *m_body, *m_btn_prev, *m_btn_next);
+        m_main.chat_add(*m_headerbar_attached, *m_body, *m_btn_prev, *m_btn_next);
     }, *this));
     m_btn_close_attached->signal_clicked().connect(sigc::track_obj([this]() {
-        m_main->chat_remove(*m_headerbar_attached, *m_body);
+        m_main.chat_remove(*m_headerbar_attached, *m_body);
     }, *this));
     m_btn_close_detached->signal_clicked().connect(sigc::track_obj([this]() {
         remove();
@@ -128,9 +128,9 @@ chat::chat(Glib::RefPtr<dialog::main> main, std::shared_ptr<toxmm2::contact> con
         auto time = Glib::DateTime::create_now_utc();
         add_chat_line(
             LINE_APPEND_APPENDABLE,
-            m_main->tox(),
+            m_main.tox(),
             time,
-            Gtk::manage(new widget::chat_message(m_main->tox()->property_name_or_addr(),
+            Gtk::manage(new widget::chat_message(m_main.tox()->property_name_or_addr(),
                                                  time,
                                                  message)));
     }, *this));
@@ -150,9 +150,9 @@ chat::chat(Glib::RefPtr<dialog::main> main, std::shared_ptr<toxmm2::contact> con
         auto time = Glib::DateTime::create_now_utc();
         add_chat_line(
             LINE_NEW,
-            m_main->tox(),
+            m_main.tox(),
             Glib::DateTime::create_now_utc(),
-            Gtk::manage(new widget::chat_action(m_main->tox()->property_name_or_addr(),
+            Gtk::manage(new widget::chat_action(m_main.tox()->property_name_or_addr(),
                                                 time,
                                                 action)));
     }, *this));
@@ -188,7 +188,7 @@ chat::chat(Glib::RefPtr<dialog::main> main, std::shared_ptr<toxmm2::contact> con
         auto widget = b_ref.raw();
         add_chat_line(
             LINE_APPEND_APPENDABLE,
-            m_main->tox(),
+            m_main.tox(),
             Glib::DateTime::create_now_utc(),
             Gtk::manage(widget));
     }, *this));
@@ -303,14 +303,14 @@ chat::chat(Glib::RefPtr<dialog::main> main, std::shared_ptr<toxmm2::contact> con
 }
 
 chat::~chat() {
-    m_main->chat_remove(*m_headerbar_attached, *m_body);
+    m_main.chat_remove(*m_headerbar_attached, *m_body);
 }
 
 void chat::activated() {
     if (is_visible()) {
         present();
     } else {
-        m_main->chat_show(*m_headerbar_attached, *m_body, *m_btn_prev, *m_btn_next);
+        m_main.chat_show(*m_headerbar_attached, *m_body, *m_btn_prev, *m_btn_next);
     }
 }
 
@@ -382,7 +382,7 @@ Glib::ustring chat::get_children_selection(
 }
 
 void chat::load_log() {
-    auto c = m_main->tox();
+    auto c = m_main.tox();
     auto cm = c->contact_manager();
     if (!c || !cm) {
         return;

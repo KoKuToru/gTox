@@ -28,7 +28,7 @@ namespace dialog {
     class settings : public Gtk::Window {
         private:
             utils::builder m_builder;
-            Glib::RefPtr<main> m_main;
+            main& m_main;
 
             Gtk::HeaderBar* m_headerbar_attached;
             Gtk::HeaderBar* m_headerbar_detached;
@@ -73,7 +73,7 @@ namespace dialog {
             std::vector<Glib::RefPtr<Glib::Binding>> m_bindings;
 
         public:
-            settings(Glib::RefPtr<main> main);
+            settings(main& main);
             ~settings();
 
             void activated();

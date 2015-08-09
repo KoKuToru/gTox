@@ -29,7 +29,7 @@ namespace sigc {
 
 #include <iostream>
 
-settings::settings(Glib::RefPtr<main> main)
+settings::settings(main& main)
     : m_builder(Gtk::Builder::create_from_resource("/org/gtox/ui/dialog_settings.ui")),
       m_main(main) {
 
@@ -72,7 +72,7 @@ settings::settings(Glib::RefPtr<main> main)
 
     m_builder.get_widget("video_default_device", m_video_device);
 
-    m_main->chat_add(*m_headerbar_attached, *m_body, *m_btn_prev, *m_btn_next);
+    m_main.chat_add(*m_headerbar_attached, *m_body, *m_btn_prev, *m_btn_next);
 
     m_headerbar_attached->set_title(_("SETTINGS_TITLE"));
     m_headerbar_detached->set_title(_("SETTINGS_TITLE"));
@@ -81,17 +81,17 @@ settings::settings(Glib::RefPtr<main> main)
 
     m_btn_detach->signal_clicked().connect(sigc::track_obj([this]() {
         //TODO: take position w/h from main-window
-        m_main->chat_remove(*m_headerbar_attached, *m_body);
+        m_main.chat_remove(*m_headerbar_attached, *m_body);
         add(*m_body);
         show();
     }, *this));
     m_btn_attach->signal_clicked().connect(sigc::track_obj([this]() {
         remove();
         hide();
-        m_main->chat_add(*m_headerbar_attached, *m_body, *m_btn_prev, *m_btn_next);
+        m_main.chat_add(*m_headerbar_attached, *m_body, *m_btn_prev, *m_btn_next);
     }, *this));
     m_btn_close_attached->signal_clicked().connect(sigc::track_obj([this]() {
-        m_main->chat_remove(*m_headerbar_attached, *m_body);
+        m_main.chat_remove(*m_headerbar_attached, *m_body);
     }, *this));
     m_btn_close_detached->signal_clicked().connect(sigc::track_obj([this]() {
         remove();
@@ -105,29 +105,29 @@ settings::settings(Glib::RefPtr<main> main)
 
     //SYSTEMTRAY SETTINGS
     m_bindings.push_back(Glib::Binding::bind_property(
-                             m_main->config()->property_systemtray_visible(),
+                             m_main.config()->property_systemtray_visible(),
                              m_tray_visible->property_active(),
                              binding_flag));
     m_bindings.push_back(Glib::Binding::bind_property(
-                             m_main->config()->property_systemtray_on_start(),
+                             m_main.config()->property_systemtray_on_start(),
                              m_tray_on_start->property_active(),
                              binding_flag));
     m_bindings.push_back(Glib::Binding::bind_property(
-                             m_main->config()->property_systemtray_on_close(),
+                             m_main.config()->property_systemtray_on_close(),
                              m_tray_on_close->property_active(),
                              binding_flag));
 
     //CHAT-SETTINGS
     m_bindings.push_back(Glib::Binding::bind_property(
-                             m_main->config()->property_chat_notification_on_message(),
+                             m_main.config()->property_chat_notification_on_message(),
                              m_c_n_on_message->property_active(),
                              binding_flag));
     m_bindings.push_back(Glib::Binding::bind_property(
-                             m_main->config()->property_chat_notification_with_audio(),
+                             m_main.config()->property_chat_notification_with_audio(),
                              m_c_n_with_audio->property_active(),
                              binding_flag));
     m_bindings.push_back(Glib::Binding::bind_property(
-                             m_main->config()->property_chat_auto_away(),
+                             m_main.config()->property_chat_auto_away(),
                              m_c_auto_away->property_active_id(),
                              binding_flag,
                              [](const int& value_in, Glib::ustring& value_out) {
@@ -139,38 +139,38 @@ settings::settings(Glib::RefPtr<main> main)
                                  return true;
                              }));
     m_bindings.push_back(Glib::Binding::bind_property(
-                             m_main->config()->property_chat_send_typing(),
+                             m_main.config()->property_chat_send_typing(),
                              m_c_send_typing->property_active(),
                              binding_flag));
     m_bindings.push_back(Glib::Binding::bind_property(
-                             m_main->config()->property_chat_logging(),
+                             m_main.config()->property_chat_logging(),
                              m_c_logging->property_active(),
                              binding_flag));
 
     //FILETRANSFER-SETTINGS
-    m_main->config()->property_file_save_path().signal_changed().connect(sigc::track_obj([this]() {
-        m_ft_save_to->set_file(Gio::File::create_for_path(m_main->config()->property_file_save_path().get_value()));
+    m_main.config()->property_file_save_path().signal_changed().connect(sigc::track_obj([this]() {
+        m_ft_save_to->set_file(Gio::File::create_for_path(m_main.config()->property_file_save_path().get_value()));
     }, *this));
-    m_ft_save_to->set_file(Gio::File::create_for_path(m_main->config()->property_file_save_path().get_value()));
+    m_ft_save_to->set_file(Gio::File::create_for_path(m_main.config()->property_file_save_path().get_value()));
     m_ft_save_to->signal_file_set().connect(sigc::track_obj([this]() {
-        m_main->config()->property_file_save_path() = m_ft_save_to->get_file()->get_path();
+        m_main.config()->property_file_save_path() = m_ft_save_to->get_file()->get_path();
     }, *this));
     m_bindings.push_back(Glib::Binding::bind_property(
-                             m_main->config()->property_file_auto_accept(),
+                             m_main.config()->property_file_auto_accept(),
                              m_ft_auto_accept->property_active(),
                              binding_flag));
     m_bindings.push_back(Glib::Binding::bind_property(
-                             m_main->config()->property_file_display_inline(),
+                             m_main.config()->property_file_display_inline(),
                              m_ft_display_inline->property_active(),
                              binding_flag));
 
     //CONTACTLIST-SETTINGS
     m_bindings.push_back(Glib::Binding::bind_property(
-                             m_main->config()->property_contacts_compact_list(),
+                             m_main.config()->property_contacts_compact_list(),
                              m_cl_use_compact->property_active(),
                              binding_flag));
     m_bindings.push_back(Glib::Binding::bind_property(
-                             m_main->config()->property_contacts_display_active(),
+                             m_main.config()->property_contacts_display_active(),
                              m_cl_display_active->property_active(),
                              binding_flag));
 
@@ -254,7 +254,7 @@ settings::settings(Glib::RefPtr<main> main)
 
 /*
     auto settings_video_player = m_builder.get_widget_derived<VideoPlayer>("settings_video_player");
-    auto settings_video_default_device_selected = gTox::instance()->database().m_main->config()ig_get("SETTINGS_VIDEO_DEFAULT_DEVICE", "");
+    auto settings_video_default_device_selected = gTox::instance()->database().m_main.config()ig_get("SETTINGS_VIDEO_DEFAULT_DEVICE", "");
     auto settings_video_default_device = m_builder.get_widget<Gtk::ComboBox>("settings_video_default_device");
     auto settings_video_default_device_model_store = Glib::RefPtr<Gtk::ListStore>::cast_dynamic(settings_video_default_device->get_model());
     for(auto device : gStreamerHelper::probe_devices()) {
@@ -273,7 +273,7 @@ settings::settings(Glib::RefPtr<main> main)
         Glib::ustring value;
         settings_video_default_device->get_active()->get_value(0, value);
 
-        gTox::instance()->database().m_main->config()ig_set("SETTINGS_VIDEO_DEFAULT_DEVICE", value);
+        gTox::instance()->database().m_main.config()ig_set("SETTINGS_VIDEO_DEFAULT_DEVICE", value);
 
         settings_video_player->set_uri("dev://" + value);
         settings_video_player->play();
@@ -287,10 +287,10 @@ void settings::activated() {
     if (is_visible()) {
         present();
     } else {
-        m_main->chat_show(*m_headerbar_attached, *m_body, *m_btn_prev, *m_btn_next);
+        m_main.chat_show(*m_headerbar_attached, *m_body, *m_btn_prev, *m_btn_next);
     }
 }
 
 settings::~settings() {
-    m_main->chat_remove(*m_headerbar_attached, *m_body);
+    m_main.chat_remove(*m_headerbar_attached, *m_body);
 }

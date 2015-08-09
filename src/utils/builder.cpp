@@ -21,11 +21,11 @@
 
 using namespace utils;
 
-builder::builder(const Glib::RefPtr<Gtk::Builder>& builder):
+builder::builder(const Glib::RefPtr<Gtk::Builder> builder):
     m_builder(builder) {
 }
 
-const Glib::RefPtr<Gtk::Builder> builder::operator->() {
+Glib::RefPtr<Gtk::Builder> builder::operator->() {
     return m_builder;
 }
 

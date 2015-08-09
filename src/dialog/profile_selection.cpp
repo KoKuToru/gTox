@@ -211,8 +211,10 @@ void profile_selection::set_accounts(const std::vector<std::string>& accounts) {
 }
 
 utils::builder::ref<profile_selection> profile_selection::create(const std::vector<std::string>& accounts) {
-    return utils::builder(Gtk::Builder::create_from_resource("/org/gtox/ui/dialog_profile.ui"))
-            .get_widget_derived<profile_selection>("dialog_profile", accounts);
+    return utils::builder::create_ref<profile_selection>(
+                "/org/gtox/ui/dialog_profile.ui",
+                "dialog_profile",
+                accounts);
 }
 
 void profile_selection::quit() {

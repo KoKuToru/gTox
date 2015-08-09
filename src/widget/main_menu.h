@@ -32,7 +32,7 @@ namespace dialog {
 namespace widget {
     class main_menu : public Gtk::Popover {
         private:
-            Glib::RefPtr<dialog::main> m_main;
+            dialog::main& m_main;
             Glib::RefPtr<dialog::settings> m_settings;
 
             struct {
@@ -50,7 +50,7 @@ namespace widget {
             Gtk::Button* m_settings_btn;
 
         public:
-            main_menu(Glib::RefPtr<dialog::main> m_main);
+            main_menu(dialog::main& m_main);
             ~main_menu();
 
             void set_visible(bool visible = true);

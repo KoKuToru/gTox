@@ -43,7 +43,7 @@ main::main(BaseObjectType* cobject,
     m_storage = std::make_shared<utils::storage>();
     m_toxcore = toxmm2::core::create(file, m_storage);
     m_menu = Glib::RefPtr<widget::main_menu>(
-                 new widget::main_menu(Glib::RefPtr<main>(this)));
+                 new widget::main_menu(*this));
     m_config = std::make_shared<class config>(
                    Glib::build_filename(
                        Glib::get_user_config_dir(),
@@ -259,11 +259,11 @@ main::main(BaseObjectType* cobject,
 
     m_toxcore->contact_manager()->signal_added().connect(sigc::track_obj([this](std::shared_ptr<toxmm2::contact> contact) {
         //add contact to list
-        auto item_builder = widget::contact::create(Glib::RefPtr<dialog::main>(this), contact);
+        auto item_builder = widget::contact::create(*this, contact);
         auto item = Gtk::manage(item_builder.raw());
         m_list_contact->add(*item);
 
-        item_builder = widget::contact::create(Glib::RefPtr<dialog::main>(this), contact, true);
+        item_builder = widget::contact::create(*this, contact, true);
         item = Gtk::manage(item_builder.raw());
         m_list_contact_active->add(*item);
 
@@ -302,8 +302,10 @@ main::main(BaseObjectType* cobject,
 }
 
 utils::builder::ref<main> main::create(const Glib::ustring& file) {
-    return utils::builder(Gtk::Builder::create_from_resource("/org/gtox/ui/dialog_contact.ui"))
-            .get_widget_derived<main>("dialog_contact", file);
+    return utils::builder::create_ref<main>(
+                "/org/gtox/ui/dialog_contact.ui",
+                "dialog_contact",
+                file);
 }
 
 void main::load_contacts() {
@@ -316,12 +318,12 @@ void main::load_contacts() {
 
     for (auto contact : m_toxcore->contact_manager()->get_all()) {
         //normal contact list:
-        auto item_builder = widget::contact::create(Glib::RefPtr<dialog::main>(this), contact);
+        auto item_builder = widget::contact::create(*this, contact);
         auto item = Gtk::manage(item_builder.raw());
         m_list_contact->add(*item);
 
         //active chat list:
-        item_builder = widget::contact::create(Glib::RefPtr<dialog::main>(this), contact, true);
+        item_builder = widget::contact::create(*this, contact, true);
         item = Gtk::manage(item_builder.raw());
         m_list_contact_active->add(*item);
     }

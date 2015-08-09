@@ -143,6 +143,7 @@ videoplayer::~videoplayer() {
 }
 
 utils::builder::ref<videoplayer> videoplayer::create() {
-    return utils::builder(Gtk::Builder::create_from_resource("/org/gtox/ui/videoplayer.ui"))
-            .get_widget_derived<videoplayer>("videoplayer");
+    return utils::builder::create_ref<videoplayer>(
+                "/org/gtox/ui/videoplayer.ui",
+                "videoplayer");
 }

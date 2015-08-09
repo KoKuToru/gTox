@@ -28,13 +28,13 @@
 
 using namespace widget;
 
-main_menu::main_menu(Glib::RefPtr<dialog::main> main): m_main(main) {
+main_menu::main_menu(dialog::main& main): m_main(main) {
 
     utils::builder builder = Gtk::Builder::create_from_resource("/org/gtox/ui/popover_settings.ui");
 
     builder.get_widget("profile_username_entry", m_profile.username);
     builder.get_widget("profile_statusmessage_entry", m_profile.status);
-    m_profile.avatar = builder.get_widget_derived<avatar>("profile_avatar", m_main->tox()->property_addr_public());
+    m_profile.avatar = builder.get_widget_derived<avatar>("profile_avatar", m_main.tox()->property_addr_public());
 
     builder.get_widget("add_contact_tox_id", m_add_contact.tox_id);
     builder.get_widget("add_contact_message", m_add_contact.message);
@@ -45,8 +45,8 @@ main_menu::main_menu(Glib::RefPtr<dialog::main> main): m_main(main) {
     add(*m_stack);
 
     /* Tox-Id display */
-    std::string hexfull = m_main->tox()->property_addr().get_value();
-    std::string hex = m_main->tox()->property_addr().get_value();
+    std::string hexfull = m_main.tox()->property_addr().get_value();
+    std::string hex = m_main.tox()->property_addr().get_value();
     for (int i = 4; i > 0; --i) {
         hex.insert(2 * i * TOX_PUBLIC_KEY_SIZE / 4, 1, '\n');
     }
@@ -112,10 +112,10 @@ main_menu::main_menu(Glib::RefPtr<dialog::main> main): m_main(main) {
     */
     /* Update name / status message logic */
     m_profile.username->signal_focus_out_event().connect_notify(sigc::hide([this]() {
-        m_main->tox()->property_name() = m_profile.username->get_text();
+        m_main.tox()->property_name() = m_profile.username->get_text();
     }));
     m_profile.status  ->signal_focus_out_event().connect_notify(sigc::hide([this]() {
-        m_main->tox()->property_status_message() = m_profile.status->get_text();
+        m_main.tox()->property_status_message() = m_profile.status->get_text();
     }));
 
     /* Add contact submit button handling */
@@ -149,8 +149,8 @@ void main_menu::set_visible(bool visible) {
         return;
     }
 
-    m_profile.username->set_text(m_main->tox()->property_name());
-    m_profile.status->set_text(m_main->tox()->property_status_message());
+    m_profile.username->set_text(m_main.tox()->property_name());
+    m_profile.status->set_text(m_main.tox()->property_status_message());
 
     m_stack->set_visible_child("popover_profile", Gtk::STACK_TRANSITION_TYPE_NONE);
     m_profile.username->grab_focus();
@@ -172,7 +172,7 @@ void main_menu::add_contact() {
         if (message.empty()) {
             message = " ";
         }
-        m_main->tox()->contact_manager()->add_contact(toxmm2::contactAddr(m_add_contact.tox_id->get_text()), message);
+        m_main.tox()->contact_manager()->add_contact(toxmm2::contactAddr(m_add_contact.tox_id->get_text()), message);
 
         set_visible(false);
         m_add_contact.tox_id->set_text("");

@@ -38,7 +38,7 @@ namespace dialog {
         private:
             std::shared_ptr<toxmm2::contact> m_contact;
 
-            Glib::RefPtr<main> m_main;
+            main& m_main;
             utils::dispatcher m_dispatcher;
             utils::builder    m_builder;
 
@@ -113,7 +113,7 @@ namespace dialog {
                                Glib::DateTime time,
                                Gtk::Widget* widget);
         public:
-            chat(Glib::RefPtr<main> main, std::shared_ptr<toxmm2::contact> contact);
+            chat(main& main, std::shared_ptr<toxmm2::contact> contact);
             ~chat();
 
             static void add_log(std::shared_ptr<toxmm2::storage> storage,

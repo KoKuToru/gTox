@@ -26,18 +26,19 @@
 #include <flatbuffers/flatbuffers.h>
 using namespace widget;
 
-utils::builder::ref<contact> contact::create(Glib::RefPtr<dialog::main> main, std::shared_ptr<toxmm2::contact> contact, bool for_notify) {
-    return utils::builder(Gtk::Builder::create_from_resource("/org/gtox/ui/list_item_contact.ui"))
-            .get_widget_derived<widget::contact>("contact_list_item",
-                                                 main,
-                                                 contact,
-                                                 for_notify);
+utils::builder::ref<contact> contact::create(dialog::main& main, std::shared_ptr<toxmm2::contact> contact, bool for_notify) {
+    return utils::builder::create_ref<widget::contact>(
+                "/org/gtox/ui/list_item_contact.ui",
+                "contact_list_item",
+                main,
+                contact,
+                for_notify);
 }
 
 
 contact::contact(BaseObjectType* cobject,
                  utils::builder builder,
-                 Glib::RefPtr<dialog::main> main,
+                 dialog::main& main,
                  std::shared_ptr<toxmm2::contact> contact,
                  bool for_active_chats)
     : Gtk::ListBoxRow(cobject),
@@ -131,7 +132,7 @@ contact::contact(BaseObjectType* cobject,
 
     auto update_visibility = [this]() {
         if (!m_for_active_chats &&
-                !m_main->config()->property_contacts_compact_list().get_value()) {
+                !m_main.config()->property_contacts_compact_list().get_value()) {
             m_contact_list_grid_mini->hide();
             m_contact_list_grid->show();
         } else {
@@ -143,7 +144,7 @@ contact::contact(BaseObjectType* cobject,
         }
     };
     update_visibility();
-    m_main->config()->property_contacts_compact_list()
+    m_main.config()->property_contacts_compact_list()
             .signal_changed().connect(sigc::track_obj(update_visibility, *this));
 
 
@@ -153,9 +154,9 @@ contact::contact(BaseObjectType* cobject,
 
     //callbacks for logging
     m_contact->signal_send_message().connect(sigc::track_obj([this](Glib::ustring message, std::shared_ptr<toxmm2::receipt>) {
-       dialog::chat::add_log(m_main->tox()->storage(), m_contact, [&](flatbuffers::FlatBufferBuilder& fbb) {
+       dialog::chat::add_log(m_main.tox()->storage(), m_contact, [&](flatbuffers::FlatBufferBuilder& fbb) {
            return flatbuffers::Log::CreateItem(fbb,
-                                               fbb.CreateString(m_main->tox()->property_addr_public().get_value()),
+                                               fbb.CreateString(m_main.tox()->property_addr_public().get_value()),
                                                Glib::DateTime::create_now_utc().to_unix(),
                                                flatbuffers::Log::Data_Message,
                                                flatbuffers::Log::CreateMessage(
@@ -165,7 +166,7 @@ contact::contact(BaseObjectType* cobject,
        });
     }, *this));
     m_contact->signal_recv_message().connect(sigc::track_obj([this](Glib::ustring message) {
-        dialog::chat::add_log(m_main->tox()->storage(), m_contact, [&](flatbuffers::FlatBufferBuilder& fbb) {
+        dialog::chat::add_log(m_main.tox()->storage(), m_contact, [&](flatbuffers::FlatBufferBuilder& fbb) {
             return flatbuffers::Log::CreateItem(fbb,
                                                 fbb.CreateString(m_contact->property_addr_public().get_value()),
                                                 Glib::DateTime::create_now_utc().to_unix(),
@@ -177,9 +178,9 @@ contact::contact(BaseObjectType* cobject,
         });
     }, *this));
     m_contact->signal_send_action().connect(sigc::track_obj([this](Glib::ustring action, std::shared_ptr<toxmm2::receipt>) {
-        dialog::chat::add_log(m_main->tox()->storage(), m_contact, [&](flatbuffers::FlatBufferBuilder& fbb) {
+        dialog::chat::add_log(m_main.tox()->storage(), m_contact, [&](flatbuffers::FlatBufferBuilder& fbb) {
             return flatbuffers::Log::CreateItem(fbb,
-                                                fbb.CreateString(m_main->tox()->property_addr_public().get_value()),
+                                                fbb.CreateString(m_main.tox()->property_addr_public().get_value()),
                                                 Glib::DateTime::create_now_utc().to_unix(),
                                                 flatbuffers::Log::Data_Action,
                                                 flatbuffers::Log::CreateAction(
@@ -189,7 +190,7 @@ contact::contact(BaseObjectType* cobject,
         });
     }, *this));
     m_contact->signal_recv_action().connect(sigc::track_obj([this](Glib::ustring action) {
-        dialog::chat::add_log(m_main->tox()->storage(), m_contact, [&](flatbuffers::FlatBufferBuilder& fbb) {
+        dialog::chat::add_log(m_main.tox()->storage(), m_contact, [&](flatbuffers::FlatBufferBuilder& fbb) {
             return flatbuffers::Log::CreateItem(fbb,
                                                 fbb.CreateString(m_contact->property_addr_public().get_value()),
                                                 Glib::DateTime::create_now_utc().to_unix(),
@@ -206,9 +207,9 @@ contact::contact(BaseObjectType* cobject,
             if (file->property_kind() != TOX_FILE_KIND_DATA) {
                 return;
             }
-            dialog::chat::add_log(m_main->tox()->storage(), m_contact, [&](flatbuffers::FlatBufferBuilder& fbb) {
+            dialog::chat::add_log(m_main.tox()->storage(), m_contact, [&](flatbuffers::FlatBufferBuilder& fbb) {
                 return flatbuffers::Log::CreateItem(fbb,
-                                                    fbb.CreateString(m_main->tox()->property_addr_public().get_value()),
+                                                    fbb.CreateString(m_main.tox()->property_addr_public().get_value()),
                                                     Glib::DateTime::create_now_utc().to_unix(),
                                                     flatbuffers::Log::Data_File,
                                                     flatbuffers::Log::CreateFile(
@@ -225,7 +226,7 @@ contact::contact(BaseObjectType* cobject,
             if (file->property_kind() != TOX_FILE_KIND_DATA) {
                 return;
             }
-            dialog::chat::add_log(m_main->tox()->storage(), m_contact, [&](flatbuffers::FlatBufferBuilder& fbb) {
+            dialog::chat::add_log(m_main.tox()->storage(), m_contact, [&](flatbuffers::FlatBufferBuilder& fbb) {
                 return flatbuffers::Log::CreateItem(fbb,
                                                     fbb.CreateString(m_contact->property_addr_public().get_value()),
                                                     Glib::DateTime::create_now_utc().to_unix(),

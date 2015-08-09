@@ -69,8 +69,10 @@ profile_create::profile_create(BaseObjectType* cobject,
 }
 
 utils::builder::ref<profile_create> profile_create::create(const Glib::ustring& path) {
-    return utils::builder(Gtk::Builder::create_from_resource("/org/gtox/ui/dialog_assistant.ui"))
-            .get_widget_derived<profile_create>("dialog_assistant", path);
+    return utils::builder::create_ref<profile_create>(
+                "/org/gtox/ui/dialog_assistant.ui",
+                "dialog_assistant",
+                path);
 }
 
 profile_create::~profile_create() {

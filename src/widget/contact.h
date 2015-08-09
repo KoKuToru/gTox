@@ -34,7 +34,7 @@ namespace dialog {
 namespace widget {
     class contact : public Gtk::ListBoxRow {
         private:
-            Glib::RefPtr<dialog::main> m_main;
+            dialog::main& m_main;
             Glib::RefPtr<dialog::chat> m_chat;
 
             utils::dispatcher m_dispatcher;
@@ -66,12 +66,12 @@ namespace widget {
         public:
             contact(BaseObjectType* cobject,
                     utils::builder builder,
-                    Glib::RefPtr<dialog::main> main,
+                    dialog::main& main,
                     std::shared_ptr<toxmm2::contact> contact,
                     bool for_active_chats=false);
-            ~contact();
+            virtual ~contact();
 
-            static utils::builder::ref<contact> create(Glib::RefPtr<dialog::main> main,
+            static utils::builder::ref<contact> create(dialog::main& main,
                                                        std::shared_ptr<toxmm2::contact> contact,
                                                        bool for_active_chats=false);
 

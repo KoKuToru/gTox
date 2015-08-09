@@ -29,17 +29,19 @@ namespace utils {
  */
     class builder {
         private:
-            const Glib::RefPtr<Gtk::Builder> m_builder;
+            Glib::RefPtr<Gtk::Builder> m_builder;
 
         public:
             template<typename T>
             class ref {
                 private:
-                    Glib::RefPtr<T> m_ref;
+                    Glib::RefPtr<Gtk::Builder> m_builder;
                     T* m_ptr;
                 public:
-                    ref(T* ptr): m_ref(ptr), m_ptr(ptr) {
-                        m_ref->reference();
+                    ref(utils::builder builder,
+                        T* ptr) :
+                        m_builder(builder),
+                        m_ptr(ptr) {
                     }
                     T& operator *() {
                         return *m_ptr;
@@ -62,11 +64,14 @@ namespace utils {
 
             };
 
-            builder(const Glib::RefPtr<Gtk::Builder>& builder);
-            const Glib::RefPtr<Gtk::Builder> operator->();
+            builder(Glib::RefPtr<Gtk::Builder> builder);
+            Glib::RefPtr<Gtk::Builder> operator->();
+            operator Glib::RefPtr<Gtk::Builder>() const {
+                return m_builder;
+            }
 
             template <class T_Widget, typename ...  T> inline
-            T_Widget* get_widget_derived(const Glib::ustring& name, T ... params) {
+            T_Widget* get_widget_derived(const Glib::ustring& name, T&& ... params) {
                 T_Widget* widget = nullptr;
 
                 // Get the widget from the GtkBuilder file.
@@ -113,6 +118,16 @@ namespace utils {
                 if (!widget) {
                     throw std::runtime_error("builder - Couldn't find widget");
                 }
+            }
+
+            template <class T_Widget, typename ...  T> static
+            ref<T_Widget> create_ref(const Glib::ustring resource,
+                              const Glib::ustring& name,
+                              T&& ... params) {
+                auto ori_builder = Gtk::Builder::create_from_resource(resource);
+                auto builder = utils::builder(ori_builder);
+                return { builder, builder
+                        .get_widget_derived<T_Widget>(name, params ...) };
             }
 
         protected:

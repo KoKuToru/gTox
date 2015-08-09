@@ -184,10 +184,10 @@ file::file(BaseObjectType* cobject,
 }
 
 utils::builder::ref<file> file::create(const std::shared_ptr<toxmm2::file>& file) {
-    auto builder = Gtk::Builder::create_from_resource("/org/gtox/ui/chat_filerecv.ui");
-    return utils::builder(builder)
-            .get_widget_derived<widget::file>("chat_filerecv",
-                                              file);
+    return utils::builder::create_ref<widget::file>(
+                "/org/gtox/ui/chat_filerecv.ui",
+                "chat_filerecv",
+                file);
 }
 
 utils::builder::ref<file> file::create(const Glib::ustring& file_path) {
@@ -210,10 +210,10 @@ utils::builder::ref<file> file::create(const Glib::ustring& file_path) {
             virtual void abort() override {}
     };
 
-    auto builder = Gtk::Builder::create_from_resource("/org/gtox/ui/chat_filerecv.ui");
-    return utils::builder(builder)
-            .get_widget_derived<widget::file>("chat_filerecv",
-                                              std::make_shared<dummy_file>(file_path));
+    return utils::builder::create_ref<widget::file>(
+                "/org/gtox/ui/chat_filerecv.ui",
+                "chat_filerecv",
+                std::make_shared<dummy_file>(file_path));
 }
 
 void file::update_complete() {
