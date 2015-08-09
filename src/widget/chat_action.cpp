@@ -46,6 +46,7 @@ chat_action::chat_action(Glib::PropertyProxy_ReadOnly<Glib::ustring> name,
 
     m_username.show();
     m_username.get_style_context()->add_class("gtox-action-username");
+    m_username.property_valign() = Gtk::ALIGN_START;
 
     m_username_binding = Glib::Binding::bind_property(
                              name,
