@@ -94,11 +94,21 @@ namespace dialog {
 
             void load_log();
 
-            void add_chat_line(bool append_bubble,
+            enum AppendMode {
+                //adds to previouse bubble
+                LINE_APPEND_APPENDABLE,
+                //adds to previouse bubble but following lines can't add to it
+                LINE_APPEND,
+                //start a new bubble
+                LINE_NEW_APPENDABLE,
+                LINE_NEW
+            };
+
+            void add_chat_line(AppendMode append_mode,
                                std::shared_ptr<toxmm2::contact> contact,
                                Glib::DateTime time,
                                Gtk::Widget* widget);
-            void add_chat_line(bool append_bubble,
+            void add_chat_line(AppendMode append_mode,
                                std::shared_ptr<toxmm2::core>,
                                Glib::DateTime time,
                                Gtk::Widget* widget);

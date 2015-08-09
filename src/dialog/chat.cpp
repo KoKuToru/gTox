@@ -24,6 +24,7 @@
 #include "widget/chat_input.h"
 #include "widget/chat_bubble.h"
 #include "widget/chat_message.h"
+#include "widget/chat_action.h"
 #include "widget/chat_file.h"
 #include "tox/contact/file/file.h"
 #include "tox/contact/manager.h"
@@ -126,7 +127,7 @@ chat::chat(Glib::RefPtr<dialog::main> main, std::shared_ptr<toxmm2::contact> con
     m_contact->signal_send_message().connect(sigc::track_obj([this](Glib::ustring message, std::shared_ptr<toxmm2::receipt>) {
         auto time = Glib::DateTime::create_now_utc();
         add_chat_line(
-            true,
+            LINE_APPEND_APPENDABLE,
             m_main->tox(),
             time,
             Gtk::manage(new widget::chat_message(m_main->tox()->property_name_or_addr(),
@@ -137,7 +138,7 @@ chat::chat(Glib::RefPtr<dialog::main> main, std::shared_ptr<toxmm2::contact> con
     m_contact->signal_recv_message().connect(sigc::track_obj([this](Glib::ustring message) {
         auto time = Glib::DateTime::create_now_utc();
         add_chat_line(
-            true,
+            LINE_APPEND_APPENDABLE,
             m_contact,
             time,
             Gtk::manage(new widget::chat_message(m_contact->property_name_or_addr(),
@@ -146,19 +147,25 @@ chat::chat(Glib::RefPtr<dialog::main> main, std::shared_ptr<toxmm2::contact> con
     }, *this));
 
     m_contact->signal_send_action().connect(sigc::track_obj([this](Glib::ustring action, std::shared_ptr<toxmm2::receipt>) {
-        /*add_chat_line(
-            false,
+        auto time = Glib::DateTime::create_now_utc();
+        add_chat_line(
+            LINE_NEW,
             m_main->tox(),
             Glib::DateTime::create_now_utc(),
-            Gtk::manage(new widget::chat_message(m_main->tox()->property_name_or_addr() + " " + action)));*/
+            Gtk::manage(new widget::chat_action(m_main->tox()->property_name_or_addr(),
+                                                time,
+                                                action)));
     }, *this));
 
     m_contact->signal_recv_action().connect(sigc::track_obj([this](Glib::ustring action) {
-        /*add_chat_line(
-            false,
+        auto time = Glib::DateTime::create_now_utc();
+        add_chat_line(
+            LINE_NEW,
             m_contact,
             Glib::DateTime::create_now_utc(),
-            Gtk::manage(new widget::chat_message(m_contact->property_name_or_addr() + " " + action)));*/
+            Gtk::manage(new widget::chat_action(m_contact->property_name_or_addr(),
+                                                time,
+                                                action)));
     }, *this));
 
     m_contact->file_manager()->signal_recv_file().connect(sigc::track_obj([this](std::shared_ptr<toxmm2::file>& file) {
@@ -168,7 +175,7 @@ chat::chat(Glib::RefPtr<dialog::main> main, std::shared_ptr<toxmm2::contact> con
         auto b_ref = widget::file::create(file);
         auto widget = b_ref.raw();
         add_chat_line(
-            true,
+            LINE_APPEND_APPENDABLE,
             m_contact,
             Glib::DateTime::create_now_utc(),
             Gtk::manage(widget));
@@ -180,7 +187,7 @@ chat::chat(Glib::RefPtr<dialog::main> main, std::shared_ptr<toxmm2::contact> con
         auto b_ref = widget::file::create(file);
         auto widget = b_ref.raw();
         add_chat_line(
-            true,
+            LINE_APPEND_APPENDABLE,
             m_main->tox(),
             Glib::DateTime::create_now_utc(),
             Gtk::manage(widget));
@@ -466,7 +473,7 @@ void chat::load_log() {
 
                 auto time = Glib::DateTime::create_now_utc(item->timestamp());
                 if (contact) {
-                    add_chat_line(true,
+                    add_chat_line(LINE_APPEND_APPENDABLE,
                                   contact,
                                   time,
                                   Gtk::manage(new widget::chat_message(
@@ -475,7 +482,7 @@ void chat::load_log() {
                                                   f->message()->str())));
                 } else if (c->property_addr_public().get_value()
                            == item->sender()->str()) {
-                    add_chat_line(true,
+                    add_chat_line(LINE_APPEND_APPENDABLE,
                                   c,
                                   time,
                                   Gtk::manage(new widget::chat_message(
@@ -492,28 +499,28 @@ void chat::load_log() {
                              item->data());
                 auto contact = cm->find(toxmm2::contactAddrPublic(
                                             item->sender()->str()));
-                /*
-                auto widget = new widget::chat_message(
-                                  contact->property_name_or_addr() + " " +
-                                  f->action()->str());
+                auto time = Glib::DateTime::create_now_utc(item->timestamp());
                 if (contact) {
-                    add_chat_line(false,
+                    add_chat_line(LINE_NEW,
                                   contact,
-                                  Glib::DateTime::create_now_utc(
-                                      item->timestamp()),
-                                  Gtk::manage(widget));
+                                  time,
+                                  Gtk::manage(new widget::chat_action(
+                                                  contact->property_name_or_addr(),
+                                                  time,
+                                                  f->action()->str())));
                 } else if (c->property_addr_public().get_value()
-                                 == item->sender()->str()) {
-                    add_chat_line(false,
+                           == item->sender()->str()) {
+                    add_chat_line(LINE_NEW,
                                   c,
-                                  Glib::DateTime::create_now_utc(
-                                      item->timestamp()),
-                                  Gtk::manage(widget));
+                                  time,
+                                  Gtk::manage(new widget::chat_action(
+                                                  c->property_name_or_addr(),
+                                                  time,
+                                                  f->action()->str())));
                 } else {
                     //not found
                     //TODO: will probably need this for group chat
                 }
-                */
             } break;
             case flatbuffers::Log::Data_File: {
                 auto f = reinterpret_cast<const flatbuffers::Log::File*>(
@@ -538,13 +545,13 @@ void chat::load_log() {
                         auto widget = Gtk::manage(b_ref.raw());
 
                         if (file->is_recv()) {
-                            add_chat_line(true,
+                            add_chat_line(LINE_APPEND_APPENDABLE,
                                           contact,
                                           Glib::DateTime::create_now_utc(
                                               item->timestamp()),
                                           Gtk::manage(widget));
                         } else {
-                            add_chat_line(true,
+                            add_chat_line(LINE_APPEND_APPENDABLE,
                                           c,
                                           Glib::DateTime::create_now_utc(
                                               item->timestamp()),
@@ -564,20 +571,21 @@ void chat::load_log() {
     }
 }
 
-void chat::add_chat_line(bool append_bubble,
+void chat::add_chat_line(AppendMode append_mode,
                    std::shared_ptr<toxmm2::contact> contact,
                    Glib::DateTime time,
                    Gtk::Widget* widget) {
 
     auto side = SIDE::NONE;
-    if (append_bubble) {
+    bool append = append_mode == LINE_APPEND_APPENDABLE || append_mode == LINE_APPEND;
+    if (append) {
         side = SIDE::OTHER;
     }
 
     auto bubble = dynamic_cast<widget::chat_bubble*>(m_last_bubble.widget);
 
     //check if same day
-    if (append_bubble  && bubble != nullptr && m_last_bubble.side == side) {
+    if (append  && bubble != nullptr && m_last_bubble.side == side) {
         auto a_time = m_last_bubble.time;
         auto b_time = time;
 
@@ -600,9 +608,10 @@ void chat::add_chat_line(bool append_bubble,
     }
 
     //need a new bubble
+    bool appendable = append_mode == LINE_APPEND_APPENDABLE || append_mode == LINE_NEW_APPENDABLE;
     auto bubble_builder  = widget::chat_bubble::create(contact, time);
     bubble               = bubble_builder.raw();
-    m_last_bubble.side   = SIDE::OTHER;
+    m_last_bubble.side   = appendable?side:SIDE::NONE;
     m_last_bubble.widget = Gtk::manage(bubble);
     m_last_bubble.time   = time;
 
@@ -610,20 +619,21 @@ void chat::add_chat_line(bool append_bubble,
     m_chat_box->add(*m_last_bubble.widget);
 }
 
-void chat::add_chat_line(bool append_bubble,
+void chat::add_chat_line(AppendMode append_mode,
                    std::shared_ptr<toxmm2::core> contact,
                    Glib::DateTime time,
                    Gtk::Widget* widget) {
 
     auto side = SIDE::NONE;
-    if (append_bubble) {
+    bool append = append_mode == LINE_APPEND_APPENDABLE || append_mode == LINE_APPEND;
+    if (append) {
         side = SIDE::OWN;
     }
 
     auto bubble = dynamic_cast<widget::chat_bubble*>(m_last_bubble.widget);
 
     //check if same day
-    if (append_bubble  && bubble != nullptr && m_last_bubble.side == side) {
+    if (append  && bubble != nullptr && m_last_bubble.side == side) {
         auto a_time = m_last_bubble.time;
         auto b_time = time;
 
@@ -647,9 +657,10 @@ void chat::add_chat_line(bool append_bubble,
     }
 
     //need a new bubble
+    bool appendable = append_mode == LINE_APPEND_APPENDABLE || append_mode == LINE_NEW_APPENDABLE;
     auto bubble_builder  = widget::chat_bubble::create(contact, time);
     bubble               = bubble_builder.raw();
-    m_last_bubble.side   = side;
+    m_last_bubble.side   = appendable?side:SIDE::NONE;
     m_last_bubble.widget = Gtk::manage(bubble);
     m_last_bubble.time   = time;
 

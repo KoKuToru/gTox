@@ -129,3 +129,8 @@ GtkListBoxRow {
     border-radius: 3px;
     padding: 2px;
 }
+
+.gtox-action-username {
+	font-weight: bolder;
+	padding-right: 0.5em;
+}
