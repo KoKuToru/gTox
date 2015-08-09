@@ -464,6 +464,7 @@ void chat::load_log() {
         auto item = last_data->items()->Get(index);
 
         //add message to chat
+        auto time = Glib::DateTime::create_now_utc(item->timestamp());
         switch (item->data_type()) {
             case flatbuffers::Log::Data_Message: {
                 auto f = reinterpret_cast<const flatbuffers::Log::Message*>(
@@ -471,7 +472,6 @@ void chat::load_log() {
                 auto contact = cm->find(toxmm2::contactAddrPublic(
                                             item->sender()->str()));
 
-                auto time = Glib::DateTime::create_now_utc(item->timestamp());
                 if (contact) {
                     add_chat_line(LINE_APPEND_APPENDABLE,
                                   contact,
@@ -499,7 +499,7 @@ void chat::load_log() {
                              item->data());
                 auto contact = cm->find(toxmm2::contactAddrPublic(
                                             item->sender()->str()));
-                auto time = Glib::DateTime::create_now_utc(item->timestamp());
+
                 if (contact) {
                     add_chat_line(LINE_NEW,
                                   contact,
@@ -540,25 +540,23 @@ void chat::load_log() {
 
                     auto file = fm->find(toxmm2::uniqueId(f->uuid()->str()));
 
-                    if (file) {
-                        auto b_ref = widget::file::create(file);
-                        auto widget = Gtk::manage(b_ref.raw());
+                    auto b_ref = file
+                                 ? widget::file::create(file)
+                                 : widget::file::create(f->path()->str());
 
-                        if (file->is_recv()) {
-                            add_chat_line(LINE_APPEND_APPENDABLE,
-                                          contact,
-                                          Glib::DateTime::create_now_utc(
-                                              item->timestamp()),
-                                          Gtk::manage(widget));
-                        } else {
-                            add_chat_line(LINE_APPEND_APPENDABLE,
-                                          c,
-                                          Glib::DateTime::create_now_utc(
-                                              item->timestamp()),
-                                          Gtk::manage(widget));
-                        }
+                    auto widget = Gtk::manage(b_ref.raw());
+
+                    if (item->sender()->str()
+                            != std::string(c->property_addr_public().get_value())) {
+                        add_chat_line(LINE_APPEND_APPENDABLE,
+                                      contact,
+                                      time,
+                                      Gtk::manage(widget));
                     } else {
-                        //TODO: file preview only
+                        add_chat_line(LINE_APPEND_APPENDABLE,
+                                      c,
+                                      time,
+                                      Gtk::manage(widget));
                     }
                 } else {
                     //not found

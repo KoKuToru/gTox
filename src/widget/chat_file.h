@@ -62,9 +62,15 @@ namespace widget {
 
         public:
             file(BaseObjectType* cobject,
+                 utils::builder builder);
+            file(BaseObjectType* cobject,
                  utils::builder builder,
                  const std::shared_ptr<toxmm2::file>& file);
             static utils::builder::ref<file> create(const std::shared_ptr<toxmm2::file>& file);
+            static utils::builder::ref<file> create(const Glib::ustring& file_path);
+
+        protected:
+            void update_complete();
     };
 
 }

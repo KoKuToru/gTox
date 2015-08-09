@@ -66,9 +66,8 @@ auto file::property_active()     -> PropProxy<bool, false> {
     return proxy<false>(this, m_property_active);
 }
 
-file::file(std::shared_ptr<toxmm2::file_manager> manager):
+file::file():
     Glib::ObjectBase(typeid(file)),
-    m_file_manager(manager),
     m_property_uuid (*this, "file-gid"),
     m_property_id  (*this, "file-id"),
     m_property_nr  (*this, "file-nr"),
@@ -84,6 +83,12 @@ file::file(std::shared_ptr<toxmm2::file_manager> manager):
     m_property_active(*this, "file-active", false) {
     //set gid
     m_property_uuid = uniqueId::create_random();
+}
+
+file::file(std::shared_ptr<toxmm2::file_manager> manager):
+    file() {
+    //set manager
+    m_file_manager = manager;
 }
 
 void file::init() {

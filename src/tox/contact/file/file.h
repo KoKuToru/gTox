@@ -74,6 +74,11 @@ namespace toxmm2 {
             virtual ~file() {}
             virtual bool is_recv() = 0;
 
+            file();
+            file(std::shared_ptr<toxmm2::file_manager> manager);
+            file(const file&) = delete;
+            void operator=(const file&) = delete;
+
         protected:
             virtual void resume() = 0;
             virtual void send_chunk_request(uint64_t position, size_t length) = 0;
@@ -83,9 +88,6 @@ namespace toxmm2 {
 
             void pre_send_chunk_request(uint64_t position, size_t length);
             void pre_recv_chunk(uint64_t position, const std::vector<uint8_t>& data);
-
-        private:
-            std::weak_ptr<toxmm2::file_manager> m_file_manager;
 
             Prop<uniqueId>         m_property_uuid;
             Prop<fileId>           m_property_id;
@@ -101,9 +103,8 @@ namespace toxmm2 {
             Prop<bool>             m_property_complete;
             Prop<bool>             m_property_active;
 
-            file(std::shared_ptr<toxmm2::file_manager> manager);
-            file(const file&) = delete;
-            void operator=(const file&) = delete;
+        private:
+            std::weak_ptr<toxmm2::file_manager> m_file_manager;
 
             void init();
     };
