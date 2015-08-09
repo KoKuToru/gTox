@@ -48,6 +48,7 @@ namespace widget {
 
             Gtk::Stack* m_stack;
             Gtk::Button* m_settings_btn;
+            Gtk::Button* m_avatar;
 
         public:
             main_menu(dialog::main& m_main);

@@ -42,6 +42,8 @@ main_menu::main_menu(dialog::main& main): m_main(main) {
     builder.get_widget("popover_stack", m_stack);
     builder.get_widget("profile_open_settings", m_settings_btn);
 
+    builder.get_widget("profile_avatar_btn", m_avatar);
+
     add(*m_stack);
 
     /* Tox-Id display */
@@ -70,9 +72,7 @@ main_menu::main_menu(dialog::main& main): m_main(main) {
     }, *this));
 
     /* change avatar logic */
-    /*
-    builder.get_widget<Gtk::Button>("profile_avatar_btn")
-            ->signal_clicked().connect([this, observable](){
+    m_avatar->signal_clicked().connect(sigc::track_obj([this](){
         Gtk::FileChooserDialog dialog(_("PROFILE_AVATAR_SELECT_TITLE"), Gtk::FILE_CHOOSER_ACTION_OPEN);
         dialog.add_button (Gtk::Stock::OPEN,
                                Gtk::RESPONSE_ACCEPT);
@@ -84,32 +84,35 @@ main_menu::main_menu(dialog::main& main): m_main(main) {
         filter->set_name(_("IMAGE"));
         dialog.add_filter (filter);
 
-        Gtk::Image image;
-        image.set(WidgetAvatar::get_avatar(""));
-        dialog.set_preview_widget(image);
+        widget::avatar avatar_preview;
+        avatar_preview.hide();
+        avatar_preview.set_size_request(128, 128);
+        avatar_preview.property_valign() = Gtk::ALIGN_CENTER;
+        avatar_preview.property_halign() = Gtk::ALIGN_CENTER;
+        avatar_preview.property_margin() = 15;
+        dialog.set_preview_widget(avatar_preview);
+        dialog.set_use_preview_label(false);
 
-        dialog.signal_update_preview().connect([&dialog, &image](){
+        dialog.signal_update_preview().connect([&dialog, &avatar_preview](){
             auto uri = dialog.get_preview_uri();
             if (uri.empty()) {
-                image.hide();
+                avatar_preview.hide();
                 return;
             }
-            if (Glib::str_has_prefix(uri, "file://")) {
-                image.set(WidgetAvatar::get_avatar(uri.substr(7), true, false));
-                image.show();
-            }
+            //TODO: handle error ? when get_path() doesn't work ?
+            avatar_preview.property_file() = Gio::File::create_for_uri(uri)
+                                             ->get_path();
+            avatar_preview.show();
         });
 
         const int response = dialog.run();
         if (response == Gtk::RESPONSE_ACCEPT) {
-            WidgetAvatar::set_avatar(observable,
-                                     WidgetAvatar::get_avatar_path(observable),
-                                     image.get_pixbuf());
+            avatar_preview.save_for(m_main.tox()->property_addr_public());
         }
 
         dialog.hide();
-    });
-    */
+    }, *this));
+
     /* Update name / status message logic */
     m_profile.username->signal_focus_out_event().connect_notify(sigc::hide([this]() {
         m_main.tox()->property_name() = m_profile.username->get_text();

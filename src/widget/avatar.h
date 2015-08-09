@@ -28,10 +28,13 @@
 namespace widget {
     class avatar : public Gtk::Image {
         public:
+            avatar() {}
             avatar(BaseObjectType* cobject,
                    utils::builder,
                    toxmm::contactAddrPublic addr);
             ~avatar();
+
+            void save_for(toxmm::contactAddrPublic addr);
 
         protected:
             bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;

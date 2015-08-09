@@ -216,3 +216,15 @@ void avatar::get_preferred_height_vfunc(int& minimum_height,
     minimum_height += padding.get_top() + padding.get_bottom();
     natural_height += padding.get_top() + padding.get_bottom();
 }
+
+void avatar::save_for(toxmm::contactAddrPublic addr) {
+    auto path = Glib::build_filename(
+                    Glib::get_user_config_dir(),
+                    "tox", "avatars",
+                    std::string(addr) + ".png");
+    auto pix = property_pixbuf().get_value();
+    if (!pix) {
+        return;
+    }
+    pix->save(path, "png");
+}
