@@ -72,6 +72,7 @@ namespace toxmm2 {
             auto contact()         -> std::shared_ptr<toxmm2::contact>;
 
             virtual ~file() {}
+            virtual bool is_recv() = 0;
 
         protected:
             virtual void resume() = 0;
@@ -79,7 +80,6 @@ namespace toxmm2 {
             virtual void recv_chunk(uint64_t position, const std::vector<uint8_t>& data) = 0;
             virtual void finish() = 0;
             virtual void abort() = 0;
-            virtual bool is_recv() = 0;
 
             void pre_send_chunk_request(uint64_t position, size_t length);
             void pre_recv_chunk(uint64_t position, const std::vector<uint8_t>& data);

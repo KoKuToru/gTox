@@ -27,7 +27,7 @@
 #include "widget/chat_file.h"
 #include "tox/contact/file/file.h"
 #include "tox/contact/manager.h"
-
+#include "widget/videoplayer.h"
 namespace sigc {
     SIGC_FUNCTORS_DEDUCE_RESULT_TYPE_WITH_DECLTYPE
 }
@@ -283,6 +283,14 @@ chat::chat(Glib::RefPtr<dialog::main> main, std::shared_ptr<toxmm2::contact> con
         for (auto uri : data.get_uris()) {
             //do something with the files
             fmng->send_file(Glib::filename_from_uri(uri));
+            auto b_ref = widget::videoplayer::create();
+            auto widget = b_ref.raw();
+            widget->property_uri() = uri;
+            add_chat_line(
+                true,
+                m_contact,
+                Glib::DateTime::create_now_utc(),
+                Gtk::manage(widget));
         }
     }, *this));
 
@@ -525,11 +533,19 @@ void chat::load_log() {
                         auto b_ref = widget::file::create(file);
                         auto widget = Gtk::manage(b_ref.raw());
 
-                        add_chat_line(true,
-                                      contact,
-                                      Glib::DateTime::create_now_utc(
-                                          item->timestamp()),
-                                      Gtk::manage(widget));
+                        if (file->is_recv()) {
+                            add_chat_line(true,
+                                          contact,
+                                          Glib::DateTime::create_now_utc(
+                                              item->timestamp()),
+                                          Gtk::manage(widget));
+                        } else {
+                            add_chat_line(true,
+                                          c,
+                                          Glib::DateTime::create_now_utc(
+                                              item->timestamp()),
+                                          Gtk::manage(widget));
+                        }
                     } else {
                         //TODO: file preview only
                     }
