@@ -23,7 +23,7 @@ For comparison https://wiki.tox.im/Client
 | Android       | No            |        |
 | iOS           | No            |        |
 | 1v1 messaging | **Yes** | |
-| File transfer | Yes/No | [#55](https://github.com/KoKuToru/gTox/issues/55) | only receiving working
+| File transfer | **Yes** | [#55](https://github.com/KoKuToru/gTox/issues/55) | 
 | Group chat | No | |
 | Group audio | No | |
 | Audio | No | |
@@ -39,17 +39,17 @@ For comparison https://wiki.tox.im/Client
 | Multilingual | **Yes** | | *English / German / Russian / Spanish / Italian*
 | Multiprofile | **Yes** | [#26](https://github.com/KoKuToru/gTox/issues/26) |
 | Typing notification | No | |
-| Audio notifications | **Yes** | | *When a message comes in*
+| Audio notifications | No | |
 | Emoticons | Yes/No | [#25](https://github.com/KoKuToru/gTox/issues/25) | *Only UTF-8*
 | Spell check | No | | 
 | Desktop sharing | No | |
-| Inline images | **Yes++** | | **Inline videos**
-| File resuming | Yes/No | | *only receiving working*
-| Read receipts | **Yes** | | *But log wont save "failed" yet*
+| Inline images | **Yes** | | **Inline videos**
+| File resuming | **Yes** | | **supports file resume between client restarts**
+| Read receipts | No | |
 | Message splitting | No | | 
 | Changing nospam | No | |
 | tox: URI | No | [#93](https://github.com/KoKuToru/gTox/issues/93) |
-| Avatars | Yes/No | [#27](https://github.com/KoKuToru/gTox/issues/27) | only receiving working
+| Avatars | Yes | [#27](https://github.com/KoKuToru/gTox/issues/27) |
 
 Special to gTox:
 * Markup support bold(crtl+b), italic (crtl+i), underline (crtl+u)
@@ -91,11 +91,11 @@ make
 
 Linux Dependencies
 -----------
-`gtkmm3`, `libnotifymm`, `librsvg`, `sqlite`, `gettext`, `libcanberra`, `gstreamermm`
+`gtkmm3`, `libnotifymm`, `librsvg`, `gettext`, `gstreamermm`
 
 Screenshot
 ============
-<img src="https://rawgit.com/KoKuToru/gTox/master/Screenshots/profile_selection.png">
-<img src="https://rawgit.com/KoKuToru/gTox/master/Screenshots/profile_creation.png">
-<img src="https://rawgit.com/KoKuToru/gTox/master/Screenshots/client_chat.png">
+<img src="https://rawgit.com/KoKuToru/gTox/master/screenshots/profile_selection.png">
+<img src="https://rawgit.com/KoKuToru/gTox/master/screenshots/profile_creation.png">
+<img src="https://rawgit.com/KoKuToru/gTox/master/screenshots/client_chat.png">
 
