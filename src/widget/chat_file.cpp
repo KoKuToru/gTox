@@ -19,6 +19,8 @@
 #include "chat_file.h"
 #include "tox/contact/file/file.h"
 #include <iostream>
+#include <mutex>
+
 namespace sigc {
     SIGC_FUNCTORS_DEDUCE_RESULT_TYPE_WITH_DECLTYPE
 }
@@ -234,6 +236,8 @@ void file::update_complete() {
         m_preview_thread = std::thread([this,
                                        dispatcher = utils::dispatcher::ref(m_dispatcher),
                                        file]() {
+            static std::mutex limit_mutex;
+            std::lock_guard<std::mutex> lg(limit_mutex);
             //TODO: check file size before generating preview ?
             double max_size = 1024; //max size if an image will be 1024x1024
 
