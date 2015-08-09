@@ -28,7 +28,6 @@ namespace widget {
     class chat_message : public Gtk::Revealer {
         private:
             class label: public widget::label {
-                    friend class chat_message;
                 private:
                     Glib::PropertyProxy_ReadOnly<Glib::ustring> m_name;
                     Glib::DateTime m_time;
