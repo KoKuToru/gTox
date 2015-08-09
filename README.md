@@ -11,7 +11,7 @@
 
 Features
 ============
-For comparison https://wiki.tox.im/Client
+For comparison https://wiki.tox.chat/users/clients
 
 |               | gTox          | Issue  | Comment |
 | ------------- |:-------------:|:------:|-------|
@@ -91,7 +91,7 @@ make
 
 Linux Dependencies
 -----------
-`gtkmm3`, `libnotifymm`, `librsvg`, `gettext`, `gstreamermm`
+`gtkmm3`, `libnotifymm`, `librsvg`, `gettext`, `gstreamermm`, `flatbuffers`
 
 Screenshot
 ============
