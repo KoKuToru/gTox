@@ -24,7 +24,7 @@
 #include "file/manager.h"
 #include "file/file.h"
 
-using namespace toxmm2;
+using namespace toxmm;
 
 contact::type_signal_receipt            contact::signal_receipt() { return m_signal_receipt; }
 contact::type_signal_recv_message       contact::signal_recv_message() { return m_signal_recv_message; }
@@ -53,7 +53,7 @@ Glib::PropertyProxy_ReadOnly<TOX_CONNECTION>    contact::property_connection()
 Glib::PropertyProxy_ReadOnly<bool>              contact::property_typing()
 { return Glib::PropertyProxy_ReadOnly<bool>(this, "contact-typing"); }
 
-contact::contact(std::shared_ptr<toxmm2::contact_manager> manager, contactNr nr):
+contact::contact(std::shared_ptr<toxmm::contact_manager> manager, contactNr nr):
     Glib::ObjectBase(typeid(contact)),
     m_contact_manager(manager),
     m_property_nr  (*this, "contact-nr"),
@@ -85,7 +85,7 @@ contact::contact(std::shared_ptr<toxmm2::contact_manager> manager, contactNr nr)
 
 void contact::init() {
     //start sub systems:
-    m_file_manager = std::shared_ptr<toxmm2::file_manager>(new toxmm2::file_manager(shared_from_this()));
+    m_file_manager = std::shared_ptr<toxmm::file_manager>(new toxmm::file_manager(shared_from_this()));
     m_file_manager->init();
 
     property_connection().signal_changed().connect(sigc::track_obj([this]() {
@@ -232,7 +232,7 @@ std::shared_ptr<receipt> contact::send_message(const Glib::ustring& message) {
     if (error != TOX_ERR_FRIEND_SEND_MESSAGE_OK) {
         throw exception(error);
     }
-    auto r = std::shared_ptr<toxmm2::receipt>(new toxmm2::receipt(shared_from_this(), receipt));
+    auto r = std::shared_ptr<toxmm::receipt>(new toxmm::receipt(shared_from_this(), receipt));
     m_signal_send_message(message, r);
     return r;
 }
@@ -248,20 +248,20 @@ std::shared_ptr<receipt> contact::send_action (const Glib::ustring& action) {
     if (error != TOX_ERR_FRIEND_SEND_MESSAGE_OK) {
         throw exception(error);
     }
-    auto r = std::shared_ptr<toxmm2::receipt>(new toxmm2::receipt(shared_from_this(), receipt));
+    auto r = std::shared_ptr<toxmm::receipt>(new toxmm::receipt(shared_from_this(), receipt));
     m_signal_send_action(action, r);
     return r;
 }
 
-std::shared_ptr<toxmm2::core> contact::core() {
+std::shared_ptr<toxmm::core> contact::core() {
     auto m = contact_manager();
     return m ? m->core() : nullptr;
 }
 
-std::shared_ptr<toxmm2::contact_manager> contact::contact_manager() {
+std::shared_ptr<toxmm::contact_manager> contact::contact_manager() {
     return m_contact_manager.lock();
 }
 
-std::shared_ptr<toxmm2::file_manager> contact::file_manager() {
+std::shared_ptr<toxmm::file_manager> contact::file_manager() {
     return m_file_manager;
 }

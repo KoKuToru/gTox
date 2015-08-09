@@ -113,7 +113,7 @@ void terminate_handler() {
         std::rethrow_exception(exptr);
     } catch (const Glib::Exception &ex) {
         dialog::error(true, "Fatal Unexpected Glib Exception", ex.what()).run();
-    } catch (const toxmm2::exception &ex) {
+    } catch (const toxmm::exception &ex) {
         dialog::error(true, "Fatal Unexpected Tox Exception", ex.what()).run();
     } catch (const std::exception &ex) {
         dialog::error(true, "Fatal Unexpected Exception", ex.what()).run();

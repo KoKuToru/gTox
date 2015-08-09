@@ -22,7 +22,7 @@
 #include <glibmm.h>
 #include "types.h"
 
-namespace toxmm2 {
+namespace toxmm {
     class receipt : public Glib::Object, public std::enable_shared_from_this<receipt> {
             friend class contact;
         private:

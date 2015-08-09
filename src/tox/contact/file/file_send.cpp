@@ -21,9 +21,9 @@
 #include "contact/contact.h"
 #include "exception.h"
 
-using namespace toxmm2;
+using namespace toxmm;
 
-file_send::file_send(std::shared_ptr<toxmm2::file_manager> manager):
+file_send::file_send(std::shared_ptr<toxmm::file_manager> manager):
     Glib::ObjectBase(typeid(file_send)),
     file(manager) {
 }
@@ -86,7 +86,7 @@ void file_send::iterate() {
         case TOX_ERR_FILE_SEND_CHUNK_OK:
             break;
         default:
-            throw toxmm2::exception(error);
+            throw toxmm::exception(error);
     }
 
     m_queue.pop_front();

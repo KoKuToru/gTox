@@ -26,7 +26,7 @@
 #include <flatbuffers/flatbuffers.h>
 using namespace widget;
 
-utils::builder::ref<contact> contact::create(dialog::main& main, std::shared_ptr<toxmm2::contact> contact, bool for_notify) {
+utils::builder::ref<contact> contact::create(dialog::main& main, std::shared_ptr<toxmm::contact> contact, bool for_notify) {
     return utils::builder::create_ref<widget::contact>(
                 "/org/gtox/ui/list_item_contact.ui",
                 "contact_list_item",
@@ -39,7 +39,7 @@ utils::builder::ref<contact> contact::create(dialog::main& main, std::shared_ptr
 contact::contact(BaseObjectType* cobject,
                  utils::builder builder,
                  dialog::main& main,
-                 std::shared_ptr<toxmm2::contact> contact,
+                 std::shared_ptr<toxmm::contact> contact,
                  bool for_active_chats)
     : Gtk::ListBoxRow(cobject),
       m_main(main),
@@ -153,7 +153,7 @@ contact::contact(BaseObjectType* cobject,
     }
 
     //callbacks for logging
-    m_contact->signal_send_message().connect(sigc::track_obj([this](Glib::ustring message, std::shared_ptr<toxmm2::receipt>) {
+    m_contact->signal_send_message().connect(sigc::track_obj([this](Glib::ustring message, std::shared_ptr<toxmm::receipt>) {
        dialog::chat::add_log(m_main.tox()->storage(), m_contact, [&](flatbuffers::FlatBufferBuilder& fbb) {
            return flatbuffers::Log::CreateItem(fbb,
                                                fbb.CreateString(m_main.tox()->property_addr_public().get_value()),
@@ -177,7 +177,7 @@ contact::contact(BaseObjectType* cobject,
                                                      .Union());
         });
     }, *this));
-    m_contact->signal_send_action().connect(sigc::track_obj([this](Glib::ustring action, std::shared_ptr<toxmm2::receipt>) {
+    m_contact->signal_send_action().connect(sigc::track_obj([this](Glib::ustring action, std::shared_ptr<toxmm::receipt>) {
         dialog::chat::add_log(m_main.tox()->storage(), m_contact, [&](flatbuffers::FlatBufferBuilder& fbb) {
             return flatbuffers::Log::CreateItem(fbb,
                                                 fbb.CreateString(m_main.tox()->property_addr_public().get_value()),
@@ -203,7 +203,7 @@ contact::contact(BaseObjectType* cobject,
     },*this));
     auto fm = m_contact->file_manager();
     if (fm) {
-        fm->signal_send_file().connect(sigc::track_obj([this](std::shared_ptr<toxmm2::file>& file) {
+        fm->signal_send_file().connect(sigc::track_obj([this](std::shared_ptr<toxmm::file>& file) {
             if (file->property_kind() != TOX_FILE_KIND_DATA) {
                 return;
             }
@@ -222,7 +222,7 @@ contact::contact(BaseObjectType* cobject,
                                                           .Union());
             });
         }, *this));
-        fm->signal_recv_file().connect(sigc::track_obj([this](std::shared_ptr<toxmm2::file>& file) {
+        fm->signal_recv_file().connect(sigc::track_obj([this](std::shared_ptr<toxmm::file>& file) {
             if (file->property_kind() != TOX_FILE_KIND_DATA) {
                 return;
             }
@@ -369,7 +369,7 @@ void contact::on_hide() {
     }
 }
 
-std::shared_ptr<toxmm2::contact> contact::get_contact() {
+std::shared_ptr<toxmm::contact> contact::get_contact() {
     return m_contact;
 }
 

@@ -23,7 +23,7 @@
 #include <memory>
 #include "types.h"
 
-namespace toxmm2 {
+namespace toxmm {
     class contact_manager : public std::enable_shared_from_this<contact_manager> {
             friend class core;
         public:
@@ -47,10 +47,10 @@ namespace toxmm2 {
             void destroy();
             ~contact_manager();
 
-            std::shared_ptr<toxmm2::core> core();
+            std::shared_ptr<toxmm::core> core();
 
         private:
-            std::weak_ptr<toxmm2::core> m_core;
+            std::weak_ptr<toxmm::core> m_core;
 
             std::vector<std::shared_ptr<contact>> m_contact;
 
@@ -58,7 +58,7 @@ namespace toxmm2 {
             type_signal_removed m_signal_removed;
             type_signal_added   m_signal_added;
 
-            contact_manager(std::shared_ptr<toxmm2::core> core);
+            contact_manager(std::shared_ptr<toxmm::core> core);
             contact_manager(const contact_manager&) = delete;
             void operator=(const contact_manager&) = delete;
 

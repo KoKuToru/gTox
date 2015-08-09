@@ -58,7 +58,7 @@ file::file(BaseObjectType* cobject,
 
 file::file(BaseObjectType* cobject,
            utils::builder builder,
-           const std::shared_ptr<toxmm2::file>& file):
+           const std::shared_ptr<toxmm::file>& file):
     file::file(cobject, builder) {
     m_file = file;
 
@@ -183,7 +183,7 @@ file::file(BaseObjectType* cobject,
     });
 }
 
-utils::builder::ref<file> file::create(const std::shared_ptr<toxmm2::file>& file) {
+utils::builder::ref<file> file::create(const std::shared_ptr<toxmm::file>& file) {
     return utils::builder::create_ref<widget::file>(
                 "/org/gtox/ui/chat_filerecv.ui",
                 "chat_filerecv",
@@ -191,7 +191,7 @@ utils::builder::ref<file> file::create(const std::shared_ptr<toxmm2::file>& file
 }
 
 utils::builder::ref<file> file::create(const Glib::ustring& file_path) {
-    class dummy_file: virtual public Glib::Object, public toxmm2::file {
+    class dummy_file: virtual public Glib::Object, public toxmm::file {
         public:
             dummy_file(const Glib::ustring& file_path):
                 Glib::ObjectBase(typeid(dummy_file)) {

@@ -40,8 +40,8 @@ profile_create::profile_create(BaseObjectType* cobject,
 
     auto w = builder.get_widget<Gtk::Widget>("assistant_first_page");
     m_username->signal_changed().connect([this, w]() {
-        toxmm2::contactAddrPublic addr;
-        m_last_toxcore = toxmm2::core::create_state(m_username->get_text(), m_status->get_text(), addr);
+        toxmm::contactAddrPublic addr;
+        m_last_toxcore = toxmm::core::create_state(m_username->get_text(), m_status->get_text(), addr);
 
         if (!m_username->get_text().empty()) {
             int i = 0;
@@ -63,8 +63,8 @@ profile_create::profile_create(BaseObjectType* cobject,
     });
 
     m_status->signal_changed().connect([this, w]() {
-        toxmm2::contactAddrPublic addr;
-        m_last_toxcore = toxmm2::core::create_state(m_username->get_text(), m_status->get_text(), addr);
+        toxmm::contactAddrPublic addr;
+        m_last_toxcore = toxmm::core::create_state(m_username->get_text(), m_status->get_text(), addr);
     });
 }
 

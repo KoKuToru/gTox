@@ -30,7 +30,7 @@ namespace widget {
         public:
             avatar(BaseObjectType* cobject,
                    utils::builder,
-                   toxmm2::contactAddrPublic addr);
+                   toxmm::contactAddrPublic addr);
             ~avatar();
 
         protected:
@@ -46,7 +46,7 @@ namespace widget {
                 public:
                     Glib::PropertyProxy<Glib::RefPtr<Gdk::Pixbuf>> property_pixbuf();
 
-                    image(toxmm2::contactAddrPublic addr);
+                    image(toxmm::contactAddrPublic addr);
 
                 private:
                     Glib::Property<Glib::RefPtr<Gdk::Pixbuf>> m_property_pixbuf;

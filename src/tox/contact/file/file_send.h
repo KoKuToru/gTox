@@ -24,7 +24,7 @@
 #include <deque>
 #include "file.h"
 
-namespace toxmm2 {
+namespace toxmm {
     class file_send: virtual public Glib::Object, public file {
             friend class file_manager;
         protected:
@@ -40,7 +40,7 @@ namespace toxmm2 {
 
             std::deque<std::pair<uint64_t, size_t>> m_queue;
 
-            file_send(std::shared_ptr<toxmm2::file_manager> manager);
+            file_send(std::shared_ptr<toxmm::file_manager> manager);
             file_send(const file_send&) = delete;
             void operator=(const file_send&) = delete;
 

@@ -4,7 +4,7 @@
 #include "tox/storage.h"
 
 namespace utils {
-    class storage : public toxmm2::storage {
+    class storage : public toxmm::storage {
             friend class main;
         private:
             std::string m_prefix;

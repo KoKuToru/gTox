@@ -30,7 +30,7 @@
 namespace widget {
     class file: public Gtk::Frame {
         private:
-            std::shared_ptr<toxmm2::file> m_file;
+            std::shared_ptr<toxmm::file> m_file;
             utils::dispatcher m_dispatcher;
 
             Gtk::ToggleButton*   m_file_resume;
@@ -65,8 +65,8 @@ namespace widget {
                  utils::builder builder);
             file(BaseObjectType* cobject,
                  utils::builder builder,
-                 const std::shared_ptr<toxmm2::file>& file);
-            static utils::builder::ref<file> create(const std::shared_ptr<toxmm2::file>& file);
+                 const std::shared_ptr<toxmm::file>& file);
+            static utils::builder::ref<file> create(const std::shared_ptr<toxmm::file>& file);
             static utils::builder::ref<file> create(const Glib::ustring& file_path);
 
         protected:

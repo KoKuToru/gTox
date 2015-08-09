@@ -172,12 +172,12 @@ void main_menu::add_contact() {
         if (message.empty()) {
             message = " ";
         }
-        m_main.tox()->contact_manager()->add_contact(toxmm2::contactAddr(m_add_contact.tox_id->get_text()), message);
+        m_main.tox()->contact_manager()->add_contact(toxmm::contactAddr(m_add_contact.tox_id->get_text()), message);
 
         set_visible(false);
         m_add_contact.tox_id->set_text("");
         m_add_contact.message->get_buffer()->set_text("");
-    } catch (toxmm2::exception &ex) {
+    } catch (toxmm::exception &ex) {
         if (ex.type() != typeid(TOX_ERR_FRIEND_ADD)) {
             throw;
         }

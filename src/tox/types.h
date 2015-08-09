@@ -22,7 +22,7 @@
 #include <glibmm.h>
 #include <memory>
 
-namespace toxmm2 {
+namespace toxmm {
     class core;
     class file;
     class contact;

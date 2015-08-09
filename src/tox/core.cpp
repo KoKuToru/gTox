@@ -21,7 +21,7 @@
 #include "exception.h"
 #include <iostream>
 
-using namespace toxmm2;
+using namespace toxmm;
 
 //SIGNALS
 core::type_signal_contact_request           core::signal_contact_request() { return m_signal_contact_request; }
@@ -66,7 +66,7 @@ Glib::PropertyProxy<Glib::ustring> core::property_avatar_path() {
     return m_property_avatar_path.get_proxy();
 }
 
-core::core(const std::string& profile_path, const std::shared_ptr<toxmm2::storage>& storage):
+core::core(const std::string& profile_path, const std::shared_ptr<toxmm::storage>& storage):
     Glib::ObjectBase(typeid(core)),
     m_profile_path(profile_path),
     m_storage(storage),
@@ -103,7 +103,7 @@ core::~core() {
 }
 
 std::shared_ptr<core> core::create(const std::string& profile_path,
-                                   const std::shared_ptr<toxmm2::storage>& storage) {
+                                   const std::shared_ptr<toxmm::storage>& storage) {
     auto tmp = std::shared_ptr<core>(new core(profile_path, storage));
     tmp->init();
     return tmp;
@@ -330,15 +330,15 @@ void core::init() {
     m_storage->set_prefix_key(property_addr_public().get_value());
 
     //start sub systems:
-    m_contact_manager = std::shared_ptr<toxmm2::contact_manager>(new toxmm2::contact_manager(shared_from_this()));
+    m_contact_manager = std::shared_ptr<toxmm::contact_manager>(new toxmm::contact_manager(shared_from_this()));
     m_contact_manager->init();
 }
 
-std::shared_ptr<toxmm2::contact_manager> core::contact_manager() {
+std::shared_ptr<toxmm::contact_manager> core::contact_manager() {
     return m_contact_manager;
 }
 
-std::shared_ptr<toxmm2::storage> core::storage() {
+std::shared_ptr<toxmm::storage> core::storage() {
     return m_storage;
 }
 
@@ -397,8 +397,8 @@ Tox* core::toxcore() {
     return m_toxcore;
 }
 
-toxmm2::hash core::hash(const std::vector<uint8_t>& data) {
-    toxmm2::hash res;
+toxmm::hash core::hash(const std::vector<uint8_t>& data) {
+    toxmm::hash res;
     tox_hash(res, data.data(), data.size());
     return res;
 }

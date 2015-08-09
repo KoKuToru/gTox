@@ -27,7 +27,7 @@ Glib::PropertyProxy<Glib::RefPtr<Gdk::Pixbuf>> avatar::image::property_pixbuf() 
     return m_property_pixbuf.get_proxy();
 }
 
-avatar::image::image(toxmm2::contactAddrPublic addr):
+avatar::image::image(toxmm::contactAddrPublic addr):
     Glib::ObjectBase(typeid(avatar::image)),
     m_property_pixbuf(*this,
                       "image-pixbuf") {
@@ -108,10 +108,10 @@ void avatar::image::load() {
 
 avatar::avatar(BaseObjectType* cobject,
                utils::builder,
-               toxmm2::contactAddrPublic addr)
+               toxmm::contactAddrPublic addr)
     : Gtk::Image(cobject) {
     //load image
-    static std::map<toxmm2::contactAddrPublic, std::shared_ptr<image>> m_image;
+    static std::map<toxmm::contactAddrPublic, std::shared_ptr<image>> m_image;
     auto iter = m_image.find(addr);
     if (iter == m_image.end()) {
         //create new

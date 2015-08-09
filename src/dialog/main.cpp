@@ -41,7 +41,7 @@ main::main(BaseObjectType* cobject,
     : Gtk::Window(cobject)
 {
     m_storage = std::make_shared<utils::storage>();
-    m_toxcore = toxmm2::core::create(file, m_storage);
+    m_toxcore = toxmm::core::create(file, m_storage);
     m_menu = Glib::RefPtr<widget::main_menu>(
                  new widget::main_menu(*this));
     m_config = std::make_shared<class config>(
@@ -196,7 +196,7 @@ main::main(BaseObjectType* cobject,
             ->contact_manager()
             ->signal_removed()
             .connect(sigc::track_obj(
-                         [this](std::shared_ptr<toxmm2::contact> contact) {
+                         [this](std::shared_ptr<toxmm::contact> contact) {
         for (auto widget: {m_list_contact, m_list_contact_active}) {
             for (auto item: widget->get_children()) {
                 auto item_r = dynamic_cast<widget::contact*>(item);
@@ -237,7 +237,7 @@ main::main(BaseObjectType* cobject,
         }
     }, *this));
 
-    m_toxcore->contact_manager()->signal_removed().connect(sigc::track_obj([this](std::shared_ptr<toxmm2::contact> contact) {
+    m_toxcore->contact_manager()->signal_removed().connect(sigc::track_obj([this](std::shared_ptr<toxmm::contact> contact) {
         //remove contact from list
         for (auto item_ : m_list_contact->get_children()) {
             auto item = dynamic_cast<widget::contact*>(item_);
@@ -257,7 +257,7 @@ main::main(BaseObjectType* cobject,
         m_list_contact_active->invalidate_sort();
     }, *this));
 
-    m_toxcore->contact_manager()->signal_added().connect(sigc::track_obj([this](std::shared_ptr<toxmm2::contact> contact) {
+    m_toxcore->contact_manager()->signal_added().connect(sigc::track_obj([this](std::shared_ptr<toxmm::contact> contact) {
         //add contact to list
         auto item_builder = widget::contact::create(*this, contact);
         auto item = Gtk::manage(item_builder.raw());
@@ -585,7 +585,7 @@ void main::chat_show(Gtk::Widget& headerbar, Gtk::Widget& body, Gtk::Button& pre
     chat_add(headerbar, body, prev, next);
 }
 
-std::shared_ptr<toxmm2::core>& main::tox() {
+std::shared_ptr<toxmm::core>& main::tox() {
     return m_toxcore;
 }
 

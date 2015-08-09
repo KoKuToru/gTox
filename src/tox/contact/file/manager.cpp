@@ -26,7 +26,7 @@
 #include "file_send.h"
 #include "flatbuffers/generated/File_generated.h"
 
-using namespace toxmm2;
+using namespace toxmm;
 
 file_manager::type_signal_recv          file_manager::signal_recv_file() { return m_signal_recv_file; }
 file_manager::type_signal_send          file_manager::signal_send_file() { return m_signal_send_file; }
@@ -36,7 +36,7 @@ file_manager::type_signal_send_chunk_rq file_manager::signal_send_chunk_request(
 file_manager::type_signal_recv_control  file_manager::signal_recv_control() { return m_signal_recv_control; }
 file_manager::type_signal_send_control  file_manager::signal_send_control() { return m_signal_send_control; }
 
-file_manager::file_manager(std::shared_ptr<toxmm2::contact> contact)
+file_manager::file_manager(std::shared_ptr<toxmm::contact> contact)
     : m_contact(contact) {
 
 }
@@ -70,7 +70,7 @@ void file_manager::init() {
                             id,
                             &error);
        if (error != TOX_ERR_FILE_GET_OK) {
-           throw toxmm2::exception(error);
+           throw toxmm::exception(error);
        }
 
        auto iter = std::find_if(m_file.begin(), m_file.end(), [&](auto file) {
@@ -91,7 +91,7 @@ void file_manager::init() {
        }
 
        //new file
-       auto f = std::shared_ptr<toxmm2::file>(new toxmm2::file_recv(shared_from_this()));
+       auto f = std::shared_ptr<toxmm::file>(new toxmm::file_recv(shared_from_this()));
        f->m_property_id = id;
        f->m_property_nr = nr;
        f->m_property_kind = kind,
@@ -172,7 +172,7 @@ void file_manager::init() {
                                                ->remove();
            }
            //when user goes offline remote this file
-           std::weak_ptr<toxmm2::file> fw = f;
+           std::weak_ptr<toxmm::file> fw = f;
            ct->property_connection().signal_changed().connect(
                                            sigc::track_obj([this, fw]() {
                auto ct = contact();
@@ -191,7 +191,7 @@ void file_manager::init() {
        }
 
        //remove file from list when complete
-       std::weak_ptr<toxmm2::file> fw = f;
+       std::weak_ptr<toxmm::file> fw = f;
        f->property_complete().signal_changed().connect(sigc::track_obj([this, fw]() {
            auto f = fw.lock();
            if (f && f->property_complete()) {
@@ -259,7 +259,7 @@ std::shared_ptr<file> file_manager::send_file(const Glib::ustring& path, bool av
     }
 
     auto file  = Gio::File::create_for_path(path);
-    auto f = std::shared_ptr<toxmm2::file>(new toxmm2::file_send(shared_from_this()));
+    auto f = std::shared_ptr<toxmm::file>(new toxmm::file_send(shared_from_this()));
 
     f->m_property_kind = avatar?TOX_FILE_KIND_AVATAR:TOX_FILE_KIND_DATA,
     f->m_property_name = file->get_basename();
@@ -295,7 +295,7 @@ std::shared_ptr<file> file_manager::send_file(const Glib::ustring& path, bool av
                            f->property_name().get_value().bytes(),
                            &error);
     if (error != TOX_ERR_FILE_SEND_OK) {
-        throw toxmm2::exception(error);
+        throw toxmm::exception(error);
     }
 
     fileId id;
@@ -306,7 +306,7 @@ std::shared_ptr<file> file_manager::send_file(const Glib::ustring& path, bool av
                          id,
                          &ferror);
     if (ferror != TOX_ERR_FILE_GET_OK) {
-        throw toxmm2::exception(error);
+        throw toxmm::exception(error);
     }
 
     f->m_property_id = id;
@@ -316,7 +316,7 @@ std::shared_ptr<file> file_manager::send_file(const Glib::ustring& path, bool av
     f->init();
 
     //remove file from list when complete
-    std::weak_ptr<toxmm2::file> fw = f;
+    std::weak_ptr<toxmm::file> fw = f;
     f->property_complete().signal_changed().connect(sigc::track_obj([this, fw]() {
         auto f = fw.lock();
         if (f && f->property_complete()) {
@@ -344,17 +344,17 @@ std::shared_ptr<file> file_manager::send_file(const Glib::ustring& path, bool av
     return f;
 }
 
-std::shared_ptr<toxmm2::core> file_manager::core() {
+std::shared_ptr<toxmm::core> file_manager::core() {
     auto ct = contact();
     return ct ? ct->core() : nullptr;
 }
 
-std::shared_ptr<toxmm2::contact_manager> file_manager::contact_manager() {
+std::shared_ptr<toxmm::contact_manager> file_manager::contact_manager() {
     auto ct = contact();
     return ct ? ct->contact_manager() : nullptr;
 }
 
-std::shared_ptr<toxmm2::contact> file_manager::contact() {
+std::shared_ptr<toxmm::contact> file_manager::contact() {
     return m_contact.lock();
 }
 
@@ -381,12 +381,12 @@ void file_manager::load() {
     auto data = flatbuffers::File::GetManager(content.data());
 
     for(auto file: *data->files()) {
-        std::shared_ptr<toxmm2::file> f;
+        std::shared_ptr<toxmm::file> f;
         if (file->is_recv()) {
-            f = decltype(f)(new toxmm2::file_recv(shared_from_this()));
+            f = decltype(f)(new toxmm::file_recv(shared_from_this()));
             //todo check if file size is still the same
         } else {
-            f = decltype(f)(new toxmm2::file_send(shared_from_this()));
+            f = decltype(f)(new toxmm::file_send(shared_from_this()));
             //todo check if file size is still the same
         }
         f->m_property_uuid = file->uuid()->str();
@@ -401,7 +401,7 @@ void file_manager::load() {
         f->init();
 
         //remove file from list when complete
-        std::weak_ptr<toxmm2::file> fw = f;
+        std::weak_ptr<toxmm::file> fw = f;
         f->property_complete().signal_changed().connect(sigc::track_obj([this, fw]() {
             auto f = fw.lock();
             if (f && f->property_complete()) {

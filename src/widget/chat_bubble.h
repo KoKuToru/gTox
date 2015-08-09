@@ -43,14 +43,14 @@ namespace widget {
             chat_bubble(BaseObjectType* cobject,
                         utils::builder builder,
                         Glib::PropertyProxy_ReadOnly<Glib::ustring> name,
-                        Glib::PropertyProxy_ReadOnly<toxmm2::contactAddrPublic> addr,
+                        Glib::PropertyProxy_ReadOnly<toxmm::contactAddrPublic> addr,
                         Glib::DateTime time);
             ~chat_bubble();
 
             void add_row(Gtk::Widget& widget);
 
-            static utils::builder::ref<chat_bubble> create(std::shared_ptr<toxmm2::core> core, Glib::DateTime time);
-            static utils::builder::ref<chat_bubble> create(std::shared_ptr<toxmm2::contact> contact, Glib::DateTime time);
+            static utils::builder::ref<chat_bubble> create(std::shared_ptr<toxmm::core> core, Glib::DateTime time);
+            static utils::builder::ref<chat_bubble> create(std::shared_ptr<toxmm::contact> contact, Glib::DateTime time);
     };
 }
 

@@ -25,7 +25,7 @@
 #include "types.h"
 #include "storage.h"
 
-namespace toxmm2 {
+namespace toxmm {
     class core : public Glib::Object, public std::enable_shared_from_this<core> {
         public:
             static Glib::ustring fix_utf8(const std::string& input);
@@ -82,19 +82,19 @@ namespace toxmm2 {
             void destroy();
             ~core();
             Tox* toxcore();
-            std::shared_ptr<toxmm2::contact_manager> contact_manager();
-            std::shared_ptr<toxmm2::storage> storage();
+            std::shared_ptr<toxmm::contact_manager> contact_manager();
+            std::shared_ptr<toxmm::storage> storage();
             static void try_load(std::string path, Glib::ustring& out_name, Glib::ustring& out_status, contactAddrPublic& out_addr, bool& out_writeable);
             static std::vector<uint8_t> create_state(std::string name, std::string status, contactAddrPublic& out_addr);
 
             //toxcore functionality
-            toxmm2::hash hash(const std::vector<uint8_t>& data);
+            toxmm::hash hash(const std::vector<uint8_t>& data);
 
         private:
             Tox* m_toxcore;
             std::string m_profile_path;
-            std::shared_ptr<toxmm2::storage> m_storage;
-            std::shared_ptr<toxmm2::contact_manager> m_contact_manager;
+            std::shared_ptr<toxmm::storage> m_storage;
+            std::shared_ptr<toxmm::contact_manager> m_contact_manager;
             profile m_profile;
 
             Glib::Property<contactAddr>       m_property_addr;
@@ -121,7 +121,7 @@ namespace toxmm2 {
             type_signal_file_recv_chunk           m_signal_file_recv_chunk;
             type_signal_file_recv_control         m_signal_file_recv_control;
 
-            core(const std::string& profile_path, const std::shared_ptr<toxmm2::storage>& storage);
+            core(const std::string& profile_path, const std::shared_ptr<toxmm::storage>& storage);
             core(const core&) = delete;
             void operator=(const core&) = delete;
 

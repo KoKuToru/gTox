@@ -36,7 +36,7 @@ namespace dialog {
     class main;
     class chat : public Gtk::Window {
         private:
-            std::shared_ptr<toxmm2::contact> m_contact;
+            std::shared_ptr<toxmm::contact> m_contact;
 
             main& m_main;
             utils::dispatcher m_dispatcher;
@@ -105,19 +105,19 @@ namespace dialog {
             };
 
             void add_chat_line(AppendMode append_mode,
-                               std::shared_ptr<toxmm2::contact> contact,
+                               std::shared_ptr<toxmm::contact> contact,
                                Glib::DateTime time,
                                Gtk::Widget* widget);
             void add_chat_line(AppendMode append_mode,
-                               std::shared_ptr<toxmm2::core>,
+                               std::shared_ptr<toxmm::core>,
                                Glib::DateTime time,
                                Gtk::Widget* widget);
         public:
-            chat(main& main, std::shared_ptr<toxmm2::contact> contact);
+            chat(main& main, std::shared_ptr<toxmm::contact> contact);
             ~chat();
 
-            static void add_log(std::shared_ptr<toxmm2::storage> storage,
-                                std::shared_ptr<toxmm2::contact> contact,
+            static void add_log(std::shared_ptr<toxmm::storage> storage,
+                                std::shared_ptr<toxmm::contact> contact,
                                 std::function<flatbuffers::Offset<flatbuffers::Log::Item>(flatbuffers::FlatBufferBuilder&)> create_func);
 
             void activated();

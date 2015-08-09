@@ -20,7 +20,7 @@
 #include "profile.h"
 #include <sys/file.h>
 
-using namespace toxmm2;
+using namespace toxmm;
 
 void profile::open(const Glib::ustring& path) {
     if (can_read() || can_write()) {

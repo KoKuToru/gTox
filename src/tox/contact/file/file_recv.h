@@ -23,7 +23,7 @@
 #include <giomm.h>
 #include "file.h"
 
-namespace toxmm2 {
+namespace toxmm {
     class file_recv: virtual public Glib::Object, public file {
             friend class file_manager;
         protected:
@@ -37,7 +37,7 @@ namespace toxmm2 {
         private:
             Glib::RefPtr<Gio::FileOutputStream> m_stream;
 
-            file_recv(std::shared_ptr<toxmm2::file_manager> manager);
+            file_recv(std::shared_ptr<toxmm::file_manager> manager);
             file_recv(const file_recv&) = delete;
             void operator=(const file_recv&) = delete;
     };

@@ -119,7 +119,7 @@ void profile_selection::set_accounts(const std::vector<std::string>& accounts) {
     m_thread = Glib::Thread::create([this, accounts](){
         Glib::ustring tox_name;
         Glib::ustring tox_status;
-        toxmm2::contactAddrPublic tox_addr;
+        toxmm::contactAddrPublic tox_addr;
 
         for (auto acc : accounts) {
             int tox_error = 0;
@@ -127,11 +127,11 @@ void profile_selection::set_accounts(const std::vector<std::string>& accounts) {
 
             //TRY TO LOAD TOX DATA
             try {
-                toxmm2::core::try_load(acc, tox_name, tox_status, tox_addr, can_write);
+                toxmm::core::try_load(acc, tox_name, tox_status, tox_addr, can_write);
                 if (tox_name.empty()) {
                     tox_name = tox_addr;
                 }
-            } catch (toxmm2::exception exception) {
+            } catch (toxmm::exception exception) {
                 if (exception.type() == typeid(TOX_ERR_NEW)) {
                     switch (exception.what_id()) {
                         case TOX_ERR_NEW_LOAD_BAD_FORMAT:

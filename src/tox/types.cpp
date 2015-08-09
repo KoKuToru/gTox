@@ -28,7 +28,7 @@ extern "C"
 #endif
 }
 
-using namespace toxmm2;
+using namespace toxmm;
 
 std::string contactAddr::to_hex() {
     return core::to_hex(m_addr.begin(), m_addr.size());

@@ -24,7 +24,7 @@
 #include <typeindex>
 #include <tox/tox.h>
 
-namespace toxmm2 {
+namespace toxmm {
     class exception: public std::exception {
         private:
             const std::type_index m_type;

@@ -39,7 +39,7 @@ namespace widget {
 
             utils::dispatcher m_dispatcher;
 
-            std::shared_ptr<toxmm2::contact> m_contact;
+            std::shared_ptr<toxmm::contact> m_contact;
 
             widget::avatar* m_avatar;
             widget::avatar* m_avatar_mini;
@@ -67,18 +67,18 @@ namespace widget {
             contact(BaseObjectType* cobject,
                     utils::builder builder,
                     dialog::main& main,
-                    std::shared_ptr<toxmm2::contact> contact,
+                    std::shared_ptr<toxmm::contact> contact,
                     bool for_active_chats=false);
             virtual ~contact();
 
             static utils::builder::ref<contact> create(dialog::main& main,
-                                                       std::shared_ptr<toxmm2::contact> contact,
+                                                       std::shared_ptr<toxmm::contact> contact,
                                                        bool for_active_chats=false);
 
             //! for sort
             int compare(contact* other);
 
-            std::shared_ptr<toxmm2::contact> get_contact();
+            std::shared_ptr<toxmm::contact> get_contact();
             void activated();
 
         protected:

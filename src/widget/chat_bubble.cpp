@@ -52,7 +52,7 @@ void chat_bubble::init(utils::builder builder) {
 chat_bubble::chat_bubble(BaseObjectType* cobject,
                          utils::builder builder,
                          Glib::PropertyProxy_ReadOnly<Glib::ustring> username,
-                         Glib::PropertyProxy_ReadOnly<toxmm2::contactAddrPublic> addr,
+                         Glib::PropertyProxy_ReadOnly<toxmm::contactAddrPublic> addr,
                          Glib::DateTime time): Gtk::Revealer(cobject) {
     m_avatar = builder
                .get_widget_derived<avatar>("avatar",
@@ -116,7 +116,7 @@ chat_bubble::~chat_bubble() {
     //
 }
 
-utils::builder::ref<chat_bubble> chat_bubble::create(std::shared_ptr<toxmm2::core> core, Glib::DateTime time) {
+utils::builder::ref<chat_bubble> chat_bubble::create(std::shared_ptr<toxmm::core> core, Glib::DateTime time) {
     return utils::builder::create_ref<chat_bubble>(
                 "/org/gtox/ui/chat_bubble_right.ui",
                 "chat_bubble",
@@ -125,7 +125,7 @@ utils::builder::ref<chat_bubble> chat_bubble::create(std::shared_ptr<toxmm2::cor
                 time);
 }
 
-utils::builder::ref<chat_bubble> chat_bubble::create(std::shared_ptr<toxmm2::contact> contact, Glib::DateTime time) {
+utils::builder::ref<chat_bubble> chat_bubble::create(std::shared_ptr<toxmm::contact> contact, Glib::DateTime time) {
     return utils::builder::create_ref<chat_bubble>(
                 "/org/gtox/ui/chat_bubble_right.ui",
                 "chat_bubble",

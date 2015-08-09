@@ -1,7 +1,7 @@
 #include "receipt.h"
 #include "contact.h"
 
-using namespace toxmm2;
+using namespace toxmm;
 
 receipt::type_signal_okay receipt::signal_okay() { return m_signal_okay; }
 receipt::type_signal_lost receipt::signal_lost() { return m_signal_lost; }

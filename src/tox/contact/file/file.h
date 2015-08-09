@@ -36,7 +36,7 @@ template<bool writeable = true, typename T> constexpr PropProxy<T, writeable> pr
     return {self, ((const Hack*)base)->get_name_internal()};
 }
 
-namespace toxmm2 {
+namespace toxmm {
     class file_manager;
     class contact_manager;
     class contact;
@@ -66,16 +66,16 @@ namespace toxmm2 {
             auto property_complete()     -> PropProxy<bool, false>;
             auto property_active()       -> PropProxy<bool, false>;
 
-            auto core()            -> std::shared_ptr<toxmm2::core>;
-            auto file_manager()    -> std::shared_ptr<toxmm2::file_manager>;
-            auto contact_manager() -> std::shared_ptr<toxmm2::contact_manager>;
-            auto contact()         -> std::shared_ptr<toxmm2::contact>;
+            auto core()            -> std::shared_ptr<toxmm::core>;
+            auto file_manager()    -> std::shared_ptr<toxmm::file_manager>;
+            auto contact_manager() -> std::shared_ptr<toxmm::contact_manager>;
+            auto contact()         -> std::shared_ptr<toxmm::contact>;
 
             virtual ~file() {}
             virtual bool is_recv() = 0;
 
             file();
-            file(std::shared_ptr<toxmm2::file_manager> manager);
+            file(std::shared_ptr<toxmm::file_manager> manager);
             file(const file&) = delete;
             void operator=(const file&) = delete;
 
@@ -104,7 +104,7 @@ namespace toxmm2 {
             Prop<bool>             m_property_active;
 
         private:
-            std::weak_ptr<toxmm2::file_manager> m_file_manager;
+            std::weak_ptr<toxmm::file_manager> m_file_manager;
 
             void init();
     };

@@ -26,7 +26,7 @@
 #include <vector>
 #include <glibmm.h>
 
-namespace toxmm2 {
+namespace toxmm {
 
     //TODO: make this portable
     class profile {

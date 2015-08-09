@@ -32,7 +32,7 @@ namespace dialog {
     // contact list with pinned chat
     class main : public Gtk::Window {
         private:
-            std::shared_ptr<toxmm2::core> m_toxcore;
+            std::shared_ptr<toxmm::core> m_toxcore;
 
             //Glib::RefPtr<Gtk::StatusIcon> m_status_icon;
 
@@ -73,7 +73,7 @@ namespace dialog {
                  const Glib::ustring& file);
             ~main();
 
-            std::shared_ptr<toxmm2::core>& tox();
+            std::shared_ptr<toxmm::core>& tox();
 
             static utils::builder::ref<main> create(const Glib::ustring& file);
 

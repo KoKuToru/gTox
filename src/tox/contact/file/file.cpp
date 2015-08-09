@@ -23,7 +23,7 @@
 #include "core.h"
 #include "exception.h"
 
-using namespace toxmm2;
+using namespace toxmm;
 
 auto file::property_uuid()          -> PropProxy<uniqueId, false> {
     return proxy<false>(this, m_property_uuid);
@@ -85,7 +85,7 @@ file::file():
     m_property_uuid = uniqueId::create_random();
 }
 
-file::file(std::shared_ptr<toxmm2::file_manager> manager):
+file::file(std::shared_ptr<toxmm::file_manager> manager):
     file() {
     //set manager
     m_file_manager = manager;
@@ -111,7 +111,7 @@ void file::init() {
                 error != TOX_ERR_FILE_CONTROL_NOT_PAUSED &&
                 error != TOX_ERR_FILE_CONTROL_DENIED &&
                 error != TOX_ERR_FILE_CONTROL_ALREADY_PAUSED) {
-            throw toxmm2::exception(error);
+            throw toxmm::exception(error);
         }
         switch (property_state().get_value()) {
             case TOX_FILE_CONTROL_RESUME:
@@ -158,7 +158,7 @@ void file::init() {
                                     property_name().get_value().bytes(),
                                     &error);
                 if (error != TOX_ERR_FILE_SEND_OK) {
-                    throw toxmm2::exception(error);
+                    throw toxmm::exception(error);
                 }
                 m_property_state = property_state();
                 m_property_active = true;
@@ -201,21 +201,21 @@ void file::pre_recv_chunk(uint64_t position, const std::vector<uint8_t>& data) {
     m_property_position = std::max(m_property_position.get_value(), position);
 }
 
-std::shared_ptr<toxmm2::core> file::core() {
+std::shared_ptr<toxmm::core> file::core() {
     auto m = file_manager();
     return m ? m->core() : nullptr;
 }
 
-std::shared_ptr<toxmm2::file_manager> file::file_manager() {
+std::shared_ptr<toxmm::file_manager> file::file_manager() {
     return m_file_manager.lock();
 }
 
-std::shared_ptr<toxmm2::contact_manager> file::contact_manager() {
+std::shared_ptr<toxmm::contact_manager> file::contact_manager() {
     auto m = file_manager();
     return m ? m->contact_manager() : nullptr;
 }
 
-std::shared_ptr<toxmm2::contact> file::contact() {
+std::shared_ptr<toxmm::contact> file::contact() {
     auto m = file_manager();
     return m ? m->contact() : nullptr;
 }

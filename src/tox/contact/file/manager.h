@@ -23,7 +23,7 @@
 #include <memory>
 #include "types.h"
 
-namespace toxmm2 {
+namespace toxmm {
     class file;
     class core;
     class contact_manager;
@@ -60,12 +60,12 @@ namespace toxmm2 {
 
             std::shared_ptr<file> send_file(const Glib::ustring& path, bool avatar = false);
 
-            std::shared_ptr<toxmm2::core> core();
-            std::shared_ptr<toxmm2::contact_manager> contact_manager();
-            std::shared_ptr<toxmm2::contact> contact();
+            std::shared_ptr<toxmm::core> core();
+            std::shared_ptr<toxmm::contact_manager> contact_manager();
+            std::shared_ptr<toxmm::contact> contact();
 
         private:
-            std::weak_ptr<toxmm2::contact> m_contact;
+            std::weak_ptr<toxmm::contact> m_contact;
             std::vector<std::shared_ptr<file>> m_file;
 
             type_signal_recv          m_signal_recv_file;
@@ -76,7 +76,7 @@ namespace toxmm2 {
             type_signal_recv_control  m_signal_recv_control;
             type_signal_send_control  m_signal_send_control;
 
-            file_manager(std::shared_ptr<toxmm2::contact> contact);
+            file_manager(std::shared_ptr<toxmm::contact> contact);
             file_manager(const file_manager&) = delete;
             void operator=(const file_manager&) = delete;
 

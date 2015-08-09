@@ -21,7 +21,7 @@
 #include <map>
 #include <glibmm/i18n.h>
 
-using namespace toxmm2;
+using namespace toxmm;
 
 const char* exception::what() const noexcept {
     return m_what.c_str();

@@ -21,13 +21,13 @@
 #include "contact.h"
 #include "exception.h"
 
-using namespace toxmm2;
+using namespace toxmm;
 
 contact_manager::type_signal_request contact_manager::signal_request() { return m_signal_request; }
 contact_manager::type_signal_removed contact_manager::signal_removed() { return m_signal_removed; }
 contact_manager::type_signal_removed contact_manager::signal_added  () { return m_signal_added; }
 
-contact_manager::contact_manager(std::shared_ptr<toxmm2::core> core):
+contact_manager::contact_manager(std::shared_ptr<toxmm::core> core):
     m_core(core) {
 }
 
@@ -179,7 +179,7 @@ void contact_manager::add_contact(contactAddrPublic addr_public) {
     if (error != TOX_ERR_FRIEND_ADD_OK) {
         throw exception(error);
     }
-    auto contact = std::shared_ptr<toxmm2::contact>(new toxmm2::contact(shared_from_this(), contactNr(nr)));
+    auto contact = std::shared_ptr<toxmm::contact>(new toxmm::contact(shared_from_this(), contactNr(nr)));
     contact->init();
     m_contact.push_back(contact);
     m_signal_added(contact);
@@ -196,7 +196,7 @@ void contact_manager::add_contact(contactAddr addr, const Glib::ustring& message
     if (error != TOX_ERR_FRIEND_ADD_OK) {
         throw exception(error);
     }
-    auto contact = std::shared_ptr<toxmm2::contact>(new toxmm2::contact(shared_from_this(), contactNr(nr)));
+    auto contact = std::shared_ptr<toxmm::contact>(new toxmm::contact(shared_from_this(), contactNr(nr)));
     contact->init();
     m_contact.push_back(contact);
     m_signal_added(contact);
@@ -224,6 +224,6 @@ void contact_manager::remove_contact(std::shared_ptr<contact> contact) {
     m_signal_removed(contact);
 }
 
-std::shared_ptr<toxmm2::core> contact_manager::core() {
+std::shared_ptr<toxmm::core> contact_manager::core() {
     return m_core.lock();
 }

@@ -35,7 +35,7 @@ namespace sigc {
 
 using namespace dialog;
 
-chat::chat(dialog::main& main, std::shared_ptr<toxmm2::contact> contact):
+chat::chat(dialog::main& main, std::shared_ptr<toxmm::contact> contact):
     m_contact(contact),
     m_main(main),
     m_builder(Gtk::Builder::create_from_resource("/org/gtox/ui/dialog_chat.ui")) {
@@ -124,7 +124,7 @@ chat::chat(dialog::main& main, std::shared_ptr<toxmm2::contact> contact):
         return false;
     }, *this), false);
 
-    m_contact->signal_send_message().connect(sigc::track_obj([this](Glib::ustring message, std::shared_ptr<toxmm2::receipt>) {
+    m_contact->signal_send_message().connect(sigc::track_obj([this](Glib::ustring message, std::shared_ptr<toxmm::receipt>) {
         auto time = Glib::DateTime::create_now_utc();
         add_chat_line(
             LINE_APPEND_APPENDABLE,
@@ -146,7 +146,7 @@ chat::chat(dialog::main& main, std::shared_ptr<toxmm2::contact> contact):
                                                  message)));
     }, *this));
 
-    m_contact->signal_send_action().connect(sigc::track_obj([this](Glib::ustring action, std::shared_ptr<toxmm2::receipt>) {
+    m_contact->signal_send_action().connect(sigc::track_obj([this](Glib::ustring action, std::shared_ptr<toxmm::receipt>) {
         auto time = Glib::DateTime::create_now_utc();
         add_chat_line(
             LINE_NEW,
@@ -168,7 +168,7 @@ chat::chat(dialog::main& main, std::shared_ptr<toxmm2::contact> contact):
                                                 action)));
     }, *this));
 
-    m_contact->file_manager()->signal_recv_file().connect(sigc::track_obj([this](std::shared_ptr<toxmm2::file>& file) {
+    m_contact->file_manager()->signal_recv_file().connect(sigc::track_obj([this](std::shared_ptr<toxmm::file>& file) {
         if (file->property_kind() != TOX_FILE_KIND_DATA) {
             return;
         }
@@ -180,7 +180,7 @@ chat::chat(dialog::main& main, std::shared_ptr<toxmm2::contact> contact):
             Glib::DateTime::create_now_utc(),
             Gtk::manage(widget));
     }, *this));
-    m_contact->file_manager()->signal_send_file().connect(sigc::track_obj([this](std::shared_ptr<toxmm2::file>& file) {
+    m_contact->file_manager()->signal_send_file().connect(sigc::track_obj([this](std::shared_ptr<toxmm::file>& file) {
         if (file->property_kind() != TOX_FILE_KIND_DATA) {
             return;
         }
@@ -469,7 +469,7 @@ void chat::load_log() {
             case flatbuffers::Log::Data_Message: {
                 auto f = reinterpret_cast<const flatbuffers::Log::Message*>(
                              item->data());
-                auto contact = cm->find(toxmm2::contactAddrPublic(
+                auto contact = cm->find(toxmm::contactAddrPublic(
                                             item->sender()->str()));
 
                 if (contact) {
@@ -497,7 +497,7 @@ void chat::load_log() {
             case flatbuffers::Log::Data_Action: {
                 auto f = reinterpret_cast<const flatbuffers::Log::Action*>(
                              item->data());
-                auto contact = cm->find(toxmm2::contactAddrPublic(
+                auto contact = cm->find(toxmm::contactAddrPublic(
                                             item->sender()->str()));
 
                 if (contact) {
@@ -525,10 +525,10 @@ void chat::load_log() {
             case flatbuffers::Log::Data_File: {
                 auto f = reinterpret_cast<const flatbuffers::Log::File*>(
                              item->data());
-                auto contact = cm->find(toxmm2::contactAddrPublic(
+                auto contact = cm->find(toxmm::contactAddrPublic(
                                             item->sender()->str()));
                 if (!contact) {
-                    contact = cm->find(toxmm2::contactAddrPublic(
+                    contact = cm->find(toxmm::contactAddrPublic(
                                            f->receiver()->str()));
                 }
                 if (contact) {
@@ -538,7 +538,7 @@ void chat::load_log() {
                         break;
                     }
 
-                    auto file = fm->find(toxmm2::uniqueId(f->uuid()->str()));
+                    auto file = fm->find(toxmm::uniqueId(f->uuid()->str()));
 
                     auto b_ref = file
                                  ? widget::file::create(file)
@@ -570,7 +570,7 @@ void chat::load_log() {
 }
 
 void chat::add_chat_line(AppendMode append_mode,
-                   std::shared_ptr<toxmm2::contact> contact,
+                   std::shared_ptr<toxmm::contact> contact,
                    Glib::DateTime time,
                    Gtk::Widget* widget) {
 
@@ -618,7 +618,7 @@ void chat::add_chat_line(AppendMode append_mode,
 }
 
 void chat::add_chat_line(AppendMode append_mode,
-                   std::shared_ptr<toxmm2::core> contact,
+                   std::shared_ptr<toxmm::core> contact,
                    Glib::DateTime time,
                    Gtk::Widget* widget) {
 
@@ -666,8 +666,8 @@ void chat::add_chat_line(AppendMode append_mode,
     m_chat_box->add(*m_last_bubble.widget);
 }
 
-void chat::add_log(std::shared_ptr<toxmm2::storage> storage,
-                   std::shared_ptr<toxmm2::contact> contact,
+void chat::add_log(std::shared_ptr<toxmm::storage> storage,
+                   std::shared_ptr<toxmm::contact> contact,
                    std::function<flatbuffers::Offset<flatbuffers::Log::Item>(flatbuffers::FlatBufferBuilder&)> create_func) {
     if (!storage || !contact) {
         return;

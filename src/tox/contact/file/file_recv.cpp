@@ -18,9 +18,9 @@
 **/
 #include "file_recv.h"
 
-using namespace toxmm2;
+using namespace toxmm;
 
-file_recv::file_recv(std::shared_ptr<toxmm2::file_manager> manager):
+file_recv::file_recv(std::shared_ptr<toxmm::file_manager> manager):
     Glib::ObjectBase(typeid(file_recv)),
     file(manager) {
 }

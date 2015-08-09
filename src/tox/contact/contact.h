@@ -24,7 +24,7 @@
 #include "types.h"
 #include <giomm.h>
 
-namespace toxmm2 {
+namespace toxmm {
     class file_manager;
     class receipt;
     class contact : public Glib::Object, public std::enable_shared_from_this<contact> {
@@ -66,13 +66,13 @@ namespace toxmm2 {
             std::shared_ptr<receipt> send_message(const Glib::ustring& message);
             std::shared_ptr<receipt> send_action (const Glib::ustring& action);
 
-            std::shared_ptr<toxmm2::core> core();
-            std::shared_ptr<toxmm2::contact_manager> contact_manager();
-            std::shared_ptr<toxmm2::file_manager> file_manager();
+            std::shared_ptr<toxmm::core> core();
+            std::shared_ptr<toxmm::contact_manager> contact_manager();
+            std::shared_ptr<toxmm::file_manager> file_manager();
 
         private:
-            std::weak_ptr<toxmm2::contact_manager> m_contact_manager;
-            std::shared_ptr<toxmm2::file_manager>  m_file_manager;
+            std::weak_ptr<toxmm::contact_manager> m_contact_manager;
+            std::shared_ptr<toxmm::file_manager>  m_file_manager;
 
             Glib::Property<contactNr>         m_property_nr;
             Glib::Property<contactAddrPublic> m_property_addr;
@@ -93,10 +93,10 @@ namespace toxmm2 {
             type_signal_recv_file_chunk    m_signal_recv_file_chunk;
             type_signal_recv_file_control  m_signal_recv_file_control;
 
-            std::shared_ptr<toxmm2::file>  m_avatar_send;
+            std::shared_ptr<toxmm::file>  m_avatar_send;
             Glib::RefPtr<Gio::FileMonitor> m_avatar_send_monitor;
 
-            contact(std::shared_ptr<toxmm2::contact_manager> manager, contactNr nr);
+            contact(std::shared_ptr<toxmm::contact_manager> manager, contactNr nr);
             contact(const contact&) = delete;
             void operator=(const contact&) = delete;
 

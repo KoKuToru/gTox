@@ -21,7 +21,7 @@
 
 #include <glibmm.h>
 
-namespace toxmm2 {
+namespace toxmm {
 
     /**
      * @brief toxmm will use this class to save data it will need to
