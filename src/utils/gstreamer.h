@@ -54,6 +54,8 @@ namespace utils {
             gstreamer(const gstreamer&) = delete;
             void operator=(const gstreamer&) = delete;
 
+            static std::pair<bool, bool> has_video_audio(Glib::ustring uri);
+
         private:
             Glib::Property<Glib::ustring>             m_property_uri;
             Glib::Property<Gst::State>                m_property_state;

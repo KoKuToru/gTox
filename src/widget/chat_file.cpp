@@ -219,10 +219,19 @@ file::file(BaseObjectType* cobject,
                         });
                     }
                 } else {
-                    //TODO: try video
-                    dispatcher.emit([this]() {
-                        m_spinner->property_visible() = false;
-                    });
+                    bool has_video;
+                    bool has_audio;
+                    std::tie(has_video, has_audio) = utils::gstreamer
+                                                     ::has_video_audio(file->get_uri());
+                    if (has_video || has_audio) {
+                        dispatcher.emit([this, file]() {
+                            m_preview_video->property_uri() = file->get_uri();
+                            //TODO: reveal and stop spinner after
+                            //peview image got generated !
+                            m_preview_video->property_reveal_child() = true;
+                            m_spinner->property_visible() = false;
+                        });
+                    }
                 }
             });
         }
