@@ -202,6 +202,28 @@ void contact_manager::add_contact(contactAddr addr, const Glib::ustring& message
     m_signal_added(contact);
 }
 
+void contact_manager::remove_contact(std::shared_ptr<contact> contact) {
+    auto c = core();
+    if (!c) {
+        return;
+    }
+
+    TOX_ERR_FRIEND_DELETE error;
+    tox_friend_delete(c->toxcore(),
+                      contact->property_nr().get_value(),
+                      &error);
+    if (error != TOX_ERR_FRIEND_DELETE_OK) {
+        throw exception(error);
+    }
+    auto iter = std::find(m_contact.begin(),
+                          m_contact.end(),
+                          contact);
+    if (iter != m_contact.end()) {
+        m_contact.erase(iter);
+    }
+    m_signal_removed(contact);
+}
+
 std::shared_ptr<toxmm2::core> contact_manager::core() {
     return m_core.lock();
 }

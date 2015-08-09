@@ -140,11 +140,6 @@ main::main(BaseObjectType* cobject,
     m_list_contact->set_sort_func(sort_func);
     m_list_contact_active->set_sort_func(sort_func);
 
-    /*m_list_notify->signal_row_activated().connect([](Gtk::ListBoxRow* row){
-        WidgetNotification* item = dynamic_cast<WidgetNotification*>(row);
-        item->activated();
-    });*/
-
     load_contacts();
 
     m_update_interval = Glib::signal_timeout().connect(sigc::track_obj([this]() {
@@ -170,12 +165,12 @@ main::main(BaseObjectType* cobject,
         }
     });
 
-    /*contact_remove->signal_activate().connect([this]() {
-        auto row = dynamic_cast<WidgetContactListItem*>(m_list_contact->get_selected_row());
+    contact_remove->signal_activate().connect([this]() {
+        auto row = dynamic_cast<widget::contact*>(m_list_contact->get_selected_row());
         if (!row) {
             return;
         }
-        auto friend_nr = row->get_friend_nr();
+        auto contact = row->get_contact();
 
         Gtk::Window& parent = dynamic_cast<Gtk::Window&>(*this->get_toplevel());
         Gtk::MessageDialog msg(parent,
@@ -186,22 +181,32 @@ main::main(BaseObjectType* cobject,
                                true);
         msg.set_secondary_text(
                     Glib::ustring::compose(_("CONTACT_DIALOG_REMOVE"),
-                                           tox().get_name_or_address(friend_nr)));
+                                           contact->property_name_or_addr()));
         if (msg.run() != Gtk::RESPONSE_OK) {
             return;
         }
-        m_list_contact->remove(*row);
-        delete row;
-        for(auto item : m_list_contact_active->get_children()) {
-            row = dynamic_cast<WidgetContactListItem*>(item);
-            if (row) {
-                m_list_contact_active->remove(*row);
-                delete row;
+
+        auto cm = contact->contact_manager();
+        if (cm) {
+            cm->remove_contact(contact);
+        }
+    });
+
+    m_toxcore
+            ->contact_manager()
+            ->signal_removed()
+            .connect(sigc::track_obj(
+                         [this](std::shared_ptr<toxmm2::contact> contact) {
+        for (auto widget: {m_list_contact, m_list_contact_active}) {
+            for (auto item: widget->get_children()) {
+                auto item_r = dynamic_cast<widget::contact*>(item);
+                if (item_r && item_r->get_contact() == contact) {
+                    widget->remove(*item_r);
+                    delete item_r;
+                }
             }
         }
-        tox().del_friend(friend_nr);
-        tox().save();
-    });*/
+    }, *this));
 
     auto update_status_icon = [this]() {
         switch (m_toxcore->property_status().get_value()) {

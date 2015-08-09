@@ -42,6 +42,7 @@ namespace toxmm2 {
 
             void add_contact(contactAddrPublic addr_public);
             void add_contact(contactAddr addr, const Glib::ustring& message);
+            void remove_contact(std::shared_ptr<contact> contact);
 
             void destroy();
             ~contact_manager();
