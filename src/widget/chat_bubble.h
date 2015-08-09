@@ -42,13 +42,9 @@ namespace widget {
         public:
             chat_bubble(BaseObjectType* cobject,
                         utils::builder builder,
-                        std::shared_ptr<toxmm2::core> contact,
+                        Glib::PropertyProxy_ReadOnly<Glib::ustring> name,
+                        Glib::PropertyProxy_ReadOnly<toxmm2::contactAddrPublic> addr,
                         Glib::DateTime time);
-            chat_bubble(BaseObjectType* cobject,
-                        utils::builder builder,
-                        std::shared_ptr<toxmm2::contact> contact,
-                        Glib::DateTime time);
-
             ~chat_bubble();
 
             void add_row(Gtk::Widget& widget);

@@ -49,74 +49,15 @@ void chat_bubble::init(utils::builder builder) {
     }, *this));
 }
 
-chat_bubble::chat_bubble(BaseObjectType* cobject, utils::builder builder, std::shared_ptr<toxmm2::core> core, Glib::DateTime time): Gtk::Revealer(cobject) {
+chat_bubble::chat_bubble(BaseObjectType* cobject,
+                         utils::builder builder,
+                         Glib::PropertyProxy_ReadOnly<Glib::ustring> username,
+                         Glib::PropertyProxy_ReadOnly<toxmm2::contactAddrPublic> addr,
+                         Glib::DateTime time): Gtk::Revealer(cobject) {
     m_avatar = builder
                .get_widget_derived<avatar>("avatar",
-                                           core->property_addr_public());
+                                           addr);
     init(builder);
-
-    auto username = core->property_name_or_addr();
-
-    auto format = m_username->property_label().get_value();
-    auto transform_text = [this, format, time](const Glib::ustring& input,
-                          Glib::ustring& output) {
-        auto escaped_username = Glib::Markup::escape_text(input);
-        auto datetime     = time.to_local();
-        auto datetime_now = Glib::DateTime::create_now_local();
-
-        auto hour_diff = datetime_now.difference(datetime) / G_TIME_SPAN_HOUR;
-        auto min_diff  = datetime_now.difference(datetime) / G_TIME_SPAN_MINUTE;
-
-        Glib::ustring date;
-        if (datetime.get_year() != datetime_now.get_year()) {
-            //display day month year and time
-            date = datetime.format(_("%e. %B %Y, %R"));
-        } else if (datetime.get_week_of_year() != datetime_now.get_week_of_year()) {
-            //display day month and time
-            date = datetime.format(_("%e. %B, %R"));
-        } else if (hour_diff >= 24) {
-            //display weekday and time
-            date = datetime.format(_("%a. %B, %R"));
-        } else if (min_diff >= 60) {
-            //display difference in h
-            date = Glib::ustring::compose(_("%1 hr"), hour_diff);
-        } else if (min_diff >= 1) {
-            //display difference in min
-            date = Glib::ustring::compose(_("%1 min"), min_diff);
-        } else {
-            //display just now
-            date = _("Just now");
-        }
-
-        output = Glib::ustring::compose(format,
-                                        escaped_username,
-                                        date);
-        return true;
-    };
-
-    auto flag = Glib::BINDING_DEFAULT | Glib::BINDING_SYNC_CREATE;
-    m_binding_name = Glib::Binding::bind_property(username,
-                                                  m_username->property_label(),
-                                                  flag,
-                                                  sigc::track_obj(transform_text,
-                                                                  *this));
-
-    Glib::signal_timeout().connect_seconds(sigc::track_obj([this, username, transform_text]() {
-        Glib::ustring input = username;
-        Glib::ustring output;
-        transform_text(input, output);
-        m_username->property_label() = output;
-        return true;
-    },*this), 60);
-}
-
-chat_bubble::chat_bubble(BaseObjectType* cobject, utils::builder builder, std::shared_ptr<toxmm2::contact> contact, Glib::DateTime time): Gtk::Revealer(cobject) {
-    m_avatar = builder
-               .get_widget_derived<avatar>("avatar",
-                                           contact->property_addr_public());
-    init(builder);
-
-    auto username = contact->property_name_or_addr();
 
     auto format = m_username->property_label().get_value();
     auto transform_text = [this, format, time](const Glib::ustring& input,
@@ -175,14 +116,20 @@ chat_bubble::~chat_bubble() {
     //
 }
 
-utils::builder::ref<chat_bubble> chat_bubble::create(std::shared_ptr<toxmm2::core> contact, Glib::DateTime time) {
+utils::builder::ref<chat_bubble> chat_bubble::create(std::shared_ptr<toxmm2::core> core, Glib::DateTime time) {
     return utils::builder(Gtk::Builder::create_from_resource("/org/gtox/ui/chat_bubble_right.ui"))
-            .get_widget_derived<chat_bubble>("chat_bubble", contact, time);
+            .get_widget_derived<chat_bubble>("chat_bubble",
+                                             core->property_name_or_addr(),
+                                             core->property_addr_public(),
+                                             time);
 }
 
 utils::builder::ref<chat_bubble> chat_bubble::create(std::shared_ptr<toxmm2::contact> contact, Glib::DateTime time) {
     return utils::builder(Gtk::Builder::create_from_resource("/org/gtox/ui/chat_bubble_left.ui"))
-            .get_widget_derived<chat_bubble>("chat_bubble", contact, time);
+            .get_widget_derived<chat_bubble>("chat_bubble",
+                                             contact->property_name_or_addr(),
+                                             contact->property_addr_public(),
+                                             time);
 }
 
 void chat_bubble::add_row(Gtk::Widget& widget) {
