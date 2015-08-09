@@ -35,13 +35,13 @@ namespace widget {
 
         public:
             label(const Glib::ustring& text);
-            ~label();
+            virtual ~label();
 
             void set_text(const Glib::ustring& text);
             Glib::ustring get_text();
 
             void on_selection(int from_x, int from_y, int to_x, int to_y);
-            Glib::ustring get_selection();
+            virtual Glib::ustring get_selection();
 
         protected:
             virtual bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr);

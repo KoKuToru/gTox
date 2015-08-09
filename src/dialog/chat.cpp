@@ -124,35 +124,41 @@ chat::chat(Glib::RefPtr<dialog::main> main, std::shared_ptr<toxmm2::contact> con
     }, *this), false);
 
     m_contact->signal_send_message().connect(sigc::track_obj([this](Glib::ustring message, std::shared_ptr<toxmm2::receipt>) {
+        auto time = Glib::DateTime::create_now_utc();
         add_chat_line(
             true,
             m_main->tox(),
-            Glib::DateTime::create_now_utc(),
-            Gtk::manage(new widget::chat_message(message)));
+            time,
+            Gtk::manage(new widget::chat_message(m_main->tox()->property_name_or_addr(),
+                                                 time,
+                                                 message)));
     }, *this));
 
     m_contact->signal_recv_message().connect(sigc::track_obj([this](Glib::ustring message) {
+        auto time = Glib::DateTime::create_now_utc();
         add_chat_line(
             true,
             m_contact,
-            Glib::DateTime::create_now_utc(),
-            Gtk::manage(new widget::chat_message(message)));
+            time,
+            Gtk::manage(new widget::chat_message(m_contact->property_name_or_addr(),
+                                                 time,
+                                                 message)));
     }, *this));
 
     m_contact->signal_send_action().connect(sigc::track_obj([this](Glib::ustring action, std::shared_ptr<toxmm2::receipt>) {
-        add_chat_line(
+        /*add_chat_line(
             false,
             m_main->tox(),
             Glib::DateTime::create_now_utc(),
-            Gtk::manage(new widget::chat_message(m_main->tox()->property_name_or_addr() + " " + action)));
+            Gtk::manage(new widget::chat_message(m_main->tox()->property_name_or_addr() + " " + action)));*/
     }, *this));
 
     m_contact->signal_recv_action().connect(sigc::track_obj([this](Glib::ustring action) {
-        add_chat_line(
+        /*add_chat_line(
             false,
             m_contact,
             Glib::DateTime::create_now_utc(),
-            Gtk::manage(new widget::chat_message(m_contact->property_name_or_addr() + " " + action)));
+            Gtk::manage(new widget::chat_message(m_contact->property_name_or_addr() + " " + action)));*/
     }, *this));
 
     m_contact->file_manager()->signal_recv_file().connect(sigc::track_obj([this](std::shared_ptr<toxmm2::file>& file) {
@@ -200,7 +206,7 @@ chat::chat(Glib::RefPtr<dialog::main> main, std::shared_ptr<toxmm2::contact> con
         dummy_event.y = from_y;
         update_children(&dummy_event, m_chat_box->get_children());
 
-        grab_focus();
+        m_eventbox->grab_focus();
 
         return true;
     }, *this));
@@ -457,21 +463,25 @@ void chat::load_log() {
                              item->data());
                 auto contact = cm->find(toxmm2::contactAddrPublic(
                                             item->sender()->str()));
-                auto widget = new widget::chat_message(
-                                  f->message()->str());
+
+                auto time = Glib::DateTime::create_now_utc(item->timestamp());
                 if (contact) {
                     add_chat_line(true,
                                   contact,
-                                  Glib::DateTime::create_now_utc(
-                                      item->timestamp()),
-                                  Gtk::manage(widget));
+                                  time,
+                                  Gtk::manage(new widget::chat_message(
+                                                  contact->property_name_or_addr(),
+                                                  time,
+                                                  f->message()->str())));
                 } else if (c->property_addr_public().get_value()
                            == item->sender()->str()) {
                     add_chat_line(true,
                                   c,
-                                  Glib::DateTime::create_now_utc(
-                                      item->timestamp()),
-                                  Gtk::manage(widget));
+                                  time,
+                                  Gtk::manage(new widget::chat_message(
+                                                  c->property_name_or_addr(),
+                                                  time,
+                                                  f->message()->str())));
                 } else {
                     //not found
                     //TODO: will probably need this for group chat
@@ -482,6 +492,7 @@ void chat::load_log() {
                              item->data());
                 auto contact = cm->find(toxmm2::contactAddrPublic(
                                             item->sender()->str()));
+                /*
                 auto widget = new widget::chat_message(
                                   contact->property_name_or_addr() + " " +
                                   f->action()->str());
@@ -502,6 +513,7 @@ void chat::load_log() {
                     //not found
                     //TODO: will probably need this for group chat
                 }
+                */
             } break;
             case flatbuffers::Log::Data_File: {
                 auto f = reinterpret_cast<const flatbuffers::Log::File*>(

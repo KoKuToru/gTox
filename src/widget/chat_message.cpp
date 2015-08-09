@@ -20,8 +20,30 @@
 
 using namespace widget;
 
-chat_message::chat_message(const Glib::ustring& text):
-    m_label(text) {
+chat_message::label::label(Glib::PropertyProxy_ReadOnly<Glib::ustring> name,
+                           Glib::DateTime time,
+                           const Glib::ustring& message):
+    widget::label(message),
+    m_name(name),
+    m_time(time) {
+}
+
+Glib::ustring chat_message::label::get_selection() {
+    auto selection = widget::label::get_selection();
+    if (selection.length() == get_text().length()) {
+        selection = Glib::ustring::compose("[%2] %1: %3",
+                                           m_name,
+                                           m_time.format("%c"),
+                                           selection);
+    }
+    return selection;
+}
+
+chat_message::chat_message(Glib::PropertyProxy_ReadOnly<Glib::ustring> name,
+                           Glib::DateTime time,
+                           const Glib::ustring& text):
+    m_label(name, time.to_local(), text) {
+
     show();
     add(m_label);
     property_reveal_child() = false;
