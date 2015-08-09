@@ -18,7 +18,7 @@
 **/
 #include "chat_file.h"
 #include "tox/contact/file/file.h"
-
+#include <iostream>
 namespace sigc {
     SIGC_FUNCTORS_DEDUCE_RESULT_TYPE_WITH_DECLTYPE
 }
@@ -48,6 +48,13 @@ file::file(BaseObjectType* cobject,
     builder.get_widget("file_dir", m_file_dir);
     builder.get_widget("file_open", m_file_open);
     builder.get_widget("file_control", m_file_control);
+    builder.get_widget("preview_image_revealer", m_preview_image_revealer);
+    builder.get_widget("widget_list", m_box);
+
+    m_preview_image = builder.get_widget_derived<widget::imagescaled>("preview_image");
+    auto preview_video_tmp = widget::videoplayer::create();
+    m_preview_video = preview_video_tmp.raw();
+    m_box->add(*Gtk::manage(m_preview_video));
 
     auto binding_flags = Glib::BINDING_DEFAULT | Glib::BINDING_SYNC_CREATE;
 
@@ -64,7 +71,7 @@ file::file(BaseObjectType* cobject,
         //      Glib::format_size(input, G_FORMAT_SIZE_DEFAULT)
         //      but will need Glib 2.45.31 or newer
         output = Glib::convert_return_gchar_ptr_to_ustring(
-                     g_format_size_full(input, G_FORMAT_SIZE_DEFAULT));
+                     g_format_size_full(input, G_FORMAT_SIZE_IEC_UNITS));
         return true;
     }));
     m_bindings.push_back(Glib::Binding::bind_property(
@@ -153,15 +160,72 @@ file::file(BaseObjectType* cobject,
         }
     });
     //Handle button visibility for open/dir
+    m_preview_image_revealer->property_reveal_child() = false;
+    m_preview_video->property_reveal_child() = false;
     auto update_complete = [this]() {
-        if (!m_file->property_complete().get_value()) {
-            m_file_open_bar->hide();
+        m_file_open_bar->hide();
+
+        if (m_file->is_recv() && !m_file->property_complete().get_value()) {
             return;
         }
+
         auto file = Gio::File::create_for_path(
                         m_file->property_path().get_value());
         m_file_open_bar->set_visible(
-                    Glib::file_test(file->get_path(),Glib::FILE_TEST_EXISTS));
+                    Glib::file_test(file->get_path(), Glib::FILE_TEST_EXISTS));
+
+        //try loading the file
+        if (!m_preview_thread.joinable()) {
+            m_preview_image_revealer->property_reveal_child() = false;
+            m_preview_video->property_reveal_child() = false;
+            m_spinner->property_visible() = true;
+            m_preview_thread = std::thread([this,
+                                           dispatcher = utils::dispatcher::ref(m_dispatcher),
+                                           file]() {
+                //TODO: check file size before generating preview ?
+                double max_size = 1024; //max size if an image will be 1024x1024
+
+                //try to load image
+                auto ani = Gdk::PixbufAnimation
+                           ::create_from_file(file->get_path());
+                if (ani) {
+                    if (ani->is_static_image()) {
+                        ani.reset();
+                        auto img = Gdk::Pixbuf
+                                   ::create_from_file(file->get_path());
+                        if (std::max(img->get_width(), img->get_height()) > max_size) {
+                            auto scale_w = max_size / img->get_width();
+                            auto scale_h = max_size / img->get_height();
+                            auto scale = std::min(scale_w, scale_h);
+                            auto w = img->get_width() * scale;
+                            auto h = img->get_height() * scale;
+                            std::clog << w << "x" << h << std::endl;
+                            img = img->scale_simple(int(w), int(h),
+                                                    Gdk::InterpType::INTERP_BILINEAR);
+                            dispatcher.emit([this, img]() {
+                                m_preview_image->property_pixbuf() = img;
+                                m_preview_image_revealer->property_reveal_child() = true;
+                                m_spinner->property_visible() = false;
+                            });
+                        }
+                    } else {
+                        //TODO: gif..
+                        /*
+                          widget::imagescaled should be updated to support
+                          animated images..
+                        */
+                        dispatcher.emit([this]() {
+                            m_spinner->property_visible() = false;
+                        });
+                    }
+                } else {
+                    //TODO: try video
+                    dispatcher.emit([this]() {
+                        m_spinner->property_visible() = false;
+                    });
+                }
+            });
+        }
 
         //install monitor
         auto update_file = [this](const Glib::RefPtr<Gio::File>&,
