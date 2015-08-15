@@ -127,7 +127,7 @@ utils::builder::ref<chat_bubble> chat_bubble::create(std::shared_ptr<toxmm::core
 
 utils::builder::ref<chat_bubble> chat_bubble::create(std::shared_ptr<toxmm::contact> contact, Glib::DateTime time) {
     return utils::builder::create_ref<chat_bubble>(
-                "/org/gtox/ui/chat_bubble_right.ui",
+                "/org/gtox/ui/chat_bubble_left.ui",
                 "chat_bubble",
                 contact->property_name_or_addr(),
                 contact->property_addr_public(),
