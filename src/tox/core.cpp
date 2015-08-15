@@ -89,8 +89,11 @@ core::core(const std::string& profile_path, const std::shared_ptr<toxmm::storage
 }
 
 void core::save() {
-    //TODO: save
-
+    std::vector<uint8_t> state(tox_get_savedata_size(m_toxcore));
+    tox_get_savedata(m_toxcore, state.data());
+    if (m_profile.can_write()) {
+        m_profile.write(state);
+    }
 }
 
 void core::destroy() {
@@ -99,6 +102,7 @@ void core::destroy() {
 }
 
 core::~core() {
+    save();
     tox_kill(m_toxcore);
 }
 
@@ -242,9 +246,11 @@ void core::init() {
     }, this);
     tox_callback_friend_name(toxcore(), [](Tox*, uint32_t nr, const uint8_t* name, size_t len, void* _this) {
         ((core*)_this)->m_signal_contact_name(contactNr(nr), core::fix_utf8(name, len));
+        ((core*)_this)->save(); //TODO: delay this save
     }, this);
     tox_callback_friend_status_message(toxcore(), [](Tox*, uint32_t nr, const uint8_t* status_message, size_t len, void* _this) {
         ((core*)_this)->m_signal_contact_status_message(contactNr(nr), core::fix_utf8(status_message, len));
+        ((core*)_this)->save(); //TODO: delay this save
     }, this);
     tox_callback_friend_status(toxcore(), [](Tox*, uint32_t nr, TOX_USER_STATUS status, void* _this) {
         ((core*)_this)->m_signal_contact_status(contactNr(nr), status);
@@ -281,6 +287,7 @@ void core::init() {
         } else {
             m_property_name_or_addr = property_name().get_value();
         }
+        save();
     };
     property_name().signal_changed().connect(sigc::track_obj(update_name_or_addr, *this));
     property_addr().signal_changed().connect(sigc::track_obj(update_name_or_addr, *this));
@@ -332,6 +339,15 @@ void core::init() {
     //start sub systems:
     m_contact_manager = std::shared_ptr<toxmm::contact_manager>(new toxmm::contact_manager(shared_from_this()));
     m_contact_manager->init();
+
+    m_contact_manager->signal_added().connect(
+                sigc::track_obj(sigc::hide([this]() {
+        save();
+    }), *this));
+    m_contact_manager->signal_removed().connect(
+                sigc::track_obj(sigc::hide([this]() {
+        save();
+    }), *this));
 }
 
 std::shared_ptr<toxmm::contact_manager> core::contact_manager() {
