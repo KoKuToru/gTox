@@ -1,0 +1,136 @@
+/**
+    Profile selection
+**/
+
+.gtox-profile-frame, .gtox-contact-frame, .gtox-notification {
+    padding: 5px;
+	padding-left: 9px;
+    padding-right: 5px;
+
+}
+
+.gtox-profile-avatar, .gtox-contact-avatar, .gtox-notification-image {
+    padding: 5px
+}
+
+.gtox-profile-name, .gtox-contact-name, .gtox-notification-title {
+    font-size: 120%;
+    padding: 0 5px;
+}
+
+.gtox-profile-status, .gtox-contact-status, .gtox-notification-status {
+    font-size: 80%;
+    padding: 0 5px;
+}
+
+.gtox-profile-path, .gtox-contact-path {
+    font-size: 80%;
+    padding: 0 5px;
+}
+
+.gtox-contact-status-icon, .gtox-notification-icon {
+	padding-left: 2px;
+	padding-right: 6px;
+}
+
+.gtox-profile-spinner-wrapper {
+    padding: 10px;
+}
+
+.gtox-profile-spinner-label {
+    padding-left: 10px;
+}
+
+.gtox-contact-avatar, .gtox-profile-avatar {
+	border-radius: 5px;
+}
+
+/**
+    Popovers
+**/
+GtkPopover {
+    padding: 0.5em;
+}
+
+GtkListBoxRow {
+	padding: 0px;
+}
+
+/**
+    Headerbar tweaks, correctly render radius
+**/
+
+.gtox-headerbar-right {
+    border-top-left-radius: 0;
+}
+
+.gtox-headerbar-left {
+    border-top-right-radius: 0;
+}
+
+/**
+    Chat bubbles
+**/
+
+.gtox-chat {
+  padding: 5px;  
+}
+
+.gtox-bubble {
+    border-radius: 7px;
+    background-color: rgba(0,0,0,0.2);
+    padding: 5px;
+}
+
+.gtox-left .gtox-bubble {
+    border-top-left-radius: 0;
+}
+
+.gtox-right .gtox-bubble {
+    border-bottom-right-radius: 0;
+}
+
+.gtox-right .gtox-avatar {
+	border-left: none;
+	border-radius: 0px 5px 5px 0px;
+	background: white;
+}
+
+.gtox-left .gtox-avatar {
+	border-right: none;
+	border-radius: 5px 0px 0px 5px;
+	background: white;
+}
+
+.bubble_chat_line {
+	background: transparent;
+	padding: 4px;
+	border: none;
+}
+
+
+.bubble_chat_line.top_left {
+	border-radius: 5px 0 0 0;
+}
+
+.bubble_chat_line.top_right {
+	border-radius: 0 5px 0 0;
+}
+
+.bubble_chat_line.bottom_left {
+	border-radius: 0 0 0 5px;
+}
+
+.bubble_chat_line.bottom_right {
+	border-radius: 0 0 5px 0;
+}
+
+.bubble_chat_line_time, .bubble_chat_file, .bubble_chat_file_preview {
+    border-radius: 3px;
+    padding: 2px;
+}
+
+.gtox-action-username {
+	font-weight: bolder;
+	padding-right: 0.5em;
+}

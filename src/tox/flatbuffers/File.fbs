@@ -1,0 +1,23 @@
+namespace flatbuffers.File;
+
+//never reorder these properties !
+
+table File {
+    uuid:string;
+    id:string;
+    kind:int;
+    position:ulong;
+    size:ulong;
+    name:string;
+    path:string;
+    progress:double;
+    is_recv:bool;
+    state:int;
+}
+
+table Manager {
+	files:[File];
+	
+}
+
+root_type Manager;
