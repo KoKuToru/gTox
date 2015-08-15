@@ -44,6 +44,8 @@ namespace dialog {
             Gtk::ListBox* m_list_contact_active;
             Gtk::ListBox* m_list_notify;
             Gtk::ScrolledWindow* m_list_contact_scroll;
+            Gtk::Revealer* m_request_revealer;
+            Gtk::Button*   m_request_btn;
 
             Gtk::Image* m_status_icon;
 
@@ -66,6 +68,8 @@ namespace dialog {
             std::vector<std::pair<Gtk::Widget*, Gtk::Widget*>> m_stack_data;
 
             std::shared_ptr<class config> m_config;
+
+            std::vector<std::pair<toxmm::contactAddrPublic, Glib::ustring>> m_requests;
 
         public:
             main(BaseObjectType* cobject,

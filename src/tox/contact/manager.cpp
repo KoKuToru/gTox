@@ -37,7 +37,7 @@ void contact_manager::init() {
         return;
     }
 
-    c->signal_contact_request().connect(sigc::track_obj([this](contactAddr contact_addr, Glib::ustring message) {
+    c->signal_contact_request().connect(sigc::track_obj([this](contactAddrPublic contact_addr, Glib::ustring message) {
         signal_request().emit(contact_addr, message);
     }, *this));
 

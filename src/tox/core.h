@@ -46,7 +46,7 @@ namespace toxmm {
             Glib::PropertyProxy<Glib::ustring>              property_avatar_path();
 
             //Signals
-            using type_signal_contact_request           = sigc::signal<void, contactAddr, Glib::ustring>;
+            using type_signal_contact_request           = sigc::signal<void, contactAddrPublic, Glib::ustring>;
             using type_signal_contact_message           = sigc::signal<void, contactNr, Glib::ustring>;
             using type_signal_contact_action            = sigc::signal<void, contactNr, Glib::ustring>;
             using type_signal_contact_name              = sigc::signal<void, contactNr, Glib::ustring>;

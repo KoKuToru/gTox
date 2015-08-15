@@ -67,6 +67,8 @@ main::main(BaseObjectType* cobject,
     builder.get_widget("list_notify", m_list_notify);
     builder.get_widget("contact_scroll", m_list_contact_scroll);
     builder.get_widget("status_icon", m_status_icon);
+    builder.get_widget("request_revealer", m_request_revealer);
+    builder.get_widget("request_btn", m_request_btn);
 
     set_icon(Gdk::Pixbuf::create_from_resource("/org/gtox/icon/icon_128.svg"));
 
@@ -293,6 +295,52 @@ main::main(BaseObjectType* cobject,
                                    config()->property_contacts_display_active(),
                                    m_list_contact_active->property_visible(),
                                    Glib::BINDING_DEFAULT | Glib::BINDING_SYNC_CREATE);
+
+    auto update_request = [this, format = m_request_btn->get_label()]() {
+        if (m_requests.empty())  {
+            m_request_revealer->property_reveal_child() = false;
+        } else {
+            m_request_btn->set_label(Glib::ustring::compose(
+                                         format,
+                                         m_requests.size()));
+            m_request_revealer->property_reveal_child() = true;
+        }
+    };
+
+    m_toxcore->contact_manager()->signal_request()
+            .connect(sigc::track_obj([this,
+                                     update_request](
+                                     toxmm::contactAddrPublic addr,
+                                     Glib::ustring message) {
+        m_requests.push_back({addr, message});
+        update_request();
+    }, *this));
+
+    m_request_btn->signal_clicked().connect([this, update_request]() {
+        if (m_requests.empty()) {
+            return;
+        }
+        Gtk::MessageDialog dialog(
+                    *this,
+                    _("Contact Request"),
+                    false,
+                    Gtk::MESSAGE_QUESTION,
+                    Gtk::BUTTONS_YES_NO,
+                    true);
+        dialog.set_secondary_text(
+                    Glib::ustring::compose(
+                        _("%1 wants to add you to his/her contact list\n\nMessage: \n%2"),
+                        std::string(m_requests.front().first),
+                        m_requests.front().second));
+        switch (dialog.run()) {
+            case Gtk::RESPONSE_YES:
+                m_toxcore->contact_manager()->add_contact(m_requests.front().first);
+            case Gtk::RESPONSE_NO:
+                m_requests.erase(m_requests.begin());
+                update_request();
+                break;
+        }
+    });
 }
 
 utils::builder::ref<main> main::create(const Glib::ustring& file) {

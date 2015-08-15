@@ -231,7 +231,7 @@ void core::init() {
 
     //install events:
     tox_callback_friend_request(toxcore(), [](Tox*, const uint8_t* addr, const uint8_t* data, size_t len, void* _this) {
-        ((core*)_this)->m_signal_contact_request(contactAddr(addr), core::fix_utf8(data, len));
+        ((core*)_this)->m_signal_contact_request(contactAddrPublic(addr), core::fix_utf8(data, len));
     }, this);
     tox_callback_friend_message(toxcore(), [](Tox*, uint32_t nr, TOX_MESSAGE_TYPE type, const uint8_t* message, size_t len, void* _this) {
         if (type == TOX_MESSAGE_TYPE_NORMAL) {

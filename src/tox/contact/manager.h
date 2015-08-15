@@ -27,7 +27,7 @@ namespace toxmm {
     class contact_manager : public std::enable_shared_from_this<contact_manager> {
             friend class core;
         public:
-            using type_signal_request = sigc::signal<void, contactAddr, Glib::ustring>;
+            using type_signal_request = sigc::signal<void, contactAddrPublic, Glib::ustring>;
             using type_signal_removed = sigc::signal<void, std::shared_ptr<contact>>;
             using type_signal_added   = sigc::signal<void, std::shared_ptr<contact>>;
 
