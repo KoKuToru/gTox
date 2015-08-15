@@ -24,7 +24,6 @@
 
 #include <gtkmm.h>
 #include "dialog/error.h"
-#include <libnotifymm.h>
 #include <glibmm/i18n.h>
 #include <glibmm/exception.h>
 #include <gstreamermm/init.h>
@@ -132,7 +131,6 @@ int main(int argc, char* argv[]) {
 
     Gtk::Main kit(argc, argv);
     Gst::init(argc, argv);
-    Notify::init("gTox");
 
     if (!setup_translation()) {
         dialog::error(false, "Fatal Error", "Couldn't find translation files")

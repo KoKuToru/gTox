@@ -7,13 +7,11 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1y -Wall -Wextra -rdynamic -g3 -
 
 find_package(PkgConfig)
 pkg_check_modules(GTKMM gtkmm-3.0)
-pkg_check_modules(LIBNOTIFYMM libnotifymm-1.0)
-pkg_check_modules(LIBCANBERRA libcanberra)
 pkg_check_modules(GSTREAMERMM gstreamermm-1.0)
 link_directories(
-    ${GTKMM_LIBRARY_DIRS} ${LIBNOTIFYMM_LIBRARY_DIRS} ${LIBCANBERRA_LIBRARY_DIRS} ${GSTREAMERMM_LIBRARY_DIRS})
+    ${GTKMM_LIBRARY_DIRS} ${GSTREAMERMM_LIBRARY_DIRS})
 include_directories(
-    ${GTKMM_INCLUDE_DIRS} ${LIBNOTIFYMM_INCLUDE_DIRS} ${LIBCANBERRA_INCLUDE_DIRS} ${GSTREAMERMM_INCLUDE_DIRS})
+    ${GTKMM_INCLUDE_DIRS} ${GSTREAMERMM_INCLUDE_DIRS})
 
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
 
@@ -65,7 +63,7 @@ add_executable(${PROJECT_NAME}
     ${GRESOURCE}
 )
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(${PROJECT_NAME} ${GTKMM_LIBRARIES} ${LIBNOTIFYMM_LIBRARIES} ${LIBCANBERRA_LIBRARIES} ${GSTREAMERMM_LIBRARIES} ${TOX_LIBRARY} -lpthread -lsqlite3 -luuid Toxmm)
+target_link_libraries(${PROJECT_NAME} ${GTKMM_LIBRARIES} ${GSTREAMERMM_LIBRARIES} ${TOX_LIBRARY} -lpthread -luuid Toxmm)
 add_dependencies(${PROJECT_NAME}
      gtox-style-resource
      gtox-icon-resource
