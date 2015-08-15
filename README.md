@@ -81,17 +81,15 @@ This project will need `toxcore`.
 ```bash
 git clone https://github.com/KoKuToru/gTox.git
 cd gTox
-git submodule init
-git submodule update
 mkdir build
 cd build
-cmake ../Source
+cmake ../src
 make
 ```
 
 Linux Dependencies
 -----------
-`gtkmm3`, `libnotifymm`, `librsvg`, `gettext`, `gstreamermm`, `flatbuffers`
+`gtkmm3`, `librsvg`, `gettext`, `gstreamermm`, `flatbuffers`
 
 Screenshot
 ============
