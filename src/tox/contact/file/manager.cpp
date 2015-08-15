@@ -389,11 +389,11 @@ void file_manager::load() {
             f = decltype(f)(new toxmm::file_send(shared_from_this()));
             //todo check if file size is still the same
         }
-        f->m_property_uuid = file->uuid()->str();
-        f->m_property_id = file->id()->str();
+        f->m_property_uuid = std::string(file->uuid()->begin(), file->uuid()->end());
+        f->m_property_id = std::string(file->id()->begin(), file->id()->end());
         f->m_property_kind = TOX_FILE_KIND(file->kind()),
-        f->m_property_name = file->name()->str();
-        f->m_property_path = file->path()->str();
+        f->m_property_name = std::string(file->name()->begin(), file->name()->end());
+        f->m_property_path = std::string(file->path()->begin(), file->path()->end());
         f->m_property_size = file->size();
         f->m_property_active = false;
         f->m_property_state = TOX_FILE_CONTROL(file->state());

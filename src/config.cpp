@@ -207,7 +207,8 @@ void config::load_flatbuffer() {
     property_chat_auto_away() = conf->chat_auto_away();
     property_chat_send_typing() = conf->chat_send_typing();
     property_chat_logging() = conf->chat_logging();
-    property_file_save_path() = conf->file_save_path()->str();
+    property_file_save_path() = std::string(conf->file_save_path()->begin(),
+                                            conf->file_save_path()->end());
     property_file_auto_accept() = conf->file_auto_accept();
     property_file_display_inline() = conf->file_display_inline();
     property_contacts_compact_list() = conf->contacts_compact_list();
@@ -276,12 +277,15 @@ void config_global::load_flatbuffer() {
     property_connection_tcp() = conf->connection_tcp();
 
     property_proxy_type() = conf->proxy_type();
-    property_proxy_host() = conf->proxy_host()->str();
+    property_proxy_host() = std::string(conf->proxy_host()->begin(),
+                                        conf->proxy_host()->end());
     property_proxy_port() = conf->proxy_port();
 
     property_theme_color() = conf->theme_color();
 
-    property_video_default_device() = conf->av_video_default()->str();
+    property_video_default_device() = std::string(
+                                          conf->av_video_default()->begin(),
+                                          conf->av_video_default()->end());
 }
 
 void config_global::save_flatbuffer() {

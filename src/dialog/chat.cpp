@@ -465,13 +465,14 @@ void chat::load_log() {
 
         //add message to chat
         auto time = Glib::DateTime::create_now_utc(item->timestamp());
+        auto sender = std::string(item->sender()->c_str());
         switch (item->data_type()) {
             case flatbuffers::Log::Data_Message: {
                 auto f = reinterpret_cast<const flatbuffers::Log::Message*>(
                              item->data());
                 auto contact = cm->find(toxmm::contactAddrPublic(
-                                            item->sender()->str()));
-
+                                            sender));
+                auto message = std::string(f->message()->c_str());
                 if (contact) {
                     add_chat_line(LINE_APPEND_APPENDABLE,
                                   contact,
@@ -479,16 +480,15 @@ void chat::load_log() {
                                   Gtk::manage(new widget::chat_message(
                                                   contact->property_name_or_addr(),
                                                   time,
-                                                  f->message()->str())));
-                } else if (c->property_addr_public().get_value()
-                           == item->sender()->str()) {
+                                                  message)));
+                } else if (c->property_addr_public().get_value() == sender) {
                     add_chat_line(LINE_APPEND_APPENDABLE,
                                   c,
                                   time,
                                   Gtk::manage(new widget::chat_message(
                                                   c->property_name_or_addr(),
                                                   time,
-                                                  f->message()->str())));
+                                                  message)));
                 } else {
                     //not found
                     //TODO: will probably need this for group chat
@@ -497,9 +497,9 @@ void chat::load_log() {
             case flatbuffers::Log::Data_Action: {
                 auto f = reinterpret_cast<const flatbuffers::Log::Action*>(
                              item->data());
-                auto contact = cm->find(toxmm::contactAddrPublic(
-                                            item->sender()->str()));
-
+                auto contact = cm->find(toxmm::contactAddrPublic(sender));
+                auto action = std::string(f->action()->begin(),
+                                          f->action()->end());
                 if (contact) {
                     add_chat_line(LINE_NEW,
                                   contact,
@@ -507,16 +507,15 @@ void chat::load_log() {
                                   Gtk::manage(new widget::chat_action(
                                                   contact->property_name_or_addr(),
                                                   time,
-                                                  f->action()->str())));
-                } else if (c->property_addr_public().get_value()
-                           == item->sender()->str()) {
+                                                  action)));
+                } else if (c->property_addr_public().get_value() == sender) {
                     add_chat_line(LINE_NEW,
                                   c,
                                   time,
                                   Gtk::manage(new widget::chat_action(
                                                   c->property_name_or_addr(),
                                                   time,
-                                                  f->action()->str())));
+                                                  action)));
                 } else {
                     //not found
                     //TODO: will probably need this for group chat
@@ -525,11 +524,10 @@ void chat::load_log() {
             case flatbuffers::Log::Data_File: {
                 auto f = reinterpret_cast<const flatbuffers::Log::File*>(
                              item->data());
-                auto contact = cm->find(toxmm::contactAddrPublic(
-                                            item->sender()->str()));
+                auto contact = cm->find(toxmm::contactAddrPublic(sender));
+                auto receiver = std::string(f->receiver()->c_str());
                 if (!contact) {
-                    contact = cm->find(toxmm::contactAddrPublic(
-                                           f->receiver()->str()));
+                    contact = cm->find(toxmm::contactAddrPublic(receiver));
                 }
                 if (contact) {
                     //search the file
@@ -538,16 +536,15 @@ void chat::load_log() {
                         break;
                     }
 
-                    auto file = fm->find(toxmm::uniqueId(f->uuid()->str()));
+                    auto file = fm->find(toxmm::uniqueId(std::string(f->uuid()->c_str())));
 
                     auto b_ref = file
                                  ? widget::file::create(file)
-                                 : widget::file::create(f->path()->str());
+                                 : widget::file::create(f->path()->c_str());
 
                     auto widget = Gtk::manage(b_ref.raw());
 
-                    if (item->sender()->str()
-                            != std::string(c->property_addr_public().get_value())) {
+                    if (sender != std::string(c->property_addr_public().get_value())) {
                         add_chat_line(LINE_APPEND_APPENDABLE,
                                       contact,
                                       time,
@@ -701,25 +698,31 @@ void chat::add_log(std::shared_ptr<toxmm::storage> storage,
                     auto f = reinterpret_cast<const flatbuffers::Log::Message*>(item->data());
                     subdata = flatbuffers::Log::CreateMessage(
                                   fbb,
-                                  fbb.CreateString(f->message()),
+                                  fbb.CreateString(std::string(
+                                                       f->message()->begin(),
+                                                       f->message()->end())),
                                   f->status()).Union();
                 } break;
                 case flatbuffers::Log::Data_Action: {
                     auto f = reinterpret_cast<const flatbuffers::Log::Action*>(item->data());
                     subdata = flatbuffers::Log::CreateAction(
                                   fbb,
-                                  fbb.CreateString(f->action()),
+                                  fbb.CreateString(std::string(
+                                                       f->action()->begin(),
+                                                       f->action()->end())),
                                   f->status()).Union();
                 } break;
                 case flatbuffers::Log::Data_File: {
                     auto f = reinterpret_cast<const flatbuffers::Log::File*>(item->data());
                     subdata = flatbuffers::Log::CreateFile(
                                   fbb,
-                                  fbb.CreateString(f->uuid()),
-                                  fbb.CreateString(f->name()),
-                                  fbb.CreateString(f->path()),
+                                  fbb.CreateString(f->uuid()->c_str()),
+                                  fbb.CreateString(std::string(
+                                                       f->name()->begin(),
+                                                       f->name()->end())),
+                                  fbb.CreateString(f->path()->c_str()),
                                   f->status(),
-                                  fbb.CreateString(f->receiver())).Union();
+                                  fbb.CreateString(f->receiver()->c_str())).Union();
                 } break;
                 default:
                     //TODO: What should we do ?
@@ -727,7 +730,7 @@ void chat::add_log(std::shared_ptr<toxmm::storage> storage,
             }
             auto new_item = flatbuffers::Log::CreateItem(
                                 fbb,
-                                fbb.CreateString(item->sender()),
+                                fbb.CreateString(item->sender()->c_str()),
                                 item->timestamp(),
                                 item->data_type(),
                                 subdata);
