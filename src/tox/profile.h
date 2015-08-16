@@ -43,6 +43,7 @@ namespace toxmm {
             void operator=(const profile& o) = delete;
 
             void open(const Glib::ustring& path);
+            void close();
 
             bool can_write();
             bool can_read();

@@ -3,6 +3,7 @@
 
 #include "../profile.h"
 #include <giomm.h>
+#include <iostream>
 
 class TestProfile : public CxxTest::TestSuite
 {
@@ -15,9 +16,22 @@ public:
     }
 
     static void init_file(const char* path) {
-        auto file = Gio::File::create_for_path(path);
-        file->remove();
-        file->create_file()->write("test");
+        try {
+            auto file = Gio::File::create_for_path(path);
+
+            try {
+                file->remove();
+            } catch (...) {
+                //ignore
+            }
+
+            file->create_file()->write("test");
+        } catch (Gio::Error err) {
+            std::cerr << err.what();
+            throw std::runtime_error("init_file failed");
+        } catch (...) {
+            throw std::runtime_error("init_file failed");
+        }
     }
 
     void test_open_nonexisting()
@@ -94,10 +108,8 @@ public:
         p.move(test_path_moved);
 
         //check if old path is moved..
-        toxmm::profile p2;
-        p2.open(test_path);
-        TS_ASSERT_EQUALS(p2.can_read(), false);
-        TS_ASSERT_EQUALS(p2.can_write(), false);
+        TS_ASSERT_EQUALS(Glib::file_test(test_path, Glib::FILE_TEST_EXISTS),
+                         false);
 
         //check if new path lock is working right..
         toxmm::profile p3;

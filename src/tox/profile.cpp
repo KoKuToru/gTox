@@ -35,7 +35,7 @@ void profile::open(const Glib::ustring& path) {
     if (flock(m_fd, LOCK_EX|LOCK_NB) == -1) {
         if (errno == EWOULDBLOCK) {
             m_writeable = false;
-            close(m_fd);
+            ::close(m_fd);
             m_fd = ::open(m_path.c_str(), O_RDONLY);
         } else {
             throw std::runtime_error("Profile flock error");
@@ -49,10 +49,15 @@ void profile::open(const Glib::ustring& path) {
 }
 
 profile::~profile() {
+    close();
+}
+
+void profile::close() {
     if (m_fd != -1) {
         flock(m_fd, LOCK_UN);
-        close(m_fd);
+        ::close(m_fd);
         m_fd = -1;
+        m_writeable = false;
     }
 }
 
@@ -76,11 +81,11 @@ void profile::write(const std::vector<unsigned char>& data) {
 
     ::write(tmp, data.data(), data.size());
     fsync(tmp);
-    close(tmp);
+    ::close(tmp);
 
     //SWAP !
     flock(m_fd, LOCK_UN);
-    close(m_fd);
+    ::close(m_fd);
     m_fd = -1;
     if (rename(path_tmp.c_str(), m_path.c_str()) == -1) {
         throw std::runtime_error("Rename failed !");
@@ -111,18 +116,19 @@ std::vector<unsigned char> profile::read() {
 }
 
 void profile::move(const Glib::ustring& new_path) {
-    //SWAP !
-    close(m_fd);
-    m_fd = -1;
+    if (!can_read()) {
+        throw std::runtime_error("profile::can_read() == false");
+    }
+    if (!can_write()) {
+        throw std::runtime_error("profile::can_write() == false");
+    }
+
+    //move file
+    close();
     if (rename(m_path.c_str(), new_path.c_str()) == -1) {
         throw std::runtime_error("Rename failed !");
     }
 
-    m_path = new_path;
-
     //reopen
-    m_fd = ::open(m_path.c_str(), O_RDWR|O_CREAT|O_EXCL, 0444);
-    if (m_fd != -1) {
-        throw std::runtime_error("Couldn't reopen file !!");
-    }
+    open(new_path);
 }
