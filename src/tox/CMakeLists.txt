@@ -1,4 +1,4 @@
-project(Toxmm)
+project(toxmm)
 cmake_minimum_required(VERSION 2.8)
 
 set(CMAKE_BUILD_TYPE Debug)
@@ -36,3 +36,20 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_subdirectory(flatbuffers)
 add_dependencies(${PROJECT_NAME} toxmm-flatbuffers)
+
+set(TEST_SOURCES
+    ${CMAKE_CURRENT_SOURCE_DIR}/test/profile.h
+)
+
+find_package(CxxTest)
+if(CXXTEST_FOUND)
+    include_directories(${CXXTEST_INCLUDE_DIR})
+    enable_testing()
+
+    CXXTEST_ADD_TEST(${PROJECT_NAME}-test runner.cc ${TEST_SOURCES})
+
+    pkg_check_modules(GIOMM giomm-2.4)
+    link_directories(${GIOMM_LIBRARY_DIRS})
+    include_directories(${GIOMM_INCLUDE_DIRS})
+    target_link_libraries(${PROJECT_NAME}-test ${GIOMM_LIBRARIES} ${PROJECT_NAME})
+endif()

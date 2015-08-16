@@ -63,7 +63,7 @@ add_executable(${PROJECT_NAME}
     ${GRESOURCE}
 )
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(${PROJECT_NAME} ${GTKMM_LIBRARIES} ${GSTREAMERMM_LIBRARIES} ${TOX_LIBRARY} -lpthread -luuid Toxmm)
+target_link_libraries(${PROJECT_NAME} ${GTKMM_LIBRARIES} ${GSTREAMERMM_LIBRARIES} ${TOX_LIBRARY} -lpthread -luuid toxmm)
 add_dependencies(${PROJECT_NAME}
      gtox-style-resource
      gtox-icon-resource
