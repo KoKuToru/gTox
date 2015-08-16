@@ -15,15 +15,20 @@ public:
         Gio::init();
     }
 
+    static void remove_file(const char* path) {
+        auto file = Gio::File::create_for_path(path);
+
+        try {
+            file->remove();
+        } catch (...) {
+            //ignore
+        }
+    }
+
     static void init_file(const char* path) {
+        remove_file(path);
         try {
             auto file = Gio::File::create_for_path(path);
-
-            try {
-                file->remove();
-            } catch (...) {
-                //ignore
-            }
 
             file->create_file()->write("test");
         } catch (Gio::Error err) {
@@ -34,7 +39,7 @@ public:
         }
     }
 
-    void test_open_nonexisting()
+    void test_open_nonexisting_not_possible()
     {
         toxmm::profile p;
 
@@ -53,6 +58,18 @@ public:
         //try to move profile
         TS_ASSERT_THROWS_ANYTHING(p.move("/dummy"));
     }
+
+    void test_open_nonexisting()
+    {
+        toxmm::profile p;
+
+        remove_file(test_path);
+        //non existsing files should be created
+        p.open(test_path);
+        TS_ASSERT_EQUALS(p.can_read(),  true);
+        TS_ASSERT_EQUALS(p.can_write(), true);
+    }
+
     void test_open_read_write() {
         init_file(test_path);
 
