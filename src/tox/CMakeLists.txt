@@ -39,6 +39,7 @@ add_dependencies(${PROJECT_NAME} toxmm-flatbuffers)
 
 set(TEST_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/test/profile.t.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/test/types.t.h
 )
 
 find_package(CxxTest)
@@ -51,5 +52,5 @@ if(CXXTEST_FOUND)
     pkg_check_modules(GIOMM giomm-2.4)
     link_directories(${GIOMM_LIBRARY_DIRS})
     include_directories(${GIOMM_INCLUDE_DIRS})
-    target_link_libraries(${PROJECT_NAME}-test ${GIOMM_LIBRARIES} ${PROJECT_NAME})
+    target_link_libraries(${PROJECT_NAME}-test ${GIOMM_LIBRARIES} ${PROJECT_NAME} uuid)
 endif()
