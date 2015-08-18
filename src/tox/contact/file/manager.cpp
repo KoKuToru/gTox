@@ -210,6 +210,10 @@ void file_manager::init() {
            }
        }, *this));
 
+       f->property_state().signal_changed().connect(sigc::track_obj([this]() {
+           save();
+       }, *this));
+
        //add file to list
        m_file.push_back(f);
        save();
@@ -340,18 +344,22 @@ std::shared_ptr<file> file_manager::send_file(const Glib::ustring& path, bool av
         }
     }, *this));
 
-    //add file to list
-    m_file.push_back(f);
-    save();
-
-    //emit signal
-    m_signal_send_file(f);
+    f->property_state().signal_changed().connect(sigc::track_obj([this]() {
+        save();
+    }, *this));
 
     if (!path.empty()) {
         f->property_state() = TOX_FILE_CONTROL_RESUME;
     } else {
         f->property_state() = TOX_FILE_CONTROL_CANCEL;
     }
+
+    //add file to list
+    m_file.push_back(f);
+    save();
+
+    //emit signal
+    m_signal_send_file(f);
 
     return f;
 }
@@ -423,6 +431,10 @@ void file_manager::load() {
                     save();
                 }
             }
+        }, *this));
+
+        f->property_state().signal_changed().connect(sigc::track_obj([this]() {
+            save();
         }, *this));
 
         //add file to list

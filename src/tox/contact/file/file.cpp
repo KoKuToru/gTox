@@ -99,12 +99,14 @@ void file::init() {
         if (!c || !ct) {
             return;
         }
-        TOX_ERR_FILE_CONTROL error;
-        tox_file_control(c->toxcore(),
-                         ct->property_nr().get_value(),
-                         property_nr().get_value(),
-                         property_state(),
-                         &error);
+        TOX_ERR_FILE_CONTROL error = TOX_ERR_FILE_CONTROL_OK;
+        if (property_active().get_value()) {
+            tox_file_control(c->toxcore(),
+                             ct->property_nr().get_value(),
+                             property_nr().get_value(),
+                             property_state(),
+                             &error);
+        }
         if (error != TOX_ERR_FILE_CONTROL_OK &&
                 error != TOX_ERR_FILE_CONTROL_FRIEND_NOT_CONNECTED &&
                 error != TOX_ERR_FILE_CONTROL_NOT_FOUND &&
@@ -144,24 +146,27 @@ void file::init() {
             if (ct->property_connection() == TOX_CONNECTION_NONE) {
                 m_property_state_remote = TOX_FILE_CONTROL_PAUSE;
                 m_property_active = false;
-            } else if (!property_active().get_value() && is_recv() == false) {
-                //resend offer
-                TOX_ERR_FILE_SEND error;
+            } else if (!property_active().get_value()) {
+                if (is_recv() == false) {
+                    //resend offer
+                    TOX_ERR_FILE_SEND error;
 
-                m_property_nr = tox_file_send(
-                                    c->toxcore(),
-                                    ct->property_nr().get_value(),
-                                    property_kind(),
-                                    property_size(),
-                                    property_id().get_value(),
-                                    (const uint8_t*)property_name().get_value().c_str(),
-                                    property_name().get_value().bytes(),
-                                    &error);
-                if (error != TOX_ERR_FILE_SEND_OK) {
-                    throw toxmm::exception(error);
+                    m_property_nr = tox_file_send(
+                                        c->toxcore(),
+                                        ct->property_nr().get_value(),
+                                        property_kind(),
+                                        property_size(),
+                                        property_id().get_value(),
+                                        (const uint8_t*)property_name().get_value().c_str(),
+                                        property_name().get_value().bytes(),
+                                        &error);
+                    if (error != TOX_ERR_FILE_SEND_OK) {
+                        throw toxmm::exception(error);
+                    }
+                    m_property_state = property_state();
+                    m_property_active = true;
                 }
-                m_property_state = property_state();
-                m_property_active = true;
+                //recv files get handled in file_manager::init signal::recv_file section
             }
         };
 
