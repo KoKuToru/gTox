@@ -32,11 +32,11 @@ class TestCore : public CxxTest::TestSuite
 
         void test_wait_online() {
             gfix.wait_while([]() {
-                return gfix.core_a->property_connection() != TOX_CONNECTION_NONE &&
-                       gfix.core_b->property_connection() != TOX_CONNECTION_NONE;
+                return gfix.core_a->property_connection() == TOX_CONNECTION_NONE ||
+                       gfix.core_b->property_connection() == TOX_CONNECTION_NONE;
             });
-            TS_ASSERT(gfix.core_a->property_connection() != TOX_CONNECTION_NONE);
-            TS_ASSERT(gfix.core_b->property_connection() != TOX_CONNECTION_NONE);
+            TS_ASSERT_DIFFERS(gfix.core_a->property_connection(), TOX_CONNECTION_NONE);
+            TS_ASSERT_DIFFERS(gfix.core_b->property_connection(), TOX_CONNECTION_NONE);
         }
 
         void test_add_contact() {
@@ -66,8 +66,8 @@ class TestCore : public CxxTest::TestSuite
                 return gfix.contact_a->property_connection() == TOX_CONNECTION_NONE ||
                        gfix.contact_b->property_connection() == TOX_CONNECTION_NONE;
             });
-            TS_ASSERT(gfix.contact_a->property_connection() != TOX_CONNECTION_NONE);
-            TS_ASSERT(gfix.contact_b->property_connection() != TOX_CONNECTION_NONE);
+            TS_ASSERT_DIFFERS(gfix.contact_a->property_connection().get_value(), TOX_CONNECTION_NONE);
+            TS_ASSERT_DIFFERS(gfix.contact_b->property_connection().get_value(), TOX_CONNECTION_NONE);
         }
 
         void test_name_change() {
@@ -92,7 +92,7 @@ class TestCore : public CxxTest::TestSuite
             for (auto status : {TOX_USER_STATUS_BUSY, TOX_USER_STATUS_AWAY, TOX_USER_STATUS_NONE}) {
                 gfix.core_a->property_status() = status;
                 gfix.wait_while([&]() {
-                    return gfix.core_a->property_status() != status;
+                    return gfix.contact_a->property_status() != status;
                 });
                 TS_ASSERT_EQUALS(gfix.contact_a->property_status().get_value(), status);
             }
