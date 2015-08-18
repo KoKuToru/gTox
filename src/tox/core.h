@@ -126,7 +126,6 @@ namespace toxmm {
             void operator=(const core&) = delete;
 
             void init();
-
     };
 
 }

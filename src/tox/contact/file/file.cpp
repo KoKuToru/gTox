@@ -192,11 +192,12 @@ void file::pre_send_chunk_request(uint64_t position, size_t length) {
 }
 
 void file::pre_recv_chunk(uint64_t position, const std::vector<uint8_t>& data) {
-    recv_chunk(position, data);
-    if (data.size() == 0) {
+    if (data.empty()) {
         //download complete
         m_property_complete = true;
         m_property_active = false;
+    } else {
+        recv_chunk(position, data);
     }
     m_property_position = std::max(m_property_position.get_value(), position);
 }

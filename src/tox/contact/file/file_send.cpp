@@ -34,7 +34,9 @@ void file_send::resume() {
         m_stream.reset();
     }
     auto file = Gio::File::create_for_path(property_path().get_value());
-    m_stream = file->read();
+    if (file->query_exists()) {
+        m_stream = file->read();
+    }
 }
 
 void file_send::send_chunk_request(uint64_t position, size_t size) {
@@ -56,10 +58,14 @@ void file_send::iterate() {
     auto size     = last.second;
 
     //TODO: make async
-    m_stream->seek(position, Glib::SEEK_TYPE_SET);
+    if (m_stream) {
+        m_stream->seek(position, Glib::SEEK_TYPE_SET);
+    }
     std::vector<uint8_t> chunk(size);
     gsize dummy;
-    m_stream->read_all(chunk.data(), chunk.size(), dummy);
+    if (m_stream) {
+        m_stream->read_all(chunk.data(), chunk.size(), dummy);
+    }
 
     //send
     auto c  = core();
