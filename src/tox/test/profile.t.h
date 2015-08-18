@@ -18,10 +18,8 @@ public:
     static void remove_file(const char* path) {
         auto file = Gio::File::create_for_path(path);
 
-        try {
+        if (file->query_exists()) {
             file->remove();
-        } catch (...) {
-            //ignore
         }
     }
 
