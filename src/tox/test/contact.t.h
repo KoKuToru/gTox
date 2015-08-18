@@ -17,6 +17,9 @@ class TestContact : public CxxTest::TestSuite
 {
     public:
         void test_message() {
+            gfix.wait_for_online();
+            gfix.wait_for_contact();
+
             Glib::ustring msg = "Test message";
             Glib::ustring recv_message;
             Glib::ustring send_message;
@@ -49,6 +52,9 @@ class TestContact : public CxxTest::TestSuite
         }
 
         void test_action() {
+            gfix.wait_for_online();
+            gfix.wait_for_contact();
+
             Glib::ustring msg = "Test message";
             Glib::ustring recv_message;
             Glib::ustring send_message;

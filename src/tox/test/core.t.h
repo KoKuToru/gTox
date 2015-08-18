@@ -62,6 +62,8 @@ class TestCore : public CxxTest::TestSuite
             gfix.core_a->contact_manager()->add_contact(gfix.core_b->property_addr_public());
             gfix.contact_a = gfix.core_b->contact_manager()->find(gfix.core_a->property_addr_public());
             gfix.contact_b = gfix.core_a->contact_manager()->find(gfix.core_b->property_addr_public());
+            TS_ASSERT(gfix.contact_a != nullptr);
+            TS_ASSERT(gfix.contact_b != nullptr);
             gfix.wait_while([]() {
                 return gfix.contact_a->property_connection() == TOX_CONNECTION_NONE ||
                        gfix.contact_b->property_connection() == TOX_CONNECTION_NONE;
@@ -71,6 +73,9 @@ class TestCore : public CxxTest::TestSuite
         }
 
         void test_name_change() {
+            gfix.wait_for_online();
+            gfix.wait_for_contact();
+
             auto new_name = "TEST_NAME_CHANGE";
             gfix.core_a->property_name() = new_name;
             gfix.wait_while([&]() {
@@ -80,6 +85,9 @@ class TestCore : public CxxTest::TestSuite
         }
 
         void test_statusmessage_change() {
+            gfix.wait_for_online();
+            gfix.wait_for_contact();
+
             auto new_name = "TEST_STATUS_CHANGE";
             gfix.core_a->property_status_message() = new_name;
             gfix.wait_while([&]() {
@@ -89,6 +97,9 @@ class TestCore : public CxxTest::TestSuite
         }
 
         void test_status_change() {
+            gfix.wait_for_online();
+            gfix.wait_for_contact();
+
             for (auto status : {TOX_USER_STATUS_BUSY, TOX_USER_STATUS_AWAY, TOX_USER_STATUS_NONE}) {
                 gfix.core_a->property_status() = status;
                 gfix.wait_while([&]() {

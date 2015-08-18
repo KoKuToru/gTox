@@ -26,15 +26,47 @@ public:
     const int UPDATE_DELAY_MS = 10;
 
     class MockStorage: public toxmm::storage {
+        private:
+            std::map<std::string, std::vector<uint8_t>> m_mem;
+            std::string m_prefix;
         public:
             MockStorage() {}
             ~MockStorage() {}
-            void set_prefix_key(const std::string&) override {}
-            void save(const std::initializer_list<std::string>&, const std::vector<uint8_t>&) override {}
-            void load(const std::initializer_list<std::string>&, std::vector<uint8_t>&) override {}
+            void set_prefix_key(const std::string& prefix) override {
+                m_prefix = prefix;
+            }
+            void save(const std::initializer_list<std::string>& key, const std::vector<uint8_t>& data) override {
+                std::string str_key = m_prefix;
+                for(auto v : key) {
+                    str_key += "_" + v;
+                }
+                auto iter = m_mem.find(str_key);
+                if (iter != m_mem.end()) {
+                    TS_TRACE("MOCKSTORAGE STORE " + str_key + " OVERWRITE " + std::to_string(data.size()) + " BYTES");
+                    iter->second = data;
+                    return;
+                }
+                TS_TRACE("MOCKSTORAGE STORE " + str_key + " WRITE " + std::to_string(data.size()) + " BYTES");
+                m_mem.insert({str_key, data});
+            }
+            void load(const std::initializer_list<std::string>& key, std::vector<uint8_t>& data) override {
+                std::string str_key = m_prefix;
+                for(auto v : key) {
+                    str_key += "_" + v;
+                }
+                auto iter = m_mem.find(str_key);
+                if (iter != m_mem.end()) {
+                    TS_TRACE("MOCKSTORAGE LOAD " + str_key + " RETURN " + std::to_string(iter->second.size()) + " BYTES");
+                    data = iter->second;
+                    return;
+                }
+                TS_TRACE("MOCKSTORAGE LOAD " + str_key + " RETURN EMPTY");
+                data.clear();
+            }
     };
 
-    std::shared_ptr<MockStorage> mock_storage;
+    std::shared_ptr<MockStorage> mock_storage_a;
+    std::shared_ptr<MockStorage> mock_storage_b;
 
     GlobalFixture() {
         auto init = [](std::string path, std::string name) {
@@ -57,9 +89,24 @@ public:
         init("/tmp/gtox_core_a", "Test A");
         init("/tmp/gtox_core_b", "Test B");
 
-        mock_storage = std::make_shared<MockStorage>();
-        core_a = toxmm::core::create("/tmp/gtox_core_a", mock_storage);
-        core_b = toxmm::core::create("/tmp/gtox_core_b", mock_storage);
+        mock_storage_a = std::make_shared<MockStorage>();
+        mock_storage_b = std::make_shared<MockStorage>();
+
+        reset();
+    }
+
+    void reset() {
+        core_a.reset();
+        core_b.reset();
+
+        core_a = toxmm::core::create("/tmp/gtox_core_a", mock_storage_a);
+        core_b = toxmm::core::create("/tmp/gtox_core_b", mock_storage_b);
+
+        core_a->property_download_path() = "/tmp/";
+        core_b->property_download_path() = "/tmp/";
+
+        core_a->property_avatar_path() = "/tmp/avatar_a/";
+        core_b->property_avatar_path() = "/tmp/avatar_b/";
 
         //speed up testing ?
         auto tox_a = core_a->toxcore();
@@ -83,6 +130,42 @@ public:
             core_a->update();
             core_b->update();
         },true), UPDATE_DELAY_MS);
+        contact_a = core_b->contact_manager()->find(core_a->property_addr_public());
+        contact_b = core_a->contact_manager()->find(core_b->property_addr_public());
+    }
+
+    void wait_for_online() {
+        wait_while([this]() {
+            return core_a->property_connection() == TOX_CONNECTION_NONE ||
+                   core_b->property_connection() == TOX_CONNECTION_NONE;
+        });
+        TS_ASSERT_DIFFERS(core_a->property_connection(), TOX_CONNECTION_NONE);
+        TS_ASSERT_DIFFERS(core_b->property_connection(), TOX_CONNECTION_NONE);
+    }
+
+    void wait_for_contact() {
+        if (!contact_a || !contact_b) {
+            auto need_to_wait = true;
+            auto con = core_a->contact_manager()->signal_request().connect([&](toxmm::contactAddrPublic, Glib::ustring) {
+                core_a->contact_manager()->add_contact(core_b->property_addr_public());
+                need_to_wait = false;
+            });
+            core_b->contact_manager()->add_contact(core_a->property_addr().get_value(), "Test Message");
+            wait_while([&]() {
+                return need_to_wait;
+            });
+            con->disconnect();
+            contact_a = core_b->contact_manager()->find(core_a->property_addr_public());
+            contact_b = core_a->contact_manager()->find(core_b->property_addr_public());
+        }
+        TS_ASSERT(contact_a != nullptr);
+        TS_ASSERT(contact_b != nullptr);
+        wait_while([this]() {
+            return contact_a->property_connection() == TOX_CONNECTION_NONE ||
+                   contact_b->property_connection() == TOX_CONNECTION_NONE;
+        });
+        TS_ASSERT_DIFFERS(contact_a->property_connection().get_value(), TOX_CONNECTION_NONE);
+        TS_ASSERT_DIFFERS(contact_b->property_connection().get_value(), TOX_CONNECTION_NONE);
     }
 
     ~GlobalFixture() {
