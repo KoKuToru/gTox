@@ -25,7 +25,7 @@
 namespace toxmm {
     class receipt : public Glib::Object, public std::enable_shared_from_this<receipt> {
             friend class contact;
-        private:
+        public:
             typedef sigc::signal<void> type_signal_okay;
             typedef sigc::signal<void> type_signal_lost;
 
