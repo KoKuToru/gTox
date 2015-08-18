@@ -21,7 +21,8 @@ public:
     Glib::RefPtr<Glib::MainLoop> main_loop;
     sigc::connection update_connection;
 
-    const int MAX_WAIT_MIN = 2;
+    const int MAX_WAIT_SEC_OFFLINE = 600;
+    const int MAX_WAIT_SEC_ONLINE  = 15;
     const int UPDATE_DELAY_MS = 10;
 
     class MockStorage: public toxmm::storage {
@@ -90,11 +91,26 @@ public:
 
     template<typename T>
     void wait_while(T f) {
-        int time = 0;
-        while (std::chrono::milliseconds(time) < std::chrono::minutes(MAX_WAIT_MIN) &&
+        auto start = std::chrono::system_clock::now();
+        int last_15_sec = 0;
+        TS_TRACE("WAITING START");
+        while (std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now() - start)
+               < std::chrono::seconds(
+                       ((contact_a && contact_a->property_connection() != TOX_CONNECTION_NONE) &&
+                        (contact_b && contact_b->property_connection() != TOX_CONNECTION_NONE))
+                   ?MAX_WAIT_SEC_ONLINE
+                   :MAX_WAIT_SEC_OFFLINE) &&
                f()) {
             Glib::MainContext::get_default()->iteration(true);
-            time += UPDATE_DELAY_MS; //not 100% correct but who cares ?
+            auto new_15_sec = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now() - start).count() / 15 * 15;
+            if (new_15_sec != last_15_sec) {
+                last_15_sec = new_15_sec;
+                TS_TRACE("WAITED FOR " + std::to_string(last_15_sec) + "SEC");
+            }
+        }
+        TS_TRACE("WAITING END");
+        if (f()) {
+            TS_FAIL("TIMEOUT");
         }
     }
 };
