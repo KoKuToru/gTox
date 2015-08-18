@@ -348,15 +348,15 @@ std::shared_ptr<file> file_manager::send_file(const Glib::ustring& path, bool av
         save();
     }, *this));
 
+    //add file to list
+    m_file.push_back(f);
+    save();
+
     if (!path.empty()) {
         f->property_state() = TOX_FILE_CONTROL_RESUME;
     } else {
         f->property_state() = TOX_FILE_CONTROL_CANCEL;
     }
-
-    //add file to list
-    m_file.push_back(f);
-    save();
 
     //emit signal
     m_signal_send_file(f);
