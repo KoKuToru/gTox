@@ -157,9 +157,11 @@ void file_manager::init() {
                                                .get_value());
                std::vector<uint8_t> content(file->query_info()->get_size());
                gsize dummy;
-               file->read()->read_all((void*)content.data(),
-                                      content.size(),
-                                      dummy);
+               if (!content.empty()) {
+                   file->read()->read_all((void*)content.data(),
+                   content.size(),
+                   dummy);
+               }
 
                if (c->hash(content).get() == f->property_id().get_value().get()) {
                    //it is the same avatar, don't download it again
@@ -170,6 +172,11 @@ void file_manager::init() {
                //hash is different, remove this file
                Gio::File::create_for_path(f->property_path().get_value())
                                                ->remove();
+           }
+           if (f->property_size() == 0) {
+               //nothing to download
+               f->property_state() = TOX_FILE_CONTROL_CANCEL;
+               return;
            }
            //when user goes offline remote this file
            std::weak_ptr<toxmm::file> fw = f;
@@ -278,10 +285,12 @@ std::shared_ptr<file> file_manager::send_file(const Glib::ustring& path, bool av
         std::vector<uint8_t> content;
         if (file->query_exists()) {
             content.resize(file->query_info()->get_size());
-            gsize dummy;
-            file->read()->read_all((void*)content.data(),
-                                   content.size(),
-                                   dummy);
+            if (!content.empty()) {
+                gsize dummy;
+                file->read()->read_all((void*)content.data(),
+                                       content.size(),
+                                       dummy);
+            }
         }
         f->m_property_id.set_value(c->hash(content).get());
     }

@@ -105,7 +105,9 @@ void contact::init() {
                             c->property_avatar_path().get_value(),
                             std::string(c->property_addr_public()
                                         .get_value()) + ".png");
-            m_avatar_send = file_manager()->send_file(path, true);
+            if (Glib::file_test(path, Glib::FILE_TEST_IS_REGULAR)) {
+                m_avatar_send = file_manager()->send_file(path, true);
+            }
             m_avatar_send_monitor = Gio::File::create_for_path(path)
                                     ->monitor_file();
             m_avatar_send_monitor->signal_changed()
