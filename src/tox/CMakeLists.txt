@@ -40,6 +40,7 @@ add_dependencies(${PROJECT_NAME} toxmm-flatbuffers)
 set(TEST_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/test/profile.t.h
     ${CMAKE_CURRENT_SOURCE_DIR}/test/types.t.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/test/core.t.h
 )
 
 find_package(CxxTest)
