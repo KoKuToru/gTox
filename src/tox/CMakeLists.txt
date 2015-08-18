@@ -43,6 +43,7 @@ set(TEST_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/test/types.t.h
     ${CMAKE_CURRENT_SOURCE_DIR}/test/core.t.h
     ${CMAKE_CURRENT_SOURCE_DIR}/test/contact.t.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/test/file.t.h
 )
 
 find_package(CxxTest)
