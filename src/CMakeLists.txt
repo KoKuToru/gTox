@@ -12,6 +12,15 @@ else()
     message(FATAL_ERROR "The compiler ${CMAKE_CXX_COMPILER} has no C++14 support. Please use a different C++ compiler.")
 endif()
 
+if(CMAKE_COMPILER_IS_GNUCXX)
+    execute_process(COMMAND ${CMAKE_C_COMPILER} -dumpversion
+                    OUTPUT_VARIABLE GCC_VERSION)
+    if (GCC_VERSION VERSION_LESS 5.0)
+            message(WARNING "g++ <= 5.0, going to use nasty macro to fix https://gcc.gnu.org/bugzilla/show_bug.cgi?id=59483")
+            add_definitions(-Dprotected=public)
+    endif()
+endif()
+
 set(CMAKE_BUILD_TYPE Debug)
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -rdynamic -g3 -Wno-deprecated")
 #-fsanitize=address
