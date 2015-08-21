@@ -163,7 +163,7 @@ void core::try_load(std::string path, Glib::ustring& out_name, Glib::ustring& ou
     }
     auto state = m_profile.read();
     if (state.empty()) {
-        throw std::runtime_error("Empty state ?");
+        throw std::runtime_error("Toxcore profile is empty, 0 bytes");
     }
     options->savedata_type   = TOX_SAVEDATA_TYPE_TOX_SAVE;
     options->savedata_data   = state.data();
