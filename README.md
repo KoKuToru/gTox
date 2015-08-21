@@ -1,5 +1,7 @@
 <h1><img src="https://rawgit.com/KoKuToru/gTox/master/src/resources/icon/icon_128.svg">GTK3-Style Tox-Client</h1>
 
+**Current build status:** [![Build Status](https://travis-ci.org/KoKuToru/gTox.png?branch=master)](https://travis-ci.org/KoKuToru/gTox)
+
 * [Features](#features)
 * [How to install](#how-to-install)
   * [ArchLinux](#archlinux)
