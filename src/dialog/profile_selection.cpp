@@ -150,9 +150,11 @@ void profile_selection::set_accounts(const std::vector<std::string>& accounts) {
             } catch (std::exception exp) {
                 std::cerr << "Couldn't load profile \"" + acc + "\"" << std::endl;
                 std::cerr << exp.what() << std::endl;
+                tox_error = 3;
             } catch (...) {
                 std::cerr << "Couldn't load profile \"" + acc + "\"" << std::endl;
                 std::cerr << "Unexpected error" << std::endl;
+                tox_error = 3;
             }
 
             m_dispatcher.emit([this, tox_name, acc, tox_status, tox_error, can_write, tox_addr](){
