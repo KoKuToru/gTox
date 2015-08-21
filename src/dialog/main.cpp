@@ -29,6 +29,8 @@
 #include "dialog/main.h"
 #include "widget/contact.h"
 
+#include "gTox.h"
+
 namespace sigc {
     SIGC_FUNCTORS_DEDUCE_RESULT_TYPE_WITH_DECLTYPE
 }
@@ -286,6 +288,10 @@ main::main(BaseObjectType* cobject,
         m_toxcore->property_status() = TOX_USER_STATUS_AWAY;
     });
     m_action->add_action("offline", [this]() {
+        hide();
+    });
+    m_action->add_action("switch", [this]() {
+        gTox::instance()->activate();
         hide();
     });
 

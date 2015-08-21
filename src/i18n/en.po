@@ -903,6 +903,9 @@ msgstr "After 5 minutes"
 msgid "never"
 msgstr "Never"
 
+msgid "SWITCH_PROFILE"
+msgstr "Switch profile"
+
 #~ msgid "SETTINGS_CACHE_CLEAN_LOG"
 #~ msgstr ""
 #~ "You are about to remove all conversations logs of all contacts.\n"

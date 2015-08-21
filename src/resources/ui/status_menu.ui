@@ -22,6 +22,11 @@
        <attribute name='action'>status.offline</attribute>
        <attribute name='icon'>status_offline</attribute>
      </item>
+      <item>
+       <attribute name='label' translatable='yes'>SWITCH_PROFILE</attribute>
+       <attribute name='action'>status.switch</attribute>
+       <attribute name='icon'>status_offline</attribute>
+     </item>
    </section>
  </menu>
 </interface>
