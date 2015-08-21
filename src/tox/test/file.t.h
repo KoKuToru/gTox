@@ -149,11 +149,6 @@ class TestFile : public CxxTest::TestSuite
                 return;
             }
 
-            auto o_send_state = original_send_file->property_state().get_value();
-            auto o_send_remote_state = original_send_file->property_state_remote().get_value();
-            auto o_recv_state = original_recv_file->property_state().get_value();
-            auto o_recv_remote_state = original_recv_file->property_state_remote().get_value();
-
             //restart
             TS_TRACE("CAR: RESTART CLIENTS");
             gfix.reset();
@@ -186,20 +181,12 @@ class TestFile : public CxxTest::TestSuite
 
             //resume file
             TS_TRACE("CAR: RESUME FILE");
-            auto s_send_state = after_send_file->property_state().get_value();
-            auto s_send_remote_state = after_send_file->property_state_remote().get_value();
-            auto s_recv_state = after_recv_file->property_state().get_value();
-            auto s_recv_remote_state = after_recv_file->property_state_remote().get_value();
             after_recv_file->property_state() = TOX_FILE_CONTROL_RESUME;
 
             gfix.wait_while([&]() {
                 return !after_send_file->property_complete() ||
                        !after_recv_file->property_complete();
             });
-            auto a_send_state = after_send_file->property_state().get_value();
-            auto a_send_remote_state = after_send_file->property_state_remote().get_value();
-            auto a_recv_state = after_recv_file->property_state().get_value();
-            auto a_recv_remote_state = after_recv_file->property_state_remote().get_value();
             TS_ASSERT_EQUALS(after_send_file->property_complete().get_value(), true);
             TS_ASSERT_EQUALS(after_recv_file->property_complete().get_value(), true);
 
