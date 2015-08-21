@@ -1,0 +1,20 @@
+language: cpp
+
+sudo: required
+
+services:
+  - docker
+
+compiler:
+  - gcc
+  - clang
+
+before_install:
+  - docker build -t gtox/build .
+
+script:
+  - cd src && mkdir build
+  - docker run -v $PWD:/opt/gtox gtox/build bash -c "cd /opt/gtox/build && CXX=$CXX cmake –GNinja .." 
+  - docker run -v $PWD:/opt/gtox gtox/build bash -c "cd /opt/gtox/build && make"
+  #- docker run -v $PWD:/opt/gtox gtox/build bash -c "cd /opt/gtox/build && ./tox/toxmm-test"
+  
