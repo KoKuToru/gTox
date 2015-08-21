@@ -30,7 +30,9 @@ class TestContact : public CxxTest::TestSuite
                 ++count;
             });
             sigc::connection con3;
+            std::shared_ptr<toxmm::receipt> receipt;
             sigc::connection con2 = gfix.contact_a->signal_send_message().connect([&](Glib::ustring s, std::shared_ptr<toxmm::receipt> r) {
+                receipt = r;
                 send_message = s;
                 con3 = r->signal_okay().connect([&]() {
                     receipt_okay = true;
@@ -65,7 +67,9 @@ class TestContact : public CxxTest::TestSuite
                 ++count;
             });
             sigc::connection con3;
+            std::shared_ptr<toxmm::receipt> receipt;
             sigc::connection con2 = gfix.contact_a->signal_send_action().connect([&](Glib::ustring s, std::shared_ptr<toxmm::receipt> r) {
+                receipt = r;
                 send_message = s;
                 con3 = r->signal_okay().connect([&]() {
                     receipt_okay = true;
