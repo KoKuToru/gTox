@@ -4,6 +4,17 @@ sudo: required
 
 services:
   - docker
+  
+env:
+  - MODE=build
+  - MODE=test
+  
+matrix:
+  allow_failures:
+    - env: MODE=test
+  
+git:
+  submodules: false
 
 compiler:
   - gcc
