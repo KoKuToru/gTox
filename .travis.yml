@@ -12,7 +12,7 @@ env:
 matrix:
   allow_failures:
     - env: MODE=test
-  
+
 git:
   submodules: false
 
@@ -27,5 +27,5 @@ script:
   - cd src && mkdir build
   - docker run -v $PWD:/opt/gtox kokutoru/gtox-travis-build bash -c "cd /opt/gtox/build && CXX=$CXX cmake –GNinja .."
   - docker run -v $PWD:/opt/gtox kokutoru/gtox-travis-build bash -c "cd /opt/gtox/build && make"
-  - docker run -v $PWD:/opt/gtox kokutoru/gtox-travis-build bash -c "cd /opt/gtox/build && ./tox/toxmm-test"
+  - if [ $MODE == test ]; then docker run -v $PWD:/opt/gtox kokutoru/gtox-travis-build bash -c "cd /opt/gtox/build && ./tox/toxmm-test"; fi
 
