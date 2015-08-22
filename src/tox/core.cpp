@@ -269,11 +269,6 @@ void core::init() {
         auto host = nodes[index].ipv4;
         auto port = nodes[index].port;
         if (!host.empty()) {
-            std::clog << "Bootstrap\n"
-                      << " Ip:" << host << "\n"
-                      << " Port:" << port << "\n"
-                      << " Pub: " << nodes[index].pubkey
-                      << std::endl;
             if (!tox_bootstrap(m_toxcore,
                                host.c_str(),
                                port, pub.data(),
@@ -283,11 +278,6 @@ void core::init() {
         }
         host = nodes[index].ipv6;
         if (!host.empty()) {
-            std::clog << "Bootstrap\n"
-                      << " Ip:" << host << "\n"
-                      << " Port:" << port << "\n"
-                      << " Pub: " << nodes[index].pubkey
-                      << std::endl;
             if (!tox_bootstrap(m_toxcore,
                                host.c_str(),
                                port, pub.data(),
@@ -435,11 +425,6 @@ void core::update() {
                 auto host = nodes[index].ipv4;
                 auto port = nodes[index].port;
                 if (!host.empty()) {
-                    std::clog << "Bootstrap\n"
-                              << " Ip:" << host << "\n"
-                              << " Port:" << port << "\n"
-                              << " Pub: " << nodes[index].pubkey
-                              << std::endl;
                     if (!tox_bootstrap(m_toxcore,
                                        host.c_str(),
                                        port, pub.data(),
@@ -449,11 +434,6 @@ void core::update() {
                 }
                 host = nodes[index].ipv6;
                 if (!host.empty()) {
-                    std::clog << "Bootstrap\n"
-                              << " Ip:" << host << "\n"
-                              << " Port:" << port << "\n"
-                              << " Pub: " << nodes[index].pubkey
-                              << std::endl;
                     if (!tox_bootstrap(m_toxcore,
                                        host.c_str(),
                                        port, pub.data(),
@@ -474,11 +454,6 @@ void core::update() {
             auto host = nodes[index].ipv4;
             auto port = nodes[index].port;
             if (!host.empty()) {
-                std::clog << "Bootstrap\n"
-                          << " Ip:" << host << "\n"
-                          << " Port:" << port << "\n"
-                          << " Pub: " << nodes[index].pubkey
-                          << std::endl;
                 if (!tox_bootstrap(m_toxcore,
                                    host.c_str(),
                                    port, pub.data(),
@@ -488,11 +463,6 @@ void core::update() {
             }
             host = nodes[index].ipv6;
             if (!host.empty()) {
-                std::clog << "Bootstrap\n"
-                          << " Ip:" << host << "\n"
-                          << " Port:" << port << "\n"
-                          << " Pub: " << nodes[index].pubkey
-                          << std::endl;
                 if (!tox_bootstrap(m_toxcore,
                                    host.c_str(),
                                    port, pub.data(),
