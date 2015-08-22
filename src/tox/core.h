@@ -96,6 +96,7 @@ namespace toxmm {
             std::shared_ptr<toxmm::storage> m_storage;
             std::shared_ptr<toxmm::contact_manager> m_contact_manager;
             profile m_profile;
+            Glib::Timer m_bootstrap_timer;
 
             Glib::Property<contactAddr>       m_property_addr;
             Glib::Property<contactAddrPublic> m_property_addr_public;
