@@ -4,28 +4,31 @@ sudo: required
 
 services:
   - docker
-  
-env:
-  - MODE=build
-  - MODE=test
-  
+
 matrix:
+  include:
+    - compiler: gcc
+      env: DOCKER=kokutoru/gtox-travis-build CMAKE=cmake TEST=0
+    - compiler: clang
+      env: DOCKER=kokutoru/gtox-travis-build CMAKE=cmake TEST=0
+    - compiler: gcc
+      env: DOCKER=kokutoru/gtox-travis-build CMAKE=cmake TEST=1
+    - compiler: clang
+      env: DOCKER=kokutoru/gtox-travis-build CMAKE=cmake TEST=1
+    - compiler: gcc
+      env: DOCKER=kokutoru/gtox-travis-build-mingw-w64 CMAKE=x86_64-w64-mingw32-cmake TEST=0
   allow_failures:
-    - env: MODE=test
+    - env: DOCKER=kokutoru/gtox-travis-build CMAKE=cmake TEST=1
 
 git:
   submodules: false
 
-compiler:
-  - gcc
-  - clang
-
 before_install:
-  - docker pull kokutoru/gtox-travis-build
+  - docker pull $DOCKER
 
 script:
   - cd src && mkdir build
-  - docker run -v $PWD:/opt/gtox kokutoru/gtox-travis-build bash -c "cd /opt/gtox/build && CXX=$CXX cmake –GNinja .."
-  - docker run -v $PWD:/opt/gtox kokutoru/gtox-travis-build bash -c "cd /opt/gtox/build && make"
-  - if [ $MODE == test ]; then docker run -v $PWD:/opt/gtox kokutoru/gtox-travis-build bash -c "cd /opt/gtox/build && ./tox/toxmm-test"; fi
+  - docker run -v $PWD:/opt/gtox $DOCKER bash -c "cd /opt/gtox/build && CXX=$CXX $CMAKE –GNinja .."
+  - docker run -v $PWD:/opt/gtox $DOCKER bash -c "cd /opt/gtox/build && make"
+  - if [ $TEST == 1 ]; then docker run -v $PWD:/opt/gtox $DOCKER bash -c "cd /opt/gtox/build && ./tox/toxmm-test"; fi
 
