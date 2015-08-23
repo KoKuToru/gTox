@@ -22,7 +22,7 @@ if(CMAKE_COMPILER_IS_GNUCXX)
 endif()
 
 set(CMAKE_BUILD_TYPE Debug)
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -rdynamic -g3 -Wno-deprecated")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -g3 -Wno-deprecated")
 #-fsanitize=address
 
 find_package(PkgConfig)
@@ -81,7 +81,12 @@ add_executable(${PROJECT_NAME}
     ${GRESOURCE}
 )
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(${PROJECT_NAME} ${GTKMM_LIBRARIES} ${GSTREAMERMM_LIBRARIES} ${TOX_LIBRARY} -lpthread -luuid toxmm)
+if(WIN32)
+    target_link_libraries(${PROJECT_NAME} ${GTKMM_LIBRARIES} ${GSTREAMERMM_LIBRARIES} ${TOX_LIBRARY} -lpthread -lrpcrt4 toxmm)
+else()
+    target_link_libraries(${PROJECT_NAME} ${GTKMM_LIBRARIES} ${GSTREAMERMM_LIBRARIES} ${TOX_LIBRARY} -lpthread -luuid toxmm)
+endif()
+
 add_dependencies(${PROJECT_NAME}
      gtox-style-resource
      gtox-icon-resource

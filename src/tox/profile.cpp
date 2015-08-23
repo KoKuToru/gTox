@@ -22,6 +22,17 @@
 
 using namespace toxmm;
 
+#if defined _WIN32 || defined __CYGWIN__
+    int flock(int, int) {
+        return 0;
+    }
+    #define LOCK_EX 0
+    #define LOCK_NB 0
+    #define LOCK_SH 0
+    #define LOCK_UN 0
+    void fsync(int) { }
+#endif
+
 void profile::open(const Glib::ustring& path) {
     if (can_read() || can_write()) {
         throw std::runtime_error("Profile already loaded");

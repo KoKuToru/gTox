@@ -21,8 +21,8 @@
 
 extern "C"
 {
-#ifdef WIN32
-#include <Rpc.h>
+#if defined _WIN32 || defined __CYGWIN__
+#include <rpc.h>
 #else
 #include <uuid/uuid.h>
 #endif
@@ -75,7 +75,7 @@ decltype(hash::m_hash) hash::from_hex(const std::string& hex) {
 }
 
 uniqueId uniqueId::create_random() {
-#ifdef WIN32
+#if defined _WIN32 || defined __CYGWIN__
     UUID uuid;
     UuidCreate(&uuid);
 

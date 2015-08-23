@@ -80,7 +80,7 @@ bool change_language(const std::string& lang) {
     // https://www.gnu.org/software/gettext/manual/html_node/gettext-grok.html
 
     /* Change language */
-    setenv("LANGUAGE", lang.c_str(), true);
+    Glib::setenv("LANGUAGE", lang.c_str(), true);
 
     /* Make change known. */
     {
