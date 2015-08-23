@@ -29,6 +29,8 @@
 #include "dialog/main.h"
 #include "widget/contact.h"
 
+#include "gTox.h"
+
 namespace sigc {
     SIGC_FUNCTORS_DEDUCE_RESULT_TYPE_WITH_DECLTYPE
 }
@@ -288,6 +290,10 @@ main::main(BaseObjectType* cobject,
     m_action->add_action("offline", [this]() {
         hide();
     });
+    m_action->add_action("switch", [this]() {
+        exit();
+        gTox::instance()->activate();
+    });
 
     insert_action_group("status", m_action);
 
@@ -386,9 +392,7 @@ main::~main() {
 }
 
 void main::exit() {
-    //tox().save();
-    // TODO: ask for confirmation
-    hide();
+    delete this;
 }
 
 void main::chat_add(Gtk::Widget& headerbar, Gtk::Widget& body, Gtk::Button& prev, Gtk::Button& next) {
