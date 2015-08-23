@@ -24,9 +24,6 @@
 
 namespace dialog {
     class error : public Gtk::MessageDialog {
-        private:
-            std::string get_stacktrace();
-
         public:
             error(Gtk::Window& parent, bool fatal, std::string title, std::string message);
             error(bool fatal, std::string title, std::string message);

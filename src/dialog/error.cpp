@@ -20,8 +20,6 @@
 #include "error.h"
 #include <glibmm/i18n.h>
 #include <glibmm/markup.h>
-#include <execinfo.h>
-#include <cxxabi.h>
 
 using namespace dialog;
 
@@ -29,7 +27,7 @@ error::error(Gtk::Window& parent,bool fatal,std::string title, std::string messa
     MessageDialog(parent, title, false, fatal?Gtk::MESSAGE_ERROR:Gtk::MESSAGE_WARNING, Gtk::BUTTONS_CLOSE, true) {
     set_secondary_text(((fatal)?_("ERROR_REPORT_TEXT_INTRO"):"")
                        + Glib::Markup::escape_text(message)
-                       + ((fatal)?(Glib::Markup::escape_text("\n\n" + get_stacktrace())
+                       + ((fatal)?(Glib::Markup::escape_text("\n\n")
                                    + _("ERROR_REPORT_TEXT_OUTRO")):""), true);
 
     if (fatal) {
@@ -41,7 +39,7 @@ error::error(bool fatal,std::string title, std::string message):
     MessageDialog(title, false, fatal?Gtk::MESSAGE_ERROR:Gtk::MESSAGE_WARNING, Gtk::BUTTONS_CLOSE, true) {
     set_secondary_text(((fatal)?_("ERROR_REPORT_TEXT_INTRO"):"")
                        + Glib::Markup::escape_text(message)
-                       + ((fatal)?(Glib::Markup::escape_text("\n\n" + get_stacktrace())
+                       + ((fatal)?(Glib::Markup::escape_text("\n\n")
                                    + _("ERROR_REPORT_TEXT_OUTRO")):""), true);
 
     if (fatal) {
@@ -64,86 +62,4 @@ int error::run() {
     }
 
     return 0;
-}
-
-std::string error::get_stacktrace() {
-    return "";
-
-    std::stringstream ss;
-
-    void * array[50];
-    int size = backtrace(array, 50);
-
-    char ** messages = backtrace_symbols(array, size);
-
-    // skip first stack frame (points here)
-    for (int i = 1; i < size && messages != NULL; ++i)
-    {
-        char *mangled_name = 0, *offset_begin = 0, *offset_end = 0;
-
-        // find parantheses and +address offset surrounding mangled name
-        for (char *p = messages[i]; *p; ++p)
-        {
-            if (*p == '(')
-            {
-                mangled_name = p;
-            }
-            else if (*p == '+')
-            {
-                offset_begin = p;
-            }
-            else if (*p == ')')
-            {
-                offset_end = p;
-                break;
-            }
-        }
-
-        // if the line could be processed, attempt to demangle the symbol
-        if (mangled_name && offset_begin && offset_end &&
-            mangled_name < offset_begin)
-        {
-            *mangled_name++ = '\0';
-            *offset_begin++ = '\0';
-            *offset_end++ = '\0';
-
-            int status;
-            char * real_name = mangled_name;
-            try {
-                real_name = abi::__cxa_demangle(mangled_name, 0, 0, &status);
-            } catch (...) {
-                //ignore
-            }
-
-            // if demangling is successful, output the demangled function name
-            if (status == 0)
-            {
-                ss << "[bt]: (" << i << ") " << messages[i] << " : "
-                   << real_name << "+" << offset_begin << offset_end
-                   << std::endl;
-
-            }
-            // otherwise, output the mangled function name
-            else
-            {
-                ss << "[bt]: (" << i << ") " << messages[i] << " : "
-                   << mangled_name << "+" << offset_begin << offset_end
-                   << std::endl;
-            }
-
-            if (mangled_name != real_name) {
-                free(real_name);
-            }
-        }
-        // otherwise, print the whole line
-        else
-        {
-            ss << "[bt]: (" << i << ") " << messages[i] << std::endl;
-        }
-    }
-    ss << std::endl;
-
-    free(messages);
-
-    return ss.str();
 }
