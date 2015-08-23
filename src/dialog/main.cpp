@@ -291,8 +291,8 @@ main::main(BaseObjectType* cobject,
         hide();
     });
     m_action->add_action("switch", [this]() {
+        exit();
         gTox::instance()->activate();
-        hide();
     });
 
     insert_action_group("status", m_action);
@@ -392,9 +392,7 @@ main::~main() {
 }
 
 void main::exit() {
-    //tox().save();
-    // TODO: ask for confirmation
-    hide();
+    delete this;
 }
 
 void main::chat_add(Gtk::Widget& headerbar, Gtk::Widget& body, Gtk::Button& prev, Gtk::Button& next) {
