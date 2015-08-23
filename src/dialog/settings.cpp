@@ -80,7 +80,11 @@ settings::settings(main& main)
     m_headerbar_detached->set_subtitle(_("SETTINGS_SUBTITLE"));
 
     m_btn_detach->signal_clicked().connect(sigc::track_obj([this]() {
-        //TODO: take position w/h from main-window
+        m_main.property_gravity() = Gdk::GRAVITY_NORTH_WEST;
+        int x, y;
+        m_main.get_position(x, y);
+        move(x, y);
+        resize(m_body->get_width(), m_main.get_height());
         m_main.chat_remove(*m_headerbar_attached, *m_body);
         add(*m_body);
         show();
