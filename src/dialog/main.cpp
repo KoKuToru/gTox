@@ -147,7 +147,7 @@ main::main(BaseObjectType* cobject,
 
 
     //Menu items
-    auto contact_remove = Gtk::manage(new Gtk::MenuItem(_("CONTACT_MENU_REMOVE"), true));
+    auto contact_remove = Gtk::manage(new Gtk::MenuItem(_("Remove contact"), true));
 
     m_popup_menu.append(*contact_remove);
     m_popup_menu.accelerate(*this);
@@ -172,13 +172,13 @@ main::main(BaseObjectType* cobject,
 
         Gtk::Window& parent = dynamic_cast<Gtk::Window&>(*this->get_toplevel());
         Gtk::MessageDialog msg(parent,
-                               _("CONTACT_DIALOG_REMOVE_TITLE"),
+                               _("Remove contact"),
                                false,
                                Gtk::MESSAGE_QUESTION,
                                Gtk::BUTTONS_OK_CANCEL,
                                true);
         msg.set_secondary_text(
-                    Glib::ustring::compose(_("CONTACT_DIALOG_REMOVE"),
+                    Glib::ustring::compose(_("Are you sure you want to remove this contact?"),
                                            contact->property_name_or_addr()));
         if (msg.run() != Gtk::RESPONSE_OK) {
             return;

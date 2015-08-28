@@ -42,7 +42,7 @@ gTox::gTox()
       m_avatar_path(Glib::build_filename(m_config_path, "avatars")),
       m_config_global_path(Glib::build_filename(Glib::get_user_config_dir(), "gtox")) {
 
-    Glib::set_application_name(_("APPLICATION_NAME"));
+    Glib::set_application_name(_("gTox"));
 
     if (!Glib::file_test(m_config_path, Glib::FILE_TEST_IS_DIR)) {
         Gio::File::create_for_path(m_config_path)->make_directory_with_parents();

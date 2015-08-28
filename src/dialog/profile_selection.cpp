@@ -39,13 +39,13 @@ profile_selection::profile_selection(BaseObjectType* cobject, utils::builder bui
     builder->get_widget("profile_list", m_profile_list);
     builder->get_widget("revealer", m_revealer);
 
-    set_title(_("PROFILE_TITLE"));
+    set_title(_("gTox"));
     set_default_geometry(300, 300);
     set_position(Gtk::WindowPosition::WIN_POS_CENTER);
 
     auto hbar = builder.get_widget<Gtk::HeaderBar>("headerbar");
-    hbar->set_title(_("PROFILE_TITLE"));
-    hbar->set_subtitle(_("PROFILE_SUBTITLE"));
+    hbar->set_title(_("gTox"));
+    hbar->set_subtitle(_("Select profile"));
 
     Gtk::ListBox* profile_selection_list   = builder.get_widget<Gtk::ListBox>("profile_list");
     Gtk::Button*  profile_selection_new    = builder.get_widget<Gtk::Button>("profile_new");
@@ -92,7 +92,7 @@ profile_selection::profile_selection(BaseObjectType* cobject, utils::builder bui
         quit();
     });
 
-    auto open_in_fm = Gtk::manage(new Gtk::MenuItem(_("PROFILE_MENU_OPEN_IN_FILEMANAGER"), true));
+    auto open_in_fm = Gtk::manage(new Gtk::MenuItem(_("Open this profile in file manager"), true));
 
     m_popup_menu.append(*open_in_fm);
 
@@ -181,16 +181,16 @@ void profile_selection::set_accounts(const std::vector<std::string>& accounts) {
                             }
                             break;
                         case 1:
-                            name->set_text(_("PROFILE_CORRUPTED_TITLE"));
-                            status->set_text(_("PROFILE_CORRUPTED"));
+                            name->set_text(_("Corrupted profile"));
+                            status->set_text(_("Profile couldn't be loaded"));
                             break;
                         case 2:
-                            name->set_text(_("PROFILE_CRYPTED_TITLE"));
-                            status->set_text(_("PROFILE_CRYPTED"));
+                            name->set_text(_("Encrypted profile"));
+                            status->set_text(_("Profile couldn't be loaded"));
                             break;
                         default:
-                            name->set_text(_("PROFILE_UNEXPECTED_TITLE"));
-                            status->set_text(_("PROFILE_UNEXPECTED"));
+                            name->set_text(_("Profile not loaded for an unknown reason"));
+                            status->set_text(_("Profile couldn't be loaded"));
                             break;
                     }
 

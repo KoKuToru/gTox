@@ -73,7 +73,7 @@ main_menu::main_menu(dialog::main& main): m_main(main) {
 
     /* change avatar logic */
     m_avatar->signal_clicked().connect(sigc::track_obj([this](){
-        Gtk::FileChooserDialog dialog(_("PROFILE_AVATAR_SELECT_TITLE"), Gtk::FILE_CHOOSER_ACTION_OPEN);
+        Gtk::FileChooserDialog dialog(_("Select new avatar"), Gtk::FILE_CHOOSER_ACTION_OPEN);
         dialog.add_button (Gtk::Stock::OPEN,
                                Gtk::RESPONSE_ACCEPT);
         dialog.add_button (Gtk::Stock::CANCEL,
@@ -81,7 +81,7 @@ main_menu::main_menu(dialog::main& main): m_main(main) {
 
         Glib::RefPtr<Gtk::FileFilter> filter = Gtk::FileFilter::create();
         filter->add_pixbuf_formats();
-        filter->set_name(_("IMAGE"));
+        filter->set_name(_("Image"));
         dialog.add_filter (filter);
 
         widget::avatar avatar_preview;
@@ -165,8 +165,8 @@ void main_menu::add_contact() {
 
     if (m_add_contact.tox_id->get_text().length() != TOX_ADDRESS_SIZE * 2) {
         dialog::error(parent, false,
-                      _("ERROR_ADD_CONTACT_ADDR_WRONG_SIZE_TITLE"),
-                      _("ERROR_ADD_CONTACT_ADDR_WRONG_SIZE")).run();
+                      _("Wrong ID length"),
+                      _("A Tox-ID must be 76 letters long")).run();
         return;
     }
 
@@ -187,33 +187,34 @@ void main_menu::add_contact() {
         switch(ex.what_id()) {
             case TOX_ERR_FRIEND_ADD_NO_MESSAGE:
                 dialog::error(parent, false,
-                              _("TOX_ERR_FRIEND_ADD_NO_MESSAGE_UI_TITLE"),
-                              _("TOX_ERR_FRIEND_ADD_NO_MESSAGE_UI")).run();
+                              _("Empty message"),
+                              _("The contact request message is not allowed to be empty.")).run();
                 break;
             case TOX_ERR_FRIEND_ADD_BAD_CHECKSUM:
                 dialog::error(parent, false,
-                              _("TOX_ERR_FRIEND_ADD_BAD_CHECKSUM_UI_TITLE"),
-                              _("TOX_ERR_FRIEND_ADD_BAD_CHECKSUM_UI")).run();
+                              _("Wrong checksum"),
+                              _("The contact address checksum failed.")).run();
                 break;
             case TOX_ERR_FRIEND_ADD_ALREADY_SENT:
                 dialog::error(parent, false,
-                              _("TOX_ERR_FRIEND_ADD_ALREADY_SENT_UI_TITLE"),
-                              _("TOX_ERR_FRIEND_ADD_ALREADY_SENT_UI")).run();
+                              _("Contact request failed"),
+                              _("A contact request has already been sent, or the address belongs to a friend "
+                                "that is already on the friend list.")).run();
                 break;
             case TOX_ERR_FRIEND_ADD_OWN_KEY:
                 dialog::error(parent, false,
-                              _("TOX_ERR_FRIEND_ADD_OWN_KEY_UI_TITLE"),
-                              _("TOX_ERR_FRIEND_ADD_OWN_KEY_UI")).run();
+                              _("Contact request failed"),
+                              _("This contact address belongs to you")).run();
                 break;
             case TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM:
                 dialog::error(parent, false,
-                              _("TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM_UI_TITLE"),
-                              _("TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM_UI")).run();
+                              _("Contact request failed"),
+                              _("The contact was already there, but the nospam value was different.")).run();
                 break;
             case TOX_ERR_FRIEND_ADD_TOO_LONG:
                 dialog::error(parent, false,
-                              _("TOX_ERR_FRIEND_ADD_TOO_LONG_UI_TITLE"),
-                              _("TOX_ERR_FRIEND_ADD_TOO_LONG_UI")).run();
+                              _("Contact request failed"),
+                              _("The length of the contact request message exceeded 1016 bytes.")).run();
                 break;
             default:
                 throw;

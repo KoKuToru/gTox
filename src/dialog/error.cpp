@@ -25,25 +25,37 @@ using namespace dialog;
 
 error::error(Gtk::Window& parent,bool fatal,std::string title, std::string message):
     MessageDialog(parent, title, false, fatal?Gtk::MESSAGE_ERROR:Gtk::MESSAGE_WARNING, Gtk::BUTTONS_CLOSE, true) {
-    set_secondary_text(((fatal)?_("ERROR_REPORT_TEXT_INTRO"):"")
+    set_secondary_text(((fatal)?_("gTox can't continue.\n"
+                                  "The following problem occurred:\n"
+                                  "\n"
+                                  "<i><b>"):"")
                        + Glib::Markup::escape_text(message)
                        + ((fatal)?(Glib::Markup::escape_text("\n\n")
-                                   + _("ERROR_REPORT_TEXT_OUTRO")):""), true);
+                                   + _("</b></i>\n"
+                                       "\n"
+                                       "Please make sure that you are using the newest gTox version.\n"
+                                       "If you do use the newest, please report the error to us.")):""), true);
 
     if (fatal) {
-        add_button(_("ERROR_REPORT_BTN"), 213);
+        add_button(_("Report"), 213);
     }
 }
 
 error::error(bool fatal,std::string title, std::string message):
     MessageDialog(title, false, fatal?Gtk::MESSAGE_ERROR:Gtk::MESSAGE_WARNING, Gtk::BUTTONS_CLOSE, true) {
-    set_secondary_text(((fatal)?_("ERROR_REPORT_TEXT_INTRO"):"")
+    set_secondary_text(((fatal)?_("gTox can't continue.\n"
+                                  "The following problem occurred:\n"
+                                  "\n"
+                                  "<i><b>"):"")
                        + Glib::Markup::escape_text(message)
                        + ((fatal)?(Glib::Markup::escape_text("\n\n")
-                                   + _("ERROR_REPORT_TEXT_OUTRO")):""), true);
+                                   + _("</b></i>\n"
+                                       "\n"
+                                       "Please make sure that you are using the newest gTox version.\n"
+                                       "If you do use the newest, please report the error to us.")):""), true);
 
     if (fatal) {
-        add_button(_("ERROR_REPORT_BTN"), 213);
+        add_button(_("Report"), 213);
     }
 }
 

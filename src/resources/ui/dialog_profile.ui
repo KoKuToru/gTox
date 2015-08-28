@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.18.1 -->
+<!-- Generated with glade 3.19.0 -->
 <interface domain="gTox">
   <requires lib="gtk+" version="3.14"/>
   <object class="GtkWindow" id="dialog_profile">
@@ -56,7 +56,8 @@
                   <object class="GtkLabel" id="label2">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes" comments="Text next to the spinner, while profiles are loading">PROFILE_LOADING</property>
+                    <property name="label" translatable="yes" comments="Text next to the spinner, while profiles are loading">loading profiles...</property>
+                    <property name="ellipsize">end</property>
                     <style>
                       <class name="gtox-profile-spinner-label"/>
                     </style>
@@ -85,8 +86,8 @@
       <object class="GtkHeaderBar" id="headerbar">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-        <property name="title">PROFILE_TITLE</property>
-        <property name="subtitle">PROFILE_SUBTITLE</property>
+        <property name="title">gTox</property>
+        <property name="subtitle">Select profile</property>
         <property name="show_close_button">True</property>
         <child>
           <placeholder/>
@@ -97,7 +98,7 @@
             <property name="can_focus">False</property>
             <child>
               <object class="GtkButton" id="profile_new">
-                <property name="label" translatable="yes" comments="Button for creating a new profile">PROFILE_NEW</property>
+                <property name="label" translatable="yes" comments="Button for creating a new profile">New</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
@@ -110,7 +111,7 @@
             </child>
             <child>
               <object class="GtkButton" id="profile_select">
-                <property name="label" translatable="yes" comments="Button for loading the selected profile">PROFILE_SELECT</property>
+                <property name="label" translatable="yes" comments="Button for loading the selected profile">Select</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>

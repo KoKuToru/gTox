@@ -56,7 +56,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <property name="tooltip_text" translatable="yes" comments="Open file with file-explorer">FILE_RECV_OPEN_DIR</property>
+                    <property name="tooltip_text" translatable="yes" comments="Open file with file-explorer">Open containing folder</property>
                     <property name="relief">none</property>
                     <child>
                       <object class="GtkImage" id="image9">
@@ -82,7 +82,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <property name="tooltip_text" translatable="yes" comments="Open the downloaded file">FILE_RECV_OPEN</property>
+                    <property name="tooltip_text" translatable="yes" comments="Open the downloaded file">Open file</property>
                     <child>
                       <object class="GtkImage" id="image1">
                         <property name="visible">True</property>
@@ -179,7 +179,7 @@
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
-                            <property name="tooltip_text" translatable="yes" comments="Starts the download">FILE_RECV_START</property>
+                            <property name="tooltip_text" translatable="yes" comments="Starts the download">Start download</property>
                             <child>
                               <object class="GtkImage" id="image2">
                                 <property name="visible">True</property>
@@ -204,7 +204,7 @@
                             <property name="sensitive">False</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
-                            <property name="tooltip_text" translatable="yes" comments="Pauses the download">FILE_RECV_PAUSE</property>
+                            <property name="tooltip_text" translatable="yes" comments="Pauses the download">Pause download</property>
                             <child>
                               <object class="GtkImage" id="image3">
                                 <property name="visible">True</property>
@@ -228,7 +228,7 @@
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
-                            <property name="tooltip_text" translatable="yes" comments="Stop/Remove the download">FILE_RECV_STOP</property>
+                            <property name="tooltip_text" translatable="yes" comments="Stop/Remove the download">Remove download</property>
                             <child>
                               <object class="GtkImage" id="image4">
                                 <property name="visible">True</property>

@@ -14,796 +14,505 @@ msgstr ""
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Language: ru_RU\n"
 "X-Source-Language: C\n"
-"X-Generator: Poedit 1.7.5\n"
+"X-Generator: Poedit 1.8.4\n"
 
-#: Layout/dialog_settings.ui
-msgid "ABOUT_SOFTWARE_COPYRIGHT"
-msgstr "Copyright © 2014 - the gTox team"
+#: main.cpp
+msgid "TRANSLATION_CHECKER"
+msgstr "Okay"
 
-#: Layout/dialog_settings.ui
-msgid "ABOUT_SOFTWARE_HOMEPAGE"
+#: widget/chat_bubble.cpp
+msgid "%1 hr"
 msgstr ""
-"<a href=\"https://github.com/KoKuToru/gTox.git\">github.com/KoKuToru/gTox."
-"git</a>"
 
-#: Layout/dialog_settings.ui
-msgid "ABOUT_SOFTWARE_NAME"
-msgstr "<b>gTox</b>"
-
-#: Layout/dialog_settings.ui
-msgid "ABOUT_SOFTWARE_VERSION"
-msgstr "<i>pre-alpha version</i>"
-
-#: Layout/dialog_settings.ui
-msgid "ABOUT_SOFTWARE_WARRANTY"
-msgstr "<i>This program comes with ABSOLUTELY NO WARRANTY</i>"
-
-#: Layout/popover_settings.ui
-msgid "ADD_CONTACT_MESSAGE"
-msgstr "Сообщение"
-
-#: Layout/popover_settings.ui
-msgid "ADD_CONTACT_TOX_ID"
-msgstr "Tox-ID"
-
-#: gTox.cpp
-msgid "APPLICATION_NAME"
-msgstr "gTox"
-
-#. Label for the gTox database path
-#: Layout/dialog_assistant.ui
-msgid "ASSISTANT_FILE_GTOX"
-msgstr "Файл gTox"
-
-#. Describes how to backup the tox profile
-#: Layout/dialog_assistant.ui
-msgid "ASSISTANT_FILE_TEXT"
+#: widget/chat_bubble.cpp
+msgid "%1 min"
 msgstr ""
-"<span size='x-small'><u>Файл toxcore</u> содержит профиль и список "
-"контактов,\n"
-"<u>файл gTox</u> включает в себя историю сообщений и настройки gTox.\n"
+
+#: resources/ui/dialog_contact.ui
+msgid "%1 new contact request"
+msgstr ""
+
+#: dialog/main.cpp
+msgid ""
+"%1 wants to add you to his/her contact list\n"
 "\n"
-"<b>Если вы хотите сделать резервную копию профиля, то в первую очередь "
-"сохраните <u>файл toxcore</u> !</b></span>"
-
-#. Label for the toxcore profile save path
-#: Layout/dialog_assistant.ui
-msgid "ASSISTANT_FILE_TOX"
-msgstr "файл toxcore"
-
-#. Lable for the log enable/disable switch
-#: Layout/dialog_assistant.ui
-msgid "ASSISTANT_LOGGING"
-msgstr "Хранить историю сообщений"
-
-#. Describes that gTox will log into a uncrypted sqlite db
-#: Layout/dialog_assistant.ui
-msgid "ASSISTANT_LOGGING_TEXT"
+"Message: \n"
+"%2"
 msgstr ""
-"<span size='x-small'>gTox сохраняет историю в незашифрованную базу дынных "
-"Sqlite</span>"
 
-#. Label for the profile statusmessage
-#: Layout/dialog_assistant.ui
-msgid "ASSISTANT_STATUSMESSAGE"
-msgstr "Статусное сообщение"
-
-#. Label for the profile username
-#: Layout/dialog_assistant.ui
-msgid "ASSISTANT_USERNAME"
-msgstr "Имя"
-
-#. Welcome text in profile creation, should warn about alpha-software
-#: Layout/dialog_assistant.ui
-msgid "ASSISTANT_WELCOME_TEXT"
+#: widget/chat_bubble.cpp
+msgid "%a. %B, %R"
 msgstr ""
-"Добро пожаловать в gTox\n"
-"\n"
-"gTox и Tox находятся в стадии активной разработки.\n"
-"Мы не может гарантировать то, что сегодня прекрасно работает будет так же "
-"работать и завтра.\n"
-"gTox и Tox находят в стадии альфа-версии и кодовая база обоих проектом может "
-"меняться ежедневно."
 
-#: Popover/PopoverStatus.cpp
-msgid "AWAY"
-msgstr "Ушёл"
-
-#: Popover/PopoverStatus.cpp
-msgid "BUSY"
-msgstr "Занят"
-
-#: Layout/popover_settings.ui
-msgid "CONTACT_ADD"
-msgstr "Добавить"
-
-#: Widget/WidgetChat.cpp
-msgid "DATE_FORMAT"
+#: widget/chat_bubble.cpp
+msgid "%e. %B %Y, %R"
 msgstr "%A, %e. %B %Y"
 
-#: Popover/PopoverSettings.cpp
-msgid "ERROR_ADD_CONTACT_ADDR_WRONG_SIZE"
-msgstr "Длина Tox ID должны быть 76 символов"
-
-#: Popover/PopoverSettings.cpp
-msgid "ERROR_ADD_CONTACT_ADDR_WRONG_SIZE_TITLE"
-msgstr "Неверная длина ID"
-
-#: Dialog/DialogError.cpp
-msgid "ERROR_REPORT_BTN"
-msgstr "Сообщить разработчику"
-
-#: Dialog/DialogError.cpp
-msgid "ERROR_REPORT_TEXT_INTRO"
+#: widget/chat_bubble.cpp
+msgid "%e. %B, %R"
 msgstr ""
-"Произошла фатальная ошибка в программе:\n"
-"\n"
-"<i><b>"
 
-#: Dialog/DialogError.cpp
-msgid "ERROR_REPORT_TEXT_OUTRO"
+#: dialog/error.cpp
+msgid ""
+"</b></i>\n"
+"\n"
+"Please make sure that you are using the newest gTox version.\n"
+"If you do use the newest, please report the error to us."
 msgstr ""
 "</b></i>\n"
 "\n"
 "Убедитесь, что вы используете последнюю версию gTox.\n"
 "Если это так, то дайте нам знать о случившейся ошибке программы."
 
-#: Popover/PopoverStatus.cpp
-msgid "EXIT"
-msgstr "Выход"
-
-#: Dialog/DialogContact.cpp
-msgid "FRIEND_REQUEST"
-msgstr "%1"
-
-#: Helper/Video/gStreamerVideo.cpp
-msgid "GST_VIDEO_ERROR_UNKNOW"
-msgstr "unknown video error !"
-
-#: Dialog/DialogContact.cpp
-msgid "IGNORE"
-msgstr "Ignore"
-
-#: Popover/PopoverSettings.cpp
-msgid "IMAGE"
+#: resources/ui/dialog_settings.ui
+msgid ""
+"<a href=\"https://github.com/KoKuToru/gTox.git\">github.com/KoKuToru/gTox."
+"git</a>"
 msgstr ""
 
-#: Popover/PopoverStatus.cpp
-msgid "ONLINE"
-msgstr "Доступен"
+#: resources/ui/dialog_settings.ui
+msgid "<b>Chat</b>"
+msgstr ""
 
-#. Click here to change avatar, right click to remove
-#: Layout/popover_settings.ui
-msgid "PROFILE_AVATAR_HELP"
-msgstr "Change avatar"
+#: resources/ui/dialog_settings.ui
+msgid "<b>Connection</b>"
+msgstr ""
 
-#: Popover/PopoverSettings.cpp
-msgid "PROFILE_AVATAR_SELECT_TITLE"
-msgstr "Select new avatar"
+#: resources/ui/dialog_settings.ui
+msgid "<b>Contacts</b>"
+msgstr ""
 
-#. Copies tox id into clipboard
-#: Layout/popover_settings.ui
-msgid "PROFILE_COPY_TOX_ID"
-msgstr "Copy Tox-ID to clipboard"
+#: resources/ui/dialog_settings.ui
+msgid "<b>Filetransfer</b>"
+msgstr ""
 
-#: Layout/list_item_profile.ui
-msgid "PROFILE_CORRUPTED"
-msgstr "Невозможно загрузить профиль"
+#: resources/ui/dialog_settings.ui
+msgid "<b>Profile</b>"
+msgstr ""
 
-#: Layout/list_item_profile.ui
-msgid "PROFILE_CORRUPTED_TITLE"
-msgstr "Повреждённый профиль"
+#: resources/ui/dialog_settings.ui
+msgid "<b>Systemtray</b>"
+msgstr ""
 
-#. Text next to the spinner, while profiles are loading
-#: Layout/dialog_profile.ui
-msgid "PROFILE_LOADING"
-msgstr "loading profiles..."
+#: resources/ui/dialog_settings.ui
+msgid "<b>Theme</b>"
+msgstr ""
 
-#. Button for creating a new profile
-#: Layout/dialog_profile.ui
-msgid "PROFILE_NEW"
-msgstr "Новый"
+#: resources/ui/dialog_settings.ui
+msgid "<i>This program comes with ABSOLUTELY NO WARRANTY</i>"
+msgstr ""
 
-#: Layout/popover_settings.ui
-msgid "PROFILE_OPEN_SETTINGS"
-msgstr "Настройки"
+#: resources/ui/dialog_settings.ui
+msgid "<i>pre-alpha version</i>"
+msgstr ""
 
-#. Button for loading the selected profile
-#: Layout/dialog_profile.ui
-msgid "PROFILE_SELECT"
-msgstr "Выбрать"
+#: widget/main_menu.cpp
+msgid "A Tox-ID must be 76 letters long"
+msgstr "Длина Tox ID должны быть 76 символов"
 
-#: Layout/popover_settings.ui
-msgid "PROFILE_STATUSMESSAGE"
-msgstr "Статусное сообщение"
+#: widget/main_menu.cpp
+msgid ""
+"A contact request has already been sent, or the address belongs to a friend "
+"that is already on the friend list."
+msgstr ""
 
-#: Dialog/DialogProfile.cpp
-msgid "PROFILE_SUBTITLE"
-msgstr "Выбор профиля"
-
-#: Dialog/DialogProfile.cpp
-msgid "PROFILE_TITLE"
-msgstr "gTox"
-
-#: Layout/popover_settings.ui
-msgid "PROFILE_TOX_ID"
-msgstr "Tox-ID"
-
-#: Layout/popover_settings.ui
-msgid "PROFILE_USERNAME"
-msgstr "Имя"
-
-#: Popover/PopoverContextContact.cpp
-msgid "REMOVE"
-msgstr "Удалить"
-
-#: Widget/WidgetChat.cpp
-msgid "SEND"
-msgstr "Отправить"
-
-#: Layout/dialog_settings.ui
-msgid "SETTINGS_ABOUT"
+#: resources/ui/dialog_settings.ui
+msgid "About"
 msgstr "О программе"
 
 #. Button for adding a new contact
-#: Layout/popover_settings.ui
-msgid "SETTINGS_ADD_CONTACT"
-msgstr "Add contact"
+#: resources/ui/popover_settings.ui
+msgid "Add contact"
+msgstr "Добавить"
 
-#: Layout/dialog_settings.ui
-msgid "SETTINGS_CHAT_AUTO_AWAY"
-msgstr "Automatically set status to away"
+#: dialog/main.cpp
+msgid "Are you sure you want to remove this contact?"
+msgstr ""
+
+#: resources/ui/dialog_settings.ui
+msgid "Audio notification on new message"
+msgstr ""
+
+#: resources/ui/dialog_settings.ui
+msgid "Auto accept"
+msgstr ""
+
+#: resources/ui/dialog_settings.ui
+msgid "Automatically set status to away"
+msgstr ""
+
+#: resources/ui/status_menu.ui
+msgid "Away"
+msgstr "Ушёл"
+
+#: resources/ui/status_menu.ui
+msgid "Busy"
+msgstr "Занят"
+
+#. Click here to change avatar, right click to remove
+#: resources/ui/popover_settings.ui
+msgid "Change avatar"
+msgstr ""
 
 #. Lable for the log enable/disable switch
-#: Layout/dialog_settings.ui
-msgid "SETTINGS_CHAT_LOGGING"
-msgstr "Chat logging"
+#: resources/ui/dialog_settings.ui
+msgid "Chat logging"
+msgstr "Хранить историю сообщений"
 
-#: Layout/dialog_settings.ui
-msgid "SETTINGS_CHAT_NOTIFICATION_ON_MESSAGE"
-msgstr "Notification on new message"
-
-#: Layout/dialog_settings.ui
-msgid "SETTINGS_CHAT_NOTIFICATION_WITH_AUDIO_ON_MESSSAGE"
-msgstr "Audio notification on new message"
-
-#: Layout/dialog_settings.ui
-msgid "SETTINGS_CHAT_SEND_TYPING"
-msgstr "Send typing notification"
-
-#: Layout/dialog_settings.ui
-msgid "SETTINGS_CHAT_TITLE"
-msgstr "<b>Chat</b>"
-
-#: Layout/dialog_settings.ui
-msgid "SETTINGS_CONNECTION_TCP"
-msgstr "TCP"
-
-#: Layout/dialog_settings.ui
-msgid "SETTINGS_CONNECTION_TITLE"
-msgstr "<b>Connection</b>"
-
-#: Layout/dialog_settings.ui
-msgid "SETTINGS_CONNECTION_UDP"
-msgstr "UDP"
-
-#: Layout/dialog_settings.ui
-msgid "SETTINGS_CONTACTLIST_DISPLAY_ACTIVE"
-msgstr "Show active chats"
-
-#: Layout/dialog_settings.ui
-msgid "SETTINGS_CONTACTLIST_TITLE"
-msgstr "<b>Contacts</b>"
-
-#: Layout/dialog_settings.ui
-msgid "SETTINGS_CONTACTLIST_USE_COMPACT"
-msgstr "Compact list"
-
-#: Layout/dialog_settings.ui
-msgid "SETTINGS_FILETRANSFER_AUTO_ACCEPT"
-msgstr "Auto accept"
-
-#: Layout/dialog_settings.ui
-msgid "SETTINGS_FILETRANSFER_DISPLAY_INLINE"
-msgstr "Display inline"
-
-#: Layout/dialog_settings.ui
-msgid "SETTINGS_FILETRANSFER_SAVE_TO"
-msgstr "Save to"
-
-#: Layout/dialog_settings.ui
-msgid "SETTINGS_FILETRANSFER_TITLE"
-msgstr "<b>Filetransfer</b>"
-
-#: Layout/dialog_settings.ui
-msgid "SETTINGS_GLOBAL"
-msgstr "Global"
-
-#: Layout/dialog_settings.ui
-msgid "SETTINGS_PROFILE"
-msgstr "Profile"
-
-#: Layout/dialog_settings.ui
-msgid "SETTINGS_PROFILE_REMEMBER"
-msgstr "Remember last used profile"
-
-#: Layout/dialog_settings.ui
-msgid "SETTINGS_PROFILE_TITLE"
-msgstr "<b>Profile</b>"
-
-#: Layout/dialog_settings.ui
-msgid "SETTINGS_PROXY_HOST"
-msgstr "Proxy type"
-
-#: Layout/dialog_settings.ui
-msgid "SETTINGS_PROXY_PORT"
-msgstr "Proxy host"
-
-#: Layout/dialog_settings.ui
-msgid "SETTINGS_PROXY_TYPE"
-msgstr "Proxy port"
-
-#: Dialog/DialogSettings.cpp
-msgid "SETTINGS_SUBTITLE"
+#: resources/ui/dialog_settings.ui
+msgid "Color"
 msgstr ""
 
-#: Layout/dialog_settings.ui
-msgid "SETTINGS_SYSTEMTRAY_ON_CLOSE"
-msgstr "Put into systemtray on close"
-
-#: Layout/dialog_settings.ui
-msgid "SETTINGS_SYSTEMTRAY_ON_START"
-msgstr "Start in systemtray"
-
-#: Layout/dialog_settings.ui
-msgid "SETTINGS_SYSTEMTRAY_TITLE"
-msgstr "<b>Systemtray</b>"
-
-#: Layout/dialog_settings.ui
-msgid "SETTINGS_SYSTEMTRAY_VISIBLE"
-msgstr "Show in systemtray"
-
-#: Layout/dialog_settings.ui
-msgid "SETTINGS_THEME_COLOR"
-msgstr "Color"
-
-#. Light theme
-#: Layout/dialog_settings.ui
-msgid "SETTINGS_THEME_COLOR_BLACK_ON_WHITE"
-msgstr "black on white"
-
-#. dark theme
-#: Layout/dialog_settings.ui
-msgid "SETTINGS_THEME_COLOR_WHITE_ON_BLACK"
-msgstr "white on black"
-
-#: Layout/dialog_settings.ui
-msgid "SETTINGS_THEME_TITLE"
-msgstr "<b>Theme</b>"
-
-#: Dialog/DialogSettings.cpp
-msgid "SETTINGS_TITLE"
-msgstr "Найтройка gTox"
-
-#: Layout/dialog_settings.ui
-msgid "SETTINGS_VIDEO"
-msgstr "Video"
-
-#: Layout/dialog_settings.ui
-msgid "SETTINGS_VIDEO_DEFAULT_DEVICE"
-msgstr "Default device"
-
-#: Tox/ToxException.cpp
-msgid "TOX_ERR_BOOTSTRAP_BAD_HOST"
+#: resources/ui/dialog_settings.ui
+msgid "Compact list"
 msgstr ""
-"TOX_ERR_BOOTSTRAP_BAD_HOST\n"
-"Невозможно преобразовать имя сервера в IP-адрес, или был использован не "
-"верный IP-адрес."
 
-#: Tox/ToxException.cpp
-msgid "TOX_ERR_BOOTSTRAP_BAD_PORT"
+#: dialog/settings.cpp
+msgid "Configure gTox"
 msgstr ""
-"TOX_ERR_BOOTSTRAP_BAD_PORT\n"
-"Неверный номер порта. Номер порта должен находиться в пределах от 1 до 65535."
 
-#: Tox/ToxException.cpp
-msgid "TOX_ERR_BOOTSTRAP_NULL"
-msgstr "TOX_ERR_BOOTSTRAP_NULL"
-
-#: Tox/ToxException.cpp
-msgid "TOX_ERR_FILE_CONTROL_ALREADY_PAUSED"
+#: dialog/main.cpp
+msgid "Contact Request"
 msgstr ""
-"TOX_ERR_FILE_CONTROL_ALREADY_PAUSED A PAUSE control was sent, but the file "
-"transfer was already paused."
 
-#: Tox/ToxException.cpp
-msgid "TOX_ERR_FILE_CONTROL_DENIED"
+#: widget/main_menu.cpp
+msgid "Contact request failed"
 msgstr ""
-"TOX_ERR_FILE_CONTROL_DENIED A RESUME control was sent, but the file transfer "
-"was paused by the other party. Only the party that paused the transfer can "
-"resume it."
 
-#: Tox/ToxException.cpp
-msgid "TOX_ERR_FILE_CONTROL_FRIEND_NOT_CONNECTED"
+#. Copies tox id into clipboard
+#: resources/ui/popover_settings.ui
+msgid "Copy Tox-ID into clipboard"
 msgstr ""
-"TOX_ERR_FILE_CONTROL_FRIEND_NOT_CONNECTED This client is currently not "
-"connected to the friend."
 
-#: Tox/ToxException.cpp
-msgid "TOX_ERR_FILE_CONTROL_FRIEND_NOT_FOUND"
+#: resources/ui/dialog_settings.ui
+msgid "Copyright © 2014 - the gTox team"
 msgstr ""
-"TOX_ERR_FILE_CONTROL_FRIEND_NOT_FOUND The friend_number passed did not "
-"designate a valid friend."
 
-#: Tox/ToxException.cpp
-msgid "TOX_ERR_FILE_CONTROL_NOT_FOUND"
+#: dialog/profile_selection.cpp
+msgid "Corrupted profile"
+msgstr "Повреждённый профиль"
+
+#: resources/ui/dialog_settings.ui
+msgid "Default device"
 msgstr ""
-"TOX_ERR_FILE_CONTROL_NOT_FOUND No file transfer with the given file number "
-"was found for the given friend."
 
-#: Tox/ToxException.cpp
-msgid "TOX_ERR_FILE_CONTROL_NOT_PAUSED"
+#: resources/ui/dialog_settings.ui
+msgid "Display inline"
 msgstr ""
-"TOX_ERR_FILE_CONTROL_NOT_PAUSED A RESUME control was sent, but the file "
-"transfer is running normally."
 
-#: Tox/ToxException.cpp
-msgid "TOX_ERR_FILE_CONTROL_SENDQ"
-msgstr "TOX_ERR_FILE_CONTROL_SENDQ Packet queue is full."
-
-#: Tox/ToxException.cpp
-msgid "TOX_ERR_FILE_GET_FRIEND_NOT_FOUND"
+#: widget/main_menu.cpp
+msgid "Empty message"
 msgstr ""
-"TOX_ERR_FILE_CONTROL_FRIEND_NOT_FOUND The friend_number passed did not "
-"designate a valid friend."
 
-#: Tox/ToxException.cpp
-msgid "TOX_ERR_FILE_GET_NOT_FOUND"
+#: dialog/profile_selection.cpp
+msgid "Encrypted profile"
 msgstr ""
-"TOX_ERR_FILE_GET_NOT_FOUND No file transfer with the given file number was "
-"found for the given friend."
 
-#: Tox/ToxException.cpp
-msgid "TOX_ERR_FILE_SEEK_DENIED"
+#: resources/ui/status_menu.ui
+msgid "Exit"
+msgstr "Выход"
+
+#: resources/ui/dialog_settings.ui
+msgid "Global"
 msgstr ""
-"TOX_ERR_FILE_SEEK_DENIED File was not in a state where it could be seeked."
 
-#: Tox/ToxException.cpp
-msgid "TOX_ERR_FILE_SEEK_FRIEND_NOT_CONNECTED"
+#: widget/main_menu.cpp
+msgid "Image"
 msgstr ""
-"TOX_ERR_FILE_SEEK_FRIEND_NOT_CONNECTED This client is currently not "
-"connected to the friend."
 
-#: Tox/ToxException.cpp
-msgid "TOX_ERR_FILE_SEEK_FRIEND_NOT_FOUND"
+#: widget/chat_bubble.cpp
+msgid "Just now"
 msgstr ""
-"TOX_ERR_FILE_SEEK_FRIEND_NOT_FOUND The friend_number passed did not "
-"designate a valid friend."
 
-#: Tox/ToxException.cpp
-msgid "TOX_ERR_FILE_SEEK_INVALID_POSITION"
-msgstr "TOX_ERR_FILE_SEEK_INVALID_POSITION Seek position was invalid"
-
-#: Tox/ToxException.cpp
-msgid "TOX_ERR_FILE_SEEK_NOT_FOUND"
+#: resources/ui/popover_settings.ui
+msgid "Message"
 msgstr ""
-"TOX_ERR_FILE_SEEK_NOT_FOUND No file transfer with the given file number was "
-"found for the given friend."
 
-#: Tox/ToxException.cpp
-msgid "TOX_ERR_FRIEND_ADD_ALREADY_SENT"
+#. Label for the profile username
+#: resources/ui/dialog_assistant.ui
+msgid "Name"
+msgstr "Имя"
+
+#. Button for creating a new profile
+#: resources/ui/dialog_profile.ui
+msgid "New"
+msgstr "Новый"
+
+#: resources/ui/dialog_settings.ui
+msgid "Notification on new message"
 msgstr ""
-"TOX_ERR_FRIEND_ADD_ALREADY_SENT\n"
-"Запрос на добавление уже был отправлен или адрес уже присутствует в контакт-"
-"листе."
 
-#: Popover/PopoverSettings.cpp
-msgid "TOX_ERR_FRIEND_ADD_ALREADY_SENT_UI"
+#: resources/ui/status_menu.ui
+msgid "Online"
+msgstr "Доступен"
+
+#. Open file with file-explorer
+#: resources/ui/chat_filerecv.ui
+msgid "Open containing folder"
 msgstr ""
-"Запрос на добавление уже был отправлен или адрес уже присутствует в контакт-"
-"листе."
 
-#: Popover/PopoverSettings.cpp
-msgid "TOX_ERR_FRIEND_ADD_ALREADY_SENT_UI_TITLE"
-msgstr "Запрос на добавление уже отправлен"
-
-#: Tox/ToxException.cpp
-msgid "TOX_ERR_FRIEND_ADD_BAD_CHECKSUM"
+#. Open the downloaded file
+#: resources/ui/chat_filerecv.ui
+msgid "Open file"
 msgstr ""
-"TOX_ERR_FRIEND_ADD_BAD_CHECKSUM\n"
-"Неверная контрольная сумма адреса контакта."
 
-#: Popover/PopoverSettings.cpp
-msgid "TOX_ERR_FRIEND_ADD_BAD_CHECKSUM_UI"
-msgstr "Неверная контрольная сумма адреса контакта."
-
-#: Popover/PopoverSettings.cpp
-msgid "TOX_ERR_FRIEND_ADD_BAD_CHECKSUM_UI_TITLE"
-msgstr "Неверная контрольная сумма"
-
-#: Tox/ToxException.cpp
-msgid "TOX_ERR_FRIEND_ADD_MALLOC"
+#: dialog/profile_selection.cpp
+msgid "Open this profile in file manager"
 msgstr ""
-"TOX_ERR_FRIEND_ADD_MALLOC\n"
-"Невозможно выделить память для добавления в контакт-лист."
 
-#: Tox/ToxException.cpp
-msgid "TOX_ERR_FRIEND_ADD_NO_MESSAGE"
+#: resources/ui/list_item_profile.ui
+msgid "Path of file"
 msgstr ""
-"TOX_ERR_FRIEND_ADD_NO_MESSAGE\n"
-"Текст запроса на добавление было пустым. Это сообщение и сообщение TOO_LONG "
-"code никогда не будет вызвано из функции tox_friend_add_norequest."
 
-#: Popover/PopoverSettings.cpp
-msgid "TOX_ERR_FRIEND_ADD_NO_MESSAGE_UI"
-msgstr "Сообщение при запросе на добавление не должно быть пустым."
-
-#: Popover/PopoverSettings.cpp
-msgid "TOX_ERR_FRIEND_ADD_NO_MESSAGE_UI_TITLE"
-msgstr "Пустое сообщение запроса на добавление"
-
-#: Tox/ToxException.cpp
-msgid "TOX_ERR_FRIEND_ADD_NULL"
-msgstr "TOX_ERR_FRIEND_ADD_NULL"
-
-#: Tox/ToxException.cpp
-msgid "TOX_ERR_FRIEND_ADD_OWN_KEY"
+#. Pauses the download
+#: resources/ui/chat_filerecv.ui
+msgid "Pause download"
 msgstr ""
-"TOX_ERR_FRIEND_ADD_OWN_KEY\n"
-"Вы не можете добавить себя в свой же контакт-лист."
 
-#: Popover/PopoverSettings.cpp
-msgid "TOX_ERR_FRIEND_ADD_OWN_KEY_UI"
-msgstr "Адрес контакта для добавления принадлежит вам"
-
-#: Popover/PopoverSettings.cpp
-msgid "TOX_ERR_FRIEND_ADD_OWN_KEY_UI_TITLE"
-msgstr "Невозможно добавить контакт"
-
-#: Tox/ToxException.cpp
-msgid "TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM"
+#: resources/ui/dialog_settings.ui
+msgid "Profile"
 msgstr ""
-"TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM\n"
-"Контакт уже добавлен, но с другим значением nospam."
 
-#: Popover/PopoverSettings.cpp
-msgid "TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM_UI"
-msgstr "Контакт уже добавлен, но с другим значением nospam."
+#: dialog/profile_selection.cpp
+msgid "Profile couldn't be loaded"
+msgstr "Невозможно загрузить профиль"
 
-#: Popover/PopoverSettings.cpp
-msgid "TOX_ERR_FRIEND_ADD_SET_NEW_NOSPAM_UI_TITLE"
-msgstr "Невозможно добавить контакт"
-
-#: Tox/ToxException.cpp
-msgid "TOX_ERR_FRIEND_ADD_TOO_LONG"
+#: dialog/profile_selection.cpp
+msgid "Profile not loaded for an unknown reason"
 msgstr ""
-"TOX_ERR_FRIEND_ADD_TOO_LONG\n"
-"Длина сообщения запроса на добавление привысила "
-"TOX_MAX_FRIEND_REQUEST_LENGTH."
 
-#: Popover/PopoverSettings.cpp
-msgid "TOX_ERR_FRIEND_ADD_TOO_LONG_UI"
-msgstr "Длина сообщения запроса на добавление привысила 1016 байт."
-
-#: Popover/PopoverSettings.cpp
-msgid "TOX_ERR_FRIEND_ADD_TOO_LONG_UI_TITLE"
-msgstr "Невозможно добавить контакт"
-
-#: Tox/ToxException.cpp
-msgid "TOX_ERR_FRIEND_BY_PUBLIC_KEY_NOT_FOUND"
+#: resources/ui/dialog_settings.ui
+msgid "Proxy host"
 msgstr ""
-"TOX_ERR_FRIEND_BY_PUBLIC_KEY_NOT_FOUND\n"
-"Контакт с данным публичным ключом отсутствут в контакт-листе."
 
-#: Tox/ToxException.cpp
-msgid "TOX_ERR_FRIEND_BY_PUBLIC_KEY_NULL"
-msgstr "TOX_ERR_FRIEND_BY_PUBLIC_KEY_NULL"
-
-#: Tox/ToxException.cpp
-msgid "TOX_ERR_FRIEND_GET_LAST_ONLINE_FRIEND_NOT_FOUND"
+#: resources/ui/dialog_settings.ui
+msgid "Proxy port"
 msgstr ""
-"TOX_ERR_FRIEND_GET_LAST_ONLINE_FRIEND_NOT_FOUND\n"
-"Контакт с данным номером отсутствует в контакт-листе."
 
-#: Tox/ToxException.cpp
-msgid "TOX_ERR_FRIEND_GET_PUBLIC_KEY_FRIEND_NOT_FOUND"
+#: resources/ui/dialog_settings.ui
+msgid "Proxy type"
 msgstr ""
-"TOX_ERR_FRIEND_GET_PUBLIC_KEY_FRIEND_NOT_FOUND\n"
-"Клиент с данным номером отсутствует в контакт-листе."
 
-#: Tox/ToxException.cpp
-msgid "TOX_ERR_FRIEND_QUERY_FRIEND_NOT_FOUND"
+#: resources/ui/dialog_settings.ui
+msgid "Put into systemtray on close"
 msgstr ""
-"TOX_ERR_FRIEND_QUERY_FRIEND_NOT_FOUND\n"
-"Номер контакта неверен."
 
-# Скорее всего автор оставил сообщение себе для тестирования.
-#: Tox/ToxException.cpp
-msgid "TOX_ERR_FRIEND_QUERY_NULL"
+#: resources/ui/dialog_settings.ui
+msgid "Remember last used profile"
 msgstr ""
-"TOX_ERR_FRIEND_QUERY_NULL\n"
-"The pointer parameter for storing the query result (name, message) was NULL. "
-"Unlike the `_self_` variants of these functions, which have no effect when a "
-"parameter is NULL, these functions return an error in that case."
 
-#: Tox/ToxException.cpp
-msgid "TOX_ERR_FRIEND_SEND_MESSAGE_EMPTY"
+#: dialog/main.cpp
+msgid "Remove contact"
+msgstr "Удалить"
+
+#. Stop/Remove the download
+#: resources/ui/chat_filerecv.ui
+msgid "Remove download"
+msgstr "Удалить"
+
+#: dialog/error.cpp
+msgid "Report"
+msgstr "Сообщить разработчику"
+
+#: resources/ui/dialog_settings.ui
+msgid "Save to"
 msgstr ""
-"TOX_ERR_FRIEND_SEND_MESSAGE_EMPTY\n"
-"Попытка отправить пустое сообщение."
 
-#: Tox/ToxException.cpp
-msgid "TOX_ERR_FRIEND_SEND_MESSAGE_FRIEND_NOT_CONNECTED"
+#. Button for loading the selected profile
+#: resources/ui/dialog_profile.ui
+msgid "Select"
+msgstr "Выбрать"
+
+#: widget/main_menu.cpp
+msgid "Select new avatar"
 msgstr ""
-"TOX_ERR_FRIEND_SEND_MESSAGE_FRIEND_NOT_CONNECTED\n"
-"Нет связи с контактом."
 
-#: Tox/ToxException.cpp
-msgid "TOX_ERR_FRIEND_SEND_MESSAGE_FRIEND_NOT_FOUND"
+#: dialog/profile_selection.cpp
+msgid "Select profile"
 msgstr ""
-"TOX_ERR_FRIEND_SEND_MESSAGE_FRIEND_NOT_FOUND\n"
-"Номер контакта неверен."
 
-#: Tox/ToxException.cpp
-msgid "TOX_ERR_FRIEND_SEND_MESSAGE_NULL"
-msgstr "TOX_ERR_FRIEND_SEND_MESSAGE_NULL"
-
-#: Tox/ToxException.cpp
-msgid "TOX_ERR_FRIEND_SEND_MESSAGE_SENDQ"
+#: resources/ui/dialog_settings.ui
+msgid "Send typing notification"
 msgstr ""
-"TOX_ERR_FRIEND_SEND_MESSAGE_SENDQ\n"
-"Ошибка выделения памяти при увеличении размера очереди отправки."
 
-#: Tox/ToxException.cpp
-msgid "TOX_ERR_FRIEND_SEND_MESSAGE_TOO_LONG"
+#: resources/ui/popover_settings.ui
+msgid "Settings"
+msgstr "Настройки"
+
+#: resources/ui/dialog_settings.ui
+msgid "Show active chats"
 msgstr ""
-"TOX_ERR_FRIEND_SEND_MESSAGE_TOO_LONG\n"
-"Длина сообщения не может привышать TOX_MAX_MESSAGE_LENGTH."
 
-#: Tox/ToxException.cpp
-msgid "TOX_ERR_NEW_LOAD_BAD_FORMAT"
+#: resources/ui/dialog_settings.ui
+msgid "Show in systemtray"
 msgstr ""
-"TOX_ERR_NEW_LOAD_BAD_FORMAT\n"
-"Неверные данные. Такое случается при попытке загрузить данные которые "
-"повреждены или сохранены в старой версии Tox. При загрузке неверных данных "
-"некоторая часть информации может быть загружена, а остальная часть "
-"отброшена. Также передача неверного параметра длины может вызвать эту ошибку."
 
-#: Tox/ToxException.cpp
-msgid "TOX_ERR_NEW_LOAD_ENCRYPTED"
+#. Starts the download
+#: resources/ui/chat_filerecv.ui
+msgid "Start download"
 msgstr ""
-"TOX_ERR_NEW_LOAD_ENCRYPTED\n"
-"Массив данных для загрузки зашифрован."
 
-#: Tox/ToxException.cpp
-msgid "TOX_ERR_NEW_MALLOC"
+#: resources/ui/dialog_settings.ui
+msgid "Start in systemtray"
 msgstr ""
-"TOX_ERR_NEW_MALLOC\n"
-"Функция не смогла выделить достаточно памяти для хранения внутренних "
-"структур Tox-объекта"
 
-#: Tox/ToxException.cpp
-msgid "TOX_ERR_NEW_NULL"
-msgstr "TOX_ERR_NEW_NULL"
+#. Label for the profile statusmessage
+#: resources/ui/dialog_assistant.ui
+msgid "Status message"
+msgstr "Статусное сообщение"
 
-#: Tox/ToxException.cpp
-msgid "TOX_ERR_NEW_PORT_ALLOC"
+#: resources/ui/list_item_profile.ui resources/ui/popover_settings.ui
+msgid "Statusmessage"
+msgstr "Status"
+
+#: resources/ui/popover_settings.ui
+msgid "Submit"
 msgstr ""
-"TOX_ERR_NEW_PORT_ALLOC\n"
-"Функция не смогла привязаться к порту. Такое может случиться при недостатке "
-"прав или если ко всем портам уже кто-то привязался, например, другие "
-"запущенные экземпляры Tox. Вы можете получить больше информации из кода "
-"ошибки."
 
-#: Tox/ToxException.cpp
-msgid "TOX_ERR_NEW_PROXY_BAD_HOST"
+#: resources/ui/status_menu.ui
+msgid "Switch Profile"
 msgstr ""
-"TOX_ERR_NEW_PROXY_BAD_HOST\n"
-"Правильный proxy_type, но proxy_host равен NULL или имеет неверный формат."
 
-#: Tox/ToxException.cpp
-msgid "TOX_ERR_NEW_PROXY_BAD_PORT"
+#: resources/ui/dialog_settings.ui
+msgid "TCP"
 msgstr ""
-"TOX_ERR_NEW_PROXY_BAD_PORT\n"
-"Правильный proxy_type, но неверный proxy_port."
 
-#: Tox/ToxException.cpp
-msgid "TOX_ERR_NEW_PROXY_NOT_FOUND"
+#: widget/main_menu.cpp
+msgid "The contact address checksum failed."
 msgstr ""
-"TOX_ERR_NEW_PROXY_NOT_FOUND\n"
-"Указанный адрес прокси-сервера не найден."
 
-#: Tox/ToxException.cpp
-msgid "TOX_ERR_OPTIONS_NEW_MALLOC"
+#: widget/main_menu.cpp
+msgid "The contact request message is not allowed to be empty."
 msgstr ""
-"TOX_ERR_OPTIONS_NEW_MALLOC\n"
-"Функция не смогла выделить достаточно памяти для внутренноего объекта "
-"настроек."
 
-#: Tox/ToxException.cpp
-msgid "TOX_ERR_SET_INFO_NULL"
-msgstr "TOX_ERR_SET_INFO_NULL"
-
-#: Tox/ToxException.cpp
-msgid "TOX_ERR_SET_INFO_TOO_LONG"
+#: widget/main_menu.cpp
+msgid "The contact was already there, but the nospam value was different."
 msgstr ""
-"TOX_ERR_SET_INFO_TOO_LONG\n"
-"Превышена длина допустимого размера информации."
 
-#: Tox/ToxException.cpp
-msgid "TOX_ERR_SET_TYPING_FRIEND_NOT_FOUND"
+#: widget/main_menu.cpp
+msgid "The length of the contact request message exceeded 1016 bytes."
 msgstr ""
-"TOX_ERR_SET_TYPING_FRIEND_NOT_FOUND\n"
-"Неверный номер контакта."
 
-#: main.cpp
-msgid "TRANSLATION_CHECKER"
-msgstr "Okay"
+#: widget/main_menu.cpp
+msgid "This contact address belongs to you"
+msgstr ""
 
-#: Layout/dialog_settings.ui
+#: resources/ui/popover_settings.ui
+msgid "Tox-ID"
+msgstr ""
+
+#: resources/ui/dialog_settings.ui
+msgid "UDP"
+msgstr ""
+
+#: resources/ui/list_item_profile.ui resources/ui/popover_settings.ui
+msgid "Username"
+msgstr "Имя"
+
+#: resources/ui/dialog_settings.ui
+msgid "Video"
+msgstr ""
+
+#. Welcome text in profile creation, should warn about alpha-software
+#: resources/ui/dialog_assistant.ui
+msgid ""
+"Welcome to gTox\n"
+"\n"
+"gTox and Tox are by no means complete.\n"
+"We cannot guarantee what works today will work tomorrow.\n"
+"gTox and Tox are alpha software and code changes daily."
+msgstr ""
+"Добро пожаловать в gTox\n"
+"\n"
+"gTox и Tox находятся в стадии активной разработки.\n"
+"Мы не может гарантировать то, что сегодня прекрасно работает будет так же "
+"работать и завтра.\n"
+"gTox и Tox находят в стадии альфа-версии и кодовая база обоих проектом "
+"может меняться ежедневно."
+
+#: widget/main_menu.cpp
+msgid "Wrong ID length"
+msgstr "Неверная длина ID"
+
+#: widget/main_menu.cpp
+msgid "Wrong checksum"
+msgstr ""
+
+#: resources/ui/dialog_settings.ui
 msgid "after 1 hour"
 msgstr ""
 
-#: Layout/dialog_settings.ui
+#: resources/ui/dialog_settings.ui
 msgid "after 1 min"
 msgstr ""
 
-#: Layout/dialog_settings.ui
+#: resources/ui/dialog_settings.ui
 msgid "after 10 min"
 msgstr ""
 
-#: Layout/dialog_settings.ui
+#: resources/ui/dialog_settings.ui
+msgid "after 2 hours"
+msgstr ""
+
+#: resources/ui/dialog_settings.ui
 msgid "after 2 min"
 msgstr ""
 
-#: Layout/dialog_settings.ui
+#: resources/ui/dialog_settings.ui
 msgid "after 20 min"
 msgstr ""
 
-#: Layout/dialog_settings.ui
-msgid "after 2hours"
-msgstr ""
-
-#: Layout/dialog_settings.ui
+#: resources/ui/dialog_settings.ui
 msgid "after 30 min"
 msgstr ""
 
-#: Layout/dialog_settings.ui
+#: resources/ui/dialog_settings.ui
 msgid "after 5 min"
 msgstr ""
 
-#: Layout/dialog_settings.ui
+#. Light theme
+#: resources/ui/dialog_settings.ui
+msgid "black on white"
+msgstr ""
+
+#: gTox.cpp dialog/profile_selection.cpp resources/ui/dialog_settings.ui
+msgid "gTox"
+msgstr ""
+
+#: dialog/error.cpp
+msgid ""
+"gTox can't continue.\n"
+"The following problem occurred:\n"
+"\n"
+"<i><b>"
+msgstr ""
+"Произошла фатальная ошибка в программе:\n"
+"\n"
+"<i><b>"
+
+#: dialog/settings.cpp
+msgid "gTox settings"
+msgstr "Выбор профиля"
+
+#. Text next to the spinner, while profiles are loading
+#: resources/ui/dialog_profile.ui
+msgid "loading profiles..."
+msgstr ""
+
+#: resources/ui/dialog_settings.ui
 msgid "never"
 msgstr ""
 
-#~ msgid "SETTINGS_CACHE_CLEAN_LOG"
-#~ msgstr ""
-#~ "Вы собираетесь удалить историю переписки со всеми контактами.\n"
-#~ "В дальнейшем действие не может быть отменено! Продолжить?"
+#. Label for the toxcore profile save path
+#: resources/ui/dialog_assistant.ui
+msgid "toxcore file"
+msgstr "файл toxcore"
 
-#~ msgid "SETTINGS_CACHE_CLEAN_LOG_SUCCESS"
-#~ msgstr "%1 сообщений удалено"
+#: utils/gstreamer.cpp
+msgid "unknow gstreamer error"
+msgstr ""
 
-#~ msgid "SETTINGS_CACHE_CLEAN_LOG_SUCCESS_TITLE"
-#~ msgstr "История переписки очищена"
-
-#~ msgid "SETTINGS_CACHE_CLEAN_LOG_TITLE"
-#~ msgstr "Удалить всю историю ?"
-
-#~ msgid "TOX_ID"
-#~ msgstr "Tox ID"
-
-#~ msgid "USERNAME"
-#~ msgstr "Имя"
-
-#~ msgid "PROFILE_ABORT"
-#~ msgstr "Выход"
-
-#~ msgid "SETTINGS"
-#~ msgstr "Настройки"
-
-#~ msgid "QUIT_ASSISTANT_QUESTION"
-#~ msgstr "Вы хотите отменить создание нового профиля?"
-
-#~ msgid "LOADING_THEME_FAILED"
-#~ msgstr "Невозможно загрузить тему"
+#. dark theme
+#: resources/ui/dialog_settings.ui
+msgid "white on black"
+msgstr ""

@@ -195,8 +195,8 @@
   <object class="GtkHeaderBar" id="chat_headerbar_attached">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="title">SETTINGS_TITLE</property>
-    <property name="subtitle">SETTINGS_SUBTITLE</property>
+    <property name="title">Username</property>
+    <property name="subtitle">Statusmessage</property>
     <child>
       <object class="GtkButton" id="chat_detach">
         <property name="visible">True</property>
@@ -315,8 +315,8 @@
   <object class="GtkHeaderBar" id="chat_headerbar_detached">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="title">SETTINGS_TITLE</property>
-    <property name="subtitle">SETTINGS_SUBTITLE</property>
+    <property name="title">Username</property>
+    <property name="subtitle">Statusmessage</property>
     <child>
       <object class="GtkButton" id="chat_attach">
         <property name="visible">True</property>
