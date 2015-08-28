@@ -76,22 +76,6 @@ bool find_translation_domain() {
     return false;
 }
 
-bool change_language(const std::string& lang) {
-    // https://www.gnu.org/software/gettext/manual/html_node/gettext-grok.html
-
-    /* Change language */
-    Glib::setenv("LANGUAGE", lang.c_str(), true);
-
-    /* Make change known. */
-    {
-        extern int _nl_msg_cat_cntr;
-        ++_nl_msg_cat_cntr;
-    }
-
-    // Find the prefered domain for this language
-    return find_translation_domain();
-}
-
 bool setup_translation() {
 
     // Translations returns in UTF-8
@@ -99,11 +83,7 @@ bool setup_translation() {
 
     textdomain("gTox");
 
-    if (find_translation_domain())
-        return true;
-
-    // Fallback to English if preffered lang not available
-    return change_language("en");
+    return find_translation_domain();
 }
 
 void terminate_handler() {
@@ -132,11 +112,7 @@ int main(int argc, char* argv[]) {
     Gtk::Main kit(argc, argv);
     Gst::init(argc, argv);
 
-    if (!setup_translation()) {
-        dialog::error(false, "Fatal Error", "Couldn't find translation files")
-            .run();
-        return -1;
-    }
+    setup_translation();
 
     print_copyright();
 

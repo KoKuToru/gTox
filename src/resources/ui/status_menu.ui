@@ -3,27 +3,27 @@
  <menu id='status-menu'>
    <section>
      <item>
-       <attribute name='label' translatable='yes'>ONLINE</attribute>
+       <attribute name='label' translatable='yes'>Online</attribute>
        <attribute name='action'>status.online</attribute>
        <attribute name='icon'>status_online</attribute>
      </item>
      <item>
-       <attribute name='label' translatable='yes'>BUSY</attribute>
+       <attribute name='label' translatable='yes'>Busy</attribute>
        <attribute name='action'>status.busy</attribute>
        <attribute name='icon'>status_busy</attribute>
      </item>
      <item>
-       <attribute name='label' translatable='yes'>AWAY</attribute>
+       <attribute name='label' translatable='yes'>Away</attribute>
        <attribute name='action'>status.away</attribute>
        <attribute name='icon'>status_away</attribute>
      </item>
      <item>
-       <attribute name='label' translatable='yes'>EXIT</attribute>
+       <attribute name='label' translatable='yes'>Exit</attribute>
        <attribute name='action'>status.offline</attribute>
        <attribute name='icon'>status_offline</attribute>
      </item>
       <item>
-       <attribute name='label' translatable='yes'>SWITCH_PROFILE</attribute>
+       <attribute name='label' translatable='yes'>Switch Profile</attribute>
        <attribute name='action'>status.switch</attribute>
        <attribute name='icon'>status_offline</attribute>
      </item>

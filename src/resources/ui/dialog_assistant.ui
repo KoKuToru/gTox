@@ -36,7 +36,7 @@
                 <property name="can_focus">False</property>
                 <property name="halign">start</property>
                 <property name="hexpand">True</property>
-                <property name="label" translatable="yes" comments="Label for the profile username">ASSISTANT_USERNAME</property>
+                <property name="label" translatable="yes" comments="Label for the profile username">Name</property>
               </object>
               <packing>
                 <property name="left_attach">0</property>
@@ -61,7 +61,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="halign">start</property>
-                <property name="label" translatable="yes" comments="Label for the profile statusmessage">ASSISTANT_STATUSMESSAGE</property>
+                <property name="label" translatable="yes" comments="Label for the profile statusmessage">Status message</property>
               </object>
               <packing>
                 <property name="left_attach">0</property>
@@ -96,7 +96,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="halign">start</property>
-                <property name="label" translatable="yes" comments="Label for the toxcore profile save path">ASSISTANT_FILE_TOX</property>
+                <property name="label" translatable="yes" comments="Label for the toxcore profile save path">toxcore file</property>
               </object>
               <packing>
                 <property name="left_attach">0</property>
@@ -124,7 +124,11 @@
                   <object class="GtkLabel" id="assistant_welcome_text">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes" comments="Welcome text in profile creation, should warn about alpha-software">ASSISTANT_WELCOME_TEXT</property>
+                    <property name="label" translatable="yes" comments="Welcome text in profile creation, should warn about alpha-software">Welcome to gTox
+
+gTox and Tox are by no means complete.
+We cannot guarantee what works today will work tomorrow.
+gTox and Tox are alpha software and code changes daily.</property>
                     <property name="use_markup">True</property>
                   </object>
                   <packing>
@@ -158,6 +162,12 @@
                 <property name="top_attach">0</property>
                 <property name="width">2</property>
               </packing>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
             </child>
             <child>
               <placeholder/>

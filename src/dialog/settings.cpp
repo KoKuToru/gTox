@@ -74,10 +74,10 @@ settings::settings(main& main)
 
     m_main.chat_add(*m_headerbar_attached, *m_body, *m_btn_prev, *m_btn_next);
 
-    m_headerbar_attached->set_title(_("SETTINGS_TITLE"));
-    m_headerbar_detached->set_title(_("SETTINGS_TITLE"));
-    m_headerbar_attached->set_subtitle(_("SETTINGS_SUBTITLE"));
-    m_headerbar_detached->set_subtitle(_("SETTINGS_SUBTITLE"));
+    m_headerbar_attached->set_title(_("gTox settings"));
+    m_headerbar_detached->set_title(_("gTox settings"));
+    m_headerbar_attached->set_subtitle(_("Configure gTox"));
+    m_headerbar_detached->set_subtitle(_("Configure gTox"));
 
     m_btn_detach->signal_clicked().connect(sigc::track_obj([this]() {
         m_main.property_gravity() = Gdk::GRAVITY_NORTH_WEST;

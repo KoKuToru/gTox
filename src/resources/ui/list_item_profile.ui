@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.18.1 -->
+<!-- Generated with glade 3.19.0 -->
 <interface>
   <requires lib="gtk+" version="3.14"/>
   <object class="GtkListBoxRow" id="pofile_list_item">
@@ -42,7 +42,7 @@
                     <property name="can_focus">False</property>
                     <property name="halign">start</property>
                     <property name="hexpand">True</property>
-                    <property name="label" translatable="yes">PROFILE_CORRUPTED_TITLE</property>
+                    <property name="label" translatable="yes">Username</property>
                     <property name="ellipsize">end</property>
                     <property name="single_line_mode">True</property>
                     <style>
@@ -60,7 +60,7 @@
                     <property name="can_focus">False</property>
                     <property name="halign">start</property>
                     <property name="hexpand">True</property>
-                    <property name="label" translatable="yes">PROFILE_CORRUPTED</property>
+                    <property name="label" translatable="yes">Statusmessage</property>
                     <property name="ellipsize">end</property>
                     <property name="single_line_mode">True</property>
                     <style>
@@ -78,6 +78,7 @@
                     <property name="can_focus">False</property>
                     <property name="halign">start</property>
                     <property name="hexpand">True</property>
+                    <property name="label" translatable="yes">Path of file</property>
                     <property name="ellipsize">end</property>
                     <property name="single_line_mode">True</property>
                     <attributes>
