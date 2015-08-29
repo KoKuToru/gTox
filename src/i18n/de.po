@@ -26,7 +26,7 @@ msgstr "%1 min"
 
 #: resources/ui/dialog_contact.ui
 msgid "%1 new contact request"
-msgstr "%1 neue contact anfrage"
+msgstr "%1 neue Kontaktanfrage"
 
 #: dialog/main.cpp
 msgid ""
@@ -119,6 +119,8 @@ msgid ""
 "A contact request has already been sent, or the address belongs to a friend "
 "that is already on the friend list."
 msgstr ""
+"Dei Kontaktanfrage wurde bereits gesendet order die Tox-ID befindet sich "
+"bereits in deiner Kontaktliste."
 
 #: resources/ui/dialog_settings.ui
 msgid "About"
@@ -383,23 +385,23 @@ msgstr "TCP"
 
 #: widget/main_menu.cpp
 msgid "The contact address checksum failed."
-msgstr ""
+msgstr "Die Tox-ID Checksumme ist fehlgeschlagen."
 
 #: widget/main_menu.cpp
 msgid "The contact request message is not allowed to be empty."
-msgstr ""
+msgstr "Die Kontaktanfrage Nachricht muss ausgefüllt werden."
 
 #: widget/main_menu.cpp
 msgid "The contact was already there, but the nospam value was different."
-msgstr ""
+msgstr "NOSPAM-Wert ist nicht korrekt"
 
 #: widget/main_menu.cpp
 msgid "The length of the contact request message exceeded 1016 bytes."
-msgstr ""
+msgstr "Die Kontaktanfrage Nachricht darf nicht größer als 1016 Bytes sein."
 
 #: widget/main_menu.cpp
 msgid "This contact address belongs to you"
-msgstr ""
+msgstr "Diese Tox-ID gehört dir."
 
 #: resources/ui/popover_settings.ui
 msgid "Tox-ID"
@@ -411,7 +413,7 @@ msgstr "UDP"
 
 #: resources/ui/list_item_profile.ui resources/ui/popover_settings.ui
 msgid "Username"
-msgstr "Username"
+msgstr "Name"
 
 #: resources/ui/dialog_settings.ui
 msgid "Video"
@@ -477,7 +479,7 @@ msgstr "nacg 5 Minuten"
 #. Light theme
 #: resources/ui/dialog_settings.ui
 msgid "black on white"
-msgstr "Scgwarz auf Weiß"
+msgstr "Schwarz auf Weiß"
 
 #: gTox.cpp dialog/profile_selection.cpp resources/ui/dialog_settings.ui
 msgid "gTox"

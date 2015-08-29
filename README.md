@@ -18,8 +18,7 @@ Translation Status
 
 translation | untranslated
 :-----------|------------:
-de.po       |            6
-en.po       |          110
+de.po       |             
 es.po       |           31
 it.po       |           70
 ru.po       |           84
