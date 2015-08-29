@@ -2,6 +2,8 @@
 
 **Current build status:** [![Build Status](https://travis-ci.org/KoKuToru/gTox.png?branch=master)](https://travis-ci.org/KoKuToru/gTox)
 
+Not ready for daily use ! Please wait for the first release (not alpha/beta).
+
 * [Features](#features)
 * [How to install](#how-to-install)
   * [ArchLinux](#archlinux)
@@ -10,6 +12,55 @@
 * [How to build](#how-to-build)
   * [Linux Dependencies](#linux-dependencies)
 * [Screenshot](#screenshot)
+
+Translation Status
+============
+
+translation | untranslated
+:-----------|------------:
+de.po       |            6
+en.po       |          110
+es.po       |           31
+it.po       |           70
+ru.po       |           84
+
+**If you are a `gettext`-Master, please contact me !  
+I have some serious problems with this..**
+
+How to install
+============
+Archlinux
+------------
+<a href="https://aur.archlinux.org/packages/gtox-git/">MAKEPKG</a>
+```bash
+yaourt gtox-git
+```
+Linux
+------------
+Check "How to build" and `make install`
+
+Mac, Windows
+------------
+No idea. Somehow get dependencies installed.
+*Good luck.*
+
+How to build
+============
+First read <a href="https://github.com/irungentoo/toxcore/blob/master/INSTALL.md">`https://github.com/irungentoo/toxcore/blob/master/INSTALL.md`</a>.<br />
+This project will need `toxcore`.
+
+```bash
+git clone https://github.com/KoKuToru/gTox.git
+cd gTox
+mkdir build
+cd build
+cmake ../src
+make
+```
+
+Linux Dependencies
+-----------
+`gtkmm3`, `librsvg`, `gettext`, `gstreamermm`, `flatbuffers`
 
 Features
 ============
@@ -54,44 +105,7 @@ For comparison https://wiki.tox.chat/users/clients
 | Avatars | Yes | [#27](https://github.com/KoKuToru/gTox/issues/27) |
 
 Special to gTox:
-* Markup support bold(crtl+b), italic (crtl+i), underline (crtl+u)
-
-Not much, not ready for daily use ! Please wait for the first release.
-
-How to install
-============
-Archlinux
-------------
-<a href="https://aur.archlinux.org/packages/gtox-git/">MAKEPKG</a>
-```bash
-yaourt gtox-git
-```
-Linux
-------------
-Check "How to build" and `make install`
-
-Mac, Windows
-------------
-No idea. Somehow get dependencies installed.
-*Good luck.*
-
-How to build
-============
-First read <a href="https://github.com/irungentoo/toxcore/blob/master/INSTALL.md">`https://github.com/irungentoo/toxcore/blob/master/INSTALL.md`</a>.<br />
-This project will need `toxcore`.
-
-```bash
-git clone https://github.com/KoKuToru/gTox.git
-cd gTox
-mkdir build
-cd build
-cmake ../src
-make
-```
-
-Linux Dependencies
------------
-`gtkmm3`, `librsvg`, `gettext`, `gstreamermm`, `flatbuffers`
+* Markup support bold(crtl+b), italic(crtl+i), underline(crtl+u)
 
 Screenshot
 ============
