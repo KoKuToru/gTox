@@ -23,6 +23,7 @@
 using namespace toxmm;
 
 #if defined _WIN32 || defined __CYGWIN__
+    #include <iostream>
     int flock(int, int) {
         return 0;
     }
@@ -81,6 +82,9 @@ bool profile::can_read() {
 }
 
 void profile::write(const std::vector<unsigned char>& data) {
+#if defined _WIN32 || defined __CYGWIN__
+    std::clog << "profile::write not support on windows yet !" << std::endl;
+#else
     if (!can_write()) {
         throw std::runtime_error("profile::can_write() == false");
     }
@@ -110,6 +114,7 @@ void profile::write(const std::vector<unsigned char>& data) {
     if (flock(m_fd, LOCK_SH) == -1) {
         throw std::runtime_error("Profile flock error");
     }
+#endif
 }
 
 std::vector<unsigned char> profile::read() {

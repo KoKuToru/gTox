@@ -77,13 +77,14 @@ bool find_translation_domain() {
 }
 
 bool setup_translation() {
-
     // Translations returns in UTF-8
     bind_textdomain_codeset("gtox", "UTF-8");
-
     textdomain("gtox");
-
+#if defined _WIN32 || defined __CYGWIN__
+    return true;
+#else
     return find_translation_domain();
+#endif
 }
 
 void terminate_handler() {
