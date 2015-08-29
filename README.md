@@ -8,7 +8,8 @@ Not ready for daily use ! Please wait for the first release (not alpha/beta).
 * [How to install](#how-to-install)
   * [ArchLinux](#archlinux)
   * [Linux](#linux)
-  * [Mac, Windows](#mac-windows)
+  * [Mac](#mac)
+  * [Windows](#windows)
 * [How to build](#how-to-build)
   * [Linux Dependencies](#linux-dependencies)
 * [Screenshot](#screenshot)
@@ -38,10 +39,15 @@ Linux
 ------------
 Check "How to build" and `make install`
 
-Mac, Windows
+Mac
 ------------
 No idea. Somehow get dependencies installed.
 *Good luck.*
+
+Windows
+------------
+It does build, check travis..  
+But it doesn't run
 
 How to build
 ============
