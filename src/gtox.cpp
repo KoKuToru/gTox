@@ -17,7 +17,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 **/
-#include "gTox.h"
+#include "gtox.h"
 #include <glibmm/i18n.h>
 #include <iostream>
 #include <cstring>

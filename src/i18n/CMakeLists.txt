@@ -22,7 +22,7 @@ set(TRANSLATIONS
 foreach(trans ${TRANSLATIONS})
     add_custom_command(
         COMMENT "Generate Locale '${trans}'"
-        OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${trans}/LC_MESSAGES/gTox.mo
+        OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${trans}/LC_MESSAGES/gtox.mo
         POST_BUILD
         COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/${trans}/LC_MESSAGES/
 
@@ -35,13 +35,13 @@ foreach(trans ${TRANSLATIONS})
         # Create binary file with translations
         COMMAND ${GETTEXT_MSGFMT_EXECUTABLE}
             ${CMAKE_CURRENT_BINARY_DIR}/${trans}.po
-            -o ${CMAKE_CURRENT_BINARY_DIR}/${trans}/LC_MESSAGES/gTox.mo
+            -o ${CMAKE_CURRENT_BINARY_DIR}/${trans}/LC_MESSAGES/gtox.mo
 
         DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${trans}.po
     )
 
     set(mo_files
-        ${mo_files} ${CMAKE_CURRENT_BINARY_DIR}/${trans}/LC_MESSAGES/gTox.mo
+        ${mo_files} ${CMAKE_CURRENT_BINARY_DIR}/${trans}/LC_MESSAGES/gtox.mo
     )
 
     install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/${trans}"

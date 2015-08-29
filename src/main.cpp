@@ -29,7 +29,7 @@
 #include <gstreamermm/init.h>
 #include "tox/exception.h"
 
-#include "gTox.h"
+#include "gtox.h"
 
 void print_copyright() {
     std::clog
@@ -64,11 +64,11 @@ bool translation_working() {
 bool find_translation_domain() {
     // Translation search locations in order of preference
     std::vector<std::string> locations {"./i18n",
-        bindtextdomain("gTox", nullptr), // default location
+        bindtextdomain("gtox", nullptr), // default location
         "/usr/local/share/locale"};
 
     for (auto l : locations) {
-        bindtextdomain("gTox", l.c_str());
+        bindtextdomain("gtox", l.c_str());
         if (translation_working())
             return true;
     }
@@ -79,9 +79,9 @@ bool find_translation_domain() {
 bool setup_translation() {
 
     // Translations returns in UTF-8
-    bind_textdomain_codeset("gTox", "UTF-8");
+    bind_textdomain_codeset("gtox", "UTF-8");
 
-    textdomain("gTox");
+    textdomain("gtox");
 
     return find_translation_domain();
 }

@@ -29,7 +29,7 @@
 #include "dialog/main.h"
 #include "widget/contact.h"
 
-#include "gTox.h"
+#include "gtox.h"
 
 namespace sigc {
     SIGC_FUNCTORS_DEDUCE_RESULT_TYPE_WITH_DECLTYPE

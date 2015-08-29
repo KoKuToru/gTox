@@ -1,4 +1,4 @@
-project(gTox)
+project(gtox)
 cmake_minimum_required(VERSION 2.8)
 
 include(CheckCXXCompilerFlag)
@@ -48,7 +48,7 @@ add_subdirectory(resources/flatbuffers)
 
 set(SOURCES
     main.cpp
-    gTox.cpp
+    gtox.cpp
     config.cpp
 
     dialog/error.cpp
@@ -134,8 +134,8 @@ add_custom_command(
     COMMENT "Copy .desktop"
     TARGET ${PROJECT_NAME}
     COMMAND mkdir -p "${PROJECT_BINARY_DIR}/share/applications"
-    COMMAND cp gTox.desktop "${PROJECT_BINARY_DIR}/share/applications/gTox.desktop"
-    DEPENDS gTox.desktop
+    COMMAND cp gtox.desktop "${PROJECT_BINARY_DIR}/share/applications/gtox.desktop"
+    DEPENDS gtox.desktop
     WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
 install(DIRECTORY "${PROJECT_BINARY_DIR}/share/applications"
     DESTINATION share
