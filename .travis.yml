@@ -9,26 +9,20 @@ matrix:
   - compiler: clang
     env: DOCKER=kokutoru/gtox-travis-build CMAKE=cmake TEST=1
   - compiler: gcc
-    env: DOCKER=kokutoru/gtox-travis-build-mingw-w64 CMAKE=i686-w64-mingw32-cmake
-      TEST=0 PUB_WIN=1 PUB_COPY=i686-w64-mingw32 PUB_FILE=gtox.win.i686
+    env: DOCKER=kokutoru/gtox-travis-build-mingw-w64 CMAKE=i686-w64-mingw32-cmake TEST=0 PUB_WIN=1 PUB_COPY=i686-w64-mingw32 PUB_FILE=gtox.win.i686
   - compiler: gcc
-    env: DOCKER=kokutoru/gtox-travis-build-mingw-w64 CMAKE=x86_64-w64-mingw32-cmake
-      TEST=0 PUB_WIN=1 PUB_COPY=x86_64-w64-mingw32 PUB_FILE=gtox.win.x86-64
+    env: DOCKER=kokutoru/gtox-travis-build-mingw-w64 CMAKE=x86_64-w64-mingw32-cmake TEST=0 PUB_WIN=1 PUB_COPY=x86_64-w64-mingw32 PUB_FILE=gtox.win.x86-64
 git:
   submodules: false
 before_install:
-- docker pull $DOCKER
+  - docker pull $DOCKER
 script:
-- cd src && mkdir build
-- docker run -v $PWD:/opt/gtox $DOCKER bash -c "cd /opt/gtox/build && CXX=$CXX $CMAKE
-  –GNinja .."
-- docker run -v $PWD:/opt/gtox $DOCKER bash -c "cd /opt/gtox/build && make"
-- if [ $TEST = 1 ]; then docker run -v $PWD:/opt/gtox $DOCKER bash -c "cd /opt/gtox/build
-  && ./tox/toxmm-test"; fi
+  - cd src && mkdir build
+  - docker run -v $PWD:/opt/gtox $DOCKER bash -c "cd /opt/gtox/build && CXX=$CXX $CMAKE -GNinja .."
+  - docker run -v $PWD:/opt/gtox $DOCKER bash -c "cd /opt/gtox/build && make"
+  - if [ $TEST = 1 ]; then docker run -v $PWD:/opt/gtox $DOCKER bash -c "cd /opt/gtox/build && ./tox/toxmm-test"; fi
 after_success:
-- if [ $PUB_WIN = 1]; then docker run -v $PWD:/opt/gtox $DOCKER bash -c "cd /opt/gtox/build
-  && mkdir publish && cp -rT /usr/$PUB_COPY ./publish" && ./.travis_publish_win.sh;
-  fi
+  - if [ $PUB_WIN = 1]; then docker run -v $PWD:/opt/gtox $DOCKER bash -c "cd /opt/gtox/build && mkdir publish && cp -rT /usr/$PUB_COPY ./publish" && ./.travis_publish_win.sh; fi
 env:
   global:
   - secure: XNEZRZwimLwOjmco3uL2kOZM3NJmPW7X6PtpuOKtmVYRfrWAtNf+egrsOko1sGW0SR+2p2O2EljtRRJpIWwquGksQr1dtkuQC0JnwYo9rPGw+BaV3dRybR1bbN/622XpVv6C2RQPzf8u94I9itH/Qa7uU4NofdByPPkqWZXSZ7fup3Dcbn4L0EfrTOJjg8cvYqWWYTB3F1v/tjNwoi4SZd80EofSo1UpBei/EVWNAqf/T+7kRqEWhbhqrtrQVLAxVEkRSqYgfmtQ6UmVFXVm+JhIvOW82Bf8xmS9WYf0hqZ8ZCcdq6no8FmszzNXrIDBlqd53ePCt+RLTZkShxArqWB/sYE2KfHv3ISA4K0WsmTrN3Y9zVwI2f7G2w2E5drNcYg2pOr32vgeTnVisiRPlT+IJtBKkplGMFDKYjcqB3eDPdgQ1glBN/ndg7jyUggvoXDkBWj3pKcfVR+UMqGtpXj29UTE3GtgsTXv9ZLeMQFhRhfu0KAl0qnjZGfvy2CX+iI13rFTSMRGJG2pssb0BL7KZqKqo2SwHOhFl+FB5WiWi5mpzde5J9QILpfkwqVJxs8/qcRgxufLsHQKbn52teNKyHncx6KTZTf2MjZOfrajy3DvLne2W/BdJ7qVbqfCe3EGeaT3xU1q2TBw8zDaIpqM04C0xxgqnaLPX6wN0Qo=
