@@ -1,3 +1,6 @@
+branches:
+  except: 
+    - AUR
 cache: ccache
 language: cpp
 sudo: required
