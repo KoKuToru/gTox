@@ -1,5 +1,6 @@
 #!/bin/bash
-if [ "$TRAVIS_BRANCH" != "master" -o "$TRAVIS_PULL_REQUEST" != "false" ]; then 
+if [ "$TRAVIS_BRANCH" != "master" -o "$TRAVIS_PULL_REQUEST" != "false" ]; then
+    echo "Nothing todo" 
     exit
 fi
 
