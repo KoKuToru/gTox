@@ -1,5 +1,8 @@
-#!/usr/bin/bash
-mkdir ./publish/
+#!/bin/bash
+if [ "$TRAVIS_BRANCH" != "master" -o "$TRAVIS_PULL_REQUEST" != "false" ]; then 
+    exit
+fi
+
 cp -r ./share ./publish/
 cp gtox.exe ./publish/bin/gtox.exe
 
@@ -22,21 +25,21 @@ echo "" >> $FILE
 echo "" >> $FILE
 
 echo "Remove unused files"
-find . -name "*.a" -type f -delete
-find . -name "*.h" -type f -delete
-find . -name "*.c" -type f -delete
-find . -name "*.hpp" -type f -delete
-find . -name "*.cpp" -type f -delete
-find . -name "*.o" -type f -delete
-find . -name "*.pc" -type f -delete
-find . -name "*.m4" -type f -delete
-find . -name "*.sh" -type f -delete
-find . -name "*.spec" -type f -delete
-find . -name "*.cmake" -type f -delete
-find . -name include -exec rm -rf {} \;
-find . -name proc -exec rm -rf {} \;
-rm -rf share/doc
-find . -type d -empty -exec rm -rf {} \;
+find . -name "*.a" -type f -delete &> /dev/null
+find . -name "*.h" -type f -delete &> /dev/null
+find . -name "*.c" -type f -delete &> /dev/null
+find . -name "*.hpp" -type f -delete &> /dev/null
+find . -name "*.cpp" -type f -delete &> /dev/null
+find . -name "*.o" -type f -delete &> /dev/null
+find . -name "*.pc" -type f -delete &> /dev/null
+find . -name "*.m4" -type f -delete &> /dev/null
+find . -name "*.sh" -type f -delete &> /dev/null
+find . -name "*.spec" -type f -delete &> /dev/null
+find . -name "*.cmake" -type f -delete &> /dev/null
+find . -name include -exec rm -rf {} \; &> /dev/null
+find . -name proc -exec rm -rf {} \; &> /dev/null
+rm -rf share/doc &> /dev/null
+find . -type d -empty -exec rm -rf {} \; &> /dev/null
 
 echo "Get version"
 PKG_VERSION=`git describe --long --tags 2>/dev/null | sed 's/\([^-]*-g\)/r\1/;s/-/./g' || printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"`
@@ -49,6 +52,6 @@ cd ..
 if [ ! -z "$PUBLISH_KEY" ]; then
     echo "Upload"
     sudo pacman -S curl --noconfirm
-    curl -v -u $PUBLISH_KEY -T $PUB_FILE.$PKG_VERSION.zip $PUBLISH_HOST
+    curl -u $PUBLISH_KEY -T $PUB_FILE.$PKG_VERSION.zip $PUBLISH_HOST -k
 fi
 
