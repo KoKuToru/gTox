@@ -20,7 +20,7 @@ Translation Status
 translation | untranslated
 :-----------|------------:
 de.po       |             
-es.po       |           31
+es.po       |             
 it.po       |           70
 ru.po       |           84
 
