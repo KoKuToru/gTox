@@ -18,7 +18,7 @@ before_install:
   - docker pull $DOCKER
 script:
   - cd src && mkdir build
-  - docker run -v $PWD:/opt/gtox $DOCKER bash -c "cd /opt/gtox/build && CXX=$CXX $CMAKE -GNinja .."
+  - docker run -v $PWD:/opt/gtox $DOCKER bash -c "cd /opt/gtox/build && CXX=$CXX $CMAKE .."
   - docker run -v $PWD:/opt/gtox $DOCKER bash -c "cd /opt/gtox/build && make"
   - if [ $TEST = 1 ]; then docker run -v $PWD:/opt/gtox $DOCKER bash -c "cd /opt/gtox/build && ./tox/toxmm-test"; fi
 after_success:
