@@ -1,4 +1,5 @@
 #!/usr/bin/bash
+mkdir ./publish/
 cp -r ./share ./publish/
 cp gtox.exe ./publish/bin/gtox.exe
 
@@ -40,11 +41,12 @@ find . -type d -empty -exec rm -rf {} \;
 echo "Get version"
 PKG_VERSION=`git describe --long --tags 2>/dev/null | sed 's/\([^-]*-g\)/r\1/;s/-/./g' || printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"`
 
+echo "Generate Zip"
 sudo pacman -S zip --noconfirm
 zip -r9 ../$PUB_FILE.$PKG_VERSION.zip *
 cd ..
 
-if [ ! -z $PUBLISH_KEY ]; then
+if [ ! -z "$PUBLISH_KEY" ]; then
     echo "Upload"
     sudo pacman -S curl --noconfirm
     curl -v -u $PUBLISH_KEY -T $PUB_FILE.$PKG_VERSION.zip $PUBLISH_HOST
