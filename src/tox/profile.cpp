@@ -82,9 +82,6 @@ bool profile::can_read() {
 }
 
 void profile::write(const std::vector<unsigned char>& data) {
-#if defined _WIN32 || defined __CYGWIN__
-    std::clog << "profile::write not support on windows yet !" << std::endl;
-#else
     if (!can_write()) {
         throw std::runtime_error("profile::can_write() == false");
     }
@@ -102,19 +99,25 @@ void profile::write(const std::vector<unsigned char>& data) {
     flock(m_fd, LOCK_UN);
     ::close(m_fd);
     m_fd = -1;
+#if defined _WIN32 || defined __CYGWIN__
+    // overwrite my rename(move) isn't possible on windows ?
+    // do the unsafe thing.. and remove the old file first
+    if (unlink(path_tmp.c_str()) == -1) {
+        throw std::runtime_error("Couldn't remove the old profile");
+    }
+#endif
     if (rename(path_tmp.c_str(), m_path.c_str()) == -1) {
-        throw std::runtime_error("Rename failed !");
+        throw std::runtime_error("Renaming the new profile failed !");
     }
 
     //reopen
     m_fd = ::open(m_path.c_str(), O_RDWR|O_CREAT, 0600);
     if (m_fd == -1) {
-        throw std::runtime_error("Couldn't reopen file !!");
+        throw std::runtime_error("Couldn't reopen the profile !!");
     }
     if (flock(m_fd, LOCK_SH) == -1) {
         throw std::runtime_error("Profile flock error");
     }
-#endif
 }
 
 std::vector<unsigned char> profile::read() {
