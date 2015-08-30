@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Language: es_ES\n"
-"X-Generator: Poedit 1.8.4\n"
+"X-Generator: Poedit 1.8.3\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 
@@ -21,15 +21,15 @@ msgstr "Okay"
 
 #: widget/chat_bubble.cpp
 msgid "%1 hr"
-msgstr ""
+msgstr "%1 h."
 
 #: widget/chat_bubble.cpp
 msgid "%1 min"
-msgstr ""
+msgstr "%1 min."
 
 #: resources/ui/dialog_contact.ui
 msgid "%1 new contact request"
-msgstr ""
+msgstr "%1 nueva solicitud de contacto"
 
 #: dialog/main.cpp
 msgid ""
@@ -38,18 +38,22 @@ msgid ""
 "Message: \n"
 "%2"
 msgstr ""
+"%1 quiere usted añadir a su lista de contactos\n"
+"\n"
+"Mensaje: \n"
+"%2"
 
 #: widget/chat_bubble.cpp
 msgid "%a. %B, %R"
-msgstr ""
+msgstr "%a. %B, %R"
 
 #: widget/chat_bubble.cpp
 msgid "%e. %B %Y, %R"
-msgstr "%A, %e. %B %Y"
+msgstr "%e. %B %Y, %R"
 
 #: widget/chat_bubble.cpp
 msgid "%e. %B, %R"
-msgstr ""
+msgstr "%e. %B, %R"
 
 #: dialog/error.cpp
 msgid ""
@@ -116,6 +120,8 @@ msgid ""
 "A contact request has already been sent, or the address belongs to a friend "
 "that is already on the friend list."
 msgstr ""
+"Una solicitud de contacto ya se ha enviado, o la dirección pertenece a un "
+"amigo que ya está en la lista de amigos."
 
 #: resources/ui/dialog_settings.ui
 msgid "About"
@@ -128,7 +134,7 @@ msgstr "Añadir contacto"
 
 #: dialog/main.cpp
 msgid "Are you sure you want to remove this contact?"
-msgstr ""
+msgstr "¿Esta seguro que desea eliminar este contacto?"
 
 #: resources/ui/dialog_settings.ui
 msgid "Audio notification on new message"
@@ -170,15 +176,15 @@ msgstr "Lista compacta de contactos"
 
 #: dialog/settings.cpp
 msgid "Configure gTox"
-msgstr ""
+msgstr "Configurar gTox"
 
 #: dialog/main.cpp
 msgid "Contact Request"
-msgstr ""
+msgstr "Solicitud de contacto"
 
 #: widget/main_menu.cpp
 msgid "Contact request failed"
-msgstr ""
+msgstr "Solicitud de contacto a fallado"
 
 #. Copies tox id into clipboard
 #: resources/ui/popover_settings.ui
@@ -187,7 +193,7 @@ msgstr "Copiar Tox-ID al portapapeles"
 
 #: resources/ui/dialog_settings.ui
 msgid "Copyright © 2014 - the gTox team"
-msgstr "Copyright © 2014 - the gTox team"
+msgstr "Copyright © 2014 - El equipo gTox"
 
 #: dialog/profile_selection.cpp
 msgid "Corrupted profile"
@@ -203,11 +209,11 @@ msgstr "Mostrar conectado"
 
 #: widget/main_menu.cpp
 msgid "Empty message"
-msgstr ""
+msgstr "Mensaje vacio"
 
 #: dialog/profile_selection.cpp
 msgid "Encrypted profile"
-msgstr ""
+msgstr "Perfil encriptado"
 
 #: resources/ui/status_menu.ui
 msgid "Exit"
@@ -223,7 +229,7 @@ msgstr "Imagen"
 
 #: widget/chat_bubble.cpp
 msgid "Just now"
-msgstr ""
+msgstr "Justamente ahora"
 
 #: resources/ui/popover_settings.ui
 msgid "Message"
@@ -232,7 +238,7 @@ msgstr "Mensaje"
 #. Label for the profile username
 #: resources/ui/dialog_assistant.ui
 msgid "Name"
-msgstr ""
+msgstr "Nombre"
 
 #. Button for creating a new profile
 #: resources/ui/dialog_profile.ui
@@ -250,29 +256,29 @@ msgstr "Disponible"
 #. Open file with file-explorer
 #: resources/ui/chat_filerecv.ui
 msgid "Open containing folder"
-msgstr ""
+msgstr "Abrir carpeta que lo contiene"
 
 #. Open the downloaded file
 #: resources/ui/chat_filerecv.ui
 msgid "Open file"
-msgstr ""
+msgstr "Abrir archivo"
 
 #: dialog/profile_selection.cpp
 msgid "Open this profile in file manager"
-msgstr ""
+msgstr "Abrir este perfil con el administrador de archivos"
 
 #: resources/ui/list_item_profile.ui
 msgid "Path of file"
-msgstr ""
+msgstr "Dirección del archivo"
 
 #. Pauses the download
 #: resources/ui/chat_filerecv.ui
 msgid "Pause download"
-msgstr ""
+msgstr "Pausar descarga"
 
 #: resources/ui/dialog_settings.ui
 msgid "Profile"
-msgstr "gTox"
+msgstr "Perfil"
 
 #: dialog/profile_selection.cpp
 msgid "Profile couldn't be loaded"
@@ -280,7 +286,7 @@ msgstr "Perfil no se pudo cargar"
 
 #: dialog/profile_selection.cpp
 msgid "Profile not loaded for an unknown reason"
-msgstr ""
+msgstr "El perfil no se pudo cargar por una razón desconocida"
 
 #: resources/ui/dialog_settings.ui
 msgid "Proxy host"
@@ -304,12 +310,12 @@ msgstr "Recordar ultimo perfil usado"
 
 #: dialog/main.cpp
 msgid "Remove contact"
-msgstr "Eliminar"
+msgstr "Eliminar contacto"
 
 #. Stop/Remove the download
 #: resources/ui/chat_filerecv.ui
 msgid "Remove download"
-msgstr ""
+msgstr "Eliminar descarga"
 
 #: dialog/error.cpp
 msgid "Report"
@@ -322,7 +328,7 @@ msgstr "Guardar en"
 #. Button for loading the selected profile
 #: resources/ui/dialog_profile.ui
 msgid "Select"
-msgstr "Usar Perfil"
+msgstr "Selecionar"
 
 #: widget/main_menu.cpp
 msgid "Select new avatar"
@@ -346,12 +352,12 @@ msgstr "Mostrar chats activos"
 
 #: resources/ui/dialog_settings.ui
 msgid "Show in systemtray"
-msgstr "Mostrar en bandeja"
+msgstr "Mostrar icono en la bandeja"
 
 #. Starts the download
 #: resources/ui/chat_filerecv.ui
 msgid "Start download"
-msgstr ""
+msgstr "Iniciar descarga"
 
 #: resources/ui/dialog_settings.ui
 msgid "Start in systemtray"
@@ -372,7 +378,7 @@ msgstr "Enviar"
 
 #: resources/ui/status_menu.ui
 msgid "Switch Profile"
-msgstr ""
+msgstr "Cambiar perfil"
 
 #: resources/ui/dialog_settings.ui
 msgid "TCP"
@@ -380,23 +386,23 @@ msgstr "TCP"
 
 #: widget/main_menu.cpp
 msgid "The contact address checksum failed."
-msgstr ""
+msgstr "The contact address checksum failed."
 
 #: widget/main_menu.cpp
 msgid "The contact request message is not allowed to be empty."
-msgstr ""
+msgstr "El mensaje de solicitud de contacto no se permite estar vacío."
 
 #: widget/main_menu.cpp
 msgid "The contact was already there, but the nospam value was different."
-msgstr ""
+msgstr "El contacto ya estaba allí, pero el valor nospam es diferente."
 
 #: widget/main_menu.cpp
 msgid "The length of the contact request message exceeded 1016 bytes."
-msgstr ""
+msgstr "La longitud del mensaje de solicitud de contacto supera 1016 bytes."
 
 #: widget/main_menu.cpp
 msgid "This contact address belongs to you"
-msgstr ""
+msgstr "Esta dirección de contacto le pertenece a usted"
 
 #: resources/ui/popover_settings.ui
 msgid "Tox-ID"
@@ -435,7 +441,7 @@ msgstr "Longitud Tox-ID incorrecta"
 
 #: widget/main_menu.cpp
 msgid "Wrong checksum"
-msgstr ""
+msgstr "Checksum incorrecto"
 
 #: resources/ui/dialog_settings.ui
 msgid "after 1 hour"
@@ -510,7 +516,7 @@ msgstr "Archivo Tox"
 
 #: utils/gstreamer.cpp
 msgid "unknow gstreamer error"
-msgstr ""
+msgstr "Error gstreamer desconocido"
 
 #. dark theme
 #: resources/ui/dialog_settings.ui
