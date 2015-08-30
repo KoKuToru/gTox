@@ -24,7 +24,7 @@ script:
   - docker run -v $PWD:/opt/gtox -v ~/.ccache:/root/.ccache -w /opt/gtox/src/build $DOCKER bash -c "make"
   - if [ $TEST = 1 ]; then docker run -v $PWD:/opt/gtox -w /opt/gtox/src/build $DOCKER bash -c "./tox/toxmm-test"; fi
 after_success:
-  - if [ $PUB_WIN = 1 ]; then docker run -e "TRAVIS_BRANCH=$TRAVIS_BRANCH" -e "TRAVIS_PULL_REQUEST=$TRAVIS_PULL_REQUEST" -e "PUBLISH_KEY=$PUBLISH_KEY" -e "PUBLISH_HOST=$PUBLISH_HOST" -e "PUB_COPY=$PUB_COPY" -e "PUB_FILE=$PUB_FILE" -v $PWD:/opt/gtox -w /opt/gtox/src/build $DOCKER bash -c "mkdir publish && cp -rT /usr/$PUB_COPY ./publish && ../../.travis_publish_win.sh"; fi
+  - if [ "$PUB_WIN" = 1 ]; then docker run -e "TRAVIS_BRANCH=$TRAVIS_BRANCH" -e "TRAVIS_PULL_REQUEST=$TRAVIS_PULL_REQUEST" -e "PUBLISH_KEY=$PUBLISH_KEY" -e "PUBLISH_HOST=$PUBLISH_HOST" -e "PUB_COPY=$PUB_COPY" -e "PUB_FILE=$PUB_FILE" -v $PWD:/opt/gtox -w /opt/gtox/src/build $DOCKER bash -c "mkdir publish && cp -rT /usr/$PUB_COPY ./publish && ../../.travis_publish_win.sh"; fi
   - ccache -s
 env:
   global:

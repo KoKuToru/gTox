@@ -11,8 +11,8 @@ cd publish
 
 echo "Fix libharfbuzz-1.dll bug"
 cp bin/libharfbuzz-0.dll ./publish/bin/libharfbuzz-1.dll
-cp /bin/libharfbuzz-gobject-0.dll ./publish/bin/libharfbuzz-gobject-1.dll
-cp /bin/libharfbuzz-icu-0.dll ./publish/bin/libharfbuzz-icu-1.dll
+cp bin/libharfbuzz-gobject-0.dll ./publish/bin/libharfbuzz-gobject-1.dll
+cp bin/libharfbuzz-icu-0.dll ./publish/bin/libharfbuzz-icu-1.dll
 
 echo "Generate loaders.cache for SVG"
 FILE=lib/gdk-pixbuf-2.0/2.10.0/loaders.cache
@@ -43,6 +43,7 @@ rm -rf share/doc &> /dev/null
 find . -type d -empty -exec rm -rf {} \; &> /dev/null
 
 echo "Get version"
+git fetch --unshallow
 PKG_VERSION=`git describe --long --tags 2>/dev/null | sed 's/\([^-]*-g\)/r\1/;s/-/./g' || printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"`
 
 echo "Generate Zip"
