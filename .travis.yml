@@ -13,7 +13,7 @@ matrix:
       TEST=0 PUB_WIN=1 PUB_COPY=i686-w64-mingw32 PUB_FILE=gtox.win.i686
   - compiler: gcc
     env: DOCKER=kokutoru/gtox-travis-build-mingw-w64 CMAKE=x86_64-w64-mingw32-cmake
-      TEST=0 PUB_WIN=1 PUB_COPY=x86_64-w64-mingw32 PUB_FILE=gtox.win.x86-x64
+      TEST=0 PUB_WIN=1 PUB_COPY=x86_64-w64-mingw32 PUB_FILE=gtox.win.x86-64
 git:
   submodules: false
 before_install:
