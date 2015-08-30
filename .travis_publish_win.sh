@@ -1,3 +1,4 @@
+#!/usr/bin/bash
 cp -r ./share ./publish/
 cp gtox.exe ./publish/bin/gtox.exe
 
@@ -37,10 +38,7 @@ rm -rf share/doc
 find . -type d -empty -exec rm -rf {} \;
 
 echo "Get version"
-PKG_VERSION=( set -o pipefail
-       git describe --long --tags 2>/dev/null | sed 's/\([^-]*-g\)/r\1/;s/-/./g' ||
-       printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
-     )
+PKG_VERSION=`git describe --long --tags 2>/dev/null | sed 's/\([^-]*-g\)/r\1/;s/-/./g' || printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"`
 
 sudo pacman -S zip --noconfirm
 zip -r9 ../$PUB_FILE.$PKG_VERSION.zip *
