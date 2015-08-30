@@ -10,9 +10,9 @@ cp gtox.exe ./publish/bin/gtox.exe
 cd publish
 
 echo "Fix libharfbuzz-1.dll bug"
-cp bin/libharfbuzz-0.dll ./publish/bin/libharfbuzz-1.dll
-cp bin/libharfbuzz-gobject-0.dll ./publish/bin/libharfbuzz-gobject-1.dll
-cp bin/libharfbuzz-icu-0.dll ./publish/bin/libharfbuzz-icu-1.dll
+cp ./publish/bin/libharfbuzz-0.dll ./publish/bin/libharfbuzz-1.dll
+cp ./publish/bin/libharfbuzz-gobject-0.dll ./publish/bin/libharfbuzz-gobject-1.dll
+cp ./publish/bin/libharfbuzz-icu-0.dll ./publish/bin/libharfbuzz-icu-1.dll
 
 echo "Generate loaders.cache for SVG"
 FILE=lib/gdk-pixbuf-2.0/2.10.0/loaders.cache
@@ -48,7 +48,7 @@ PKG_VERSION=`git describe --long --tags 2>/dev/null | sed 's/\([^-]*-g\)/r\1/;s/
 
 echo "Generate Zip"
 sudo pacman -S zip --noconfirm
-zip -r9 ../$PUB_FILE.$PKG_VERSION.zip *
+zip -r9 ../$PUB_FILE.$PKG_VERSION.zip * > /dev/null &> /dev/null
 cd ..
 
 if [ ! -z "$PUBLISH_KEY" ]; then
