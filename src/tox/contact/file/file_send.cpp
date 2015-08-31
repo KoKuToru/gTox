@@ -30,14 +30,12 @@ file_send::file_send(std::shared_ptr<toxmm::file_manager> manager):
 }
 
 void file_send::resume() {
+    m_too_fast = false;
     m_queue.clear();
     if (m_stream) {
         m_stream.reset();
     }
     auto file = Gio::File::create_for_path(property_path().get_value());
-    if (file->query_exists()) {
-        m_stream = file->read();
-    }
 }
 
 void file_send::send_chunk_request(uint64_t position, size_t size) {
@@ -107,6 +105,7 @@ void file_send::recv_chunk(uint64_t, const std::vector<uint8_t>&) {
 }
 
 void file_send::finish() {
+    m_too_fast = false;
     m_queue.clear();
     if (m_stream) {
         m_stream.reset();
@@ -114,6 +113,7 @@ void file_send::finish() {
 }
 
 void file_send::abort() {
+    m_too_fast = false;
     m_queue.clear();
     if (m_stream) {
         m_stream.reset();
