@@ -51,7 +51,7 @@ Windows
 Build on Linux with `mingw-w64` like for Linux.  
 Or use [this prebuild](https://hub.docker.com/r/kokutoru/gtox-travis-build-mingw-w64/) [Docker-Image](https://github.com/KoKuToru/gTox-docker-build-mingw-w64)
 
-Or download [precompiled binaries, use at your own](http://gtox.urotukok.net/)
+Or download [precompiled binaries, use at your own risk](http://gtox.urotukok.net/)
 
 How to build
 ============
