@@ -4,15 +4,16 @@ if [ "$TRAVIS_BRANCH" != "master" -o "$TRAVIS_PULL_REQUEST" != "false" ]; then
     exit
 fi
 
-cp -r ./share ./publish/
-cp gtox.exe ./publish/bin/gtox.exe
-
+mkdir publish 
+cp -rT /usr/$PUB_COPY publish
+cp -r ./share publish/
+cp gtox.exe publish/bin/gtox.exe
 cd publish
 
 echo "Fix libharfbuzz-1.dll bug"
-cp ./publish/bin/libharfbuzz-0.dll ./publish/bin/libharfbuzz-1.dll
-cp ./publish/bin/libharfbuzz-gobject-0.dll ./publish/bin/libharfbuzz-gobject-1.dll
-cp ./publish/bin/libharfbuzz-icu-0.dll ./publish/bin/libharfbuzz-icu-1.dll
+cp bin/libharfbuzz-0.dll bin/libharfbuzz-1.dll
+cp bin/libharfbuzz-gobject-0.dll bin/libharfbuzz-gobject-1.dll
+cp bin/libharfbuzz-icu-0.dll bin/libharfbuzz-icu-1.dll
 
 echo "Generate loaders.cache for SVG"
 FILE=lib/gdk-pixbuf-2.0/2.10.0/loaders.cache
@@ -48,12 +49,11 @@ PKG_VERSION=`git describe --long --tags 2>/dev/null | sed 's/\([^-]*-g\)/r\1/;s/
 
 echo "Generate Zip"
 sudo pacman -S zip --noconfirm
-zip -r9 ../$PUB_FILE.$PKG_VERSION.zip * > /dev/null &> /dev/null
+zip -r9 ../$PUB_FILE.$PKG_VERSION.zip ./* > /dev/null &> /dev/null
 cd ..
 
 if [ ! -z "$PUBLISH_KEY" ]; then
     echo "Upload"
-    sudo pacman -S curl --noconfirm
     curl -u $PUBLISH_KEY -T $PUB_FILE.$PKG_VERSION.zip $PUBLISH_HOST -k
 fi
 
