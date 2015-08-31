@@ -25,7 +25,8 @@ using namespace toxmm;
 
 file_send::file_send(std::shared_ptr<toxmm::file_manager> manager):
     Glib::ObjectBase(typeid(file_send)),
-    file(manager) {
+    file(manager),
+    m_too_fast(false) {
 }
 
 void file_send::resume() {
@@ -46,56 +47,59 @@ void file_send::send_chunk_request(uint64_t position, size_t size) {
 
     m_queue.push_back({position, size});
 
-    iterate();
+    if (!m_too_fast) {
+        iterate();
+    }
 }
 
 void file_send::iterate() {
-    if (m_queue.empty()) {
-        return;
-    }
-    auto last     = m_queue.front();
-    auto position = last.first;
-    auto size     = last.second;
+    m_too_fast = false;
+    while (!m_queue.empty()) {
+        auto last     = m_queue.front();
+        auto position = last.first;
+        auto size     = last.second;
 
-    //TODO: make async
-    if (m_stream) {
-        m_stream->seek(position, Glib::SEEK_TYPE_SET);
-    }
-    std::vector<uint8_t> chunk(size);
-    gsize dummy;
-    if (m_stream) {
-        m_stream->read_all(chunk.data(), chunk.size(), dummy);
-    }
+        //TODO: make async
+        if (m_stream) {
+            m_stream->seek(position, Glib::SEEK_TYPE_SET);
+        }
+        std::vector<uint8_t> chunk(size);
+        gsize dummy;
+        if (m_stream) {
+            m_stream->read_all(chunk.data(), chunk.size(), dummy);
+        }
 
-    //send
-    auto c  = core();
-    auto ct = contact();
-    if (!c || !ct) {
-        return;
-    }
-
-    TOX_ERR_FILE_SEND_CHUNK error;
-    tox_file_send_chunk(c->toxcore(),
-                        ct->property_nr().get_value(),
-                        property_nr().get_value(),
-                        position,
-                        chunk.data(),
-                        chunk.size(),
-                        &error);
-    switch (error) {
-        case TOX_ERR_FILE_SEND_CHUNK_SENDQ:
-            //try again later !
-            Glib::signal_idle().connect_once(sigc::track_obj([this]() {
-                iterate();
-            }, *this));
+        //send
+        auto c  = core();
+        auto ct = contact();
+        if (!c || !ct) {
             return;
-        case TOX_ERR_FILE_SEND_CHUNK_OK:
-            break;
-        default:
-            throw toxmm::exception(error);
-    }
+        }
 
-    m_queue.pop_front();
+        TOX_ERR_FILE_SEND_CHUNK error;
+        tox_file_send_chunk(c->toxcore(),
+                            ct->property_nr().get_value(),
+                            property_nr().get_value(),
+                            position,
+                            chunk.data(),
+                            chunk.size(),
+                            &error);
+        switch (error) {
+            case TOX_ERR_FILE_SEND_CHUNK_SENDQ:
+                //try again later !
+                m_too_fast = true;
+                Glib::signal_idle().connect_once(sigc::track_obj([this]() {
+                    iterate();
+                }, *this));
+                return;
+            case TOX_ERR_FILE_SEND_CHUNK_OK:
+                break;
+            default:
+                throw toxmm::exception(error);
+        }
+
+        m_queue.pop_front();
+    }
 }
 
 void file_send::recv_chunk(uint64_t, const std::vector<uint8_t>&) {
