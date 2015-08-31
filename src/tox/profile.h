@@ -25,18 +25,24 @@
 #include <unistd.h>
 #include <vector>
 #include <glibmm.h>
+#include <giomm.h>
+#include <set>
 
 namespace toxmm {
 
     //TODO: make this portable
     class profile {
         private:
-            int m_fd = -1;
-            bool m_writeable = false;
-            Glib::ustring m_path;
+            std::set<Glib::ustring>& create_used_files();
+
+            bool m_can_write;
+            bool m_can_read;
+            Glib::RefPtr<Gio::File>            m_file;
+            Glib::RefPtr<Gio::FileInputStream> m_stream;
+            std::set<Glib::ustring>& m_used_files;
 
         public:
-            profile() {}
+            profile();
             profile(const profile& o) = delete;
             ~profile();
 
@@ -49,9 +55,9 @@ namespace toxmm {
             bool can_read();
 
             /**
-         * @brief if new_path exists it will be overwritten with this profile
-         * @param new_path
-         */
+            * @brief if new_path exists it will be overwritten with this profile
+            * @param new_path
+            */
             void move(const Glib::ustring& new_path);
 
             void write(const std::vector<unsigned char>& data);

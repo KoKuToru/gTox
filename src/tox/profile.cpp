@@ -22,42 +22,40 @@
 
 using namespace toxmm;
 
-#if defined _WIN32 || defined __CYGWIN__
-    #include <iostream>
-    int flock(int, int) {
-        return 0;
-    }
-    #define LOCK_EX 0
-    #define LOCK_NB 0
-    #define LOCK_SH 0
-    #define LOCK_UN 0
-    void fsync(int) { }
-#endif
+std::set<Glib::ustring>& profile::create_used_files() {
+    static std::set<Glib::ustring> used_files;
+    return used_files;
+}
+
+profile::profile(): m_used_files(create_used_files()) {
+
+}
 
 void profile::open(const Glib::ustring& path) {
-    if (can_read() || can_write()) {
-        throw std::runtime_error("Profile already loaded");
-    }
-    m_path = path;
-    m_fd = ::open(m_path.c_str(), O_RDWR|O_CREAT, 0600);
-    if (m_fd == -1) {
-        return;
+    if (m_file) {
+        close();
     }
 
-    if (flock(m_fd, LOCK_EX|LOCK_NB) == -1) {
-        if (errno == EWOULDBLOCK) {
-            m_writeable = false;
-            ::close(m_fd);
-            m_fd = ::open(m_path.c_str(), O_RDONLY);
-        } else {
-            throw std::runtime_error("Profile flock error");
+    m_file = Gio::File::create_for_path(path);
+
+    m_can_write = m_used_files.find(path) == m_used_files.end();
+    m_can_read  = true;
+
+    if (m_can_write) {
+        try {
+            m_file->open_readwrite();
+        } catch (...) {
+            m_can_write = false;
         }
-    } else {
-        m_writeable = true;
     }
-    if (flock(m_fd, LOCK_SH) == -1) {
-        throw std::runtime_error("Profile flock error");
+
+    try {
+        m_stream = m_file->read();
+    } catch (...) {
+        m_can_read = false;
     }
+
+    m_used_files.insert(m_file->get_path());
 }
 
 profile::~profile() {
@@ -65,59 +63,48 @@ profile::~profile() {
 }
 
 void profile::close() {
-    if (m_fd != -1) {
-        flock(m_fd, LOCK_UN);
-        ::close(m_fd);
-        m_fd = -1;
-        m_writeable = false;
+    m_can_write = false;
+    m_can_read  = false;
+
+    if (m_file) {
+        m_used_files.erase(m_file->get_path());
     }
+
+    m_stream.clear();
+    m_file.clear();
 }
 
 bool profile::can_write() {
-    return m_writeable;
+    return m_can_write;
 }
 
 bool profile::can_read() {
-    return m_fd != -1;
+    return m_can_read;
 }
 
 void profile::write(const std::vector<unsigned char>& data) {
     if (!can_write()) {
         throw std::runtime_error("profile::can_write() == false");
     }
-    auto path_tmp = m_path + ".tmp";
-    int tmp = ::open(path_tmp.c_str(), O_RDWR|O_CREAT, 0600);
-    if (tmp == -1) {
-        throw std::runtime_error("Couldn't create tmp file for profile");
+
+    m_stream.clear();
+
+    Glib::RefPtr<Gio::FileOutputStream> stream;
+    try {
+        stream = m_file->replace(std::string(), true);
+    } catch (Gio::Error exp) {
+        if (exp.code() != Gio::Error::CANT_CREATE_BACKUP) {
+            throw;
+        }
+        stream = m_file->replace();
     }
 
-    ::write(tmp, data.data(), data.size());
-    fsync(tmp);
-    ::close(tmp);
+    stream->truncate(0);
+    stream->write_bytes(Glib::Bytes::create((gconstpointer)data.data(),
+                                              data.size()));
+    stream->close();
 
-    //SWAP !
-    flock(m_fd, LOCK_UN);
-    ::close(m_fd);
-    m_fd = -1;
-#if defined _WIN32 || defined __CYGWIN__
-    // overwrite my rename(move) isn't possible on windows ?
-    // do the unsafe thing.. and remove the old file first
-    if (unlink(path_tmp.c_str()) == -1) {
-        throw std::runtime_error("Couldn't remove the old profile");
-    }
-#endif
-    if (rename(path_tmp.c_str(), m_path.c_str()) == -1) {
-        throw std::runtime_error("Renaming the new profile failed !");
-    }
-
-    //reopen
-    m_fd = ::open(m_path.c_str(), O_RDWR|O_CREAT, 0600);
-    if (m_fd == -1) {
-        throw std::runtime_error("Couldn't reopen the profile !!");
-    }
-    if (flock(m_fd, LOCK_SH) == -1) {
-        throw std::runtime_error("Profile flock error");
-    }
+    open(m_file->get_path());
 }
 
 std::vector<unsigned char> profile::read() {
@@ -125,13 +112,13 @@ std::vector<unsigned char> profile::read() {
         throw std::runtime_error("profile::can_read() == false");
     }
 
-    auto size = lseek(m_fd, 0, SEEK_END);
-    lseek(m_fd, 0, SEEK_SET);
+    std::vector<unsigned char> data(m_stream->query_info()->get_size());
 
-    std::vector<unsigned char> tmp(size);
-    ::read(m_fd, tmp.data(), tmp.size());
+    gsize size;
+    m_stream->seek(0, Glib::SeekType::SEEK_TYPE_SET);
+    m_stream->read_all((void*)data.data(), data.size(), size);
 
-    return tmp;
+    return data;
 }
 
 void profile::move(const Glib::ustring& new_path) {
@@ -142,12 +129,10 @@ void profile::move(const Glib::ustring& new_path) {
         throw std::runtime_error("profile::can_write() == false");
     }
 
-    //move file
-    close();
-    if (rename(m_path.c_str(), new_path.c_str()) == -1) {
-        throw std::runtime_error("Rename failed !");
-    }
+    m_stream.clear();
 
-    //reopen
+    m_file->move(
+                Gio::File::create_for_path(new_path));
+
     open(new_path);
 }

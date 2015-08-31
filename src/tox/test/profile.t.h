@@ -62,10 +62,20 @@ public:
         toxmm::profile p;
 
         remove_file(test_path);
-        //non existsing files should be created
+        //non existsing files
         p.open(test_path);
-        TS_ASSERT_EQUALS(p.can_read(),  true);
-        TS_ASSERT_EQUALS(p.can_write(), true);
+        TS_ASSERT_EQUALS(p.can_read(),  false);
+        TS_ASSERT_EQUALS(p.can_write(), false);
+
+        //try to load data
+        std::vector<uint8_t> state;
+        TS_ASSERT_THROWS_ANYTHING(state = p.read());
+
+        //try to save data
+        TS_ASSERT_THROWS_ANYTHING(p.write(state));
+
+        //try to move profile
+        TS_ASSERT_THROWS_ANYTHING(p.move("/dummy"));
     }
 
     void test_open_read_write() {
@@ -120,6 +130,7 @@ public:
 
         //move the profile
         auto test_path_moved = std::string(test_path) + ".moved";
+        remove_file(test_path_moved.c_str());
         p.move(test_path_moved);
 
         //check if old path is moved..
