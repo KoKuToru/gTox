@@ -37,7 +37,6 @@ namespace toxmm {
 
         private:
             Glib::RefPtr<Gio::FileInputStream> m_stream;
-            bool m_too_fast;
             std::deque<std::pair<uint64_t, size_t>> m_queue;
 
             file_send(std::shared_ptr<toxmm::file_manager> manager);

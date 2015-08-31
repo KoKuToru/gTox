@@ -25,17 +25,18 @@ using namespace toxmm;
 
 file_send::file_send(std::shared_ptr<toxmm::file_manager> manager):
     Glib::ObjectBase(typeid(file_send)),
-    file(manager),
-    m_too_fast(false) {
+    file(manager) {
 }
 
 void file_send::resume() {
-    m_too_fast = false;
     m_queue.clear();
     if (m_stream) {
         m_stream.reset();
     }
     auto file = Gio::File::create_for_path(property_path().get_value());
+    if (file->query_exists()) {
+        m_stream = file->read();
+    }
 }
 
 void file_send::send_chunk_request(uint64_t position, size_t size) {
@@ -45,13 +46,10 @@ void file_send::send_chunk_request(uint64_t position, size_t size) {
 
     m_queue.push_back({position, size});
 
-    if (!m_too_fast) {
-        iterate();
-    }
+    iterate();
 }
 
 void file_send::iterate() {
-    m_too_fast = false;
     while (!m_queue.empty()) {
         auto last     = m_queue.front();
         auto position = last.first;
@@ -85,7 +83,6 @@ void file_send::iterate() {
         switch (error) {
             case TOX_ERR_FILE_SEND_CHUNK_SENDQ:
                 //try again later !
-                m_too_fast = true;
                 Glib::signal_idle().connect_once(sigc::track_obj([this]() {
                     iterate();
                 }, *this));
@@ -105,7 +102,6 @@ void file_send::recv_chunk(uint64_t, const std::vector<uint8_t>&) {
 }
 
 void file_send::finish() {
-    m_too_fast = false;
     m_queue.clear();
     if (m_stream) {
         m_stream.reset();
@@ -113,7 +109,6 @@ void file_send::finish() {
 }
 
 void file_send::abort() {
-    m_too_fast = false;
     m_queue.clear();
     if (m_stream) {
         m_stream.reset();
