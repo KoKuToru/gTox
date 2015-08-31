@@ -39,6 +39,8 @@ Linux
 ------------
 Check "How to build" and `make install`
 
+Or use [AUR](https://aur.archlinux.org/packages/gtox-git/)
+
 Mac
 ------------
 No idea. Somehow get dependencies installed.
@@ -46,8 +48,10 @@ No idea. Somehow get dependencies installed.
 
 Windows
 ------------
-It does build, check travis..  
-But it doesn't run
+Build on Linux with `mingw-w64` like for Linux.  
+Or use [this prebuild](https://hub.docker.com/r/kokutoru/gtox-travis-build-mingw-w64/) [Docker-Image](https://github.com/KoKuToru/gTox-docker-build-mingw-w64)
+
+Or download [precompiled binaries, use at your own](http://gtox.urotukok.net/)
 
 How to build
 ============
@@ -74,8 +78,8 @@ For comparison https://wiki.tox.chat/users/clients
 |               | gTox          | Issue  | Comment |
 | ------------- |:-------------:|:------:|-------|
 | **Interface** | Desktop GUI   |        |
-| Linux         | **Yes**       |        |
-| Windows       | Maybe         |        |
+| Linux         | **Yes**       |        | [AUR](https://aur.archlinux.org/packages/gtox-git/)
+| Windows       | **It runs..** |        | [Precompiled binaries, use at your own risk](http://gtox.urotukok.net/)
 | OS X          | Maybe         |        |
 | BSD-like      | Maybe         |        |
 | Android       | No            |        |
