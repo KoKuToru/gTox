@@ -74,6 +74,7 @@ set(SOURCES
     utils/dispatcher.h
     utils/storage.cpp
     utils/gstreamer.cpp
+    utils/debug.cpp
 )
 SET_SOURCE_FILES_PROPERTIES(${GRESOURCE} PROPERTIES GENERATED 1)
 add_executable(${PROJECT_NAME}
