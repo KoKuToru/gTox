@@ -11,6 +11,7 @@ namespace utils {
 
         public:
             storage();
+            virtual ~storage();
 
         protected:
             void set_prefix_key(const std::string& prefix) override;

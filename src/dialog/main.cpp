@@ -31,6 +31,8 @@
 
 #include "gtox.h"
 
+#include "utils/debug.h"
+
 namespace sigc {
     SIGC_FUNCTORS_DEDUCE_RESULT_TYPE_WITH_DECLTYPE
 }
@@ -42,6 +44,7 @@ main::main(BaseObjectType* cobject,
            const Glib::ustring& file)
     : Gtk::Window(cobject)
 {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), { file.raw() });
     m_storage = std::make_shared<utils::storage>();
     m_toxcore = toxmm::core::create(file, m_storage);
     m_menu = Glib::RefPtr<widget::main_menu>(
@@ -110,11 +113,13 @@ main::main(BaseObjectType* cobject,
 
     auto setting_btn = builder.get_widget<Gtk::Button>("setting_btn");
     setting_btn->signal_clicked().connect([this, setting_btn]() {
+        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
         m_menu->set_relative_to(*setting_btn);
         m_menu->set_visible();
     });
 
     auto activated = [this](Gtk::ListBoxRow* row) {
+        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
         //FORWARD SIGNAL TO THE ITEM
         auto item = dynamic_cast<widget::contact*>(row);
         if (item) {
@@ -124,7 +129,8 @@ main::main(BaseObjectType* cobject,
     m_list_contact->signal_row_activated().connect(activated);
     m_list_contact_active->signal_row_activated().connect(activated);
 
-    auto sort_func = [this](Gtk::ListBoxRow* a, Gtk::ListBoxRow* b){
+    auto sort_func = [this](Gtk::ListBoxRow* a, Gtk::ListBoxRow* b) {
+        utils::debug::scope_log log(DBG_LVL_5("gtox"), {});
         auto item_a = dynamic_cast<widget::contact*>(a);
         auto item_b = dynamic_cast<widget::contact*>(b);
         if (item_a == nullptr) {
@@ -141,6 +147,7 @@ main::main(BaseObjectType* cobject,
     load_contacts();
 
     m_update_interval = Glib::signal_timeout().connect(sigc::track_obj([this]() {
+        utils::debug::scope_log log(DBG_LVL_5("gtox"), {});
         m_toxcore->update();
         return true;
     }, *this), m_toxcore->update_optimal_interval());
@@ -154,6 +161,7 @@ main::main(BaseObjectType* cobject,
     m_popup_menu.show_all();
 
     m_list_contact->signal_button_press_event().connect_notify([this](GdkEventButton* event) {
+        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
         if (event->type == GDK_BUTTON_PRESS && event->button == 3) {
             auto item = m_list_contact->get_row_at_y(event->y);
             if (item) {
@@ -164,6 +172,7 @@ main::main(BaseObjectType* cobject,
     });
 
     contact_remove->signal_activate().connect([this]() {
+        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
         auto row = dynamic_cast<widget::contact*>(m_list_contact->get_selected_row());
         if (!row) {
             return;
@@ -195,6 +204,7 @@ main::main(BaseObjectType* cobject,
             ->signal_removed()
             .connect(sigc::track_obj(
                          [this](std::shared_ptr<toxmm::contact> contact) {
+        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
         for (auto widget: {m_list_contact, m_list_contact_active}) {
             for (auto item: widget->get_children()) {
                 auto item_r = dynamic_cast<widget::contact*>(item);
@@ -207,6 +217,7 @@ main::main(BaseObjectType* cobject,
     }, *this));
 
     auto update_status_icon = [this]() {
+        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
         switch (m_toxcore->property_status().get_value()) {
             case TOX_USER_STATUS_AWAY:
                 m_status_icon->set_from_icon_name("status_away", Gtk::BuiltinIconSize::ICON_SIZE_BUTTON);
@@ -224,6 +235,7 @@ main::main(BaseObjectType* cobject,
 
     m_toxcore->property_status().signal_changed().connect(sigc::track_obj(update_status_icon, *this));
     m_toxcore->property_connection().signal_changed().connect(sigc::track_obj([this, update_status_icon]() {
+        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
         if (m_toxcore->property_connection().get_value() == TOX_CONNECTION_NONE) {
             m_btn_status->set_sensitive(false);
             m_status_icon->set_from_icon_name("status_offline", Gtk::BuiltinIconSize::ICON_SIZE_BUTTON);
@@ -236,6 +248,7 @@ main::main(BaseObjectType* cobject,
     }, *this));
 
     m_toxcore->contact_manager()->signal_removed().connect(sigc::track_obj([this](std::shared_ptr<toxmm::contact> contact) {
+        utils::debug::scope_log log(DBG_LVL_2("gtox"), { contact->property_name_or_addr().get_value().raw() });
         //remove contact from list
         for (auto item_ : m_list_contact->get_children()) {
             auto item = dynamic_cast<widget::contact*>(item_);
@@ -256,6 +269,7 @@ main::main(BaseObjectType* cobject,
     }, *this));
 
     m_toxcore->contact_manager()->signal_added().connect(sigc::track_obj([this](std::shared_ptr<toxmm::contact> contact) {
+    utils::debug::scope_log log(DBG_LVL_2("gtox"), { contact->property_name_or_addr().get_value().raw() });
         //add contact to list
         auto item_builder = widget::contact::create(*this, contact);
         auto item = Gtk::manage(item_builder.raw());
@@ -279,18 +293,23 @@ main::main(BaseObjectType* cobject,
 
     m_action = Gio::SimpleActionGroup::create();
     m_action->add_action("online", [this]() {
+        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
         m_toxcore->property_status() = TOX_USER_STATUS_NONE;
     });
     m_action->add_action("busy", [this]() {
+        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
         m_toxcore->property_status() = TOX_USER_STATUS_BUSY;
     });
     m_action->add_action("away", [this]() {
+        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
         m_toxcore->property_status() = TOX_USER_STATUS_AWAY;
     });
     m_action->add_action("offline", [this]() {
+        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
         hide();
     });
     m_action->add_action("switch", [this]() {
+        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
         exit();
         gTox::instance()->activate();
     });
@@ -303,6 +322,7 @@ main::main(BaseObjectType* cobject,
                                    Glib::BINDING_DEFAULT | Glib::BINDING_SYNC_CREATE);
 
     auto update_request = [this, format = m_request_btn->get_label()]() {
+        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
         if (m_requests.empty())  {
             m_request_revealer->property_reveal_child() = false;
         } else {
@@ -318,11 +338,16 @@ main::main(BaseObjectType* cobject,
                                      update_request](
                                      toxmm::contactAddrPublic addr,
                                      Glib::ustring message) {
+        utils::debug::scope_log log(DBG_LVL_2("gtox"), {
+                                        std::string(addr),
+                                        message.raw()
+                                    });
         m_requests.push_back({addr, message});
         update_request();
     }, *this));
 
     m_request_btn->signal_clicked().connect([this, update_request]() {
+        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
         if (m_requests.empty()) {
             return;
         }
@@ -350,6 +375,7 @@ main::main(BaseObjectType* cobject,
 }
 
 utils::builder::ref<main> main::create(const Glib::ustring& file) {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), { file.raw() });
     return utils::builder::create_ref<main>(
                 "/org/gtox/ui/dialog_contact.ui",
                 "dialog_contact",
@@ -357,6 +383,7 @@ utils::builder::ref<main> main::create(const Glib::ustring& file) {
 }
 
 void main::load_contacts() {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
     for (auto item : m_list_contact->get_children()) {
         delete item;
     }
@@ -381,6 +408,7 @@ void main::load_contacts() {
 }
 
 main::~main() {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
     for (auto item : m_list_contact->get_children()) {
         delete item;
     }
@@ -388,14 +416,19 @@ main::~main() {
         delete item;
     }
     // save ?
-    //tox().save();
+    auto t = tox();
+    if (t) {
+        t->save();
+    }
 }
 
 void main::exit() {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
     delete this;
 }
 
 void main::chat_add(Gtk::Widget& headerbar, Gtk::Widget& body, Gtk::Button& prev, Gtk::Button& next) {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
     headerbar.get_style_context()->add_class("gtox-headerbar-left");
 
     m_stack_header->add(headerbar);
@@ -447,6 +480,7 @@ void main::chat_add(Gtk::Widget& headerbar, Gtk::Widget& body, Gtk::Button& prev
 }
 
 void main::chat_remove(Gtk::Widget& headerbar, Gtk::Widget& body) {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
     for (size_t i = 0; i < m_stack_data.size(); ++i) {
         if (m_stack_data[i].first == &headerbar && m_stack_data[i].second == &body) {
             m_stack_header->remove(headerbar);
@@ -467,6 +501,7 @@ void main::chat_remove(Gtk::Widget& headerbar, Gtk::Widget& body) {
 }
 
 void main::chat_show(Gtk::Widget& headerbar, Gtk::Widget& body, Gtk::Button& prev, Gtk::Button& next) {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
     for (size_t i = 0; i < m_stack_data.size(); ++i) {
         if (m_stack_data[i].first == &headerbar && m_stack_data[i].second == &body) {
             m_stack_header->set_visible_child(headerbar);
@@ -478,9 +513,11 @@ void main::chat_show(Gtk::Widget& headerbar, Gtk::Widget& body, Gtk::Button& pre
 }
 
 std::shared_ptr<toxmm::core>& main::tox() {
+    utils::debug::scope_log log(DBG_LVL_5("gtox"), {});
     return m_toxcore;
 }
 
 std::shared_ptr<class config>& main::config() {
+    utils::debug::scope_log log(DBG_LVL_5("gtox"), {});
     return m_config;
 }

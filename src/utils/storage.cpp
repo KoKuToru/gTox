@@ -1,16 +1,20 @@
 #include "storage.h"
 #include <glibmm.h>
 #include <giomm.h>
+#include "utils/debug.h"
 using namespace utils;
 
 storage::storage() {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
 }
 
 void storage::set_prefix_key(const std::string& prefix) {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), { prefix });
     m_prefix = prefix;
 }
 
 void storage::load(const std::initializer_list<std::string>& key, std::vector<uint8_t>& data) {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), { std::vector<std::string>(key), data });
    auto file_path = get_path_for_key(key);
 
     //open file
@@ -36,6 +40,7 @@ void storage::load(const std::initializer_list<std::string>& key, std::vector<ui
 }
 
 void storage::save(const std::initializer_list<std::string>& key, const std::vector<uint8_t>& data) {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), { std::vector<std::string>(key), data });
     auto file_path = get_path_for_key(key);
 
     //open file
@@ -55,6 +60,7 @@ void storage::save(const std::initializer_list<std::string>& key, const std::vec
 }
 
 std::string storage::get_path_for_key(const std::initializer_list<std::string>& key) {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), { std::vector<std::string>(key) });
     std::string file_path = Glib::build_filename(Glib::get_user_config_dir(),
                                                  "gtox");
     if (!m_prefix.empty()) {
@@ -66,4 +72,8 @@ std::string storage::get_path_for_key(const std::initializer_list<std::string>& 
     file_path += ".bin";
 
     return file_path;
+}
+
+storage::~storage() {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
 }

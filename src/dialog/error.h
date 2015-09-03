@@ -27,7 +27,7 @@ namespace dialog {
         public:
             error(Gtk::Window& parent, bool fatal, std::string title, std::string message);
             error(bool fatal, std::string title, std::string message);
-            ~error();
+            virtual ~error();
 
             int run();
     };

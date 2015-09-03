@@ -20,19 +20,23 @@
 #include "imagescaled.h"
 #include <iostream>
 #include <mutex>
+#include "utils/debug.h"
 
 using namespace widget;
 
 imagescaled::imagescaled(BaseObjectType* cobject,
                          utils::builder)
     : Gtk::Image(cobject) {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
     show();
 }
 
 imagescaled::~imagescaled() {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
 }
 
 bool imagescaled::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
+    utils::debug::scope_log log(DBG_LVL_5("gtox"), {});
     Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
 
     int w = get_allocated_width();
@@ -81,11 +85,13 @@ bool imagescaled::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
 }
 
 Gtk::SizeRequestMode imagescaled::get_request_mode_vfunc() const {
+    utils::debug::scope_log log(DBG_LVL_5("gtox"), {});
     return Gtk::SIZE_REQUEST_HEIGHT_FOR_WIDTH;
 }
 
 void imagescaled::get_preferred_width_vfunc(int& minimum_width,
                                             int& natural_width) const {
+    utils::debug::scope_log log(DBG_LVL_5("gtox"), {});
     Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
     auto padding = style->get_padding();
 
@@ -102,6 +108,7 @@ void imagescaled::get_preferred_width_vfunc(int& minimum_width,
 }
 void imagescaled::get_preferred_height_vfunc(int& minimum_height,
                                              int& natural_height) const {
+    utils::debug::scope_log log(DBG_LVL_5("gtox"), {});
     Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
     auto padding = style->get_padding();
 
@@ -121,6 +128,7 @@ void imagescaled::get_preferred_height_for_width_vfunc(
         int width,
         int& minimum_height,
         int& natural_height) const {
+    utils::debug::scope_log log(DBG_LVL_5("gtox"), {});
     Glib::RefPtr<Gtk::StyleContext> stylecontext = get_style_context();
     auto padding = stylecontext->get_padding();
 

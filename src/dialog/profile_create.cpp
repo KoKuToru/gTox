@@ -21,6 +21,8 @@
 #include "tox/types.h"
 #include "tox/core.h"
 #include <glibmm/i18n.h>
+#include "utils/debug.h"
+
 using namespace dialog;
 
 profile_create::profile_create(BaseObjectType* cobject,
@@ -29,6 +31,7 @@ profile_create::profile_create(BaseObjectType* cobject,
     Gtk::Assistant(cobject),
     m_aborted(true),
     m_path(path) {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), { path.raw() });
 
     property_resizable() = false;
     set_size_request(800, 600);
@@ -40,6 +43,7 @@ profile_create::profile_create(BaseObjectType* cobject,
 
     auto w = builder.get_widget<Gtk::Widget>("assistant_first_page");
     m_username->signal_changed().connect([this, w]() {
+        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
         toxmm::contactAddrPublic addr;
         m_last_toxcore = toxmm::core::create_state(m_username->get_text(), m_status->get_text(), addr);
 
@@ -63,12 +67,14 @@ profile_create::profile_create(BaseObjectType* cobject,
     });
 
     m_status->signal_changed().connect([this, w]() {
+        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
         toxmm::contactAddrPublic addr;
         m_last_toxcore = toxmm::core::create_state(m_username->get_text(), m_status->get_text(), addr);
     });
 }
 
 utils::builder::ref<profile_create> profile_create::create(const Glib::ustring& path) {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), { path.raw() });
     return utils::builder::create_ref<profile_create>(
                 "/org/gtox/ui/dialog_assistant.ui",
                 "dialog_assistant",
@@ -76,14 +82,17 @@ utils::builder::ref<profile_create> profile_create::create(const Glib::ustring& 
 }
 
 profile_create::~profile_create() {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
 }
 
 void profile_create::on_cancel() {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
     m_path.clear();
     hide();
 }
 
 void profile_create::on_apply() {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
     auto stream = Gio::File::create_for_path(m_file_tox->get_text())->create_file();
     auto bytes = Glib::Bytes::create((void*)m_last_toxcore.data(), m_last_toxcore.size());
     stream->write_bytes(bytes);
@@ -95,13 +104,15 @@ void profile_create::on_apply() {
 }
 
 void profile_create::on_close() {
-
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
 }
 
 bool profile_create::is_aborted() {
+    utils::debug::scope_log log(DBG_LVL_5("gtox"), {});
     return m_aborted;
 }
 
 Glib::ustring profile_create::get_path() {
+    utils::debug::scope_log log(DBG_LVL_5("gtox"), {});
     return m_path;
 }

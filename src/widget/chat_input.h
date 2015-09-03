@@ -33,6 +33,7 @@ namespace widget {
 
         public:
             chat_input(BaseObjectType* cobject, utils::builder);
+            virtual ~chat_input();
 
             Glib::ustring get_serialized_text();
     };

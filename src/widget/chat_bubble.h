@@ -45,7 +45,7 @@ namespace widget {
                         Glib::PropertyProxy_ReadOnly<Glib::ustring> name,
                         Glib::PropertyProxy_ReadOnly<toxmm::contactAddrPublic> addr,
                         Glib::DateTime time);
-            ~chat_bubble();
+            virtual ~chat_bubble();
 
             void add_row(Gtk::Widget& widget);
 

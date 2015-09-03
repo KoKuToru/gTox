@@ -21,6 +21,7 @@
 #include "tox/contact/contact.h"
 #include "tox/core.h"
 #include <glibmm/i18n.h>
+#include "utils/debug.h"
 
 namespace sigc {
     SIGC_FUNCTORS_DEDUCE_RESULT_TYPE_WITH_DECLTYPE
@@ -29,6 +30,7 @@ namespace sigc {
 using namespace widget;
 
 void chat_bubble::init(utils::builder builder) {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
     builder.get_widget("row_box", m_row_box);
     builder.get_widget("username", m_username);
     builder.get_widget("frame", m_frame);
@@ -40,6 +42,7 @@ void chat_bubble::init(utils::builder builder) {
 
     //change size of avatar based on the size of the rows in row_box
     m_frame->signal_size_allocate().connect_notify(sigc::track_obj([this](Gtk::Allocation& allocation) {
+        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
         auto w = std::min(64, allocation.get_height() - 5); //5px radius
         if (w != m_avatar->get_width()) {
             m_dispatcher.emit([this, w]() {
@@ -54,6 +57,7 @@ chat_bubble::chat_bubble(BaseObjectType* cobject,
                          Glib::PropertyProxy_ReadOnly<Glib::ustring> username,
                          Glib::PropertyProxy_ReadOnly<toxmm::contactAddrPublic> addr,
                          Glib::DateTime time): Gtk::Revealer(cobject) {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
     m_avatar = builder
                .get_widget_derived<avatar>("avatar",
                                            addr);
@@ -62,6 +66,7 @@ chat_bubble::chat_bubble(BaseObjectType* cobject,
     auto format = m_username->property_label().get_value();
     auto transform_text = [this, format, time](const Glib::ustring& input,
                           Glib::ustring& output) {
+        utils::debug::scope_log log(DBG_LVL_4("gtox"), { input.raw() });
         auto escaped_username = Glib::Markup::escape_text(input);
         auto datetime     = time.to_local();
         auto datetime_now = Glib::DateTime::create_now_local();
@@ -104,6 +109,7 @@ chat_bubble::chat_bubble(BaseObjectType* cobject,
                                                                   *this));
 
     Glib::signal_timeout().connect_seconds(sigc::track_obj([this, username, transform_text]() {
+        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
         Glib::ustring input = username;
         Glib::ustring output;
         transform_text(input, output);
@@ -113,10 +119,14 @@ chat_bubble::chat_bubble(BaseObjectType* cobject,
 }
 
 chat_bubble::~chat_bubble() {
-    //
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
 }
 
 utils::builder::ref<chat_bubble> chat_bubble::create(std::shared_ptr<toxmm::core> core, Glib::DateTime time) {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {
+                                    core->property_name_or_addr().get_value().raw(),
+                                    time.format("%c").raw()
+                                });
     return utils::builder::create_ref<chat_bubble>(
                 "/org/gtox/ui/chat_bubble_right.ui",
                 "chat_bubble",
@@ -126,6 +136,10 @@ utils::builder::ref<chat_bubble> chat_bubble::create(std::shared_ptr<toxmm::core
 }
 
 utils::builder::ref<chat_bubble> chat_bubble::create(std::shared_ptr<toxmm::contact> contact, Glib::DateTime time) {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {
+                                    contact->property_name_or_addr().get_value().raw(),
+                                    time.format("%c").raw()
+                                });
     return utils::builder::create_ref<chat_bubble>(
                 "/org/gtox/ui/chat_bubble_left.ui",
                 "chat_bubble",
@@ -135,5 +149,6 @@ utils::builder::ref<chat_bubble> chat_bubble::create(std::shared_ptr<toxmm::cont
 }
 
 void chat_bubble::add_row(Gtk::Widget& widget) {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
     m_row_box->add(widget);
 }

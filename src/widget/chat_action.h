@@ -50,6 +50,7 @@ namespace widget {
             chat_action(Glib::PropertyProxy_ReadOnly<Glib::ustring> name,
                         Glib::DateTime time,
                         const Glib::ustring& text);
+            virtual ~chat_action();
     };
 }
 #endif

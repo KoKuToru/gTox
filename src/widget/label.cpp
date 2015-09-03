@@ -21,6 +21,7 @@
 #include <pangomm/renderer.h>
 #include <cmath>
 #include <iostream>
+#include "utils/debug.h"
 
 using namespace widget;
 
@@ -29,6 +30,7 @@ label::label(const Glib::ustring& text)
       m_clip(nullptr),
       selection_index_from(0),
       selection_index_to(0) {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), { text.raw() });
     // add default name because
     // styling with "gtkmm_CustomObject_WidgetChatMessage" is not nice
 
@@ -47,9 +49,11 @@ label::label(const Glib::ustring& text)
 }
 
 label::~label() {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
 }
 
 bool label::is_shape(PangoLayoutRun* run) {
+    utils::debug::scope_log log(DBG_LVL_5("gtox"), {});
     if (!run) {
         return false;
     }
@@ -68,6 +72,7 @@ bool label::is_shape(PangoLayoutRun* run) {
 }
 
 bool label::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
+    utils::debug::scope_log log(DBG_LVL_5("gtox"), {});
     Glib::RefPtr<Gtk::StyleContext> stylecontext = get_style_context();
     auto padding = stylecontext->get_padding();
 
@@ -128,6 +133,7 @@ bool label::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
 }
 
 void label::set_text(const Glib::ustring& text) {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), { text.raw() });
     m_text = create_pango_layout("");
     m_text->set_wrap(Pango::WRAP_WORD_CHAR);
 
@@ -231,6 +237,7 @@ void label::set_text(const Glib::ustring& text) {
 }
 
 void label::force_redraw() {
+    utils::debug::scope_log log(DBG_LVL_5("gtox"), {});
     Glib::RefPtr<Gdk::Window> win = get_window();
     if (win) {
         win->invalidate(false);
@@ -238,11 +245,13 @@ void label::force_redraw() {
 }
 
 Gtk::SizeRequestMode label::get_request_mode_vfunc() const {
+    utils::debug::scope_log log(DBG_LVL_5("gtox"), {});
     return Gtk::SIZE_REQUEST_HEIGHT_FOR_WIDTH;
 }
 
 void label::get_preferred_width_vfunc(int& minimum_width,
                                                 int& natural_width) const {
+    utils::debug::scope_log log(DBG_LVL_5("gtox"), {});
     Glib::RefPtr<Gtk::StyleContext> stylecontext = get_style_context();
     auto padding = stylecontext->get_padding();
 
@@ -259,6 +268,7 @@ void label::get_preferred_height_for_width_vfunc(
     int width,
     int& minimum_height,
     int& natural_height) const {
+    utils::debug::scope_log log(DBG_LVL_5("gtox"), {});
     Glib::RefPtr<Gtk::StyleContext> stylecontext = get_style_context();
     auto padding = stylecontext->get_padding();
 
@@ -273,6 +283,7 @@ void label::get_preferred_height_for_width_vfunc(
 
 void label::get_preferred_height_vfunc(int& minimum_height,
                                                  int& natural_height) const {
+    utils::debug::scope_log log(DBG_LVL_5("gtox"), {});
     Glib::RefPtr<Gtk::StyleContext> stylecontext = get_style_context();
     auto padding = stylecontext->get_padding();
 
@@ -288,10 +299,12 @@ void label::get_preferred_height_vfunc(int& minimum_height,
 }
 
 Glib::ustring label::get_text() {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
     return m_text->get_text();
 }
 
 void label::on_selection(int from_x, int from_y, int to_x, int to_y) {
+    utils::debug::scope_log log(DBG_LVL_5("gtox"), {});
     if (from_x == to_x && from_y == to_y) {
         if (m_clip) {
             selection_index_from = 0;
@@ -354,6 +367,7 @@ void label::on_selection(int from_x, int from_y, int to_x, int to_y) {
 }
 
 Glib::ustring label::get_selection() {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
     if (!m_clip) {
         return Glib::ustring();
     }

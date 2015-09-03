@@ -20,6 +20,7 @@
 #include <gstreamermm/bus.h>
 #include <glibmm/i18n.h>
 #include <gstreamermm/uridecodebin.h>
+#include "utils/debug.h"
 
 namespace sigc {
     SIGC_FUNCTORS_DEDUCE_RESULT_TYPE_WITH_DECLTYPE
@@ -58,6 +59,7 @@ gstreamer::gstreamer():
     m_property_duration(*this, "gstreamer-duration", 0),
     m_property_volume(*this, "gstreamer-volume", 0.5),
     m_property_pixbuf(*this, "gstreamer-pixbuf") {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
 
     m_playbin = Gst::PlayBin::create();
     m_appsink = Gst::AppSink::create();
@@ -71,6 +73,7 @@ gstreamer::gstreamer():
     auto resolution = std::make_shared<std::pair<int, int>>();
 
     m_appsink->signal_new_preroll().connect(sigc::track_obj([this, sink = m_appsink, weak_dispatcher, resolution]() {
+        utils::debug::scope_log log(DBG_LVL_5("gtox"), {});
         auto preroll = sink->pull_preroll();
         if (!preroll) {
             return Gst::FLOW_OK;
@@ -98,6 +101,7 @@ gstreamer::gstreamer():
 
         auto frame = extract_frame(preroll, resolution);
         weak_dispatcher.emit([this, frame]() {
+            utils::debug::scope_log log(DBG_LVL_5("gtox"), {});
             gint64 pos, dur;
             if (m_playbin
                 && m_playbin->query_position(Gst::FORMAT_TIME, pos)
@@ -112,9 +116,11 @@ gstreamer::gstreamer():
 
     }, *this));
     m_appsink->signal_new_sample().connect(sigc::track_obj([this, sink = m_appsink, weak_dispatcher, resolution]() {
+        utils::debug::scope_log log(DBG_LVL_5("gtox"), {});
         auto sample = sink->pull_sample();
         auto frame = extract_frame(sample, resolution);
         weak_dispatcher.emit([this, frame]() {
+            utils::debug::scope_log log(DBG_LVL_5("gtox"), {});
             gint64 pos, dur;
             if (m_playbin
                 && m_playbin->query_position(Gst::FORMAT_TIME, pos)
@@ -134,6 +140,7 @@ gstreamer::gstreamer():
                 sigc::track_obj([this](
                                 const Glib::RefPtr<Gst::Bus>&,
                                 const Glib::RefPtr<Gst::Message>& message) {
+        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
         Glib::RefPtr<Gst::MessageError> error;
 
         switch (message->get_message_type()) {
@@ -168,15 +175,18 @@ gstreamer::gstreamer():
                         | Glib::BINDING_SYNC_CREATE);
 
     property_state().signal_changed().connect(sigc::track_obj([this]() {
+        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
         m_playbin->set_state(property_state());
     }, *this));
 }
 
 gstreamer::~gstreamer() {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
     property_state() = Gst::STATE_NULL;
 }
 
 std::pair<bool, bool> gstreamer::has_video_audio(Glib::ustring uri) {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), { uri.raw() });
     //http://gstreamer.freedesktop.org/data/doc/gstreamer/head/manual/html/chapter-metadata.html
     auto pipeline = Gst::Pipeline::create();
     auto decoder  = Gst::UriDecodeBin::create();
@@ -188,6 +198,7 @@ std::pair<bool, bool> gstreamer::has_video_audio(Glib::ustring uri) {
     decoder->property_uri() = uri;
 
     decoder->signal_pad_added().connect([sink](const Glib::RefPtr<Gst::Pad>& pad) {
+        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
         //Why am I doing this here ?
         auto sinkpad = sink->get_static_pad("sink");
         if (!sinkpad->is_linked()) {
@@ -226,6 +237,7 @@ std::pair<bool, bool> gstreamer::has_video_audio(Glib::ustring uri) {
 
 Glib::RefPtr<Gdk::Pixbuf> gstreamer::extract_frame(Glib::RefPtr<Gst::Sample> sample,
                                                    std::shared_ptr<std::pair<int, int>> resolution) {
+    utils::debug::scope_log log(DBG_LVL_5("gtox"), {});
     static auto null = Glib::RefPtr<Gdk::Pixbuf>();
     if (!sample) {
         return null;

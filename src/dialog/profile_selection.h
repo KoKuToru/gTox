@@ -50,7 +50,7 @@ namespace dialog {
 
             static utils::builder::ref<profile_selection> create(const std::vector<std::string>& accounts);
 
-            ~profile_selection();
+            virtual ~profile_selection();
 
             bool is_aborted();
             std::string get_path();

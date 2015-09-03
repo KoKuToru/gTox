@@ -17,6 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 **/
 #include "chat_action.h"
+#include "utils/debug.h"
 
 using namespace widget;
 
@@ -26,9 +27,15 @@ chat_action::label::label(Glib::PropertyProxy_ReadOnly<Glib::ustring> name,
     widget::label(message),
     m_name(name),
     m_time(time) {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {
+                                    name.get_value().raw(),
+                                    time.format("%c").raw(),
+                                    message.raw()
+                                });
 }
 
 Glib::ustring chat_action::label::get_selection() {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
     auto selection = widget::label::get_selection();
     if (selection.length() == get_text().length()) {
         selection = Glib::ustring::compose("[%2] %1 %3",
@@ -43,7 +50,11 @@ chat_action::chat_action(Glib::PropertyProxy_ReadOnly<Glib::ustring> name,
                            Glib::DateTime time,
                            const Glib::ustring& text):
     m_label(name, time.to_local(), text) {
-
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {
+                                    name.get_value().raw(),
+                                    time.format("%c").raw(),
+                                    text.raw()
+                                });
     m_username.show();
     m_username.get_style_context()->add_class("gtox-action-username");
     m_username.property_valign() = Gtk::ALIGN_START;
@@ -60,6 +71,11 @@ chat_action::chat_action(Glib::PropertyProxy_ReadOnly<Glib::ustring> name,
     m_hbox.add(m_label);
     property_reveal_child() = false;
     m_dispatcher.emit([this]() {
+        utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
         property_reveal_child() = true;
     });
+}
+
+chat_action::~chat_action() {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
 }

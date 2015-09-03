@@ -66,6 +66,7 @@ namespace widget {
             file(BaseObjectType* cobject,
                  utils::builder builder,
                  const std::shared_ptr<toxmm::file>& file);
+            virtual ~file();
             static utils::builder::ref<file> create(const std::shared_ptr<toxmm::file>& file);
             static utils::builder::ref<file> create(const Glib::ustring& file_path);
 

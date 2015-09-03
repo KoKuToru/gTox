@@ -24,6 +24,7 @@
 #include "tox/exception.h"
 #include "glib/gthread.h"
 #include "widget/avatar.h"
+#include "utils/debug.h"
 
 namespace sigc {
     SIGC_FUNCTORS_DEDUCE_RESULT_TYPE_WITH_DECLTYPE
@@ -35,6 +36,7 @@ profile_selection::profile_selection(BaseObjectType* cobject, utils::builder bui
     Gtk::Window(cobject),
     m_abort(true),
     m_quited(false) {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
 
     builder->get_widget("profile_list", m_profile_list);
     builder->get_widget("revealer", m_revealer);
@@ -52,6 +54,7 @@ profile_selection::profile_selection(BaseObjectType* cobject, utils::builder bui
     Gtk::Button*  profile_selection_select = builder.get_widget<Gtk::Button>("profile_select");
 
     profile_selection_list->signal_row_selected().connect([this, profile_selection_select](Gtk::ListBoxRow* row) {
+        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
         if (m_quited) {
             return;
         }
@@ -60,17 +63,20 @@ profile_selection::profile_selection(BaseObjectType* cobject, utils::builder bui
         }
     });
     profile_selection_list->signal_row_activated().connect([this, profile_selection_select](Gtk::ListBoxRow*) {
+        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
         if (profile_selection_select) {
             profile_selection_select->clicked();
         }
     });
 
     profile_selection_new->signal_clicked().connect([this](){
+        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
         m_abort = false;
         quit();
     });
 
     profile_selection_list->signal_button_press_event().connect_notify([this, profile_selection_list](GdkEventButton* event) {
+        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
         if (event->type == GDK_BUTTON_PRESS && event->button == 3) {
             auto item = profile_selection_list->get_row_at_y(event->y);
             if (item) {
@@ -81,7 +87,8 @@ profile_selection::profile_selection(BaseObjectType* cobject, utils::builder bui
     });
 
     profile_selection_select->set_sensitive(false);
-    profile_selection_select->signal_clicked().connect([this, profile_selection_list](){
+    profile_selection_select->signal_clicked().connect([this, profile_selection_list]() {
+        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
         m_abort = false;
 
         auto row = profile_selection_list->get_selected_row();
@@ -99,7 +106,8 @@ profile_selection::profile_selection(BaseObjectType* cobject, utils::builder bui
     m_popup_menu.accelerate(*this);
     m_popup_menu.show_all();
 
-    open_in_fm->signal_activate().connect([this, profile_selection_list](){
+    open_in_fm->signal_activate().connect([this, profile_selection_list]() {
+        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
         auto row = profile_selection_list->get_selected_row();
         if (row) {
             try {
@@ -114,9 +122,11 @@ profile_selection::profile_selection(BaseObjectType* cobject, utils::builder bui
 }
 
 void profile_selection::set_accounts(const std::vector<std::string>& accounts) {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
     m_accounts = accounts;
 
-    m_thread = Glib::Thread::create([this, accounts](){
+    m_thread = Glib::Thread::create([this, accounts]() {
+        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
         Glib::ustring tox_name;
         Glib::ustring tox_status;
         toxmm::contactAddrPublic tox_addr;
@@ -158,6 +168,7 @@ void profile_selection::set_accounts(const std::vector<std::string>& accounts) {
             }
 
             m_dispatcher.emit([this, tox_name, acc, tox_status, tox_error, can_write, tox_addr](){
+                utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
                 utils::builder builder = Gtk::Builder::create_from_resource("/org/gtox/ui/list_item_profile.ui");
                 Gtk::ListBoxRow* row = nullptr;
                 builder->get_widget("pofile_list_item", row);
@@ -201,7 +212,8 @@ void profile_selection::set_accounts(const std::vector<std::string>& accounts) {
                     Gtk::Revealer* revealer;
                     builder.get_widget("revealer", revealer);
                     revealer->reference();
-                    Glib::signal_idle().connect_once([revealer](){
+                    Glib::signal_idle().connect_once([revealer]() {
+                        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
                         revealer->set_reveal_child(true);
                         revealer->unreference();
                     });
@@ -217,6 +229,7 @@ void profile_selection::set_accounts(const std::vector<std::string>& accounts) {
 }
 
 utils::builder::ref<profile_selection> profile_selection::create(const std::vector<std::string>& accounts) {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
     return utils::builder::create_ref<profile_selection>(
                 "/org/gtox/ui/dialog_profile.ui",
                 "dialog_profile",
@@ -224,11 +237,13 @@ utils::builder::ref<profile_selection> profile_selection::create(const std::vect
 }
 
 void profile_selection::quit() {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
     m_quited = true;
     hide();
 }
 
 profile_selection::~profile_selection() {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
     m_quited = true;
     if (m_thread != nullptr) {
         //wait for thread :D
@@ -237,9 +252,11 @@ profile_selection::~profile_selection() {
 }
 
 bool profile_selection::is_aborted() {
+    utils::debug::scope_log log(DBG_LVL_5("gtox"), {});
     return m_abort;
 }
 
 std::string profile_selection::get_path() {
+    utils::debug::scope_log log(DBG_LVL_5("gtox"), {});
     return m_selected_path;
 }

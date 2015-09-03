@@ -74,7 +74,7 @@ namespace dialog {
 
         public:
             settings(main& main);
-            ~settings();
+            virtual ~settings();
 
             void activated();
     };

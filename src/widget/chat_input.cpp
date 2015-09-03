@@ -17,6 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 **/
 #include "chat_input.h"
+#include "utils/debug.h"
 
 namespace sigc {
     SIGC_FUNCTORS_DEDUCE_RESULT_TYPE_WITH_DECLTYPE
@@ -25,6 +26,7 @@ namespace sigc {
 using namespace widget;
 
 chat_input::chat_input(BaseObjectType* cobject, utils::builder): Gtk::TextView(cobject) {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
     m_buffer = get_buffer();
 
     m_bold_tag = m_buffer->create_tag("bold");
@@ -35,7 +37,8 @@ chat_input::chat_input(BaseObjectType* cobject, utils::builder): Gtk::TextView(c
     m_italic_tag->property_style() = Pango::STYLE_ITALIC;
     m_underline_tag->property_underline() = Pango::UNDERLINE_SINGLE;
 
-    signal_key_press_event().connect([this](GdkEventKey* event){
+    signal_key_press_event().connect([this](GdkEventKey* event) {
+        utils::debug::scope_log log(DBG_LVL_5("gtox"), {});
         // text formating
         Gtk::TextBuffer::iterator begin;
         Gtk::TextBuffer::iterator end;
@@ -87,7 +90,12 @@ chat_input::chat_input(BaseObjectType* cobject, utils::builder): Gtk::TextView(c
     }, false);
 }
 
+chat_input::~chat_input() {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
+}
+
 Glib::ustring chat_input::get_serialized_text() {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
     Glib::ustring text;
     auto begin = m_buffer->begin();
     auto end = m_buffer->end();

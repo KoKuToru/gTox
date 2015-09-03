@@ -32,7 +32,7 @@ namespace widget {
             avatar(BaseObjectType* cobject,
                    utils::builder,
                    toxmm::contactAddrPublic addr);
-            ~avatar();
+            virtual ~avatar();
 
             void save_for(toxmm::contactAddrPublic addr);
 
