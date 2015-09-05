@@ -30,6 +30,8 @@ namespace toxmm {
     class file_manager: public std::enable_shared_from_this<file_manager> {
             friend class contact;
         public:
+            ~file_manager();
+
             //signals
             using type_signal_recv          = sigc::signal<void, std::shared_ptr<file>&>;
             using type_signal_send          = sigc::signal<void, std::shared_ptr<file>&>;

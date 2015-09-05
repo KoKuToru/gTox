@@ -188,7 +188,7 @@ void file::pre_send_chunk_request(uint64_t position, size_t length) {
     if (length > 0) {
         send_chunk_request(position, length);
     }
-    m_property_position = std::max(m_property_position.get_value(), position);
+    m_property_position = position + length;
     if (length == 0) {
         //upload complete
         m_property_complete = true;
@@ -204,7 +204,7 @@ void file::pre_recv_chunk(uint64_t position, const std::vector<uint8_t>& data) {
     } else {
         recv_chunk(position, data);
     }
-    m_property_position = std::max(m_property_position.get_value(), position);
+    m_property_position = position + data.size();
 }
 
 std::shared_ptr<toxmm::core> file::core() {

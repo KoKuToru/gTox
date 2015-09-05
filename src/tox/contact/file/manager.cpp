@@ -418,6 +418,8 @@ void file_manager::load() {
         f->m_property_active = false;
         f->m_property_state = TOX_FILE_CONTROL(file->state());
         f->m_property_state_remote = TOX_FILE_CONTROL_PAUSE;
+        f->m_property_position = file->position();
+        f->m_property_progress = file->progress();
         f->init();
 
         //remove file from list when complete
@@ -486,4 +488,8 @@ void file_manager::save() {
                                  fbb.GetBufferPointer() + fbb.GetSize());
     c->storage()->save({ct->property_addr_public().get_value(),
                         "file-manager"}, content);
+}
+
+file_manager::~file_manager() {
+    save();
 }
