@@ -88,6 +88,7 @@ namespace toxmm {
 
             void pre_send_chunk_request(uint64_t position, size_t length);
             void pre_recv_chunk(uint64_t position, const std::vector<uint8_t>& data);
+            void seek(uint64_t position);
 
             Prop<uniqueId>         m_property_uuid;
             Prop<fileId>           m_property_id;

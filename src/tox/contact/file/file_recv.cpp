@@ -35,9 +35,7 @@ void file_recv::resume() {
     m_stream->seek(std::min(goffset(property_size()), m_stream->tell()),
                    Glib::SEEK_TYPE_SET);
     m_stream->truncate(m_stream->tell());
-    if (uint64_t(m_stream->tell()) != property_position()) {
-        //TODO: seek
-    }
+    seek(uint64_t(m_stream->tell()));
 }
 
 void file_recv::send_chunk_request(uint64_t, size_t) {

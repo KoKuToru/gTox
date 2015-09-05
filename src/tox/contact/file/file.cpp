@@ -93,6 +93,18 @@ file::file(std::shared_ptr<toxmm::file_manager> manager):
 
 void file::init() {
     property_state().signal_changed().connect(sigc::track_obj([this]() {
+        switch (property_state().get_value()) {
+            case TOX_FILE_CONTROL_RESUME:
+                resume();
+                break;
+            case TOX_FILE_CONTROL_CANCEL:
+                abort();
+                m_property_complete = true;
+                m_property_active = false;
+                break;
+            default:
+                break;
+        }
         //send changes
         auto c  = core();
         auto ct = contact();
@@ -114,18 +126,6 @@ void file::init() {
                 error != TOX_ERR_FILE_CONTROL_DENIED &&
                 error != TOX_ERR_FILE_CONTROL_ALREADY_PAUSED) {
             throw toxmm::exception(error);
-        }
-        switch (property_state().get_value()) {
-            case TOX_FILE_CONTROL_RESUME:
-                resume();
-                break;
-            case TOX_FILE_CONTROL_CANCEL:
-                abort();
-                m_property_complete = true;
-                m_property_active = false;
-                break;
-            default:
-                break;
         }
     }, *this));
     property_state_remote().signal_changed().connect(sigc::track_obj([this]() {
@@ -224,4 +224,20 @@ std::shared_ptr<toxmm::contact_manager> file::contact_manager() {
 std::shared_ptr<toxmm::contact> file::contact() {
     auto m = file_manager();
     return m ? m->contact() : nullptr;
+}
+
+void file::seek(uint64_t position) {
+    auto  c = core();
+    auto ct = contact();
+    if (c && ct) {
+        TOX_ERR_FILE_SEEK error;
+        tox_file_seek(c->toxcore(),
+                      ct->property_nr().get_value(),
+                      property_nr().get_value(),
+                      position,
+                      &error);
+        if (error != TOX_ERR_FILE_SEEK_OK) {
+            throw toxmm::exception(error);
+        }
+    }
 }
