@@ -7,6 +7,11 @@
 #include <mutex>
 #include <algorithm>
 #include <iostream>
+#include <typeinfo>
+#include <typeindex>
+#include <map>
+#include <mutex>
+#include <memory>
 
 #define DBG_LVL_1(tag) tag, 1, __FILE__, __LINE__, __PRETTY_FUNCTION__
 #define DBG_LVL_2(tag) tag, 2, __FILE__, __LINE__, __PRETTY_FUNCTION__
@@ -108,16 +113,28 @@ namespace utils {
         }
 
         template<typename T>
-        class track_obj: virtual public T, virtual public internal::tracker<T> {
-                using T::T;
+        class track_obj: public internal::tracker<T> {
+            public:
+                track_obj() {}
                 virtual ~track_obj() {}
+                track_obj(const track_obj& o) = delete;
+                void operator=(const track_obj& o) = delete;
         };
 
         namespace internal {
             class tracker_impl {
+                private:
+                    std::type_index m_type;
+                    using map_type = std::map<std::type_index, std::pair<std::string, int>>;
+                    using mtx_type = std::recursive_mutex;
+                    std::shared_ptr<map_type> m_map;
+                    std::shared_ptr<mtx_type> m_mtx;
+
                 public:
-                    tracker_impl(std::string name);
-                    virtual ~tracker_impl() {}
+                    tracker_impl(std::type_index type, const char* name);
+                    virtual ~tracker_impl();
+
+                    void print_leak();
             };
 
             template<typename T>
@@ -125,7 +142,7 @@ namespace utils {
                 private:
                     tracker_impl m_impl;
                 public:
-                    tracker(): m_impl("demo") {}
+                    tracker(): m_impl(std::type_index(typeid(T)), typeid(T).name()) {}
                     virtual ~tracker() {}
             };
         }

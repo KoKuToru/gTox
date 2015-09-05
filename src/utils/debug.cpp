@@ -7,6 +7,7 @@
 #include <iomanip>
 #include <unistd.h>
 #include <glibmm.h>
+#include <cxxabi.h>
 
 #define KNRM "\x1B[0m"
 #define KRED "\x1B[31m"
@@ -264,4 +265,191 @@ scope_log::scope_log(const char* tag,
 
 scope_log::~scope_log() {
     m_depth -= 1;
+}
+
+internal::tracker_impl::tracker_impl(std::type_index type, const char* name)
+    : m_type(type),
+      m_map([this]() {
+            static decltype (m_map) static_map = decltype (m_map)(new map_type());
+            return static_map;
+      }()),
+      m_mtx([this]() {
+            static decltype (m_mtx) static_mtx = decltype (m_mtx)(new mtx_type());
+            return static_mtx;
+      }()) {
+    static auto env_debug = std::stoi("0" + Glib::getenv("GTOX_DBG_TRACKOBJ")) == 1;
+    if (!env_debug) {
+        return;
+    }
+    static auto is_terminal = isatty(2) == 1;
+
+    if (name == nullptr) {
+        return;
+    }
+
+    std::lock_guard<mtx_type> lg(*m_mtx);
+
+    auto iter = m_map->find(type);
+    if (iter != m_map->end()) {
+        iter->second.second += 1;
+    } else {
+        int status;
+        char* demangled = abi::__cxa_demangle(name, nullptr, nullptr, &status);
+        if (status == 0) {
+            name = demangled;
+        }
+        m_map->insert({type, {name, 1}});
+        free(demangled);
+        iter = m_map->find(type);
+    }
+    std::clog << "+";
+    std::clog << "[";
+    if (is_terminal) {
+        std::clog << KMAG;
+    }
+    std::clog << std::setw(sizeof(void*)*2)
+              << std::setfill('0')
+              << std::right
+              << std::hex
+              << std::this_thread::get_id()
+              << std::dec
+              << std::setfill(' ');
+    if (is_terminal) {
+        std::clog << KNRM;
+    }
+    std::clog << "] ";
+    if (is_terminal) {
+        std::clog << KYEL;
+    }
+    std::clog << std::setw(sizeof(void*)*2)
+              << std::setfill('0')
+              << std::right
+              << std::hex
+              << (uint64_t)(void*)this
+              << std::dec
+              << std::setfill(' ');
+    if (is_terminal) {
+        std::clog << KNRM;
+    }
+    if (is_terminal) {
+        std::clog << KCYN;
+    }
+    std::clog << " " << iter->second.first;
+    if (is_terminal) {
+        std::clog << KRED;
+    }
+    std::clog << " " << iter->second.second;
+    if (is_terminal) {
+        std::clog << KNRM;
+    }
+    std::clog <<  " objs" << std::endl;
+}
+
+internal::tracker_impl::~tracker_impl() {
+    static auto env_debug = std::stoi("0" + Glib::getenv("GTOX_DBG_TRACKOBJ")) == 1;
+    if (!env_debug) {
+        return;
+    }
+    static auto is_terminal = isatty(2) == 1;
+
+    std::lock_guard<mtx_type> log(*m_mtx);
+
+    auto iter = m_map->find(m_type);
+
+    if (iter == m_map->end()) {
+        return;
+    }
+    iter->second.second -= 1;
+
+    std::clog << "-";
+    std::clog << "[";
+    if (is_terminal) {
+        std::clog << KMAG;
+    }
+    std::clog << std::setw(sizeof(void*)*2)
+              << std::setfill('0')
+              << std::right
+              << std::hex
+              << std::this_thread::get_id()
+              << std::dec
+              << std::setfill(' ');
+    if (is_terminal) {
+        std::clog << KNRM;
+    }
+    std::clog << "] ";
+    if (is_terminal) {
+        std::clog << KYEL;
+    }
+    std::clog << std::setw(sizeof(void*)*2)
+              << std::setfill('0')
+              << std::right
+              << std::hex
+              << (uint64_t)(void*)this
+              << std::dec
+              << std::setfill(' ');
+    if (is_terminal) {
+        std::clog << KNRM;
+    }
+    if (is_terminal) {
+        std::clog << KCYN;
+    }
+    std::clog << " " << iter->second.first;
+    if (is_terminal) {
+        std::clog << KRED;
+    }
+    std::clog << " " << iter->second.second;
+    if (is_terminal) {
+        std::clog << KNRM;
+    }
+    std::clog <<  " objs" << std::endl;
+}
+
+void internal::tracker_impl::print_leak() {
+    static auto env_debug = std::stoi("0" + Glib::getenv("GTOX_DBG_TRACKOBJ")) == 1;
+    if (!env_debug) {
+        return;
+    }
+    static auto is_terminal = isatty(fileno(stderr)) == 1;
+    //Display leaked memory
+    int count = 0;
+    for (auto& item: *m_map) {
+        if (item.second.second == 0) {
+            continue;
+        }
+        count += item.second.second;
+    }
+    if (count == 0) {
+        return;
+    }
+    std::cerr << "\nLeaked memory: \n";
+    for (auto& item: *m_map) {
+        if (item.second.second != 0) {
+            if (is_terminal) {
+                std::clog << KCYN;
+            }
+            std::cerr << " " << item.second.first;
+            if (is_terminal) {
+                std::clog << KRED;
+            }
+            std::cerr << " " << item.second.second;
+            if (is_terminal) {
+                std::clog << KNRM;
+            }
+            std::cerr <<  " objs\n";
+        }
+    }
+    if (is_terminal) {
+        std::cerr << KRED;
+    }
+    std::cerr << count << " objs leaked !\n";
+    if (is_terminal) {
+        std::cerr << KNRM;
+    }
+    std::cerr << std::endl;
+}
+
+__attribute__((destructor))
+static void destroy_app() {
+    internal::tracker_impl dummy(std::type_index(typeid (void)), nullptr);
+    dummy.print_leak();
 }
