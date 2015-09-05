@@ -32,14 +32,11 @@ namespace dialog {
             bool m_abort;
             bool m_quited;
             std::string m_selected_path;
-            Glib::Thread* m_thread = nullptr;
 
             Gtk::ListBox* m_profile_list;
             Gtk::Revealer* m_revealer;
 
             Gtk::Menu m_popup_menu;
-
-            utils::dispatcher m_dispatcher;
 
             void quit();
 
