@@ -23,9 +23,10 @@
 #include <gtkmm.h>
 #include "utils/builder.h"
 #include "utils/dispatcher.h"
+#include "utils/debug.h"
 
 namespace dialog {
-    class profile_selection : public Gtk::Window {
+    class profile_selection : public Gtk::Window, public utils::debug::track_obj<profile_selection> {
         private:
             std::vector<std::string> m_accounts;
             bool m_abort;

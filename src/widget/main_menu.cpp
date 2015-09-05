@@ -25,7 +25,6 @@
 #include "tox/exception.h"
 #include "dialog/settings.h"
 #include "dialog/main.h"
-#include "utils/debug.h"
 
 using namespace widget;
 

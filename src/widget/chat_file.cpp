@@ -20,7 +20,6 @@
 #include "tox/contact/file/file.h"
 #include <iostream>
 #include <mutex>
-#include "utils/debug.h"
 
 namespace sigc {
     SIGC_FUNCTORS_DEDUCE_RESULT_TYPE_WITH_DECLTYPE

@@ -20,7 +20,6 @@
 #include "settings.h"
 #include "main.h"
 #include <glibmm/i18n.h>
-#include "utils/debug.h"
 
 using namespace dialog;
 

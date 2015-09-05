@@ -21,9 +21,10 @@
 #define WIDGETCHATMESSAGE_H
 
 #include <gtkmm.h>
+#include "utils/debug.h"
 
 namespace widget {
-    class label : public Gtk::DrawingArea {
+    class label : public Gtk::DrawingArea, public utils::debug::track_obj<label> {
         private:
             Glib::RefPtr<Pango::Layout> m_text;
             Cairo::RefPtr<Cairo::Region> m_clip;

@@ -17,7 +17,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 **/
 #include "chat_input.h"
-#include "utils/debug.h"
 
 namespace sigc {
     SIGC_FUNCTORS_DEDUCE_RESULT_TYPE_WITH_DECLTYPE

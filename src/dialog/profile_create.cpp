@@ -21,7 +21,6 @@
 #include "tox/types.h"
 #include "tox/core.h"
 #include <glibmm/i18n.h>
-#include "utils/debug.h"
 
 using namespace dialog;
 

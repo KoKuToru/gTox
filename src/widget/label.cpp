@@ -21,7 +21,6 @@
 #include <pangomm/renderer.h>
 #include <cmath>
 #include <iostream>
-#include "utils/debug.h"
 
 using namespace widget;
 

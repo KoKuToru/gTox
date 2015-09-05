@@ -27,8 +27,6 @@
 #include "dialog/profile_create.h"
 #include "dialog/main.h"
 
-#include "utils/debug.h"
-
 #include "config.h"
 
 namespace sigc {

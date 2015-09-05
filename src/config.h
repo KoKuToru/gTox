@@ -19,8 +19,9 @@
 #ifndef GTOX_CONFIG_H
 #define GTOX_CONFIG_H
 #include <glibmm.h>
+#include "utils/debug.h"
 
-class config_global: public Glib::Object {
+class config_global: public Glib::Object, public utils::debug::track_obj<config_global> {
         friend class config;
     public:
         Glib::PropertyProxy<bool> property_connection_udp();

@@ -24,7 +24,6 @@
 #include "tox/exception.h"
 #include "glib/gthread.h"
 #include "widget/avatar.h"
-#include "utils/debug.h"
 
 namespace sigc {
     SIGC_FUNCTORS_DEDUCE_RESULT_TYPE_WITH_DECLTYPE

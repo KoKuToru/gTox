@@ -24,9 +24,10 @@
 #include <gstreamermm/playbin.h>
 #include <gstreamermm/appsink.h>
 #include "dispatcher.h"
+#include "utils/debug.h"
 
 namespace utils {
-    class gstreamer: public Glib::Object {
+    class gstreamer: public Glib::Object, public debug::track_obj<gstreamer> {
         private:
             utils::dispatcher m_dispatcher;
 

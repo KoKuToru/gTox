@@ -24,7 +24,7 @@
 #include "tox/contact/file/file.h"
 #include "tox/contact/file/manager.h"
 #include <flatbuffers/flatbuffers.h>
-#include "utils/debug.h"
+
 using namespace widget;
 
 utils::builder::ref<contact> contact::create(dialog::main& main, std::shared_ptr<toxmm::contact> contact, bool for_notify) {

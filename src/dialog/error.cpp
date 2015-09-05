@@ -20,7 +20,6 @@
 #include "error.h"
 #include <glibmm/i18n.h>
 #include <glibmm/markup.h>
-#include "utils/debug.h"
 
 using namespace dialog;
 

@@ -20,8 +20,9 @@
 #ifndef GTOX_APPLICATION
 #define GTOX_APPLICATION
 #include <gtkmm.h>
+#include "utils/debug.h"
 
-class gTox : public Gtk::Application {
+class gTox : public Gtk::Application, public utils::debug::track_obj<gTox> {
     public:
         gTox();
         static Glib::RefPtr<gTox> create();

@@ -2,9 +2,10 @@
 #define STORAGE_H
 #include <string>
 #include "tox/storage.h"
+#include "utils/debug.h"
 
 namespace utils {
-    class storage : public toxmm::storage {
+    class storage : public toxmm::storage, public debug::track_obj<storage> {
             friend class main;
         private:
             std::string m_prefix;

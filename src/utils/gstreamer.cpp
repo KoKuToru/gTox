@@ -20,7 +20,6 @@
 #include <gstreamermm/bus.h>
 #include <glibmm/i18n.h>
 #include <gstreamermm/uridecodebin.h>
-#include "utils/debug.h"
 
 namespace sigc {
     SIGC_FUNCTORS_DEDUCE_RESULT_TYPE_WITH_DECLTYPE

@@ -19,7 +19,6 @@
 #include "config.h"
 #include <iostream>
 #include <giomm.h>
-#include "utils/debug.h"
 #include "resources/flatbuffers/generated/ConfigGlobal_generated.h"
 #include "resources/flatbuffers/generated/Config_generated.h"
 

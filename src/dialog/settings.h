@@ -22,10 +22,11 @@
 
 #include "utils/builder.h"
 #include "config.h"
+#include "utils/debug.h"
 
 namespace dialog {
     class main;
-    class settings : public Gtk::Window {
+    class settings : public Gtk::Window, public utils::debug::track_obj<settings> {
         private:
             utils::builder m_builder;
             main& m_main;

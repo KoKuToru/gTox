@@ -21,7 +21,6 @@
 #include "tox/contact/contact.h"
 #include "tox/core.h"
 #include <glibmm/i18n.h>
-#include "utils/debug.h"
 
 namespace sigc {
     SIGC_FUNCTORS_DEDUCE_RESULT_TYPE_WITH_DECLTYPE

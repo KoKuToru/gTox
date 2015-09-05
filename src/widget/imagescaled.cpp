@@ -20,7 +20,6 @@
 #include "imagescaled.h"
 #include <iostream>
 #include <mutex>
-#include "utils/debug.h"
 
 using namespace widget;
 
