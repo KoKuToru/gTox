@@ -28,6 +28,7 @@ using namespace widget;
 videoplayer::videoplayer(BaseObjectType* cobject,
                          utils::builder builder):
     Gtk::Revealer(cobject) {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
 
     builder.get_widget("video_control", m_eventbox);
     builder.get_widget("video_revealer", m_video_revealer);
@@ -60,6 +61,7 @@ videoplayer::videoplayer(BaseObjectType* cobject,
                              m_position->property_label(),
                              flags,
                              [](const gint64& input, Glib::ustring& output) {
+        utils::debug::scope_log log(DBG_LVL_4("gtox"), { (long long)(input) });
         output = Glib::ustring::compose(
                     "%1:%2:%3",
                     Glib::ustring::format(std::setw(3), std::setfill(L'0'), std::right, Gst::get_hours(input)),
@@ -72,6 +74,7 @@ videoplayer::videoplayer(BaseObjectType* cobject,
                              m_duration->property_label(),
                              flags,
                              [](const gint64& input, Glib::ustring& output) {
+        utils::debug::scope_log log(DBG_LVL_4("gtox"), { (long long)(input) });
         output = Glib::ustring::compose(
                     "%1:%2:%3",
                     Glib::ustring::format(std::setw(3), std::setfill(L'0'), std::right, Gst::get_hours(input)),
@@ -82,6 +85,7 @@ videoplayer::videoplayer(BaseObjectType* cobject,
 
     //Button handling
     auto property_state_update = [this]() {
+        utils::debug::scope_log log(DBG_LVL_4("gtox"), {});
         auto state = m_streamer.property_state().get_value();
         bool playing = state == Gst::STATE_PLAYING;
         bool paused  = state == Gst::STATE_PAUSED;
@@ -116,16 +120,19 @@ videoplayer::videoplayer(BaseObjectType* cobject,
                              flags | Glib::BINDING_INVERT_BOOLEAN));
 
     m_play_btn->signal_clicked().connect(sigc::track_obj([this]() {
+        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
         if (m_play_btn->property_active()) {
            m_streamer.property_state() = Gst::STATE_PLAYING;
         }
     }, *this));
     m_pause_btn->signal_clicked().connect(sigc::track_obj([this]() {
+        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
         if (m_pause_btn->property_active()) {
             m_streamer.property_state() = Gst::STATE_PAUSED;
         }
     }, *this));
     m_stop_btn->signal_clicked().connect(sigc::track_obj([this]() {
+        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
         if (m_stop_btn->property_active()) {
             m_streamer.property_state() = Gst::STATE_NULL;
             m_streamer.property_state() = Gst::STATE_PAUSED;
@@ -133,6 +140,7 @@ videoplayer::videoplayer(BaseObjectType* cobject,
     }, *this));
 
     m_streamer.property_uri().signal_changed().connect(sigc::track_obj([this]() {
+        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
         m_streamer.property_state() = Gst::STATE_PAUSED;
     }, *this));
 
@@ -144,10 +152,11 @@ videoplayer::videoplayer(BaseObjectType* cobject,
 }
 
 videoplayer::~videoplayer() {
-
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
 }
 
 utils::builder::ref<videoplayer> videoplayer::create() {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
     return utils::builder::create_ref<videoplayer>(
                 "/org/gtox/ui/videoplayer.ui",
                 "videoplayer");

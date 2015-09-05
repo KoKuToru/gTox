@@ -21,11 +21,11 @@
 
 #include <gtkmm.h>
 #include "label.h"
-
+#include "utils/debug.h"
 #include "utils/dispatcher.h"
 
 namespace widget {
-    class chat_action : public Gtk::Revealer {
+    class chat_action : public Gtk::Revealer, public utils::debug::track_obj<chat_action> {
         private:
             class label: public widget::label {
                 private:
@@ -50,6 +50,7 @@ namespace widget {
             chat_action(Glib::PropertyProxy_ReadOnly<Glib::ustring> name,
                         Glib::DateTime time,
                         const Glib::ustring& text);
+            virtual ~chat_action();
     };
 }
 #endif

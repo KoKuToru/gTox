@@ -28,10 +28,11 @@
 #include <glibmm/exception.h>
 #include <gstreamermm/init.h>
 #include "tox/exception.h"
-
+#include "utils/debug.h"
 #include "gtox.h"
 
 void print_copyright() {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
     std::clog
         << "gTox a GTK-based tox-client - https://github.com/KoKuToru/gTox.git"
         << std::endl << std::endl << "Copyright (C) 2014  Luca Béla Palkovics"
@@ -57,11 +58,13 @@ void print_copyright() {
 }
 
 bool translation_working() {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
     const char* TRANSLATION_CHECK = "TRANSLATION_CHECKER";
     return !(_(TRANSLATION_CHECK) == TRANSLATION_CHECK);
 }
 
 bool find_translation_domain() {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
     // Translation search locations in order of preference
     std::vector<std::string> locations {"./i18n",
         bindtextdomain("gtox", nullptr), // default location
@@ -77,6 +80,7 @@ bool find_translation_domain() {
 }
 
 bool setup_translation() {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
     // Translations returns in UTF-8
     bind_textdomain_codeset("gtox", "UTF-8");
     textdomain("gtox");
@@ -88,6 +92,7 @@ bool setup_translation() {
 }
 
 void terminate_handler() {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
     std::exception_ptr exptr = std::current_exception();
     try {
         std::rethrow_exception(exptr);
@@ -105,8 +110,13 @@ void terminate_handler() {
     }
     abort();
 }
-
+#include <assert.h>
 int main(int argc, char* argv[]) {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {
+                                  argc,
+                                  utils::debug::parameter(argv, argc),
+                              });
+
     std::set_terminate(terminate_handler);
     Glib::add_exception_handler(sigc::ptr_fun(&terminate_handler));
 

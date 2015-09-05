@@ -26,9 +26,10 @@
 #include "widget/imagescaled.h"
 #include "widget/videoplayer.h"
 #include <thread>
+#include "utils/debug.h"
 
 namespace widget {
-    class file: public Gtk::Frame {
+    class file: public Gtk::Frame, public utils::debug::track_obj<file> {
         private:
             std::shared_ptr<toxmm::file> m_file;
             utils::dispatcher m_dispatcher;
@@ -66,6 +67,7 @@ namespace widget {
             file(BaseObjectType* cobject,
                  utils::builder builder,
                  const std::shared_ptr<toxmm::file>& file);
+            virtual ~file();
             static utils::builder::ref<file> create(const std::shared_ptr<toxmm::file>& file);
             static utils::builder::ref<file> create(const Glib::ustring& file_path);
 

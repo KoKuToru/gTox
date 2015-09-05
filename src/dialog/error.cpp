@@ -23,8 +23,9 @@
 
 using namespace dialog;
 
-error::error(Gtk::Window& parent,bool fatal,std::string title, std::string message):
+error::error(Gtk::Window& parent,bool fatal, std::string title, std::string message):
     MessageDialog(parent, title, false, fatal?Gtk::MESSAGE_ERROR:Gtk::MESSAGE_WARNING, Gtk::BUTTONS_CLOSE, true) {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), { fatal, title, message });
     set_secondary_text(((fatal)?_("gTox can't continue.\n"
                                   "The following problem occurred:\n"
                                   "\n"
@@ -43,6 +44,7 @@ error::error(Gtk::Window& parent,bool fatal,std::string title, std::string messa
 
 error::error(bool fatal,std::string title, std::string message):
     MessageDialog(title, false, fatal?Gtk::MESSAGE_ERROR:Gtk::MESSAGE_WARNING, Gtk::BUTTONS_CLOSE, true) {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), { fatal, title, message });
     set_secondary_text(((fatal)?_("gTox can't continue.\n"
                                   "The following problem occurred:\n"
                                   "\n"
@@ -60,9 +62,11 @@ error::error(bool fatal,std::string title, std::string message):
 }
 
 error::~error() {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
 }
 
 int error::run() {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
     switch(MessageDialog::run()) {
         case 213:
             if (!Gio::AppInfo::launch_default_for_uri("https://github.com/KoKuToru/gTox/issues/new")) {

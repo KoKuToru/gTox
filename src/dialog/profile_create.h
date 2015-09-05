@@ -23,9 +23,10 @@
 
 #include <gtkmm.h>
 #include "utils/builder.h"
+#include "utils/debug.h"
 
 namespace dialog {
-    class profile_create : public Gtk::Assistant {
+    class profile_create : public Gtk::Assistant, public utils::debug::track_obj<profile_create> {
         private:
             bool m_aborted;
             Glib::ustring m_path;

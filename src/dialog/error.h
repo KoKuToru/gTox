@@ -21,13 +21,14 @@
 #define DIALOGERROR_H
 
 #include <gtkmm.h>
+#include "utils/debug.h"
 
 namespace dialog {
-    class error : public Gtk::MessageDialog {
+    class error : public Gtk::MessageDialog, public utils::debug::track_obj<error> {
         public:
             error(Gtk::Window& parent, bool fatal, std::string title, std::string message);
             error(bool fatal, std::string title, std::string message);
-            ~error();
+            virtual ~error();
 
             int run();
     };

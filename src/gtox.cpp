@@ -41,6 +41,7 @@ gTox::gTox()
       m_config_path(Glib::build_filename(Glib::get_user_config_dir(), "tox")),
       m_avatar_path(Glib::build_filename(m_config_path, "avatars")),
       m_config_global_path(Glib::build_filename(Glib::get_user_config_dir(), "gtox")) {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
 
     Glib::set_application_name(_("gTox"));
 
@@ -63,10 +64,12 @@ gTox::gTox()
                                                    Gtk::Settings::get_default()->property_gtk_application_prefer_dark_theme(),
                                                    Glib::BINDING_DEFAULT | Glib::BINDING_BIDIRECTIONAL | Glib::BINDING_SYNC_CREATE,
                                                    [](const int& value_in, bool& value_out) {
+                                                       utils::debug::scope_log log(DBG_LVL_4("gtox"), { value_in, value_out });
                                                        value_out = value_in == 0;
                                                        return true;
                                                    },
                                                    [](const bool& value_in, int& value_out) {
+                                                       utils::debug::scope_log log(DBG_LVL_4("gtox"), { value_in, value_out });
                                                        value_out = value_in ? 0 : 1;
                                                        return true;
                                                    });
@@ -79,6 +82,7 @@ gTox::gTox()
                 GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
 
     auto update_style = [css]() {
+        utils::debug::scope_log a(DBG_LVL_2("gtox"), {});
         bool dark = Gtk::Settings::get_default()
                     ->property_gtk_application_prefer_dark_theme();
         css->load_from_resource(dark?"/org/gtox/style/dark.css":"/org/gtox/style/light.css");
@@ -91,6 +95,7 @@ gTox::gTox()
 }
 
 Glib::RefPtr<gTox> gTox::create() {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
     if (!m_instance) {
         m_instance = Glib::RefPtr<gTox>( new gTox() );
     }
@@ -98,17 +103,19 @@ Glib::RefPtr<gTox> gTox::create() {
 }
 
 Glib::RefPtr<gTox> gTox::instance() {
+    utils::debug::scope_log log(DBG_LVL_5("gtox"), {});
     return m_instance;
 }
 
 void gTox::on_activate() {
-
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
     Glib::Dir dir(m_config_path);
     std::vector<std::string> accounts(dir.begin(), dir.end());
     accounts.resize(std::distance(
         accounts.begin(),
         std::remove_if(
             accounts.begin(), accounts.end(), [](const std::string& name) {
+                utils::debug::scope_log log(DBG_LVL_3("gtox"), { name });
                 std::string state_ext = ".tox";
                 bool f_tox = !(name.size() > state_ext.size()
                                && name.substr(name.size() - state_ext.size(),
@@ -120,6 +127,7 @@ void gTox::on_activate() {
     //filter files with same name .tox
     //1. remove extension
     std::transform(accounts.begin(), accounts.end(), accounts.begin(), [](std::string a) {
+        utils::debug::scope_log log(DBG_LVL_3("gtox"), { a });
         auto a_p = a.find_last_of(".");
         if (a_p != std::string::npos) {
             a.resize(a_p);
@@ -132,6 +140,7 @@ void gTox::on_activate() {
     accounts.erase(std::unique(accounts.begin(), accounts.end()), accounts.end());
     //4. make the full paths
     std::transform(accounts.begin(), accounts.end(), accounts.begin(), [this](const std::string& name) {
+        utils::debug::scope_log log(DBG_LVL_3("gtox"), { name });
         return Glib::build_filename(m_config_path, name + ".tox");
     });
 
@@ -146,6 +155,7 @@ void gTox::on_activate() {
     auto profile_ptr = profile.raw();
     if (profile->get_path().empty()) {
         profile->signal_hide().connect_notify([this, profile_ptr](){
+            utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
             if (!profile_ptr->get_path().empty()) {
                 open(Gio::File::create_for_path(profile_ptr->get_path()));
             } else if (!profile_ptr->is_aborted()) {
@@ -159,6 +169,7 @@ void gTox::on_activate() {
 
                 auto assistant_ptr = assistant.raw();
                 assistant->signal_hide().connect_notify([this, assistant_ptr]() {
+                    utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
                     Glib::ustring path = assistant_ptr->get_path();
                     remove_window(*assistant_ptr);
 
@@ -183,6 +194,7 @@ void gTox::on_activate() {
 
 void gTox::on_open(const Gio::Application::type_vec_files& files,
                    const Glib::ustring& hint) {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
     //open file !
     for (auto file : files) {
         mark_busy();
@@ -197,6 +209,7 @@ void gTox::on_open(const Gio::Application::type_vec_files& files,
 }
 
 int gTox::on_command_line(const Glib::RefPtr<Gio::ApplicationCommandLine>& command_line) {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
     int argc = 0;
     auto argv = command_line ? command_line->get_arguments(argc) : nullptr;
     std::vector<std::string> arguments;

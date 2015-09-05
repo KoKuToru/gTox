@@ -19,7 +19,6 @@
 #include "config.h"
 #include <iostream>
 #include <giomm.h>
-
 #include "resources/flatbuffers/generated/ConfigGlobal_generated.h"
 #include "resources/flatbuffers/generated/Config_generated.h"
 
@@ -114,6 +113,7 @@ config_global::config_global():
     m_property_profile_remember(*this, "config-profile-remember", false),
     m_property_video_default_device(*this, "config-video-default-device")
 {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
     load_flatbuffer();
 
     //setup properties
@@ -152,6 +152,7 @@ config::config(Glib::ustring config_file):
     m_property_contacts_compact_list  (*this, "config-contacts-compact-list", false),
     m_property_contacts_display_active(*this, "config-contacts-display-active", true)
 {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), { config_file.raw() });
     load_flatbuffer();
 
     //setup settings:
@@ -177,11 +178,13 @@ config::config(Glib::ustring config_file):
 }
 
 class config_global& config::global() {
+    utils::debug::scope_log log(DBG_LVL_5("gtox"), {});
     static class config_global global;
     return global;
 }
 
 void config::load_flatbuffer() {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
     if (!Glib::file_test(m_config_file, Glib::FILE_TEST_IS_REGULAR)) {
         save_flatbuffer();
     }
@@ -217,6 +220,7 @@ void config::load_flatbuffer() {
 }
 
 void config::save_flatbuffer() {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
     flatbuffers::FlatBufferBuilder fbb;
 
     auto file_save_path = fbb.CreateString(property_file_save_path().get_value());
@@ -257,6 +261,7 @@ void config::save_flatbuffer() {
 }
 
 void config_global::load_flatbuffer() {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
     if (!Glib::file_test(m_config_file, Glib::FILE_TEST_IS_REGULAR)) {
         save_flatbuffer();
     }
@@ -289,6 +294,7 @@ void config_global::load_flatbuffer() {
 }
 
 void config_global::save_flatbuffer() {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
     flatbuffers::FlatBufferBuilder fbb;
 
     auto proxy_host = fbb.CreateString(property_proxy_host().get_value());

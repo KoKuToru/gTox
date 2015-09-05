@@ -39,6 +39,7 @@ chat::chat(dialog::main& main, std::shared_ptr<toxmm::contact> contact):
     m_contact(contact),
     m_main(main),
     m_builder(Gtk::Builder::create_from_resource("/org/gtox/ui/dialog_chat.ui")) {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), { contact->property_name_or_addr().get_value().raw() });
 
     m_builder.get_widget("chat_headerbar_attached", m_headerbar_attached);
     m_builder.get_widget("chat_headerbar_detached", m_headerbar_detached);
@@ -77,6 +78,7 @@ chat::chat(dialog::main& main, std::shared_ptr<toxmm::contact> contact):
                                  m_input_revealer->property_reveal_child(),
                                  Glib::BINDING_DEFAULT | Glib::BINDING_SYNC_CREATE,
                                  [](const TOX_CONNECTION& connection, bool& is_online) {
+        utils::debug::scope_log log(DBG_LVL_5("gtox"), { connection });
         is_online = connection != TOX_CONNECTION_NONE;
         return true;
     });
@@ -87,6 +89,7 @@ chat::chat(dialog::main& main, std::shared_ptr<toxmm::contact> contact):
 
     set_titlebar(*m_headerbar_detached);
     m_btn_detach->signal_clicked().connect(sigc::track_obj([this]() {
+        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
         m_main.property_gravity() = Gdk::GRAVITY_NORTH_WEST;
         int x, y;
         m_main.get_position(x, y);
@@ -97,19 +100,23 @@ chat::chat(dialog::main& main, std::shared_ptr<toxmm::contact> contact):
         show();
     }, *this));
     m_btn_attach->signal_clicked().connect(sigc::track_obj([this]() {
+        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
         remove();
         hide();
         m_main.chat_add(*m_headerbar_attached, *m_body, *m_btn_prev, *m_btn_next);
     }, *this));
     m_btn_close_attached->signal_clicked().connect(sigc::track_obj([this]() {
+        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
         m_main.chat_remove(*m_headerbar_attached, *m_body);
     }, *this));
     m_btn_close_detached->signal_clicked().connect(sigc::track_obj([this]() {
+        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
         remove();
         hide();
     }, *this));
 
     m_input->signal_key_press_event().connect(sigc::track_obj([this](GdkEventKey* event) {
+        utils::debug::scope_log log(DBG_LVL_3("gtox"), {});
         auto text_buffer = m_input->get_buffer();
         if (event->keyval == GDK_KEY_Return && !(event->state & GDK_SHIFT_MASK)) {
             if (text_buffer->begin() != text_buffer->end()) {
@@ -129,6 +136,7 @@ chat::chat(dialog::main& main, std::shared_ptr<toxmm::contact> contact):
     }, *this), false);
 
     m_contact->signal_send_message().connect(sigc::track_obj([this](Glib::ustring message, std::shared_ptr<toxmm::receipt>) {
+        utils::debug::scope_log log(DBG_LVL_2("gtox"), { message.raw() });
         auto time = Glib::DateTime::create_now_utc();
         add_chat_line(
             LINE_APPEND_APPENDABLE,
@@ -140,6 +148,7 @@ chat::chat(dialog::main& main, std::shared_ptr<toxmm::contact> contact):
     }, *this));
 
     m_contact->signal_recv_message().connect(sigc::track_obj([this](Glib::ustring message) {
+        utils::debug::scope_log log(DBG_LVL_2("gtox"), { message.raw() });
         auto time = Glib::DateTime::create_now_utc();
         add_chat_line(
             LINE_APPEND_APPENDABLE,
@@ -151,6 +160,7 @@ chat::chat(dialog::main& main, std::shared_ptr<toxmm::contact> contact):
     }, *this));
 
     m_contact->signal_send_action().connect(sigc::track_obj([this](Glib::ustring action, std::shared_ptr<toxmm::receipt>) {
+        utils::debug::scope_log log(DBG_LVL_2("gtox"), { action.raw() });
         auto time = Glib::DateTime::create_now_utc();
         add_chat_line(
             LINE_NEW,
@@ -162,6 +172,7 @@ chat::chat(dialog::main& main, std::shared_ptr<toxmm::contact> contact):
     }, *this));
 
     m_contact->signal_recv_action().connect(sigc::track_obj([this](Glib::ustring action) {
+        utils::debug::scope_log log(DBG_LVL_2("gtox"), { action.raw() });
         auto time = Glib::DateTime::create_now_utc();
         add_chat_line(
             LINE_NEW,
@@ -173,6 +184,7 @@ chat::chat(dialog::main& main, std::shared_ptr<toxmm::contact> contact):
     }, *this));
 
     m_contact->file_manager()->signal_recv_file().connect(sigc::track_obj([this](std::shared_ptr<toxmm::file>& file) {
+        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
         if (file->property_kind() != TOX_FILE_KIND_DATA) {
             return;
         }
@@ -185,6 +197,7 @@ chat::chat(dialog::main& main, std::shared_ptr<toxmm::contact> contact):
             Gtk::manage(widget));
     }, *this));
     m_contact->file_manager()->signal_send_file().connect(sigc::track_obj([this](std::shared_ptr<toxmm::file>& file) {
+        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
         if (file->property_kind() != TOX_FILE_KIND_DATA) {
             return;
         }
@@ -204,6 +217,7 @@ chat::chat(dialog::main& main, std::shared_ptr<toxmm::contact> contact):
                            Gdk::KEY_PRESS_MASK);
     m_eventbox->set_can_focus(true);
     m_eventbox->signal_button_press_event().connect(sigc::track_obj([this](GdkEventButton* event) {
+        utils::debug::scope_log log(DBG_LVL_5("gtox"), {});
         if (event->button != 1) {
             return false;
         }
@@ -222,6 +236,7 @@ chat::chat(dialog::main& main, std::shared_ptr<toxmm::contact> contact):
         return true;
     }, *this));
     m_eventbox->signal_button_release_event().connect(sigc::track_obj([this](GdkEventButton* event) {
+        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
         if (event->button != 1) {
             return false;
         }
@@ -230,6 +245,7 @@ chat::chat(dialog::main& main, std::shared_ptr<toxmm::contact> contact):
         return true;
     }, *this));
     m_eventbox->signal_motion_notify_event().connect(sigc::track_obj([this](GdkEventMotion* event) {
+        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
         if (from_x < 0 && from_y < 0) {
             return false;
         }
@@ -238,6 +254,7 @@ chat::chat(dialog::main& main, std::shared_ptr<toxmm::contact> contact):
         return true;
     }, *this));
     m_eventbox->signal_key_press_event().connect(sigc::track_obj([this](GdkEventKey* event) {
+        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
         if (!(event->state & GDK_CONTROL_MASK)) {
             return false;
         }
@@ -254,6 +271,7 @@ chat::chat(dialog::main& main, std::shared_ptr<toxmm::contact> contact):
     //auto scroll
     m_scrolled->get_vadjustment()->signal_value_changed()
             .connect_notify(sigc::track_obj([this]() {
+        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
         // check if lowest position
         auto adj = m_scrolled->get_vadjustment();
         m_autoscroll = adj->get_upper() - adj->get_page_size()
@@ -261,6 +279,7 @@ chat::chat(dialog::main& main, std::shared_ptr<toxmm::contact> contact):
     }, *this));
     m_chat_box->signal_size_allocate()
             .connect_notify(sigc::track_obj([this](Gtk::Allocation&) {
+        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
         // auto scroll:
         if (m_autoscroll) {
             auto adj = m_scrolled->get_vadjustment();
@@ -288,6 +307,7 @@ chat::chat(dialog::main& main, std::shared_ptr<toxmm::contact> contact):
                               Gtk::DEST_DEFAULT_MOTION | Gtk::DEST_DEFAULT_DROP,
                               Gdk::ACTION_COPY | Gdk::ACTION_MOVE);
     m_scrolled->signal_drag_data_received().connect(sigc::track_obj([this](const Glib::RefPtr<Gdk::DragContext>&, int, int, const Gtk::SelectionData& data, guint, guint) {
+        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
         auto ct = m_contact; //.lock();
         auto fmng = ct->file_manager();
         if (!ct | !fmng) {
@@ -307,10 +327,12 @@ chat::chat(dialog::main& main, std::shared_ptr<toxmm::contact> contact):
 }
 
 chat::~chat() {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
     m_main.chat_remove(*m_headerbar_attached, *m_body);
 }
 
 void chat::activated() {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
     if (is_visible()) {
         present();
     } else {
@@ -320,6 +342,7 @@ void chat::activated() {
 
 void chat::update_children(GdkEventMotion* event,
                            std::vector<Gtk::Widget*> children) {
+    utils::debug::scope_log log(DBG_LVL_5("gtox"), {});
     for (auto c : children) {
         // check if it's a container
         auto c_container = dynamic_cast<Gtk::Container*>(c);
@@ -358,6 +381,7 @@ void chat::update_children(GdkEventMotion* event,
 
 Glib::ustring chat::get_children_selection(
     std::vector<Gtk::Widget*> children) {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
     Glib::ustring res;
     Glib::ustring tmp;
     for (auto c : children) {
@@ -386,6 +410,7 @@ Glib::ustring chat::get_children_selection(
 }
 
 void chat::load_log() {
+    utils::debug::scope_log lo(DBG_LVL_1("gtox"), {});
     auto c = m_main.tox();
     auto cm = c->contact_manager();
     if (!c || !cm) {
@@ -574,7 +599,11 @@ void chat::add_chat_line(AppendMode append_mode,
                    std::shared_ptr<toxmm::contact> contact,
                    Glib::DateTime time,
                    Gtk::Widget* widget) {
-
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {
+                                    append_mode,
+                                    contact->property_name_or_addr().get_value().raw(),
+                                    time.format("%c").raw()
+                                });
     auto side = SIDE::NONE;
     bool append = append_mode == LINE_APPEND_APPENDABLE || append_mode == LINE_APPEND;
     if (append) {
@@ -622,7 +651,11 @@ void chat::add_chat_line(AppendMode append_mode,
                    std::shared_ptr<toxmm::core> contact,
                    Glib::DateTime time,
                    Gtk::Widget* widget) {
-
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {
+                                    append_mode,
+                                    contact->property_name_or_addr().get_value().raw(),
+                                    time.format("%c").raw()
+                                });
     auto side = SIDE::NONE;
     bool append = append_mode == LINE_APPEND_APPENDABLE || append_mode == LINE_APPEND;
     if (append) {
@@ -670,6 +703,9 @@ void chat::add_chat_line(AppendMode append_mode,
 void chat::add_log(std::shared_ptr<toxmm::storage> storage,
                    std::shared_ptr<toxmm::contact> contact,
                    std::function<flatbuffers::Offset<flatbuffers::Log::Item>(flatbuffers::FlatBufferBuilder&)> create_func) {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {
+                                    contact->property_name_or_addr().get_value().raw(),
+                                });
     if (!storage || !contact) {
         return;
     }

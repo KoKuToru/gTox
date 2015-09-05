@@ -31,7 +31,7 @@ avatar::image::image(toxmm::contactAddrPublic addr):
     Glib::ObjectBase(typeid(avatar::image)),
     m_property_pixbuf(*this,
                       "image-pixbuf") {
-
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), { std::string(addr) });
     auto path = Glib::build_filename(
                     Glib::get_user_config_dir(),
                     "tox", "avatars",
@@ -42,6 +42,7 @@ avatar::image::image(toxmm::contactAddrPublic addr):
     m_monitor->signal_changed().connect(sigc::track_obj([this](const Glib::RefPtr<Gio::File>&,
                                         const Glib::RefPtr<Gio::File>&,
                                         Gio::FileMonitorEvent event_type) {
+        utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
         switch (event_type) {
             case Gio::FILE_MONITOR_EVENT_CREATED:
             case Gio::FILE_MONITOR_EVENT_CHANGES_DONE_HINT:
@@ -58,6 +59,7 @@ avatar::image::image(toxmm::contactAddrPublic addr):
 }
 
 void avatar::image::load() {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
     property_pixbuf() =
             Gdk::Pixbuf::create_from_resource("/org/gtox/icon/avatar.svg");
     if (!m_file->query_exists()) {
@@ -69,6 +71,7 @@ void avatar::image::load() {
     auto version = ++m_version;
     auto self = this;
     Glib::Thread::create([dispatcher, file, self, version](){
+        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
         static std::mutex mutex;
         std::lock_guard<std::mutex> lg(mutex); //limit parallel load
 
@@ -99,6 +102,7 @@ void avatar::image::load() {
         pix = Gdk::Pixbuf::create_subpixbuf(pix, src_x, src_y, 128, 128);
 
         dispatcher.emit([pix, self, version]() {
+            utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
             if (version == self->m_version) {
                 self->property_pixbuf() = pix;
             }
@@ -110,6 +114,7 @@ avatar::avatar(BaseObjectType* cobject,
                utils::builder,
                toxmm::contactAddrPublic addr)
     : Gtk::Image(cobject) {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), { std::string(addr) });
     //load image
     static std::map<toxmm::contactAddrPublic, std::shared_ptr<image>> m_image;
     auto iter = m_image.find(addr);
@@ -129,9 +134,11 @@ avatar::avatar(BaseObjectType* cobject,
 }
 
 avatar::~avatar() {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
 }
 
 bool avatar::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
+    utils::debug::scope_log log(DBG_LVL_5("gtox"), {});
     Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
 
     int w = get_allocated_width();
@@ -172,11 +179,13 @@ bool avatar::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
 }
 
 Gtk::SizeRequestMode avatar::get_request_mode_vfunc() const {
+    utils::debug::scope_log log(DBG_LVL_5("gtox"), {});
     return Gtk::SIZE_REQUEST_HEIGHT_FOR_WIDTH;
 }
 
 void avatar::get_preferred_width_vfunc(int& minimum_width,
-                                             int& natural_width) const {
+                                       int& natural_width) const {
+    utils::debug::scope_log log(DBG_LVL_5("gtox"), {});
     Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
     auto padding = style->get_padding();
 
@@ -197,7 +206,8 @@ void avatar::get_preferred_width_vfunc(int& minimum_width,
 }
 
 void avatar::get_preferred_height_vfunc(int& minimum_height,
-                                              int& natural_height) const {
+                                        int& natural_height) const {
+    utils::debug::scope_log log(DBG_LVL_5("gtox"), {});
     Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
     auto padding = style->get_padding();
 
@@ -218,6 +228,7 @@ void avatar::get_preferred_height_vfunc(int& minimum_height,
 }
 
 void avatar::save_for(toxmm::contactAddrPublic addr) {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), { std::string(addr) });
     auto path = Glib::build_filename(
                     Glib::get_user_config_dir(),
                     "tox", "avatars",

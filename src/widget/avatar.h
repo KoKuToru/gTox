@@ -24,15 +24,16 @@
 #include "utils/builder.h"
 #include "utils/dispatcher.h"
 #include "tox/types.h"
+#include "utils/debug.h"
 
 namespace widget {
-    class avatar : public Gtk::Image {
+    class avatar : public Gtk::Image, public utils::debug::track_obj<avatar> {
         public:
             avatar() {}
             avatar(BaseObjectType* cobject,
                    utils::builder,
                    toxmm::contactAddrPublic addr);
-            ~avatar();
+            virtual ~avatar();
 
             void save_for(toxmm::contactAddrPublic addr);
 

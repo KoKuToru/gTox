@@ -25,6 +25,7 @@
 #include "tox/types.h"
 #include "utils/builder.h"
 #include "utils/dispatcher.h"
+#include "utils/debug.h"
 
 namespace dialog {
     class main;
@@ -32,7 +33,7 @@ namespace dialog {
 }
 
 namespace widget {
-    class contact : public Gtk::ListBoxRow {
+    class contact : public Gtk::ListBoxRow, public utils::debug::track_obj<contact> {
         private:
             dialog::main& m_main;
             Glib::RefPtr<dialog::chat> m_chat;

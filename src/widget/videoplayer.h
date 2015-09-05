@@ -22,9 +22,10 @@
 #include "utils/gstreamer.h"
 #include "utils/builder.h"
 #include "widget/imagescaled.h"
+#include "utils/debug.h"
 
 namespace widget {
-    class videoplayer: public Gtk::Revealer {
+    class videoplayer: public Gtk::Revealer, public utils::debug::track_obj<videoplayer> {
         private:
             utils::gstreamer m_streamer;
 

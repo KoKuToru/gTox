@@ -23,10 +23,11 @@
 #include "utils/builder.h"
 #include "utils/dispatcher.h"
 #include "tox/types.h"
+#include "utils/debug.h"
 
 namespace widget {
     class avatar;
-    class chat_bubble: public Gtk::Revealer {
+    class chat_bubble: public Gtk::Revealer, public utils::debug::track_obj<chat_bubble> {
         private:
             utils::dispatcher m_dispatcher;
 
@@ -45,7 +46,7 @@ namespace widget {
                         Glib::PropertyProxy_ReadOnly<Glib::ustring> name,
                         Glib::PropertyProxy_ReadOnly<toxmm::contactAddrPublic> addr,
                         Glib::DateTime time);
-            ~chat_bubble();
+            virtual ~chat_bubble();
 
             void add_row(Gtk::Widget& widget);
 

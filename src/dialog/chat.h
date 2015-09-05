@@ -27,6 +27,7 @@
 #include "tox/storage.h"
 #include <memory>
 #include "resources/flatbuffers/generated/Log_generated.h"
+#include "utils/debug.h"
 
 namespace widget {
     class chat_input;
@@ -34,7 +35,7 @@ namespace widget {
 
 namespace dialog {
     class main;
-    class chat : public Gtk::Window {
+    class chat : public Gtk::Window, public utils::debug::track_obj<chat> {
         private:
             std::shared_ptr<toxmm::contact> m_contact;
 

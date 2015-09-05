@@ -23,9 +23,10 @@
 #include <gtkmm.h>
 #include "utils/builder.h"
 #include "utils/dispatcher.h"
+#include "utils/debug.h"
 
 namespace widget {
-    class imagescaled : public Gtk::Image {
+    class imagescaled : public Gtk::Image, public utils::debug::track_obj<imagescaled> {
         public:
             imagescaled(BaseObjectType* cobject,
                    utils::builder);

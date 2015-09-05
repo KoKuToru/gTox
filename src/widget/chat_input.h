@@ -21,9 +21,10 @@
 
 #include <gtkmm.h>
 #include "utils/builder.h"
+#include "utils/debug.h"
 
 namespace widget {
-    class chat_input: public Gtk::TextView {
+    class chat_input: public Gtk::TextView, public utils::debug::track_obj<chat_input> {
         private:
             Glib::RefPtr<Gtk::TextBuffer::Tag> m_bold_tag;
             Glib::RefPtr<Gtk::TextBuffer::Tag> m_italic_tag;
@@ -33,6 +34,7 @@ namespace widget {
 
         public:
             chat_input(BaseObjectType* cobject, utils::builder);
+            virtual ~chat_input();
 
             Glib::ustring get_serialized_text();
     };
