@@ -189,9 +189,21 @@ Glib::ustring contact::toxcore_get_status_message() {
         throw std::runtime_error("core() is nullptr");
     }
 
-    auto size = tox_self_get_status_message_size(c->toxcore());
+    TOX_ERR_FRIEND_QUERY error;
+    auto size = tox_friend_get_status_message_size(c->toxcore(),
+                                                   m_property_nr.get_value(),
+                                                   &error);
+    if (error != TOX_ERR_FRIEND_QUERY_OK) {
+        throw exception(error);
+    }
     std::string name(size, 0);
-    tox_self_get_status_message(c->toxcore(), (unsigned char*)name.data());
+    tox_friend_get_status_message(c->toxcore(),
+                                  m_property_nr.get_value(),
+                                  (unsigned char*)name.data(),
+                                  &error);
+    if (error != TOX_ERR_FRIEND_QUERY_OK) {
+        throw exception(error);
+    }
     return core::fix_utf8((uint8_t*)name.data(), name.size());
 }
 
