@@ -261,31 +261,6 @@ void core::init() {
         throw exception(error);
     }
 
-    for (auto i = 0; i < 5; ++i) {
-        auto nodes = get_bootstrap_nodes();
-        auto index = rand() % nodes.size();
-        TOX_ERR_BOOTSTRAP berror;
-        auto pub = from_hex(nodes[index].pubkey);
-        auto host = nodes[index].ipv4;
-        auto port = nodes[index].port;
-        if (!host.empty()) {
-            if (!tox_bootstrap(m_toxcore,
-                               host.c_str(),
-                               port, pub.data(),
-                               &berror)) {
-                throw exception(berror);
-            }
-        }
-        host = nodes[index].ipv6;
-        if (!host.empty()) {
-            if (!tox_bootstrap(m_toxcore,
-                               host.c_str(),
-                               port, pub.data(),
-                               &berror)) {
-                throw exception(berror);
-            }
-        }
-    }
     m_bootstrap_timer.reset();
 
     //install events:
@@ -416,7 +391,7 @@ std::shared_ptr<toxmm::storage> core::storage() {
 void core::update() {
     tox_iterate(toxcore());
     if (property_connection() == TOX_CONNECTION_NONE) {
-        if (m_bootstrap_timer.elapsed() >= 5) {
+        if (m_bootstrap_timer.elapsed() >= 10) {
             auto nodes = get_bootstrap_nodes();
             for (auto i = 0; i < 5; ++i) {
                 auto index = rand() % nodes.size();
