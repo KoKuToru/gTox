@@ -248,7 +248,7 @@ contact::contact(BaseObjectType* cobject,
                 return flatbuffers::Log::CreateItem(fbb,
                                                     fbb.CreateString(m_contact->property_addr_public().get_value()),
                                                     Glib::DateTime::create_now_utc().to_unix(),
-                                                    flatbuffers::Log::Data_Action,
+                                                    flatbuffers::Log::Data_File,
                                                     flatbuffers::Log::CreateFile(
                                                          fbb,
                                                          fbb.CreateString(file->property_uuid().get_value()),
