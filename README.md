@@ -5,6 +5,7 @@
 Not ready for daily use ! Please wait for the first release (not alpha/beta).
 
 * [Features](#features)
+* [Debug Features](#debug-features)
 * [How to install](#how-to-install)
   * [ArchLinux](#archlinux)
   * [Linux](#linux)
@@ -70,6 +71,12 @@ make
 Linux Dependencies
 -----------
 `gtkmm3`, `librsvg`, `gettext`, `gstreamermm`, `flatbuffers`
+
+Debug Features
+============
+gTox has special enviroment variables to help debugging
+* `GTOX_DBG_TRACKOBJ=1` enable object tracking, more or less a leak detector
+* `GTOX_DBG_LVL=x` (`x` can be from 1 to 5) prints a function call tree
 
 Features
 ============
