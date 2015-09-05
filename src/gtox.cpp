@@ -154,7 +154,7 @@ void gTox::on_activate() {
 
     auto profile_ptr = profile.raw();
     if (profile->get_path().empty()) {
-        profile->signal_hide().connect_notify([this, profile_ptr](){
+        profile->signal_hide().connect_notify([this, profile_ptr]() {
             utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
             if (!profile_ptr->get_path().empty()) {
                 open(Gio::File::create_for_path(profile_ptr->get_path()));
@@ -172,7 +172,7 @@ void gTox::on_activate() {
                     utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
                     Glib::ustring path = assistant_ptr->get_path();
                     remove_window(*assistant_ptr);
-
+                    delete assistant_ptr;
                     if (!path.empty()) {
                         open(Gio::File::create_for_path(path));
                     } else {
@@ -181,6 +181,7 @@ void gTox::on_activate() {
                 }, true);
             }
             remove_window(*profile_ptr);
+            delete profile_ptr;
         }, true);
         profile->show();
     } else {
@@ -201,6 +202,12 @@ void gTox::on_open(const Gio::Application::type_vec_files& files,
         auto tmp = dialog::main::create(file->get_path());
         unmark_busy();
         add_window(*tmp);
+
+        auto tmp_ptr = tmp.raw();
+        tmp->signal_hide().connect_notify([tmp_ptr]() {
+            utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
+            delete tmp_ptr;
+        });
 
         tmp->show();
     }

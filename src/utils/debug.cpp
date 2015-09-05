@@ -267,6 +267,8 @@ scope_log::~scope_log() {
     m_depth -= 1;
 }
 
+int object_count = 0;
+
 internal::tracker_impl::tracker_impl(std::type_index type, const char* name)
     : m_type(type),
       m_map([this]() {
@@ -283,7 +285,7 @@ internal::tracker_impl::tracker_impl(std::type_index type, const char* name)
     }
     static auto is_terminal = isatty(2) == 1;
 
-    if (name == nullptr) {
+    if (m_type == std::type_index(typeid(void))) {
         return;
     }
 
@@ -343,6 +345,8 @@ internal::tracker_impl::tracker_impl(std::type_index type, const char* name)
         std::clog << KNRM;
     }
     std::clog <<  " objs" << std::endl;
+
+    object_count += 1;
 }
 
 internal::tracker_impl::~tracker_impl() {
@@ -351,6 +355,10 @@ internal::tracker_impl::~tracker_impl() {
         return;
     }
     static auto is_terminal = isatty(2) == 1;
+
+    if (m_type == std::type_index(typeid(void))) {
+        return;
+    }
 
     std::lock_guard<mtx_type> log(*m_mtx);
 
@@ -402,6 +410,8 @@ internal::tracker_impl::~tracker_impl() {
         std::clog << KNRM;
     }
     std::clog <<  " objs" << std::endl;
+
+    object_count -= 1;
 }
 
 void internal::tracker_impl::print_leak() {
@@ -411,14 +421,7 @@ void internal::tracker_impl::print_leak() {
     }
     static auto is_terminal = isatty(fileno(stderr)) == 1;
     //Display leaked memory
-    int count = 0;
-    for (auto& item: *m_map) {
-        if (item.second.second == 0) {
-            continue;
-        }
-        count += item.second.second;
-    }
-    if (count == 0) {
+    if (object_count == 0) {
         return;
     }
     std::cerr << "\nLeaked memory: \n";
@@ -441,7 +444,7 @@ void internal::tracker_impl::print_leak() {
     if (is_terminal) {
         std::cerr << KRED;
     }
-    std::cerr << count << " objs leaked !\n";
+    std::cerr << object_count << " objs leaked !\n";
     if (is_terminal) {
         std::cerr << KNRM;
     }
@@ -450,6 +453,8 @@ void internal::tracker_impl::print_leak() {
 
 __attribute__((destructor))
 static void destroy_app() {
-    internal::tracker_impl dummy(std::type_index(typeid (void)), nullptr);
-    dummy.print_leak();
+    if (object_count > 0) {
+        internal::tracker_impl dummy(std::type_index(typeid (void)), nullptr);
+        dummy.print_leak();
+    }
 }

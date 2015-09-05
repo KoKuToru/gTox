@@ -62,7 +62,7 @@ namespace dialog {
 
             Gtk::Menu m_popup_menu;
 
-            Glib::RefPtr<widget::main_menu> m_menu;
+            std::shared_ptr<widget::main_menu> m_menu;
 
             Glib::RefPtr<Gio::SimpleActionGroup> m_action;
 

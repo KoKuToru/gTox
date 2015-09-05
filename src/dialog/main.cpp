@@ -45,8 +45,7 @@ main::main(BaseObjectType* cobject,
     utils::debug::scope_log log(DBG_LVL_1("gtox"), { file.raw() });
     m_storage = std::make_shared<utils::storage>();
     m_toxcore = toxmm::core::create(file, m_storage);
-    m_menu = Glib::RefPtr<widget::main_menu>(
-                 new widget::main_menu(*this));
+    m_menu = std::make_shared<widget::main_menu>(*this);
     m_config = std::make_shared<class config>(
                    Glib::build_filename(
                        Glib::get_user_config_dir(),
@@ -422,7 +421,7 @@ main::~main() {
 
 void main::exit() {
     utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
-    delete this;
+    hide();
 }
 
 void main::chat_add(Gtk::Widget& headerbar, Gtk::Widget& body, Gtk::Button& prev, Gtk::Button& next) {

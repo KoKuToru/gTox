@@ -329,6 +329,8 @@ chat::chat(dialog::main& main, std::shared_ptr<toxmm::contact> contact):
 chat::~chat() {
     utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
     m_main.chat_remove(*m_headerbar_attached, *m_body);
+    //why do I need to manually delete m_input ?
+    delete m_input;
 }
 
 void chat::activated() {
