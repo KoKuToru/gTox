@@ -70,7 +70,7 @@ SET(SIZES
 )
 foreach(size ${SIZES})
     set(icon_path
-        "${CMAKE_CURRENT_BINARY_DIR}/build/${size}x${size}/apps"
+        "${CMAKE_CURRENT_BINARY_DIR}/hicolor/${size}x${size}/apps"
     )
 
     #convert svg to png with rsvg
@@ -96,16 +96,16 @@ endforeach()
 
 add_custom_command(
     COMMENT "Generate Icon 'scalable'"
-    OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/scalable/apps/gtox.svg"
-    COMMAND mkdir -p "${CMAKE_CURRENT_BINARY_DIR}/scalable/apps"
-    COMMAND cp "${CMAKE_CURRENT_SOURCE_DIR}/icon.svg" "${CMAKE_CURRENT_BINARY_DIR}/scalable/apps/gtox.svg"
+    OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/hicolor/scalable/apps/gtox.svg"
+    COMMAND mkdir -p "${CMAKE_CURRENT_BINARY_DIR}/hicolor/scalable/apps"
+    COMMAND cp "${CMAKE_CURRENT_SOURCE_DIR}/icon.svg" "${CMAKE_CURRENT_BINARY_DIR}/hicolor/scalable/apps/gtox.svg"
     POST_BUILD
     WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/icon.svg)
 
-add_custom_target(gtox-icon DEPENDS ${icons} ${CMAKE_CURRENT_BINARY_DIR}/scalable/apps/gtox.svg)
+add_custom_target(gtox-icon DEPENDS ${icons} ${CMAKE_CURRENT_BINARY_DIR}/hicolor/scalable/apps/gtox.svg)
 
-install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/build"
-    DESTINATION share/icons/hicolor
+install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/hicolor"
+    DESTINATION share/icons
     FILE_PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)
 
