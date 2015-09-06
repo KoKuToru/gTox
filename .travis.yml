@@ -23,8 +23,8 @@ before_install:
   - docker pull $DOCKER
 script:
   - mkdir src/build
-  - docker run -v $PWD:/opt/gtox -v ~/.ccache:/root/.ccache -w /opt/gtox/src/build $DOCKER bash -c "PATH=\"/usr/lib/ccache/bin/:$PATH\" CXX=$CXX $CMAKE -DCMAKE_INSTALL_PREFIX:PATH=./publish .."
-  - docker run -v $PWD:/opt/gtox -v ~/.ccache:/root/.ccache -w /opt/gtox/src/build $DOCKER bash -c "make"
+  - docker run -v ~/.ccache:/root/.ccache -v $PWD:/opt/gtox -w /opt/gtox/src/build $DOCKER bash -c "PATH=\"/usr/lib/ccache/bin/:$PATH\" CXX=$CXX $CMAKE -DCMAKE_INSTALL_PREFIX:PATH=./publish .."
+  - docker run -v ~/.ccache:/root/.ccache -v $PWD:/opt/gtox -w /opt/gtox/src/build $DOCKER bash -c "make"
   - if [ $TEST = 1 ]; then docker run -v $PWD:/opt/gtox -w /opt/gtox/src/build $DOCKER bash -c "./tox/toxmm-test"; fi
 after_success:
   - if [ "$PUB_WIN" = 1 ]; then docker run -e "TRAVIS_BRANCH=$TRAVIS_BRANCH" -e "TRAVIS_PULL_REQUEST=$TRAVIS_PULL_REQUEST" -e "PUBLISH_KEY=$PUBLISH_KEY" -e "PUBLISH_HOST=$PUBLISH_HOST" -e "PUB_COPY=$PUB_COPY" -e "PUB_FILE=$PUB_FILE" -v $PWD:/opt/gtox -w /opt/gtox/src/build $DOCKER bash -c "../../.travis_publish_win.sh"; fi
