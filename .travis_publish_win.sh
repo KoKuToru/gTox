@@ -4,10 +4,9 @@ if [ "$TRAVIS_BRANCH" != "master" -o "$TRAVIS_PULL_REQUEST" != "false" ]; then
     exit
 fi
 
-mkdir publish 
+mkdir publish
+make install 
 cp -rT /usr/$PUB_COPY publish
-cp -r ./share publish/
-cp gtox.exe publish/bin/gtox.exe
 cd publish
 
 echo "Fix libharfbuzz-1.dll bug"
