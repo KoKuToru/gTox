@@ -316,6 +316,9 @@ void contact::activated() {
     if (m_chat) {
         m_chat->activated();
     } else {
-        m_chat = Glib::RefPtr<dialog::chat>(new dialog::chat(m_main, m_contact));
+        m_chat = std::make_shared<dialog::chat>(m_main, m_contact);
+        m_chat->signal_hide().connect_notify(sigc::track_obj([this]() {
+            m_chat.reset();
+        }, *this));
     }
 }

@@ -36,7 +36,7 @@ namespace widget {
     class contact : public Gtk::ListBoxRow, public utils::debug::track_obj<contact> {
         private:
             dialog::main& m_main;
-            Glib::RefPtr<dialog::chat> m_chat;
+            std::shared_ptr<dialog::chat> m_chat;
 
             utils::dispatcher m_dispatcher;
 

@@ -26,15 +26,9 @@ foreach(trans ${TRANSLATIONS})
         POST_BUILD
         COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/${trans}/LC_MESSAGES/
 
-        # Use English strings when no native translation is available
-        COMMAND  ${GETTEXT_MSGCAT_EXECUTABLE} --use-first
-            ${CMAKE_CURRENT_SOURCE_DIR}/${trans}.po
-            ${CMAKE_CURRENT_SOURCE_DIR}/en.po
-            -o ${CMAKE_CURRENT_BINARY_DIR}/${trans}.po
-
         # Create binary file with translations
         COMMAND ${GETTEXT_MSGFMT_EXECUTABLE}
-            ${CMAKE_CURRENT_BINARY_DIR}/${trans}.po
+            ${CMAKE_CURRENT_SOURCE_DIR}/${trans}.po
             -o ${CMAKE_CURRENT_BINARY_DIR}/${trans}/LC_MESSAGES/gtox.mo
 
         DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${trans}.po
@@ -51,6 +45,3 @@ endforeach()
 
 # Create a target that's accessible form parent directory
 add_custom_target(gtox-locale DEPENDS ${mo_files})
-
-# TODO add installation
-

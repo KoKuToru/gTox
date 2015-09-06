@@ -57,38 +57,33 @@ void print_copyright() {
         << std::endl;
 }
 
-bool translation_working() {
+bool find_translation_domain(std::string path) {
     utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
-    const char* TRANSLATION_CHECK = "TRANSLATION_CHECKER";
-    return !(_(TRANSLATION_CHECK) == TRANSLATION_CHECK);
-}
 
-bool find_translation_domain() {
-    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
     // Translation search locations in order of preference
-    std::vector<std::string> locations {"./i18n",
-        bindtextdomain("gtox", nullptr), // default location
-        "/usr/local/share/locale"};
+    std::vector<std::string> locations {
+        Glib::build_filename(path, "i18n"),
+        Glib::build_filename(path, "..", "share", "locale")
+    };
 
     for (auto l : locations) {
-        bindtextdomain("gtox", l.c_str());
-        if (translation_working())
+        //check for gtox.mo
+        auto mo = Glib::build_filename(l, "en", "LC_MESSAGES", "gtox.mo");
+        if (Glib::file_test(mo, Glib::FILE_TEST_EXISTS)) {
+            bindtextdomain("gtox", l.c_str());
             return true;
+        }
     }
 
     return false;
 }
 
-bool setup_translation() {
+bool setup_translation(std::string path) {
     utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
     // Translations returns in UTF-8
     bind_textdomain_codeset("gtox", "UTF-8");
     textdomain("gtox");
-#if defined _WIN32 || defined __CYGWIN__
-    return true;
-#else
-    return find_translation_domain();
-#endif
+    return find_translation_domain(path);
 }
 
 void terminate_handler() {
@@ -123,7 +118,9 @@ int main(int argc, char* argv[]) {
     Gtk::Main kit(argc, argv);
     Gst::init(argc, argv);
 
-    setup_translation();
+    setup_translation(
+                Glib::path_get_dirname(
+                    Glib::find_program_in_path(argv[0])));
 
     print_copyright();
 
