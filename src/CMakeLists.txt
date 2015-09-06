@@ -57,6 +57,7 @@ set(SOURCES
     dialog/main.cpp
     dialog/chat.cpp
     dialog/settings.cpp
+    dialog/detachable_window.cpp
 
     widget/avatar.cpp
     widget/contact.cpp

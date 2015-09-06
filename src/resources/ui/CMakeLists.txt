@@ -21,7 +21,8 @@ set(SRC
     dialog_chat.ui
     chat_bubble_right.ui
     chat_bubble_left.ui
-    videoplayer.ui)
+    videoplayer.ui
+    dialog_detachable.ui)
 
 set(LAYOUT ${SRC} PARENT_SCOPE)
 
