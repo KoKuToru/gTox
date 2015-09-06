@@ -5,7 +5,7 @@ if [ "$TRAVIS_BRANCH" != "master" -o "$TRAVIS_PULL_REQUEST" != "false" ]; then
 fi
 
 mkdir publish
-make install
+make install || exit $?
 cp -rT /usr/$PUB_COPY publish
 cd publish
 
