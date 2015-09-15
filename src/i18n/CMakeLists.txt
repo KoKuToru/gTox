@@ -14,6 +14,7 @@ set(TRANSLATIONS
     de
     en
     es
+    fr
     it
     ru
 )
