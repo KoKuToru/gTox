@@ -476,6 +476,29 @@ void main::chat_add(Gtk::Widget& headerbar, Gtk::Widget& body, Gtk::Button& prev
     m_stack->show();
 }
 
+void main::chat_add(Gtk::Widget& headerbar, Gtk::Widget& body) {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
+    headerbar.get_style_context()->add_class("gtox-headerbar-left");
+
+    m_stack_header->add(headerbar);
+    m_stack->add(body);
+
+    m_stack_header->set_visible_child(headerbar);
+    m_stack->set_visible_child(body);
+
+    m_stack_data.push_back({&headerbar, &body});
+
+    //present
+    property_gravity() = Gdk::GRAVITY_NORTH_EAST;
+    if (!m_stack_header->is_visible()) {
+        resize(800 + get_width(), get_height());
+    }
+
+    m_stack_header->show();
+    m_stack->show();
+}
+
+
 void main::chat_remove(Gtk::Widget& headerbar, Gtk::Widget& body) {
     utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
     for (size_t i = 0; i < m_stack_data.size(); ++i) {

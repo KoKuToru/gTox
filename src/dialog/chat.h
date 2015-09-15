@@ -28,6 +28,7 @@
 #include <memory>
 #include "resources/flatbuffers/generated/Log_generated.h"
 #include "utils/debug.h"
+#include "detachable_window.h"
 
 namespace widget {
     class chat_input;
@@ -35,11 +36,11 @@ namespace widget {
 
 namespace dialog {
     class main;
-    class chat : public Gtk::Window, public utils::debug::track_obj<chat> {
+    class chat : public detachable_window, public utils::debug::track_obj<chat> {
         private:
+            std::weak_ptr<toxmm::core> m_core;
             std::shared_ptr<toxmm::contact> m_contact;
 
-            main& m_main;
             utils::dispatcher m_dispatcher;
             utils::builder    m_builder;
 
@@ -65,10 +66,9 @@ namespace dialog {
 
             Gtk::Box* m_chat_box;
 
-            Glib::RefPtr<Glib::Binding> m_binding_name[2];
-            Glib::RefPtr<Glib::Binding> m_binding_status[2];
+            Glib::RefPtr<Glib::Binding> m_binding_name;
+            Glib::RefPtr<Glib::Binding> m_binding_status;
             Glib::RefPtr<Glib::Binding> m_binding_online;
-            Glib::RefPtr<Glib::Binding> m_binding_focus;
 
             enum class SIDE {
                 NONE,
@@ -114,14 +114,15 @@ namespace dialog {
                                Glib::DateTime time,
                                Gtk::Widget* widget);
         public:
-            chat(main& main, std::shared_ptr<toxmm::contact> contact);
+            chat(std::shared_ptr<toxmm::core> core,
+                 std::shared_ptr<toxmm::contact> contact,
+                 detachable_window::type_slot_detachable_add slot_add_widget,
+                 detachable_window::type_slot_detachable_del slot_del_widget);
             ~chat();
 
             static void add_log(std::shared_ptr<toxmm::storage> storage,
                                 std::shared_ptr<toxmm::contact> contact,
                                 std::function<flatbuffers::Offset<flatbuffers::Log::Item>(flatbuffers::FlatBufferBuilder&)> create_func);
-
-            void activated();
     };
 }
 

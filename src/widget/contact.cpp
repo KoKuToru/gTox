@@ -24,6 +24,7 @@
 #include "tox/contact/file/file.h"
 #include "tox/contact/file/manager.h"
 #include <flatbuffers/flatbuffers.h>
+#include "dialog/detachable_window.h"
 
 using namespace widget;
 
@@ -314,10 +315,21 @@ std::shared_ptr<toxmm::contact> contact::get_contact() {
 void contact::activated() {
     utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
     if (m_chat) {
-        m_chat->activated();
+        //m_chat->activated();
     } else {
-        m_chat = std::make_shared<dialog::chat>(m_main, m_contact);
-        m_chat->signal_hide().connect_notify(sigc::track_obj([this]() {
+        auto attach = sigc::track_obj([this](dialog::detachable_window* window) {
+            m_main.chat_add(*window->property_headerbar(),
+                            *window->property_body());
+        }, *this, m_main);
+        auto detach = sigc::track_obj([this](dialog::detachable_window* window) {
+            m_main.chat_remove(*window->property_headerbar(),
+                               *window->property_body());
+        }, *this, m_main);
+        m_chat = std::make_shared<dialog::chat>(m_main.tox(),
+                                                m_contact,
+                                                attach,
+                                                detach);
+        m_chat->signal_close().connect(sigc::track_obj([this]() {
             m_chat.reset();
         }, *this));
     }

@@ -83,6 +83,7 @@ namespace dialog {
             static utils::builder::ref<main> create(const Glib::ustring& file);
 
             void chat_add   (Gtk::Widget& headerbar, Gtk::Widget& body, Gtk::Button& prev, Gtk::Button& next);
+            void chat_add   (Gtk::Widget& headerbar, Gtk::Widget& body);
             void chat_remove(Gtk::Widget& headerbar, Gtk::Widget& body);
             void chat_show  (Gtk::Widget& headerbar, Gtk::Widget& body, Gtk::Button& prev, Gtk::Button& next);
 
