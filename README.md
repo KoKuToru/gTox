@@ -22,6 +22,7 @@ translation | untranslated
 :-----------|------------:
 de.po       |             
 es.po       |             
+fr.po       |             
 it.po       |           70
 ru.po       |           84
 
