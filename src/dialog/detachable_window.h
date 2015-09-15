@@ -37,15 +37,16 @@ namespace dialog {
             auto property_headerbar_title()    -> Glib::PropertyProxy<Glib::ustring>;
             auto property_headerbar_subtitle() -> Glib::PropertyProxy<Glib::ustring>;
             auto property_body()               -> Glib::PropertyProxy<Gtk::Widget*>;
+            auto property_headerbar()          -> Glib::PropertyProxy_ReadOnly<Gtk::HeaderBar*>;
 
-            using type_signal_detachable_add = sigc::signal<void, detachable_window*>;
-            using type_signal_detachable_del = sigc::signal<void, detachable_window*>;
-            using type_signal_close          = sigc::signal<void>;
+            using type_slot_detachable_add = sigc::slot<void, detachable_window*>;
+            using type_slot_detachable_del = sigc::slot<void, detachable_window*>;
+            using type_signal_close        = sigc::signal<void>;
 
             type_signal_close signal_close();
 
-            detachable_window(type_signal_detachable_add main_add,
-                              type_signal_detachable_del main_del);
+            detachable_window(type_slot_detachable_add main_add,
+                              type_slot_detachable_del main_del);
             virtual ~detachable_window();
 
         private:
@@ -60,11 +61,12 @@ namespace dialog {
 
             std::vector<Glib::RefPtr<Glib::Binding>> m_bindings;
 
-            Glib::Property<bool>          m_prop_has_focus;
-            Glib::Property<bool>          m_prop_is_attached;
-            Glib::Property<Glib::ustring> m_prop_headerbar_title;
-            Glib::Property<Glib::ustring> m_prop_headerbar_subtitle;
-            Glib::Property<Gtk::Widget*>  m_prop_body;
+            Glib::Property<bool>            m_prop_has_focus;
+            Glib::Property<bool>            m_prop_is_attached;
+            Glib::Property<Glib::ustring>   m_prop_headerbar_title;
+            Glib::Property<Glib::ustring>   m_prop_headerbar_subtitle;
+            Glib::Property<Gtk::Widget*>    m_prop_body;
+            Glib::Property<Gtk::HeaderBar*> m_prop_headerbar;
 
             type_signal_close m_signal_close;
     };

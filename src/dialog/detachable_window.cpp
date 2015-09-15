@@ -40,19 +40,24 @@ auto detachable_window::property_body()               -> Glib::PropertyProxy<Gtk
     return m_prop_body.get_proxy();
 }
 
+auto detachable_window::property_headerbar()          -> Glib::PropertyProxy_ReadOnly<Gtk::HeaderBar*> {
+    return {this, "detachable-window-headerbar"};
+}
+
 detachable_window::type_signal_close detachable_window::signal_close() {
     return m_signal_close;
 }
 
-detachable_window::detachable_window(type_signal_detachable_add main_add,
-                                     type_signal_detachable_del main_del)
+detachable_window::detachable_window(type_slot_detachable_add main_add,
+                                     type_slot_detachable_del main_del)
     : Glib::ObjectBase(typeid(detachable_window)),
       m_builder(Gtk::Builder::create_from_resource("/org/gtox/ui/dialog_detachable.ui")),
       m_prop_has_focus(*this, "detachable-window-has-focus", false),
       m_prop_is_attached(*this, "detachable-window-is-attached", true),
       m_prop_headerbar_title(*this, "detachable-window-headerbar-title"),
       m_prop_headerbar_subtitle(*this, "detachable-window-headerbar-subtitle"),
-      m_prop_body(*this, "detachable-window-body") {
+      m_prop_body(*this, "detachable-window-body"),
+      m_prop_headerbar(*this, "detachable-window-headerbar") {
     utils::debug::scope_log(DBG_LVL_1("gtox"), {});
     m_builder.get_widget("headerbar_attached", m_headerbar_attached);
     m_builder.get_widget("headerbar_detached", m_headerbar_detached);
@@ -60,6 +65,8 @@ detachable_window::detachable_window(type_signal_detachable_add main_add,
     m_builder.get_widget("detach", m_btn_detach);
     m_builder.get_widget("btn_attached", m_btn_close_attached);
     m_builder.get_widget("btn_detached", m_btn_close_detached);
+
+    m_prop_headerbar = m_headerbar_attached;
 
     auto bind_flags = Glib::BINDING_DEFAULT | Glib::BINDING_SYNC_CREATE;
     m_bindings.push_back(Glib::Binding::bind_property(
