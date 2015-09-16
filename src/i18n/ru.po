@@ -102,7 +102,7 @@ msgstr "<b>Область уведомлений</b>"
 
 #: resources/ui/dialog_settings.ui
 msgid "<b>Theme</b>"
-msgstr "<b>Тема</b>"
+msgstr "<b>Оформление</b>"
 
 #: resources/ui/dialog_settings.ui
 msgid "<i>This program comes with ABSOLUTELY NO WARRANTY</i>"
@@ -114,13 +114,13 @@ msgstr "<i>пре-альфа версия</i>"
 
 #: widget/main_menu.cpp
 msgid "A Tox-ID must be 76 letters long"
-msgstr "Идентификатор Tox должен быть 76 символов длиной"
+msgstr "Длина Tox-ID должна быть 76 символов"
 
 #: widget/main_menu.cpp
 msgid ""
 "A contact request has already been sent, or the address belongs to a friend "
 "that is already on the friend list."
-msgstr "Контакт уже был запрошен, либо уже находится в списке друзей."
+msgstr "Контакт уже был запрошен, либо находится в списке друзей."
 
 #: resources/ui/dialog_settings.ui
 msgid "About"
@@ -137,37 +137,37 @@ msgstr "Вы уверены, что хотите удалить данный к�
 
 #: resources/ui/dialog_settings.ui
 msgid "Audio notification on new message"
-msgstr "Звуковые уведомления при новом сообщении"
+msgstr "Звуковое оповещение"
 
 #: resources/ui/dialog_settings.ui
 msgid "Auto accept"
-msgstr "Автоматическое принятие"
+msgstr "Загружать без подтверждения"
 
 #: resources/ui/dialog_settings.ui
 msgid "Automatically set status to away"
-msgstr "Автоматически устанавливать статус «Ушел»"
+msgstr "Устанавливать статус «Отошел»"
 
 #: resources/ui/status_menu.ui
 msgid "Away"
-msgstr "Ушел"
+msgstr "Отошел"
 
 #: resources/ui/status_menu.ui
 msgid "Busy"
-msgstr "Занят"
+msgstr "Не беспокоить"
 
 #. Click here to change avatar, right click to remove
 #: resources/ui/popover_settings.ui
 msgid "Change avatar"
-msgstr "Сменить картинку"
+msgstr "Изменить картинку профиля"
 
 #. Lable for the log enable/disable switch
 #: resources/ui/dialog_settings.ui
 msgid "Chat logging"
-msgstr "Вести историю сообщений"
+msgstr "Хранить историю сообщений"
 
 #: resources/ui/dialog_settings.ui
 msgid "Color"
-msgstr "Цвет"
+msgstr "Цветовая схема"
 
 #: resources/ui/dialog_settings.ui
 msgid "Compact list"
@@ -183,16 +183,16 @@ msgstr "Запрос контакта"
 
 #: widget/main_menu.cpp
 msgid "Contact request failed"
-msgstr "Запрос контакта не удался"
+msgstr "Запрос завершен с ошибкой"
 
 #. Copies tox id into clipboard
 #: resources/ui/popover_settings.ui
 msgid "Copy Tox-ID into clipboard"
-msgstr "Скопировать идентификатор Tox в буфер обмена"
+msgstr "Скопировать в буфер обмена"
 
 #: resources/ui/dialog_settings.ui
 msgid "Copyright © 2014 - the gTox team"
-msgstr "Copyright © 2014 - команда gTox"
+msgstr "Copyright © 2014, команда gTox"
 
 #: dialog/profile_selection.cpp
 msgid "Corrupted profile"
@@ -204,7 +204,7 @@ msgstr "Устройство по умолчанию"
 
 #: resources/ui/dialog_settings.ui
 msgid "Display inline"
-msgstr "Встроенный экран"
+msgstr "Предварительный просмотр"
 
 #: widget/main_menu.cpp
 msgid "Empty message"
@@ -216,7 +216,7 @@ msgstr "Зашифрованный профиль"
 
 #: resources/ui/status_menu.ui
 msgid "Exit"
-msgstr "Выход"
+msgstr "Завершить"
 
 #: resources/ui/dialog_settings.ui
 msgid "Global"
@@ -237,7 +237,7 @@ msgstr "Сообщение"
 #. Label for the profile username
 #: resources/ui/dialog_assistant.ui
 msgid "Name"
-msgstr "Имя"
+msgstr "Имя пользователя"
 
 #. Button for creating a new profile
 #: resources/ui/dialog_profile.ui
@@ -246,16 +246,16 @@ msgstr "Новый"
 
 #: resources/ui/dialog_settings.ui
 msgid "Notification on new message"
-msgstr "Уведомление при новом сообщении"
+msgstr "Показывать уведомления"
 
 #: resources/ui/status_menu.ui
 msgid "Online"
-msgstr "Доступен"
+msgstr "В сети"
 
 #. Open file with file-explorer
 #: resources/ui/chat_filerecv.ui
 msgid "Open containing folder"
-msgstr "Открыть местонахождение"
+msgstr "Открыть расположение файла"
 
 #. Open the downloaded file
 #: resources/ui/chat_filerecv.ui
@@ -322,7 +322,7 @@ msgstr "Сообщить разработчику"
 
 #: resources/ui/dialog_settings.ui
 msgid "Save to"
-msgstr "Сохранить как"
+msgstr "Сохранять в"
 
 #. Button for loading the selected profile
 #: resources/ui/dialog_profile.ui
@@ -331,7 +331,7 @@ msgstr "Выбрать"
 
 #: widget/main_menu.cpp
 msgid "Select new avatar"
-msgstr "Выбрать новую картинку"
+msgstr "Установить новую картинку"
 
 #: dialog/profile_selection.cpp
 msgid "Select profile"
@@ -339,7 +339,7 @@ msgstr "Выбрать профиль"
 
 #: resources/ui/dialog_settings.ui
 msgid "Send typing notification"
-msgstr "Отправить уведомление  «печатает»"
+msgstr "Отправлять «печатает»"
 
 #: resources/ui/popover_settings.ui
 msgid "Settings"
@@ -347,11 +347,11 @@ msgstr "Параметры"
 
 #: resources/ui/dialog_settings.ui
 msgid "Show active chats"
-msgstr "Показать активные чаты"
+msgstr "Показывать активные чаты"
 
 #: resources/ui/dialog_settings.ui
 msgid "Show in systemtray"
-msgstr "Показывать в области уведомлений"
+msgstr "Показывать значок"
 
 #. Starts the download
 #: resources/ui/chat_filerecv.ui
@@ -373,7 +373,7 @@ msgstr "Статус"
 
 #: resources/ui/popover_settings.ui
 msgid "Submit"
-msgstr "Опубликовать"
+msgstr "Отправить"
 
 #: resources/ui/status_menu.ui
 msgid "Switch Profile"
@@ -389,7 +389,7 @@ msgstr "Неверная контрольная сумма адреса конт
 
 #: widget/main_menu.cpp
 msgid "The contact request message is not allowed to be empty."
-msgstr "Сообщение запроса контакта не может быть пустым."
+msgstr "Сообщение не может быть пустым."
 
 #: widget/main_menu.cpp
 msgid "The contact was already there, but the nospam value was different."
@@ -405,7 +405,7 @@ msgstr "Этот адрес принадлежит вам"
 
 #: resources/ui/popover_settings.ui
 msgid "Tox-ID"
-msgstr "Идентификатор Tox"
+msgstr "Tox-ID"
 
 #: resources/ui/dialog_settings.ui
 msgid "UDP"
@@ -413,11 +413,11 @@ msgstr "UDP"
 
 #: resources/ui/list_item_profile.ui resources/ui/popover_settings.ui
 msgid "Username"
-msgstr "Имя пользователя"
+msgstr "Имя"
 
 #: resources/ui/dialog_settings.ui
 msgid "Video"
-msgstr "Видел"
+msgstr "Захват видео"
 
 #. Welcome text in profile creation, should warn about alpha-software
 #: resources/ui/dialog_assistant.ui
@@ -428,10 +428,10 @@ msgid ""
 "We cannot guarantee what works today will work tomorrow.\n"
 "gTox and Tox are alpha software and code changes daily."
 msgstr ""
-"Добро пожаловать в gTox\n"
+"Добро пожаловать в gTox!\n"
 "\n"
 "gTox и Tox находятся в стадии активной разработки.\n"
-"Мы не может гарантировать, что завтра будет работать то, что работало "
+"Мы не можем гарантировать, что завтра будет работать то, что работало "
 "сегодня.\n"
 "gTox и Tox находят в стадии альфа-версии и кодовая база ежедневно "
 "изменяется."
@@ -479,7 +479,7 @@ msgstr "после 5 минут"
 #. Light theme
 #: resources/ui/dialog_settings.ui
 msgid "black on white"
-msgstr "черное на белом"
+msgstr "светлая"
 
 #: gTox.cpp dialog/profile_selection.cpp resources/ui/dialog_settings.ui
 msgid "gTox"
@@ -499,7 +499,7 @@ msgstr ""
 
 #: dialog/settings.cpp
 msgid "gTox settings"
-msgstr "Настройки gTox"
+msgstr "Параметры"
 
 #. Text next to the spinner, while profiles are loading
 #: resources/ui/dialog_profile.ui
@@ -522,4 +522,4 @@ msgstr "неизвестная ошибка GStreamer"
 #. dark theme
 #: resources/ui/dialog_settings.ui
 msgid "white on black"
-msgstr "белое на черном"
+msgstr "темная"
