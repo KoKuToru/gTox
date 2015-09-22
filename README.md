@@ -24,7 +24,7 @@ de.po       |
 es.po       |             
 fr.po       |             
 it.po       |           70
-ru.po       |           84
+ru.po       |             
 
 **If you are a `gettext`-Master, please contact me !  
 I have some serious problems with this..**

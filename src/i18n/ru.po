@@ -22,15 +22,15 @@ msgstr "Okay"
 
 #: widget/chat_bubble.cpp
 msgid "%1 hr"
-msgstr ""
+msgstr "%1 ч"
 
 #: widget/chat_bubble.cpp
 msgid "%1 min"
-msgstr ""
+msgstr "%1 мин"
 
 #: resources/ui/dialog_contact.ui
 msgid "%1 new contact request"
-msgstr ""
+msgstr "%1 новых запросов контакта"
 
 #: dialog/main.cpp
 msgid ""
@@ -39,10 +39,14 @@ msgid ""
 "Message: \n"
 "%2"
 msgstr ""
+"%1 хочет добавить вас в свой список контактов\n"
+"\n"
+"Сообщение: \n"
+"%2"
 
 #: widget/chat_bubble.cpp
 msgid "%a. %B, %R"
-msgstr ""
+msgstr "%a. %B, %R"
 
 #: widget/chat_bubble.cpp
 msgid "%e. %B %Y, %R"
@@ -50,7 +54,7 @@ msgstr "%A, %e. %B %Y"
 
 #: widget/chat_bubble.cpp
 msgid "%e. %B, %R"
-msgstr ""
+msgstr "%e. %B, %R"
 
 #: dialog/error.cpp
 msgid ""
@@ -62,59 +66,61 @@ msgstr ""
 "</b></i>\n"
 "\n"
 "Убедитесь, что вы используете последнюю версию gTox.\n"
-"Если это так, то дайте нам знать о случившейся ошибке программы."
+"Если это так, пожалуйста сообщите нам об ошибке."
 
 #: resources/ui/dialog_settings.ui
 msgid ""
 "<a href=\"https://github.com/KoKuToru/gTox.git\">github.com/KoKuToru/gTox."
 "git</a>"
 msgstr ""
+"<a href=\"https://github.com/KoKuToru/gTox.git\">github.com/KoKuToru/gTox."
+"git</a>"
 
 #: resources/ui/dialog_settings.ui
 msgid "<b>Chat</b>"
-msgstr ""
+msgstr "<b>Чат</b>"
 
 #: resources/ui/dialog_settings.ui
 msgid "<b>Connection</b>"
-msgstr ""
+msgstr "<b>Соединение</b>"
 
 #: resources/ui/dialog_settings.ui
 msgid "<b>Contacts</b>"
-msgstr ""
+msgstr "<b>Контакты</b>"
 
 #: resources/ui/dialog_settings.ui
 msgid "<b>Filetransfer</b>"
-msgstr ""
+msgstr "<b>Передача файлов</b>"
 
 #: resources/ui/dialog_settings.ui
 msgid "<b>Profile</b>"
-msgstr ""
+msgstr "<b>Профиль</b>"
 
 #: resources/ui/dialog_settings.ui
 msgid "<b>Systemtray</b>"
-msgstr ""
+msgstr "<b>Область уведомлений</b>"
 
 #: resources/ui/dialog_settings.ui
 msgid "<b>Theme</b>"
-msgstr ""
+msgstr "<b>Оформление</b>"
 
 #: resources/ui/dialog_settings.ui
 msgid "<i>This program comes with ABSOLUTELY NO WARRANTY</i>"
-msgstr ""
+msgstr "<i>Программа распространяется БЕЗ КАКИХ-ЛИБО ГАРАНТИЙ</i>"
 
 #: resources/ui/dialog_settings.ui
 msgid "<i>pre-alpha version</i>"
-msgstr ""
+msgstr "<i>пре-альфа версия</i>"
 
 #: widget/main_menu.cpp
 msgid "A Tox-ID must be 76 letters long"
-msgstr "Длина Tox ID должны быть 76 символов"
+msgstr "Длина Tox-ID должна быть 76 символов"
 
 #: widget/main_menu.cpp
 msgid ""
 "A contact request has already been sent, or the address belongs to a friend "
 "that is already on the friend list."
-msgstr ""
+msgstr "Контакт уже был запрошен, либо находится в списке друзей."
 
 #: resources/ui/dialog_settings.ui
 msgid "About"
@@ -123,36 +129,36 @@ msgstr "О программе"
 #. Button for adding a new contact
 #: resources/ui/popover_settings.ui
 msgid "Add contact"
-msgstr "Добавить"
+msgstr "Добавить контакт"
 
 #: dialog/main.cpp
 msgid "Are you sure you want to remove this contact?"
-msgstr ""
+msgstr "Вы уверены, что хотите удалить данный контакт?"
 
 #: resources/ui/dialog_settings.ui
 msgid "Audio notification on new message"
-msgstr ""
+msgstr "Звуковое оповещение"
 
 #: resources/ui/dialog_settings.ui
 msgid "Auto accept"
-msgstr ""
+msgstr "Загружать без подтверждения"
 
 #: resources/ui/dialog_settings.ui
 msgid "Automatically set status to away"
-msgstr ""
+msgstr "Устанавливать статус «Отошел»"
 
 #: resources/ui/status_menu.ui
 msgid "Away"
-msgstr "Ушёл"
+msgstr "Отошел"
 
 #: resources/ui/status_menu.ui
 msgid "Busy"
-msgstr "Занят"
+msgstr "Не беспокоить"
 
 #. Click here to change avatar, right click to remove
 #: resources/ui/popover_settings.ui
 msgid "Change avatar"
-msgstr ""
+msgstr "Изменить картинку профиля"
 
 #. Lable for the log enable/disable switch
 #: resources/ui/dialog_settings.ui
@@ -161,77 +167,77 @@ msgstr "Хранить историю сообщений"
 
 #: resources/ui/dialog_settings.ui
 msgid "Color"
-msgstr ""
+msgstr "Цветовая схема"
 
 #: resources/ui/dialog_settings.ui
 msgid "Compact list"
-msgstr ""
+msgstr "Компактный список"
 
 #: dialog/settings.cpp
 msgid "Configure gTox"
-msgstr ""
+msgstr "Настроить gTox"
 
 #: dialog/main.cpp
 msgid "Contact Request"
-msgstr ""
+msgstr "Запрос контакта"
 
 #: widget/main_menu.cpp
 msgid "Contact request failed"
-msgstr ""
+msgstr "Запрос завершен с ошибкой"
 
 #. Copies tox id into clipboard
 #: resources/ui/popover_settings.ui
 msgid "Copy Tox-ID into clipboard"
-msgstr ""
+msgstr "Скопировать в буфер обмена"
 
 #: resources/ui/dialog_settings.ui
 msgid "Copyright © 2014 - the gTox team"
-msgstr ""
+msgstr "Copyright © 2014, команда gTox"
 
 #: dialog/profile_selection.cpp
 msgid "Corrupted profile"
-msgstr "Повреждённый профиль"
+msgstr "Поврежденный профиль"
 
 #: resources/ui/dialog_settings.ui
 msgid "Default device"
-msgstr ""
+msgstr "Устройство по умолчанию"
 
 #: resources/ui/dialog_settings.ui
 msgid "Display inline"
-msgstr ""
+msgstr "Предварительный просмотр"
 
 #: widget/main_menu.cpp
 msgid "Empty message"
-msgstr ""
+msgstr "Пустое сообщение"
 
 #: dialog/profile_selection.cpp
 msgid "Encrypted profile"
-msgstr ""
+msgstr "Зашифрованный профиль"
 
 #: resources/ui/status_menu.ui
 msgid "Exit"
-msgstr "Выход"
+msgstr "Завершить"
 
 #: resources/ui/dialog_settings.ui
 msgid "Global"
-msgstr ""
+msgstr "Глобальные"
 
 #: widget/main_menu.cpp
 msgid "Image"
-msgstr ""
+msgstr "Изображение"
 
 #: widget/chat_bubble.cpp
 msgid "Just now"
-msgstr ""
+msgstr "Только что"
 
 #: resources/ui/popover_settings.ui
 msgid "Message"
-msgstr ""
+msgstr "Сообщение"
 
 #. Label for the profile username
 #: resources/ui/dialog_assistant.ui
 msgid "Name"
-msgstr "Имя"
+msgstr "Имя пользователя"
 
 #. Button for creating a new profile
 #: resources/ui/dialog_profile.ui
@@ -240,38 +246,38 @@ msgstr "Новый"
 
 #: resources/ui/dialog_settings.ui
 msgid "Notification on new message"
-msgstr ""
+msgstr "Показывать уведомления"
 
 #: resources/ui/status_menu.ui
 msgid "Online"
-msgstr "Доступен"
+msgstr "В сети"
 
 #. Open file with file-explorer
 #: resources/ui/chat_filerecv.ui
 msgid "Open containing folder"
-msgstr ""
+msgstr "Открыть расположение файла"
 
 #. Open the downloaded file
 #: resources/ui/chat_filerecv.ui
 msgid "Open file"
-msgstr ""
+msgstr "Открыть файл"
 
 #: dialog/profile_selection.cpp
 msgid "Open this profile in file manager"
-msgstr ""
+msgstr "Открыть профиль в файловом менеджере"
 
 #: resources/ui/list_item_profile.ui
 msgid "Path of file"
-msgstr ""
+msgstr "Путь к файлу"
 
 #. Pauses the download
 #: resources/ui/chat_filerecv.ui
 msgid "Pause download"
-msgstr ""
+msgstr "Приостановить загрузку"
 
 #: resources/ui/dialog_settings.ui
 msgid "Profile"
-msgstr ""
+msgstr "Профиль"
 
 #: dialog/profile_selection.cpp
 msgid "Profile couldn't be loaded"
@@ -279,36 +285,36 @@ msgstr "Невозможно загрузить профиль"
 
 #: dialog/profile_selection.cpp
 msgid "Profile not loaded for an unknown reason"
-msgstr ""
+msgstr "Профиль не загружен по неизвестной причине"
 
 #: resources/ui/dialog_settings.ui
 msgid "Proxy host"
-msgstr ""
+msgstr "Адрес прокси"
 
 #: resources/ui/dialog_settings.ui
 msgid "Proxy port"
-msgstr ""
+msgstr "Порт прокси"
 
 #: resources/ui/dialog_settings.ui
 msgid "Proxy type"
-msgstr ""
+msgstr "Тип прокси"
 
 #: resources/ui/dialog_settings.ui
 msgid "Put into systemtray on close"
-msgstr ""
+msgstr "Сворачивать при закрытии"
 
 #: resources/ui/dialog_settings.ui
 msgid "Remember last used profile"
-msgstr ""
+msgstr "Запоминать последний профиль"
 
 #: dialog/main.cpp
 msgid "Remove contact"
-msgstr "Удалить"
+msgstr "Удалить контакт"
 
 #. Stop/Remove the download
 #: resources/ui/chat_filerecv.ui
 msgid "Remove download"
-msgstr "Удалить"
+msgstr "Удалить загрузку"
 
 #: dialog/error.cpp
 msgid "Report"
@@ -316,7 +322,7 @@ msgstr "Сообщить разработчику"
 
 #: resources/ui/dialog_settings.ui
 msgid "Save to"
-msgstr ""
+msgstr "Сохранять в"
 
 #. Button for loading the selected profile
 #: resources/ui/dialog_profile.ui
@@ -325,85 +331,85 @@ msgstr "Выбрать"
 
 #: widget/main_menu.cpp
 msgid "Select new avatar"
-msgstr ""
+msgstr "Установить новую картинку"
 
 #: dialog/profile_selection.cpp
 msgid "Select profile"
-msgstr ""
+msgstr "Выбрать профиль"
 
 #: resources/ui/dialog_settings.ui
 msgid "Send typing notification"
-msgstr ""
+msgstr "Отправлять «печатает»"
 
 #: resources/ui/popover_settings.ui
 msgid "Settings"
-msgstr "Настройки"
+msgstr "Параметры"
 
 #: resources/ui/dialog_settings.ui
 msgid "Show active chats"
-msgstr ""
+msgstr "Показывать активные чаты"
 
 #: resources/ui/dialog_settings.ui
 msgid "Show in systemtray"
-msgstr ""
+msgstr "Показывать значок"
 
 #. Starts the download
 #: resources/ui/chat_filerecv.ui
 msgid "Start download"
-msgstr ""
+msgstr "Начать загрузку"
 
 #: resources/ui/dialog_settings.ui
 msgid "Start in systemtray"
-msgstr ""
+msgstr "Запускать свернутым"
 
 #. Label for the profile statusmessage
 #: resources/ui/dialog_assistant.ui
 msgid "Status message"
-msgstr "Статусное сообщение"
+msgstr "Статус"
 
 #: resources/ui/list_item_profile.ui resources/ui/popover_settings.ui
 msgid "Statusmessage"
-msgstr "Status"
+msgstr "Статус"
 
 #: resources/ui/popover_settings.ui
 msgid "Submit"
-msgstr ""
+msgstr "Отправить"
 
 #: resources/ui/status_menu.ui
 msgid "Switch Profile"
-msgstr ""
+msgstr "Сменить профиль"
 
 #: resources/ui/dialog_settings.ui
 msgid "TCP"
-msgstr ""
+msgstr "TCP"
 
 #: widget/main_menu.cpp
 msgid "The contact address checksum failed."
-msgstr ""
+msgstr "Неверная контрольная сумма адреса контакта."
 
 #: widget/main_menu.cpp
 msgid "The contact request message is not allowed to be empty."
-msgstr ""
+msgstr "Сообщение не может быть пустым."
 
 #: widget/main_menu.cpp
 msgid "The contact was already there, but the nospam value was different."
-msgstr ""
+msgstr "Контакт уже находился здесь с другим значением nospam."
 
 #: widget/main_menu.cpp
 msgid "The length of the contact request message exceeded 1016 bytes."
-msgstr ""
+msgstr "Длина сообщения запроса превышает 1016 байт."
 
 #: widget/main_menu.cpp
 msgid "This contact address belongs to you"
-msgstr ""
+msgstr "Этот адрес принадлежит вам"
 
 #: resources/ui/popover_settings.ui
 msgid "Tox-ID"
-msgstr ""
+msgstr "Tox-ID"
 
 #: resources/ui/dialog_settings.ui
 msgid "UDP"
-msgstr ""
+msgstr "UDP"
 
 #: resources/ui/list_item_profile.ui resources/ui/popover_settings.ui
 msgid "Username"
@@ -411,7 +417,7 @@ msgstr "Имя"
 
 #: resources/ui/dialog_settings.ui
 msgid "Video"
-msgstr ""
+msgstr "Захват видео"
 
 #. Welcome text in profile creation, should warn about alpha-software
 #: resources/ui/dialog_assistant.ui
@@ -422,13 +428,13 @@ msgid ""
 "We cannot guarantee what works today will work tomorrow.\n"
 "gTox and Tox are alpha software and code changes daily."
 msgstr ""
-"Добро пожаловать в gTox\n"
+"Добро пожаловать в gTox!\n"
 "\n"
 "gTox и Tox находятся в стадии активной разработки.\n"
-"Мы не может гарантировать то, что сегодня прекрасно работает будет так же "
-"работать и завтра.\n"
-"gTox и Tox находят в стадии альфа-версии и кодовая база обоих проектом "
-"может меняться ежедневно."
+"Мы не можем гарантировать, что завтра будет работать то, что работало "
+"сегодня.\n"
+"gTox и Tox находят в стадии альфа-версии и кодовая база ежедневно "
+"изменяется."
 
 #: widget/main_menu.cpp
 msgid "Wrong ID length"
@@ -436,48 +442,48 @@ msgstr "Неверная длина ID"
 
 #: widget/main_menu.cpp
 msgid "Wrong checksum"
-msgstr ""
+msgstr "Неверная контрольная сумма"
 
 #: resources/ui/dialog_settings.ui
 msgid "after 1 hour"
-msgstr ""
+msgstr "после 1 часа"
 
 #: resources/ui/dialog_settings.ui
 msgid "after 1 min"
-msgstr ""
+msgstr "после 1 минуты"
 
 #: resources/ui/dialog_settings.ui
 msgid "after 10 min"
-msgstr ""
+msgstr "после 10 минут"
 
 #: resources/ui/dialog_settings.ui
 msgid "after 2 hours"
-msgstr ""
+msgstr "после 2 часов"
 
 #: resources/ui/dialog_settings.ui
 msgid "after 2 min"
-msgstr ""
+msgstr "после 2 минут"
 
 #: resources/ui/dialog_settings.ui
 msgid "after 20 min"
-msgstr ""
+msgstr "после 20 минут"
 
 #: resources/ui/dialog_settings.ui
 msgid "after 30 min"
-msgstr ""
+msgstr "после 30 минут"
 
 #: resources/ui/dialog_settings.ui
 msgid "after 5 min"
-msgstr ""
+msgstr "после 5 минут"
 
 #. Light theme
 #: resources/ui/dialog_settings.ui
 msgid "black on white"
-msgstr ""
+msgstr "светлая"
 
 #: gTox.cpp dialog/profile_selection.cpp resources/ui/dialog_settings.ui
 msgid "gTox"
-msgstr ""
+msgstr "gTox"
 
 #: dialog/error.cpp
 msgid ""
@@ -486,22 +492,23 @@ msgid ""
 "\n"
 "<i><b>"
 msgstr ""
-"Произошла фатальная ошибка в программе:\n"
+"Работа gTox была завершена.\n"
+"Фатальная ошибка в программе:\n"
 "\n"
 "<i><b>"
 
 #: dialog/settings.cpp
 msgid "gTox settings"
-msgstr "Выбор профиля"
+msgstr "Параметры"
 
 #. Text next to the spinner, while profiles are loading
 #: resources/ui/dialog_profile.ui
 msgid "loading profiles..."
-msgstr ""
+msgstr "загрузка профилей..."
 
 #: resources/ui/dialog_settings.ui
 msgid "never"
-msgstr ""
+msgstr "никогда"
 
 #. Label for the toxcore profile save path
 #: resources/ui/dialog_assistant.ui
@@ -510,9 +517,9 @@ msgstr "файл toxcore"
 
 #: utils/gstreamer.cpp
 msgid "unknow gstreamer error"
-msgstr ""
+msgstr "неизвестная ошибка GStreamer"
 
 #. dark theme
 #: resources/ui/dialog_settings.ui
 msgid "white on black"
-msgstr ""
+msgstr "темная"
