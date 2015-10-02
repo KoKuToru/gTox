@@ -317,14 +317,10 @@ void contact::activated() {
     if (m_chat) {
         //m_chat->activated();
     } else {
-        auto attach = sigc::track_obj([this](dialog::detachable_window* window) {
-            m_main.chat_add(*window->property_headerbar(),
-                            *window->property_body());
-        }, *this, m_main);
-        auto detach = sigc::track_obj([this](dialog::detachable_window* window) {
-            m_main.chat_remove(*window->property_headerbar(),
-                               *window->property_body());
-        }, *this, m_main);
+        auto attach = sigc::mem_fun(m_main,
+                                    &dialog::main::detachable_window_add);
+        auto detach = sigc::mem_fun(m_main,
+                                    &dialog::main::detachable_window_del);
         m_chat = std::make_shared<dialog::chat>(m_main.tox(),
                                                 m_contact,
                                                 attach,

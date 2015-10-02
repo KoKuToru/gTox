@@ -73,7 +73,7 @@ settings::settings(main& main)
 
     m_builder.get_widget("video_default_device", m_video_device);
 
-    m_main.chat_add(*m_headerbar_attached, *m_body, *m_btn_prev, *m_btn_next);
+    m_main.detachable_window_add(*m_headerbar_attached, *m_body, *m_btn_prev, *m_btn_next);
 
     m_headerbar_attached->set_title(_("gTox settings"));
     m_headerbar_detached->set_title(_("gTox settings"));
@@ -87,7 +87,7 @@ settings::settings(main& main)
         m_main.get_position(x, y);
         move(x, y);
         resize(m_body->get_width(), m_main.get_height());
-        m_main.chat_remove(*m_headerbar_attached, *m_body);
+        m_main.detachable_window_del(*m_headerbar_attached, *m_body);
         add(*m_body);
         show();
     }, *this));
@@ -95,11 +95,11 @@ settings::settings(main& main)
         utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
         remove();
         hide();
-        m_main.chat_add(*m_headerbar_attached, *m_body, *m_btn_prev, *m_btn_next);
+        m_main.detachable_window_add(*m_headerbar_attached, *m_body, *m_btn_prev, *m_btn_next);
     }, *this));
     m_btn_close_attached->signal_clicked().connect(sigc::track_obj([this]() {
         utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
-        m_main.chat_remove(*m_headerbar_attached, *m_body);
+        m_main.detachable_window_del(*m_headerbar_attached, *m_body);
     }, *this));
     m_btn_close_detached->signal_clicked().connect(sigc::track_obj([this]() {
         utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
@@ -283,5 +283,5 @@ void settings::activated() {
 
 settings::~settings() {
     utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
-    m_main.chat_remove(*m_headerbar_attached, *m_body);
+    m_main.detachable_window_del(*m_headerbar_attached, *m_body);
 }

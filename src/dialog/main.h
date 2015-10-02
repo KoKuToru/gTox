@@ -28,6 +28,7 @@
 #include "config.h"
 #include "storage.h"
 #include "utils/debug.h"
+#include "detachable_window.h"
 
 namespace dialog {
     // contact list with pinned chat
@@ -82,10 +83,8 @@ namespace dialog {
 
             static utils::builder::ref<main> create(const Glib::ustring& file);
 
-            void chat_add   (Gtk::Widget& headerbar, Gtk::Widget& body, Gtk::Button& prev, Gtk::Button& next);
-            void chat_add   (Gtk::Widget& headerbar, Gtk::Widget& body);
-            void chat_remove(Gtk::Widget& headerbar, Gtk::Widget& body);
-            void chat_show  (Gtk::Widget& headerbar, Gtk::Widget& body, Gtk::Button& prev, Gtk::Button& next);
+            void detachable_window_add(dialog::detachable_window* window);
+            void detachable_window_del(dialog::detachable_window* window);
 
             void exit();
 
