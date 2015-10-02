@@ -58,8 +58,8 @@ chat::chat(std::shared_ptr<toxmm::core> core,
     property_body() = m_body;
 
     m_binding_name = Glib::Binding::bind_property(m_contact->property_name_or_addr(),
-                                                     property_headerbar_title(),
-                                                     Glib::BINDING_DEFAULT | Glib::BINDING_SYNC_CREATE);
+                                                  property_headerbar_title(),
+                                                  Glib::BINDING_DEFAULT | Glib::BINDING_SYNC_CREATE);
 
     m_binding_status = Glib::Binding::bind_property(m_contact->property_status_message(),
                                                     property_headerbar_subtitle(),

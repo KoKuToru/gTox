@@ -44,16 +44,7 @@ namespace dialog {
             utils::dispatcher m_dispatcher;
             utils::builder    m_builder;
 
-            Gtk::HeaderBar* m_headerbar_attached;
-            Gtk::HeaderBar* m_headerbar_detached;
             Gtk::Widget* m_body;
-
-            Gtk::Button* m_btn_attach;
-            Gtk::Button* m_btn_detach;
-            Gtk::Button* m_btn_prev;
-            Gtk::Button* m_btn_next;
-            Gtk::Button* m_btn_close_attached;
-            Gtk::Button* m_btn_close_detached;
 
             Gtk::EventBox* m_eventbox;
 

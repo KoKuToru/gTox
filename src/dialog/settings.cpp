@@ -39,15 +39,7 @@ settings::settings(main& main)
       m_main(main) {
     utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
 
-    m_builder.get_widget("headerbar_attached", m_headerbar_attached);
-    m_builder.get_widget("headerbar_detached", m_headerbar_detached);
     m_builder.get_widget("body", m_body);
-    m_builder.get_widget("attach", m_btn_attach);
-    m_builder.get_widget("detach", m_btn_detach);
-    m_builder.get_widget("btn_prev", m_btn_prev);
-    m_builder.get_widget("btn_next", m_btn_next);
-    m_builder.get_widget("close_btn_attached", m_btn_close_attached);
-    m_builder.get_widget("close_btn_detached", m_btn_close_detached);
 
     m_builder.get_widget("tray_visible" , m_tray_visible);
     m_builder.get_widget("tray_on_start", m_tray_on_start);
