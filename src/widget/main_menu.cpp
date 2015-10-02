@@ -67,7 +67,7 @@ main_menu::main_menu(dialog::main& main): m_main(main) {
         utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
         hide();
         if (m_settings) {
-            m_settings->activated();
+            //m_settings->activated();
         } else {
             m_settings = Glib::RefPtr<dialog::settings>(new dialog::settings(m_main));
         }
