@@ -88,8 +88,20 @@ detachable_window::detachable_window(type_slot_detachable_add main_add,
 
     m_btn_detach->signal_clicked().connect(sigc::track_obj([this, main_del]() {
         utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
+        Gtk::Widget* body = property_body().get_value();
+        Gtk::Window* parent = dynamic_cast<Gtk::Window *>(body->get_toplevel());
+        if (parent) {
+            auto gravity = parent->get_gravity();
+            int x, y, w, h;
+            parent->set_gravity(Gdk::GRAVITY_NORTH_WEST);
+            parent->get_position(x, y);
+            parent->get_size(w, h);
+            parent->set_gravity(gravity);
+            move(x, y);
+            resize(body->get_width(), h);
+        }
         main_del(this);
-        add(*property_body());
+        add(*body);
         show();
     }, *this));
     m_btn_attach->signal_clicked().connect(sigc::track_obj([this, main_add]() {
