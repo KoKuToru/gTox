@@ -70,6 +70,9 @@ main_menu::main_menu(dialog::main& main): m_main(main) {
             //m_settings->activated();
         } else {
             m_settings = Glib::RefPtr<dialog::settings>(new dialog::settings(m_main));
+            m_settings->signal_close().connect(sigc::track_obj([this]() {
+                m_settings.reset();
+            }, *this));
         }
     }, *this));
 
