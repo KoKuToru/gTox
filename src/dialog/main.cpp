@@ -424,8 +424,20 @@ void main::exit() {
     hide();
 }
 
-void main::chat_add(Gtk::Widget& headerbar, Gtk::Widget& body, Gtk::Button& prev, Gtk::Button& next) {
+void main::detachable_window_add(dialog::detachable_window* window) {
     utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
+    Gtk::Widget& headerbar = *window->property_headerbar();
+    Gtk::Widget& body = *window->property_body();
+
+    for (size_t i = 0; i < m_stack_data.size(); ++i) {
+        if (m_stack_data[i].first == &headerbar
+                && m_stack_data[i].second == &body) {
+            m_stack_header->set_visible_child(headerbar);
+            m_stack->set_visible_child(body);
+            return;
+        }
+    }
+
     headerbar.get_style_context()->add_class("gtox-headerbar-left");
 
     m_stack_header->add(headerbar);
@@ -435,36 +447,6 @@ void main::chat_add(Gtk::Widget& headerbar, Gtk::Widget& body, Gtk::Button& prev
     m_stack->set_visible_child(body);
 
     m_stack_data.push_back({&headerbar, &body});
-
-    next.signal_clicked().connect(sigc::track_obj([this]() {
-        auto visible_child = m_stack_header->get_visible_child();
-        size_t i = 0;
-        for (; i < m_stack_data.size(); ++i) {
-            if (m_stack_data[i].first == visible_child) {
-                break;
-            }
-        }
-        if (i < m_stack_data.size()) {
-            i = (i + 1) % m_stack_data.size();
-            m_stack_header->set_visible_child(*m_stack_data[i].first);
-            m_stack->set_visible_child(*m_stack_data[i].second);
-        }
-    }, *this));
-
-    prev.signal_clicked().connect(sigc::track_obj([this]() {
-        auto visible_child = m_stack_header->get_visible_child();
-        size_t i = 0;
-        for (; i < m_stack_data.size(); ++i) {
-            if (m_stack_data[i].first == visible_child) {
-                break;
-            }
-        }
-        if (i < m_stack_data.size()) {
-            i = (i > 0) ? (i - 1) : (m_stack_data.size() - 1);
-            m_stack_header->set_visible_child(*m_stack_data[i].first);
-            m_stack->set_visible_child(*m_stack_data[i].second);
-        }
-    }, *this));
 
     //present
     property_gravity() = Gdk::GRAVITY_NORTH_EAST;
@@ -476,8 +458,12 @@ void main::chat_add(Gtk::Widget& headerbar, Gtk::Widget& body, Gtk::Button& prev
     m_stack->show();
 }
 
-void main::chat_remove(Gtk::Widget& headerbar, Gtk::Widget& body) {
+
+void main::detachable_window_del(dialog::detachable_window* window) {
     utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
+    Gtk::Widget& headerbar = *window->property_headerbar();
+    Gtk::Widget& body = *window->property_body();
+
     for (size_t i = 0; i < m_stack_data.size(); ++i) {
         if (m_stack_data[i].first == &headerbar && m_stack_data[i].second == &body) {
             m_stack_header->remove(headerbar);
@@ -495,18 +481,6 @@ void main::chat_remove(Gtk::Widget& headerbar, Gtk::Widget& body) {
         m_stack_header->hide();
         m_stack->hide();
     }
-}
-
-void main::chat_show(Gtk::Widget& headerbar, Gtk::Widget& body, Gtk::Button& prev, Gtk::Button& next) {
-    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
-    for (size_t i = 0; i < m_stack_data.size(); ++i) {
-        if (m_stack_data[i].first == &headerbar && m_stack_data[i].second == &body) {
-            m_stack_header->set_visible_child(headerbar);
-            m_stack->set_visible_child(body);
-            return;
-        }
-    }
-    chat_add(headerbar, body, prev, next);
 }
 
 std::shared_ptr<toxmm::core>& main::tox() {

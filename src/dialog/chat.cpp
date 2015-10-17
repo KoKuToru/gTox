@@ -35,44 +35,35 @@ namespace sigc {
 
 using namespace dialog;
 
-chat::chat(dialog::main& main, std::shared_ptr<toxmm::contact> contact):
+chat::chat(std::shared_ptr<toxmm::core> core,
+           std::shared_ptr<toxmm::contact> contact,
+           detachable_window::type_slot_detachable_add slot_add_widget,
+           detachable_window::type_slot_detachable_add slot_del_widget):
+    Glib::ObjectBase(typeid(chat)),
+    detachable_window(slot_add_widget, slot_del_widget),
+    m_core(core),
     m_contact(contact),
-    m_main(main),
     m_builder(Gtk::Builder::create_from_resource("/org/gtox/ui/dialog_chat.ui")) {
     utils::debug::scope_log log(DBG_LVL_1("gtox"), { contact->property_name_or_addr().get_value().raw() });
 
-    m_builder.get_widget("chat_headerbar_attached", m_headerbar_attached);
-    m_builder.get_widget("chat_headerbar_detached", m_headerbar_detached);
     m_builder.get_widget("chat_body", m_body);
     m_input = m_builder.get_widget_derived<widget::chat_input>("chat_input");
     m_builder.get_widget("chat_input_revealer", m_input_revealer);
     m_builder.get_widget("chat_input_format_revealer", m_input_format_revealer);
-    m_builder.get_widget("btn_prev", m_btn_prev);
-    m_builder.get_widget("btn_next", m_btn_next);
-    m_builder.get_widget("chat_attach", m_btn_attach);
-    m_builder.get_widget("chat_detach", m_btn_detach);
-    m_builder.get_widget("close_btn_attached", m_btn_close_attached);
-    m_builder.get_widget("close_btn_detached", m_btn_close_detached);
     m_builder.get_widget("chat_box", m_chat_box);
     m_builder.get_widget("eventbox", m_eventbox);
     m_builder.get_widget("scrolled", m_scrolled);
     m_builder.get_widget("viewport", m_viewport);
 
-    m_main.chat_add(*m_headerbar_attached, *m_body, *m_btn_prev, *m_btn_next);
+    property_body() = m_body;
 
-    m_binding_name[0] = Glib::Binding::bind_property(m_contact->property_name_or_addr(),
-                                                     m_headerbar_attached->property_title(),
-                                                     Glib::BINDING_DEFAULT | Glib::BINDING_SYNC_CREATE);
-    m_binding_name[1] = Glib::Binding::bind_property(m_contact->property_name_or_addr(),
-                                                     m_headerbar_detached->property_title(),
-                                                     Glib::BINDING_DEFAULT | Glib::BINDING_SYNC_CREATE);
+    m_binding_name = Glib::Binding::bind_property(m_contact->property_name_or_addr(),
+                                                  property_headerbar_title(),
+                                                  Glib::BINDING_DEFAULT | Glib::BINDING_SYNC_CREATE);
 
-    m_binding_status[0] = Glib::Binding::bind_property(m_contact->property_status_message(),
-                                                       m_headerbar_attached->property_subtitle(),
-                                                       Glib::BINDING_DEFAULT | Glib::BINDING_SYNC_CREATE);
-    m_binding_status[1] = Glib::Binding::bind_property(m_contact->property_status_message(),
-                                                       m_headerbar_detached->property_subtitle(),
-                                                       Glib::BINDING_DEFAULT | Glib::BINDING_SYNC_CREATE);
+    m_binding_status = Glib::Binding::bind_property(m_contact->property_status_message(),
+                                                    property_headerbar_subtitle(),
+                                                    Glib::BINDING_DEFAULT | Glib::BINDING_SYNC_CREATE);
 
     m_binding_online = Glib::Binding::bind_property(m_contact->property_connection(),
                                  m_input_revealer->property_reveal_child(),
@@ -82,38 +73,6 @@ chat::chat(dialog::main& main, std::shared_ptr<toxmm::contact> contact):
         is_online = connection != TOX_CONNECTION_NONE;
         return true;
     });
-
-    /*m_binding_focus = Glib::Binding::bind_property(m_input->property_has_focus(),
-                                 m_input_format_revealer->property_reveal_child(),
-                                 Glib::BINDING_DEFAULT | Glib::BINDING_SYNC_CREATE);*/
-
-    set_titlebar(*m_headerbar_detached);
-    m_btn_detach->signal_clicked().connect(sigc::track_obj([this]() {
-        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
-        m_main.property_gravity() = Gdk::GRAVITY_NORTH_WEST;
-        int x, y;
-        m_main.get_position(x, y);
-        move(x, y);
-        resize(m_body->get_width(), m_main.get_height());
-        m_main.chat_remove(*m_headerbar_attached, *m_body);
-        add(*m_body);
-        show();
-    }, *this));
-    m_btn_attach->signal_clicked().connect(sigc::track_obj([this]() {
-        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
-        remove();
-        hide();
-        m_main.chat_add(*m_headerbar_attached, *m_body, *m_btn_prev, *m_btn_next);
-    }, *this));
-    m_btn_close_attached->signal_clicked().connect(sigc::track_obj([this]() {
-        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
-        m_main.chat_remove(*m_headerbar_attached, *m_body);
-    }, *this));
-    m_btn_close_detached->signal_clicked().connect(sigc::track_obj([this]() {
-        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
-        remove();
-        hide();
-    }, *this));
 
     m_input->signal_key_press_event().connect(sigc::track_obj([this](GdkEventKey* event) {
         utils::debug::scope_log log(DBG_LVL_3("gtox"), {});
@@ -137,14 +96,17 @@ chat::chat(dialog::main& main, std::shared_ptr<toxmm::contact> contact):
 
     m_contact->signal_send_message().connect(sigc::track_obj([this](Glib::ustring message, std::shared_ptr<toxmm::receipt>) {
         utils::debug::scope_log log(DBG_LVL_2("gtox"), { message.raw() });
-        auto time = Glib::DateTime::create_now_utc();
-        add_chat_line(
-            LINE_APPEND_APPENDABLE,
-            m_main.tox(),
-            time,
-            Gtk::manage(new widget::chat_message(m_main.tox()->property_name_or_addr(),
-                                                 time,
-                                                 message)));
+        auto core = m_core.lock();
+        if (core) {
+            auto time = Glib::DateTime::create_now_utc();
+            add_chat_line(
+                LINE_APPEND_APPENDABLE,
+                core,
+                time,
+                Gtk::manage(new widget::chat_message(core->property_name_or_addr(),
+                                                     time,
+                                                     message)));
+        }
     }, *this));
 
     m_contact->signal_recv_message().connect(sigc::track_obj([this](Glib::ustring message) {
@@ -161,14 +123,17 @@ chat::chat(dialog::main& main, std::shared_ptr<toxmm::contact> contact):
 
     m_contact->signal_send_action().connect(sigc::track_obj([this](Glib::ustring action, std::shared_ptr<toxmm::receipt>) {
         utils::debug::scope_log log(DBG_LVL_2("gtox"), { action.raw() });
-        auto time = Glib::DateTime::create_now_utc();
-        add_chat_line(
-            LINE_NEW,
-            m_main.tox(),
-            Glib::DateTime::create_now_utc(),
-            Gtk::manage(new widget::chat_action(m_main.tox()->property_name_or_addr(),
-                                                time,
-                                                action)));
+        auto core = m_core.lock();
+        if (core) {
+            auto time = Glib::DateTime::create_now_utc();
+            add_chat_line(
+                LINE_APPEND_APPENDABLE,
+                core,
+                time,
+                Gtk::manage(new widget::chat_action(core->property_name_or_addr(),
+                                                    time,
+                                                    action)));
+        }
     }, *this));
 
     m_contact->signal_recv_action().connect(sigc::track_obj([this](Glib::ustring action) {
@@ -201,13 +166,16 @@ chat::chat(dialog::main& main, std::shared_ptr<toxmm::contact> contact):
         if (file->property_kind() != TOX_FILE_KIND_DATA) {
             return;
         }
-        auto b_ref = widget::file::create(file);
-        auto widget = b_ref.raw();
-        add_chat_line(
-            LINE_APPEND_APPENDABLE,
-            m_main.tox(),
-            Glib::DateTime::create_now_utc(),
-            Gtk::manage(widget));
+        auto core = m_core.lock();
+        if (core) {
+            auto b_ref = widget::file::create(file);
+            auto widget = b_ref.raw();
+            add_chat_line(
+                LINE_APPEND_APPENDABLE,
+                core,
+                Glib::DateTime::create_now_utc(),
+                Gtk::manage(widget));
+        }
     }, *this));
 
     //logic for text-selection
@@ -328,18 +296,8 @@ chat::chat(dialog::main& main, std::shared_ptr<toxmm::contact> contact):
 
 chat::~chat() {
     utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
-    m_main.chat_remove(*m_headerbar_attached, *m_body);
     //why do I need to manually delete m_input ?
     delete m_input;
-}
-
-void chat::activated() {
-    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
-    if (is_visible()) {
-        present();
-    } else {
-        m_main.chat_show(*m_headerbar_attached, *m_body, *m_btn_prev, *m_btn_next);
-    }
 }
 
 void chat::update_children(GdkEventMotion* event,
@@ -413,9 +371,12 @@ Glib::ustring chat::get_children_selection(
 
 void chat::load_log() {
     utils::debug::scope_log lo(DBG_LVL_1("gtox"), {});
-    auto c = m_main.tox();
+    auto c = m_core.lock();
+    if (!c) {
+        return;
+    }
     auto cm = c->contact_manager();
-    if (!c || !cm) {
+    if (!cm) {
         return;
     }
 

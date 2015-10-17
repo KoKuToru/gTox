@@ -30,19 +30,16 @@ namespace sigc {
 #include <iostream>
 
 settings::settings(main& main)
-    : m_builder(Gtk::Builder::create_from_resource("/org/gtox/ui/dialog_settings.ui")),
+    : Glib::ObjectBase(typeid(settings)),
+      detachable_window(sigc::mem_fun(main,
+                                      &dialog::main::detachable_window_add),
+                        sigc::mem_fun(main,
+                                      &dialog::main::detachable_window_del)),
+      m_builder(Gtk::Builder::create_from_resource("/org/gtox/ui/dialog_settings.ui")),
       m_main(main) {
     utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
 
-    m_builder.get_widget("headerbar_attached", m_headerbar_attached);
-    m_builder.get_widget("headerbar_detached", m_headerbar_detached);
     m_builder.get_widget("body", m_body);
-    m_builder.get_widget("attach", m_btn_attach);
-    m_builder.get_widget("detach", m_btn_detach);
-    m_builder.get_widget("btn_prev", m_btn_prev);
-    m_builder.get_widget("btn_next", m_btn_next);
-    m_builder.get_widget("close_btn_attached", m_btn_close_attached);
-    m_builder.get_widget("close_btn_detached", m_btn_close_detached);
 
     m_builder.get_widget("tray_visible" , m_tray_visible);
     m_builder.get_widget("tray_on_start", m_tray_on_start);
@@ -73,40 +70,10 @@ settings::settings(main& main)
 
     m_builder.get_widget("video_default_device", m_video_device);
 
-    m_main.chat_add(*m_headerbar_attached, *m_body, *m_btn_prev, *m_btn_next);
+    property_body() = m_body;
 
-    m_headerbar_attached->set_title(_("gTox settings"));
-    m_headerbar_detached->set_title(_("gTox settings"));
-    m_headerbar_attached->set_subtitle(_("Configure gTox"));
-    m_headerbar_detached->set_subtitle(_("Configure gTox"));
-
-    m_btn_detach->signal_clicked().connect(sigc::track_obj([this]() {
-        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
-        m_main.property_gravity() = Gdk::GRAVITY_NORTH_WEST;
-        int x, y;
-        m_main.get_position(x, y);
-        move(x, y);
-        resize(m_body->get_width(), m_main.get_height());
-        m_main.chat_remove(*m_headerbar_attached, *m_body);
-        add(*m_body);
-        show();
-    }, *this));
-    m_btn_attach->signal_clicked().connect(sigc::track_obj([this]() {
-        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
-        remove();
-        hide();
-        m_main.chat_add(*m_headerbar_attached, *m_body, *m_btn_prev, *m_btn_next);
-    }, *this));
-    m_btn_close_attached->signal_clicked().connect(sigc::track_obj([this]() {
-        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
-        m_main.chat_remove(*m_headerbar_attached, *m_body);
-    }, *this));
-    m_btn_close_detached->signal_clicked().connect(sigc::track_obj([this]() {
-        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
-        remove();
-        hide();
-    }, *this));
-
+    property_headerbar_title() = _("gTox settings");
+    property_headerbar_subtitle() = _("Configure gTox");
 
     auto binding_flag = Glib::BINDING_DEFAULT |
                         Glib::BINDING_SYNC_CREATE |
@@ -267,21 +234,8 @@ settings::settings(main& main)
                              config::global().property_video_default_device(),
                              m_video_device->property_active_id(),
                              binding_flag));
-
-
-    set_titlebar(*m_headerbar_detached);
-}
-
-void settings::activated() {
-    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
-    if (is_visible()) {
-        present();
-    } else {
-        m_main.chat_show(*m_headerbar_attached, *m_body, *m_btn_prev, *m_btn_next);
-    }
 }
 
 settings::~settings() {
     utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
-    m_main.chat_remove(*m_headerbar_attached, *m_body);
 }

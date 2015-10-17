@@ -23,24 +23,16 @@
 #include "utils/builder.h"
 #include "config.h"
 #include "utils/debug.h"
+#include "detachable_window.h"
 
 namespace dialog {
     class main;
-    class settings : public Gtk::Window, public utils::debug::track_obj<settings> {
+    class settings : public detachable_window, public utils::debug::track_obj<settings> {
         private:
             utils::builder m_builder;
             main& m_main;
 
-            Gtk::HeaderBar* m_headerbar_attached;
-            Gtk::HeaderBar* m_headerbar_detached;
             Gtk::Widget* m_body;
-
-            Gtk::Button* m_btn_detach;
-            Gtk::Button* m_btn_attach;
-            Gtk::Button* m_btn_prev;
-            Gtk::Button* m_btn_next;
-            Gtk::Button* m_btn_close_attached;
-            Gtk::Button* m_btn_close_detached;
 
             Gtk::Switch* m_tray_visible;
             Gtk::Switch* m_tray_on_start;

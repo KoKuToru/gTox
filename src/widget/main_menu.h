@@ -34,7 +34,7 @@ namespace widget {
     class main_menu : public Gtk::Popover, public utils::debug::track_obj<main_menu> {
         private:
             dialog::main& m_main;
-            Glib::RefPtr<dialog::settings> m_settings;
+            std::shared_ptr<dialog::settings> m_settings;
 
             struct {
                     Gtk::Entry* username;

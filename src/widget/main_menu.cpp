@@ -67,9 +67,13 @@ main_menu::main_menu(dialog::main& main): m_main(main) {
         utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
         hide();
         if (m_settings) {
-            m_settings->activated();
+            //m_settings->activated();
         } else {
-            m_settings = Glib::RefPtr<dialog::settings>(new dialog::settings(m_main));
+            m_settings = std::make_shared<dialog::settings>(m_main);
+            m_settings->signal_close().connect(sigc::track_obj([this]() {
+                utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
+                m_settings.reset();
+            }, *this));
         }
     }, *this));
 
