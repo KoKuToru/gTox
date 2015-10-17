@@ -50,8 +50,6 @@ namespace dialog {
             virtual ~detachable_window();
 
         private:
-            utils::builder m_builder;
-
             Gtk::HeaderBar* m_headerbar_attached;
             Gtk::HeaderBar* m_headerbar_detached;
             Gtk::Button* m_btn_attach;

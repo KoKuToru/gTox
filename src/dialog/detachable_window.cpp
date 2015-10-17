@@ -51,7 +51,6 @@ detachable_window::type_signal_close detachable_window::signal_close() {
 detachable_window::detachable_window(type_slot_detachable_add main_add,
                                      type_slot_detachable_del main_del)
     : Glib::ObjectBase(typeid(detachable_window)),
-      m_builder(Gtk::Builder::create_from_resource("/org/gtox/ui/dialog_detachable.ui")),
       m_prop_has_focus(*this, "detachable-window-has-focus", false),
       m_prop_is_attached(*this, "detachable-window-is-attached", true),
       m_prop_headerbar_title(*this, "detachable-window-headerbar-title"),
@@ -59,12 +58,14 @@ detachable_window::detachable_window(type_slot_detachable_add main_add,
       m_prop_body(*this, "detachable-window-body"),
       m_prop_headerbar(*this, "detachable-window-headerbar") {
     utils::debug::scope_log(DBG_LVL_1("gtox"), {});
-    m_builder.get_widget("headerbar_attached", m_headerbar_attached);
-    m_builder.get_widget("headerbar_detached", m_headerbar_detached);
-    m_builder.get_widget("attach", m_btn_attach);
-    m_builder.get_widget("detach", m_btn_detach);
-    m_builder.get_widget("btn_attached", m_btn_close_attached);
-    m_builder.get_widget("btn_detached", m_btn_close_detached);
+    utils::builder builder(Gtk::Builder::create_from_resource("/org/gtox/ui/dialog_detachable.ui"));
+
+    builder.get_widget("headerbar_attached", m_headerbar_attached);
+    builder.get_widget("headerbar_detached", m_headerbar_detached);
+    builder.get_widget("attach", m_btn_attach);
+    builder.get_widget("detach", m_btn_detach);
+    builder.get_widget("btn_attached", m_btn_close_attached);
+    builder.get_widget("btn_detached", m_btn_close_detached);
 
     m_prop_headerbar = m_headerbar_attached;
 
@@ -174,4 +175,7 @@ detachable_window::detachable_window(type_slot_detachable_add main_add,
 
 detachable_window::~detachable_window() {
     utils::debug::scope_log(DBG_LVL_1("gtox"), {});
+
+    delete m_headerbar_attached;
+    delete m_headerbar_detached;
 }

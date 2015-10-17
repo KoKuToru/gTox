@@ -29,7 +29,6 @@ namespace dialog {
     class main;
     class settings : public detachable_window, public utils::debug::track_obj<settings> {
         private:
-            utils::builder m_builder;
             main& m_main;
 
             Gtk::Widget* m_body;

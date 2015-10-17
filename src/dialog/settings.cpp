@@ -35,40 +35,40 @@ settings::settings(main& main)
                                       &dialog::main::detachable_window_add),
                         sigc::mem_fun(main,
                                       &dialog::main::detachable_window_del)),
-      m_builder(Gtk::Builder::create_from_resource("/org/gtox/ui/dialog_settings.ui")),
       m_main(main) {
     utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
+    utils::builder builder(Gtk::Builder::create_from_resource("/org/gtox/ui/dialog_settings.ui"));
 
-    m_builder.get_widget("body", m_body);
+    builder.get_widget("body", m_body);
 
-    m_builder.get_widget("tray_visible" , m_tray_visible);
-    m_builder.get_widget("tray_on_start", m_tray_on_start);
-    m_builder.get_widget("tray_on_close", m_tray_on_close);
+    builder.get_widget("tray_visible" , m_tray_visible);
+    builder.get_widget("tray_on_start", m_tray_on_start);
+    builder.get_widget("tray_on_close", m_tray_on_close);
 
-    m_builder.get_widget("c_n_on_message", m_c_n_on_message);
-    m_builder.get_widget("c_n_with_audio", m_c_n_with_audio);
-    m_builder.get_widget("c_auto_away", m_c_auto_away);
-    m_builder.get_widget("c_send_typing", m_c_send_typing);
-    m_builder.get_widget("c_chat_logging", m_c_logging);
+    builder.get_widget("c_n_on_message", m_c_n_on_message);
+    builder.get_widget("c_n_with_audio", m_c_n_with_audio);
+    builder.get_widget("c_auto_away", m_c_auto_away);
+    builder.get_widget("c_send_typing", m_c_send_typing);
+    builder.get_widget("c_chat_logging", m_c_logging);
 
-    m_builder.get_widget("ft_saveto", m_ft_save_to);
-    m_builder.get_widget("ft_auto_accept", m_ft_auto_accept);
-    m_builder.get_widget("ft_display_inline", m_ft_display_inline);
+    builder.get_widget("ft_saveto", m_ft_save_to);
+    builder.get_widget("ft_auto_accept", m_ft_auto_accept);
+    builder.get_widget("ft_display_inline", m_ft_display_inline);
 
-    m_builder.get_widget("cl_use_compact", m_cl_use_compact);
-    m_builder.get_widget("cl_display_active", m_cl_display_active);
+    builder.get_widget("cl_use_compact", m_cl_use_compact);
+    builder.get_widget("cl_display_active", m_cl_display_active);
 
-    m_builder.get_widget("connection_udp", m_connection_udp);
-    m_builder.get_widget("connection_tcp", m_connection_tcp);
-    m_builder.get_widget("proxy_type", m_proxy_type);
-    m_builder.get_widget("proxy_host", m_proxy_host);
-    m_builder.get_widget("proxy_port", m_proxy_port);
+    builder.get_widget("connection_udp", m_connection_udp);
+    builder.get_widget("connection_tcp", m_connection_tcp);
+    builder.get_widget("proxy_type", m_proxy_type);
+    builder.get_widget("proxy_host", m_proxy_host);
+    builder.get_widget("proxy_port", m_proxy_port);
 
-    m_builder.get_widget("t_color", m_t_color);
+    builder.get_widget("t_color", m_t_color);
 
-    m_builder.get_widget("p_remember", m_p_remember);
+    builder.get_widget("p_remember", m_p_remember);
 
-    m_builder.get_widget("video_default_device", m_video_device);
+    builder.get_widget("video_default_device", m_video_device);
 
     property_body() = m_body;
 
@@ -238,4 +238,6 @@ settings::settings(main& main)
 
 settings::~settings() {
     utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
+
+    delete m_body;
 }
