@@ -42,7 +42,6 @@ namespace dialog {
             std::shared_ptr<toxmm::contact> m_contact;
 
             utils::dispatcher m_dispatcher;
-            utils::builder    m_builder;
 
             Gtk::Widget* m_body;
 

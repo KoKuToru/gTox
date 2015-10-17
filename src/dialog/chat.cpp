@@ -42,18 +42,19 @@ chat::chat(std::shared_ptr<toxmm::core> core,
     Glib::ObjectBase(typeid(chat)),
     detachable_window(slot_add_widget, slot_del_widget),
     m_core(core),
-    m_contact(contact),
-    m_builder(Gtk::Builder::create_from_resource("/org/gtox/ui/dialog_chat.ui")) {
+    m_contact(contact) {
     utils::debug::scope_log log(DBG_LVL_1("gtox"), { contact->property_name_or_addr().get_value().raw() });
 
-    m_builder.get_widget("chat_body", m_body);
-    m_input = m_builder.get_widget_derived<widget::chat_input>("chat_input");
-    m_builder.get_widget("chat_input_revealer", m_input_revealer);
-    m_builder.get_widget("chat_input_format_revealer", m_input_format_revealer);
-    m_builder.get_widget("chat_box", m_chat_box);
-    m_builder.get_widget("eventbox", m_eventbox);
-    m_builder.get_widget("scrolled", m_scrolled);
-    m_builder.get_widget("viewport", m_viewport);
+    utils::builder builder(Gtk::Builder::create_from_resource("/org/gtox/ui/dialog_chat.ui"));
+
+    builder.get_widget("chat_body", m_body);
+    m_input = builder.get_widget_derived<widget::chat_input>("chat_input");
+    builder.get_widget("chat_input_revealer", m_input_revealer);
+    builder.get_widget("chat_input_format_revealer", m_input_format_revealer);
+    builder.get_widget("chat_box", m_chat_box);
+    builder.get_widget("eventbox", m_eventbox);
+    builder.get_widget("scrolled", m_scrolled);
+    builder.get_widget("viewport", m_viewport);
 
     property_body() = m_body;
 
@@ -296,8 +297,8 @@ chat::chat(std::shared_ptr<toxmm::core> core,
 
 chat::~chat() {
     utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
-    //why do I need to manually delete m_input ?
-    delete m_input;
+
+    delete m_body;
 }
 
 void chat::update_children(GdkEventMotion* event,
