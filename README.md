@@ -81,7 +81,7 @@ gTox has special enviroment variables to help debugging
 
 Features
 ============
-For comparison https://wiki.tox.chat/users/clients
+For comparison https://wiki.tox.chat/clients#features
 
 Special to gTox:
 * Markup support bold(crtl+b), italic(crtl+i), underline(crtl+u)
