@@ -430,7 +430,7 @@ void chat::load_log() {
         auto& date  = l.first;
         auto& index = l.second;
 
-        if (date != last_date || !last_data) {
+        if (!last_data || date != last_date) {
             last_date = date;
 
             std::initializer_list<std::string> key = {
