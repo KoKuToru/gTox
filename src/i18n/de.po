@@ -18,11 +18,19 @@ msgstr "Okay"
 
 #: widget/chat_bubble.cpp
 msgid "%1 hr"
-msgstr "%1 h"
+msgstr "vor %1 Stunde"
+
+#: widget/chat_bubble.cpp
+msgid "%1 hrs"
+msgstr "vor %1 Stunden"
 
 #: widget/chat_bubble.cpp
 msgid "%1 min"
-msgstr "%1 min"
+msgstr "vor %1 Minute"
+
+#: widget/chat_bubble.cpp
+msgid "%1 mins"
+msgstr "vor %1 Minuten"
 
 #: resources/ui/dialog_contact.ui
 msgid "%1 new contact request"
@@ -41,8 +49,8 @@ msgstr ""
 "%2"
 
 #: widget/chat_bubble.cpp
-msgid "%a. %B, %R"
-msgstr "%a. %B, %R"
+msgid "%A, %R"
+msgstr "%A, %R"
 
 #: widget/chat_bubble.cpp
 msgid "%e. %B %Y, %R"

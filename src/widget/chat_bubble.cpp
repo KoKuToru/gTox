@@ -82,13 +82,23 @@ chat_bubble::chat_bubble(BaseObjectType* cobject,
             date = datetime.format(_("%e. %B, %R"));
         } else if (hour_diff >= 24) {
             //display weekday and time
-            date = datetime.format(_("%a. %B, %R"));
+            date = datetime.format(_("%A, %R"));
         } else if (min_diff >= 60) {
             //display difference in h
-            date = Glib::ustring::compose(_("%1 hr"), hour_diff);
+            date = Glib::ustring::compose(
+                       g_dngettext(nullptr,
+                                   _("%1 hr"),
+                                   _("%1 hrs"),
+                                   hour_diff),
+                       hour_diff);
         } else if (min_diff >= 1) {
             //display difference in min
-            date = Glib::ustring::compose(_("%1 min"), min_diff);
+            date = Glib::ustring::compose(
+                       g_dngettext(nullptr,
+                                   _("%1 min"),
+                                   _("%1 mins"),
+                                   min_diff),
+                       min_diff);
         } else {
             //display just now
             date = _("Just now");

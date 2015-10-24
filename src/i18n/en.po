@@ -21,7 +21,15 @@ msgid "%1 hr"
 msgstr ""
 
 #: widget/chat_bubble.cpp
+msgid "%1 hrs"
+msgstr ""
+
+#: widget/chat_bubble.cpp
 msgid "%1 min"
+msgstr ""
+
+#: widget/chat_bubble.cpp
+msgid "%1 mins"
 msgstr ""
 
 #: resources/ui/dialog_contact.ui
@@ -37,7 +45,7 @@ msgid ""
 msgstr ""
 
 #: widget/chat_bubble.cpp
-msgid "%a. %B, %R"
+msgid "%A, %R"
 msgstr ""
 
 #: widget/chat_bubble.cpp
