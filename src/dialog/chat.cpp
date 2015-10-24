@@ -594,8 +594,6 @@ void chat::add_chat_line(AppendMode append_mode,
                 bubble->add_row(*widget);
                 return;
             }
-        } else {
-            //TODO: display date line
         }
     }
 
@@ -647,8 +645,6 @@ void chat::add_chat_line(AppendMode append_mode,
                 bubble->add_row(*widget);
                 return;
             }
-        } else {
-            //TODO: display date line
         }
     }
 
