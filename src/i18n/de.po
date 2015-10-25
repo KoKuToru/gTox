@@ -69,8 +69,8 @@ msgid ""
 msgstr ""
 "</b></i>\n"
 "\n"
-"Bitte stellen Sie sicher das Sie die neuste gTox Version benützen.\n"
-"Sollten Sie die neusten gTox Version benützen, wären wir Ihnen sehr "
+"Bitte stellen Sie sicher das Sie die neuste gTox Version benutzen.\n"
+"Sollten Sie die aktuellste gTox Version benutzen, wären wir Ihnen sehr "
 "Dankbar\n"
 "wenn Sie uns diesen Fehler melden würden."
 
@@ -96,7 +96,7 @@ msgstr "<b>Kontakte</b>"
 
 #: resources/ui/dialog_settings.ui
 msgid "<b>Filetransfer</b>"
-msgstr "<b>Dateienübertragung</b>"
+msgstr "<b>Dateiübertragung</b>"
 
 #: resources/ui/dialog_settings.ui
 msgid "<b>Profile</b>"
@@ -108,7 +108,7 @@ msgstr "<b>Infobereich</b>"
 
 #: resources/ui/dialog_settings.ui
 msgid "<b>Theme</b>"
-msgstr "<b>Thema</b>"
+msgstr "<b>Theme</b>"
 
 #: resources/ui/dialog_settings.ui
 msgid "<i>This program comes with ABSOLUTELY NO WARRANTY</i>"
@@ -116,7 +116,7 @@ msgstr "<i>Dieses Programm kommt OHNE JEDWEDE GARANTIE.</i>"
 
 #: resources/ui/dialog_settings.ui
 msgid "<i>pre-alpha version</i>"
-msgstr "<i>pre-alpha version</i>"
+msgstr "<i>pre-alpha Version</i>"
 
 #: widget/main_menu.cpp
 msgid "A Tox-ID must be 76 letters long"
@@ -127,7 +127,7 @@ msgid ""
 "A contact request has already been sent, or the address belongs to a friend "
 "that is already on the friend list."
 msgstr ""
-"Dei Kontaktanfrage wurde bereits gesendet order die Tox-ID befindet sich "
+"Dei Kontaktanfrage wurde bereits gesendet oder die Tox-ID befindet sich "
 "bereits in deiner Kontaktliste."
 
 #: resources/ui/dialog_settings.ui
@@ -141,7 +141,7 @@ msgstr "Kontakt hinzufügen"
 
 #: dialog/main.cpp
 msgid "Are you sure you want to remove this contact?"
-msgstr "Möchten Sie sicher diesen Kontakt löschen ?"
+msgstr "Möchten Sie diesen Kontakt wirklich löschen ?"
 
 #: resources/ui/dialog_settings.ui
 msgid "Audio notification on new message"
@@ -187,11 +187,11 @@ msgstr "gTox Konfigurieren"
 
 #: dialog/main.cpp
 msgid "Contact Request"
-msgstr "Kontakt Anfrage"
+msgstr "Kontaktanfrage"
 
 #: widget/main_menu.cpp
 msgid "Contact request failed"
-msgstr "Kontakt anfrage schlug fehl"
+msgstr "Kontaktanfrage schlug fehl"
 
 #. Copies tox id into clipboard
 #: resources/ui/popover_settings.ui
@@ -272,11 +272,11 @@ msgstr "Datei öffnen"
 
 #: dialog/profile_selection.cpp
 msgid "Open this profile in file manager"
-msgstr "Diese Profil im Dateimanager anzeigen"
+msgstr "Dieses Profil im Dateimanager anzeigen"
 
 #: resources/ui/list_item_profile.ui
 msgid "Path of file"
-msgstr "Path zur Datei"
+msgstr "Dateipfad"
 
 #. Pauses the download
 #: resources/ui/chat_filerecv.ui
@@ -293,7 +293,7 @@ msgstr "Profil konnte nicht geladen werden"
 
 #: dialog/profile_selection.cpp
 msgid "Profile not loaded for an unknown reason"
-msgstr "Profile könnte nicht geladen werden weg eines unbekannten Problemes"
+msgstr "Profil wurde aus unbekannten Grund nicht geladen"
 
 #: resources/ui/dialog_settings.ui
 msgid "Proxy host"
@@ -347,7 +347,7 @@ msgstr "Profil auswählen"
 
 #: resources/ui/dialog_settings.ui
 msgid "Send typing notification"
-msgstr "Tippen status senden"
+msgstr "Tippen Status senden"
 
 #: resources/ui/popover_settings.ui
 msgid "Settings"
@@ -446,7 +446,7 @@ msgstr ""
 
 #: widget/main_menu.cpp
 msgid "Wrong ID length"
-msgstr "Falsche ID länge"
+msgstr "Falsche ID Länge"
 
 #: widget/main_menu.cpp
 msgid "Wrong checksum"
@@ -525,7 +525,7 @@ msgstr "toxcore Datei"
 
 #: utils/gstreamer.cpp
 msgid "unknow gstreamer error"
-msgstr "inbekanntes Problem mit gstreamer"
+msgstr "unbekanntes Problem mit gstreamer"
 
 #. dark theme
 #: resources/ui/dialog_settings.ui
