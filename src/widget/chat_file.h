@@ -27,6 +27,7 @@
 #include "widget/videoplayer.h"
 #include <thread>
 #include "utils/debug.h"
+#include "widget/chat_file_popover.h"
 
 namespace widget {
     class file: public Gtk::Frame, public utils::debug::track_obj<file> {
@@ -34,36 +35,22 @@ namespace widget {
             std::shared_ptr<toxmm::file> m_file;
             utils::dispatcher m_dispatcher;
 
-            Gtk::ToggleButton*   m_file_resume;
-            Gtk::ToggleButton*   m_file_cancel;
-            Gtk::ToggleButton*   m_file_pause;
-            Gtk::ProgressBar*    m_file_progress;
-            Gtk::Revealer*       m_revealer_download;
-            Gtk::Spinner*        m_spinner;
-            Gtk::Widget*         m_file_open_bar;
-            Gtk::Label*          m_file_speed;
-            Gtk::Label*          m_file_size;
-            Gtk::Label*          m_file_time;
-            Gtk::Label*          m_file_name;
-            Gtk::Box*            m_widget_list;
-            Gtk::Widget*         m_file_info_box_1;
-            Gtk::Widget*         m_file_info_box_2;
-            Gtk::Widget*         m_file_control;
-            Gtk::Button*         m_file_dir;
-            Gtk::Button*         m_file_open;
-            Gtk::Revealer*       m_preview_image_revealer;
-            widget::imagescaled* m_preview_image;
+            Gtk::Spinner*  m_spinner;
+            Gtk::Label*    m_file_name;
+            Gtk::Button*   m_file_info;
+            Gtk::Revealer* m_preview_revealer;
+            Gtk::Box*    m_preview;
+
+            widget::imagescaled  m_preview_image;
             widget::videoplayer* m_preview_video;
-            Gtk::Box*            m_box;
+
+            widget::chat_file_popover m_file_info_popover;
 
             std::vector<Glib::RefPtr<Glib::Binding>> m_bindings;
-            Glib::RefPtr<Gio::FileMonitor> m_monitor;
 
             std::thread m_preview_thread;
 
         public:
-            file(BaseObjectType* cobject,
-                 utils::builder builder);
             file(BaseObjectType* cobject,
                  utils::builder builder,
                  const std::shared_ptr<toxmm::file>& file);

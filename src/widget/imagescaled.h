@@ -28,6 +28,7 @@
 namespace widget {
     class imagescaled : public Gtk::Image, public utils::debug::track_obj<imagescaled> {
         public:
+            imagescaled();
             imagescaled(BaseObjectType* cobject,
                    utils::builder);
             ~imagescaled();

@@ -68,6 +68,7 @@ set(SOURCES
     widget/chat_action.cpp
     widget/chat_bubble.cpp
     widget/chat_file.cpp
+    widget/chat_file_popover.cpp
     widget/imagescaled.cpp
     widget/videoplayer.cpp
 
