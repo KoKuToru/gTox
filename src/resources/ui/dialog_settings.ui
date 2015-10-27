@@ -903,7 +903,6 @@
                     <child>
                       <object class="GtkSwitch" id="connection_udp">
                         <property name="visible">True</property>
-                        <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
                         <property name="halign">end</property>
                         <property name="active">True</property>
@@ -916,7 +915,6 @@
                     <child>
                       <object class="GtkSwitch" id="connection_tcp">
                         <property name="visible">True</property>
-                        <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
                         <property name="halign">end</property>
                         <property name="active">True</property>
@@ -942,7 +940,6 @@
                     <child>
                       <object class="GtkComboBox" id="proxy_type">
                         <property name="visible">True</property>
-                        <property name="sensitive">False</property>
                         <property name="can_focus">False</property>
                       </object>
                       <packing>
@@ -953,7 +950,6 @@
                     <child>
                       <object class="GtkEntry" id="proxy_host">
                         <property name="visible">True</property>
-                        <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
                       </object>
                       <packing>
@@ -964,7 +960,6 @@
                     <child>
                       <object class="GtkEntry" id="proxy_port">
                         <property name="visible">True</property>
-                        <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
                         <property name="input_purpose">number</property>
                       </object>
