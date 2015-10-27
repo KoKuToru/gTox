@@ -71,7 +71,7 @@ make
 
 Linux Dependencies
 -----------
-`gtkmm3`, `librsvg`, `gettext`, `gstreamermm`, `flatbuffers`
+`gtkmm3`, `librsvg`, `gettext`, `gstreamermm`, `flatbuffers`, `util-linux` for `libuuid`
 
 Debug Features
 ============
