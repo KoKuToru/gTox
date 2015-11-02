@@ -24,13 +24,6 @@
 class config_global: public Glib::Object, public utils::debug::track_obj<config_global> {
         friend class config;
     public:
-        Glib::PropertyProxy<bool> property_connection_udp();
-        Glib::PropertyProxy<bool> property_connection_tcp();
-
-        Glib::PropertyProxy<int>           property_proxy_type();
-        Glib::PropertyProxy<Glib::ustring> property_proxy_host();
-        Glib::PropertyProxy<int>           property_proxy_port();
-
         Glib::PropertyProxy<int> property_theme_color();
 
         Glib::PropertyProxy<bool> property_profile_remember();
@@ -44,13 +37,6 @@ class config_global: public Glib::Object, public utils::debug::track_obj<config_
         void save_flatbuffer();
 
         std::string m_config_file;
-
-        Glib::Property<bool> m_property_connection_udp;
-        Glib::Property<bool> m_property_connection_tcp;
-
-        Glib::Property<int>           m_property_proxy_type;
-        Glib::Property<Glib::ustring> m_property_proxy_host;
-        Glib::Property<int>           m_property_proxy_port;
 
         Glib::Property<int> m_property_theme_color;
 

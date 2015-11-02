@@ -19,6 +19,7 @@ set(SOURCES
     exception.cpp
     profile.cpp
     storage.cpp
+    config.cpp
     contact/manager.cpp
     contact/contact.cpp
     contact/receipt.cpp

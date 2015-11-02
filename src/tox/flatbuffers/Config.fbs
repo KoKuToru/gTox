@@ -1,0 +1,15 @@
+namespace flatbuffers.Config;
+
+//never reorder these properties !
+
+table Config {
+    download_path:string;
+    avatar_path:string;
+    connection_udp:bool;
+    connection_tcp:bool;
+    proxy_type:int;
+    proxy_host:string;
+    proxy_port:int;
+}
+
+root_type Config;

@@ -98,14 +98,9 @@ Glib::PropertyProxy<TOX_USER_STATUS> core::property_status() {
 Glib::PropertyProxy_ReadOnly<TOX_CONNECTION> core::property_connection() {
     return {this, "self-connection"};
 }
-Glib::PropertyProxy<Glib::ustring> core::property_download_path() {
-    return m_property_download_path.get_proxy();
-}
-Glib::PropertyProxy<Glib::ustring> core::property_avatar_path() {
-    return m_property_avatar_path.get_proxy();
-}
 
-core::core(const std::string& profile_path, const std::shared_ptr<toxmm::storage>& storage):
+core::core(const std::string& profile_path,
+           const std::shared_ptr<toxmm::storage>& storage):
     Glib::ObjectBase(typeid(core)),
     m_profile_path(profile_path),
     m_storage(storage),
@@ -115,15 +110,7 @@ core::core(const std::string& profile_path, const std::shared_ptr<toxmm::storage
     m_property_name_or_addr(*this, "self-name-or-addr"),
     m_property_status_message(*this, "self-status-message"),
     m_property_status(*this, "self-status"),
-    m_property_connection(*this, "self-connection"),
-    m_property_download_path(*this, "core-download-path",
-                             Glib::get_user_special_dir(
-                                 GUserDirectory::G_USER_DIRECTORY_DOWNLOAD)),
-    m_property_avatar_path(*this, "core-avatar-path",
-                           Glib::build_filename(
-                               Glib::get_user_config_dir(),
-                               "tox",
-                               "avatars")) {
+    m_property_connection(*this, "self-connection") {
     //rest is done in init()
 }
 
@@ -141,8 +128,11 @@ void core::destroy() {
 }
 
 core::~core() {
-    save();
-    tox_kill(m_toxcore);
+    if (m_toxcore) {
+        save();
+        tox_kill(m_toxcore);
+        m_toxcore = nullptr;
+    }
 }
 
 std::shared_ptr<core> core::create(const std::string& profile_path,
@@ -243,12 +233,14 @@ void core::init() {
         throw exception(nerror);
     }
 
-    options->ipv6_enabled = true;
-    options->udp_enabled  = true;
+    //first load with disabled, just to get the pub id
+    options->ipv6_enabled = false;
+    options->udp_enabled  = false;
 
     std::vector<uint8_t> state = m_profile.read();
     if (state.empty()) {
         options->savedata_type   = TOX_SAVEDATA_TYPE_NONE;
+        //TODO this shall throw an error ?
     } else {
         options->savedata_type   = TOX_SAVEDATA_TYPE_TOX_SAVE;
         options->savedata_data   = state.data();
@@ -256,6 +248,36 @@ void core::init() {
     }
     TOX_ERR_NEW error;
     m_toxcore = tox_new(options.get(), &error);
+    if (error != TOX_ERR_NEW_OK) {
+        throw exception(error);
+    }
+
+    //set prefix for storage
+    {
+        contactAddrPublic addr_public;
+        m_storage->set_prefix_key(addr_public);
+        m_config = config::create(m_storage);
+    }
+
+    //reload client witht the right settings now
+    tox_kill(m_toxcore);
+    options->ipv6_enabled = true;
+    options->udp_enabled  = m_config->property_connection_udp();
+    options->proxy_type   = m_config->property_proxy_type().get_value();
+    options->proxy_host   = m_config->property_proxy_host().get_value().c_str();
+    options->proxy_port   = m_config->property_proxy_port();
+
+    m_toxcore = tox_new(options.get(), &error);
+    if (error == TOX_ERR_NEW_PROXY_BAD_HOST ||
+        error == TOX_ERR_NEW_PROXY_BAD_TYPE ||
+        error == TOX_ERR_NEW_PROXY_BAD_PORT ||
+        error == TOX_ERR_NEW_PROXY_NOT_FOUND) {
+        //TODO: display error to user
+
+        //try without proxy
+        options->proxy_type = TOX_PROXY_TYPE_NONE;
+        m_toxcore = tox_new(options.get(), &error);
+    }
 
     if (error != TOX_ERR_NEW_OK) {
         throw exception(error);
@@ -363,9 +385,6 @@ void core::init() {
         tox_self_set_status(m_toxcore, property_status());
     }, *this));
 
-    //set prefix for storage
-    m_storage->set_prefix_key(property_addr_public().get_value());
-
     //start sub systems:
     m_contact_manager = std::shared_ptr<toxmm::contact_manager>(new toxmm::contact_manager(shared_from_this()));
     m_contact_manager->init();
@@ -382,6 +401,10 @@ void core::init() {
 
 std::shared_ptr<toxmm::contact_manager> core::contact_manager() {
     return m_contact_manager;
+}
+
+std::shared_ptr<toxmm::config> core::config() {
+    return m_config;
 }
 
 std::shared_ptr<toxmm::storage> core::storage() {

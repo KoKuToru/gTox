@@ -102,7 +102,7 @@ void contact::init() {
             }
         } else if (property_connection() != TOX_CONNECTION_NONE) {
             auto path = Glib::build_filename(
-                            c->property_avatar_path().get_value(),
+                            c->config()->property_avatar_path().get_value(),
                             std::string(c->property_addr_public()
                                         .get_value()) + ".png");
             if (Glib::file_test(path, Glib::FILE_TEST_IS_REGULAR)) {

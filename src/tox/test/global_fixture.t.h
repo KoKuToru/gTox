@@ -102,11 +102,11 @@ public:
         core_a = toxmm::core::create("/tmp/gtox_core_a", mock_storage_a);
         core_b = toxmm::core::create("/tmp/gtox_core_b", mock_storage_b);
 
-        core_a->property_download_path() = "/tmp/";
-        core_b->property_download_path() = "/tmp/";
+        core_a->config()->property_download_path() = "/tmp/";
+        core_b->config()->property_download_path() = "/tmp/";
 
-        core_a->property_avatar_path() = "/tmp/avatar_a/";
-        core_b->property_avatar_path() = "/tmp/avatar_b/";
+        core_a->config()->property_avatar_path() = "/tmp/avatar_a/";
+        core_b->config()->property_avatar_path() = "/tmp/avatar_b/";
 
         //speed up testing ?
         auto tox_a = core_a->toxcore();
