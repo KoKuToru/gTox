@@ -1,8 +1,9 @@
 cmake_minimum_required(VERSION 2.8)
 
 set(SRC
-    File.fbs)
-    
+    File.fbs
+    Config.fbs)
+
 ADD_CUSTOM_TARGET(toxmm-flatbuffers ALL)
 
 find_program(FLAT_C_EXECUTABLE flatc)

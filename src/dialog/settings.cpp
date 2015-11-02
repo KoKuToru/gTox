@@ -156,37 +156,36 @@ settings::settings(main& main)
 
     //GLOBAL CONNECTION-SETTINGS
     m_bindings.push_back(Glib::Binding::bind_property(
-                             config::global().property_connection_tcp(),
+                             m_main.tox()->config()->property_connection_tcp(),
                              m_connection_tcp->property_active(),
                              binding_flag));
     m_bindings.push_back(Glib::Binding::bind_property(
-                             config::global().property_connection_udp(),
+                             m_main.tox()->config()->property_connection_udp(),
                              m_connection_udp->property_active(),
                              binding_flag));
 
     //GLOBAL PROXY-SETTINGS
     m_bindings.push_back(Glib::Binding::bind_property(
-                             config::global().property_proxy_type(),
+                             m_main.tox()->config()->property_proxy_type(),
                              m_proxy_type->property_active_id(),
                              binding_flag,
-                             [](const int& value_in, Glib::ustring& value_out) {
+                             [](const TOX_PROXY_TYPE& value_in, Glib::ustring& value_out) {
                                  utils::debug::scope_log log(DBG_LVL_4("gtox"), { value_in });
                                  value_out = std::to_string(value_in);
                                  return true;
                              },
-                             [](const Glib::ustring& value_in, int& value_out) {
+                             [](const Glib::ustring& value_in, TOX_PROXY_TYPE& value_out) {
                                  utils::debug::scope_log log(DBG_LVL_4("gtox"), { value_in.raw() });
-                                 value_out = std::stoi(value_in);
+                                 value_out = TOX_PROXY_TYPE(std::stoi(value_in));
                                  return true;
                              }));
     m_bindings.push_back(Glib::Binding::bind_property(
-                             config::global().property_proxy_host(),
+                             m_main.tox()->config()->property_proxy_host(),
                              m_proxy_host->property_text(),
                              binding_flag));
-    //TOOD find out why this fails ?
     m_bindings.push_back(Glib::Binding::bind_property(
-                             config::global().property_proxy_port(),
-                             m_proxy_host->property_text(),
+                             m_main.tox()->config()->property_proxy_port(),
+                             m_proxy_port->property_text(),
                              binding_flag,
                              [](const int& value_in, Glib::ustring& value_out) {
                                  utils::debug::scope_log log(DBG_LVL_4("gtox"), { value_in });
@@ -200,6 +199,24 @@ settings::settings(main& main)
                                  } catch (...) {
                                      return false;
                                  }
+                                 return true;
+                             }));
+    m_bindings.push_back(Glib::Binding::bind_property(
+                             m_main.tox()->config()->property_proxy_type(),
+                             m_proxy_host->property_sensitive(),
+                             Glib::BINDING_DEFAULT | Glib::BINDING_SYNC_CREATE,
+                             [](const TOX_PROXY_TYPE& value_in, bool& value_out) {
+                                 utils::debug::scope_log log(DBG_LVL_4("gtox"), { value_in });
+                                 value_out = value_in != TOX_PROXY_TYPE_NONE;
+                                 return true;
+                             }));
+    m_bindings.push_back(Glib::Binding::bind_property(
+                             m_main.tox()->config()->property_proxy_type(),
+                             m_proxy_port->property_sensitive(),
+                             Glib::BINDING_DEFAULT | Glib::BINDING_SYNC_CREATE,
+                             [](const TOX_PROXY_TYPE& value_in, bool& value_out) {
+                                 utils::debug::scope_log log(DBG_LVL_4("gtox"), { value_in });
+                                 value_out = value_in != TOX_PROXY_TYPE_NONE;
                                  return true;
                              }));
 

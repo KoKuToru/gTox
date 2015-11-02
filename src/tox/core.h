@@ -24,6 +24,7 @@
 #include "profile.h"
 #include "types.h"
 #include "storage.h"
+#include "config.h"
 
 namespace toxmm {
     class core : public Glib::Object, public std::enable_shared_from_this<core> {
@@ -42,8 +43,6 @@ namespace toxmm {
             Glib::PropertyProxy<Glib::ustring>              property_status_message();
             Glib::PropertyProxy<TOX_USER_STATUS>            property_status();
             Glib::PropertyProxy_ReadOnly<TOX_CONNECTION>    property_connection();
-            Glib::PropertyProxy<Glib::ustring>              property_download_path();
-            Glib::PropertyProxy<Glib::ustring>              property_avatar_path();
 
             //Signals
             using type_signal_contact_request           = sigc::signal<void, contactAddrPublic, Glib::ustring>;
@@ -83,6 +82,7 @@ namespace toxmm {
             ~core();
             Tox* toxcore();
             std::shared_ptr<toxmm::contact_manager> contact_manager();
+            std::shared_ptr<toxmm::config> config();
             std::shared_ptr<toxmm::storage> storage();
             static void try_load(std::string path, Glib::ustring& out_name, Glib::ustring& out_status, contactAddrPublic& out_addr, bool& out_writeable);
             static std::vector<uint8_t> create_state(std::string name, std::string status, contactAddrPublic& out_addr);
@@ -93,6 +93,7 @@ namespace toxmm {
         private:
             Tox* m_toxcore;
             std::string m_profile_path;
+            std::shared_ptr<toxmm::config> m_config;
             std::shared_ptr<toxmm::storage> m_storage;
             std::shared_ptr<toxmm::contact_manager> m_contact_manager;
             profile m_profile;
@@ -105,8 +106,6 @@ namespace toxmm {
             Glib::Property<Glib::ustring>     m_property_status_message;
             Glib::Property<TOX_USER_STATUS>   m_property_status;
             Glib::Property<TOX_CONNECTION>    m_property_connection;
-            Glib::Property<Glib::ustring>     m_property_download_path;
-            Glib::Property<Glib::ustring>     m_property_avatar_path;
 
             type_signal_contact_request           m_signal_contact_request;
             type_signal_contact_message           m_signal_contact_message;
@@ -122,7 +121,8 @@ namespace toxmm {
             type_signal_file_recv_chunk           m_signal_file_recv_chunk;
             type_signal_file_recv_control         m_signal_file_recv_control;
 
-            core(const std::string& profile_path, const std::shared_ptr<toxmm::storage>& storage);
+            core(const std::string& profile_path,
+                 const std::shared_ptr<toxmm::storage>& storage);
             core(const core&) = delete;
             void operator=(const core&) = delete;
 

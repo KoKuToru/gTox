@@ -63,21 +63,6 @@ Glib::PropertyProxy<bool> config::property_contacts_display_active()
 { return m_property_contacts_display_active.get_proxy(); }
 
 //GLOBAL:
-Glib::PropertyProxy<bool> config_global::property_connection_udp()
-{ return m_property_connection_udp.get_proxy(); }
-
-Glib::PropertyProxy<bool> config_global::property_connection_tcp()
-{ return m_property_connection_tcp.get_proxy(); }
-
-Glib::PropertyProxy<int> config_global::property_proxy_type()
-{ return m_property_proxy_type.get_proxy(); }
-
-Glib::PropertyProxy<Glib::ustring> config_global::property_proxy_host()
-{ return m_property_proxy_host.get_proxy(); }
-
-Glib::PropertyProxy<int> config_global::property_proxy_port()
-{ return m_property_proxy_port.get_proxy(); }
-
 Glib::PropertyProxy<int> config_global::property_theme_color()
 { return m_property_theme_color.get_proxy(); }
 
@@ -104,11 +89,6 @@ config_global::config_global():
 
     m_config_file(Glib::build_filename(Glib::get_user_config_dir(), "gtox", "config.bin")),
 
-    m_property_connection_udp(*this, "config-connection-udp", true),
-    m_property_connection_tcp(*this, "config-connection-tcp", true),
-    m_property_proxy_type(*this, "config-proxy-type"),
-    m_property_proxy_host(*this, "config-proxy-host"),
-    m_property_proxy_port(*this, "config-proxy-post"),
     m_property_theme_color(*this, "config-theme-color", 0),
     m_property_profile_remember(*this, "config-profile-remember", false),
     m_property_video_default_device(*this, "config-video-default-device")
@@ -118,11 +98,6 @@ config_global::config_global():
 
     //setup properties
     for_each_in_tuple(std::make_tuple(
-                          property_connection_udp(),
-                          property_connection_tcp(),
-                          property_proxy_type(),
-                          property_proxy_host(),
-                          property_proxy_port(),
                           property_theme_color(),
                           property_theme_color(),
                           property_profile_remember(),
@@ -278,14 +253,6 @@ void config_global::load_flatbuffer() {
 
     auto conf = flatbuffers::Config::GetGlobal(content.data());
 
-    property_connection_udp() = conf->connection_udp();
-    property_connection_tcp() = conf->connection_tcp();
-
-    property_proxy_type() = conf->proxy_type();
-    property_proxy_host() = std::string(conf->proxy_host()->begin(),
-                                        conf->proxy_host()->end());
-    property_proxy_port() = conf->proxy_port();
-
     property_theme_color() = conf->theme_color();
 
     property_video_default_device() = std::string(
@@ -297,17 +264,9 @@ void config_global::save_flatbuffer() {
     utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
     flatbuffers::FlatBufferBuilder fbb;
 
-    auto proxy_host = fbb.CreateString(property_proxy_host().get_value());
     auto video_default = fbb.CreateString(property_video_default_device().get_value());
 
     auto builder = flatbuffers::Config::GlobalBuilder(fbb);
-
-    builder.add_connection_udp(property_connection_udp());
-    builder.add_connection_tcp(property_connection_tcp());
-
-    builder.add_proxy_type(property_proxy_type());
-    builder.add_proxy_host(proxy_host);
-    builder.add_proxy_port(property_proxy_port());
 
     builder.add_theme_color(property_theme_color());
 

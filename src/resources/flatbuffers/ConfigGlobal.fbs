@@ -3,12 +3,12 @@ namespace flatbuffers.Config;
 //never reorder these properties !
 
 table Global {
-	connection_udp: bool;
-	connection_tcp: bool;
+	connection_udp: bool (deprecated);
+	connection_tcp: bool (deprecated);
 	
-	proxy_type: int;
-	proxy_host: string;
-	proxy_port: int;
+	proxy_type: int (deprecated);
+	proxy_host: string (deprecated);
+	proxy_port: int (deprecated);
 	
 	theme_color: int;
 	

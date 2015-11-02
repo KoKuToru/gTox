@@ -140,7 +140,7 @@ void file_manager::init() {
                                               fname.substr(last_point));
                }
                fpath = Glib::build_filename(
-                                 c->property_download_path().get_value(),
+                                 c->config()->property_download_path().get_value(),
                                  ffname);
                ++index;
            } while (Glib::file_test(fpath, Glib::FILE_TEST_EXISTS));
@@ -148,7 +148,7 @@ void file_manager::init() {
        } else if (kind == TOX_FILE_KIND_AVATAR && size < 65*1024) {
            //check if file exists
            f->m_property_path = Glib::build_filename(
-                  c->property_avatar_path().get_value(),
+                  c->config()->property_avatar_path().get_value(),
                   std::string(ct->property_addr_public().get_value()) + ".png");
            if (Glib::file_test(f->property_path().get_value(),
                                Glib::FILE_TEST_IS_REGULAR)) {
@@ -395,7 +395,7 @@ void file_manager::load() {
 
     auto verify = flatbuffers::Verifier(content.data(), content.size());
     if (!flatbuffers::File::VerifyManagerBuffer(verify)) {
-        throw std::runtime_error("flatbuffers::Config::VerifyManagerBuffer failed");
+        throw std::runtime_error("flatbuffers::File::VerifyManagerBuffer failed");
     }
 
     auto data = flatbuffers::File::GetManager(content.data());
