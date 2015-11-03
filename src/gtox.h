@@ -24,8 +24,8 @@
 
 class gTox : public Gtk::Application, public utils::debug::track_obj<gTox> {
     public:
-        gTox();
-        static Glib::RefPtr<gTox> create();
+        gTox(bool non_unique);
+        static Glib::RefPtr<gTox> create(bool non_unique);
         static Glib::RefPtr<gTox> instance();
 
         const std::string m_config_path;

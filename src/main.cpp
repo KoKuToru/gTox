@@ -124,7 +124,13 @@ int main(int argc, char* argv[]) {
 
     print_copyright();
 
-    Glib::RefPtr<gTox> application = gTox::create();
+    bool non_unique = false;
+    if (argc > 1) {
+        non_unique = std::any_of(argv, argv + argc, [](auto x) {
+            return std::string("-non-unique") == x;
+        });
+    }
+    Glib::RefPtr<gTox> application = gTox::create(non_unique);
 
     const int status = application->run(argc, argv);
     return status;

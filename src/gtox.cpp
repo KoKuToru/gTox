@@ -35,9 +35,11 @@ namespace sigc {
 
 Glib::RefPtr<gTox> gTox::m_instance;
 
-gTox::gTox()
+gTox::gTox(bool non_unique)
     : Gtk::Application("org.gtox",
-                       Gio::ApplicationFlags(Gio::APPLICATION_HANDLES_OPEN | Gio::APPLICATION_HANDLES_COMMAND_LINE)),
+                       Gio::ApplicationFlags(Gio::APPLICATION_HANDLES_OPEN
+                                             | Gio::APPLICATION_HANDLES_COMMAND_LINE
+                                             | (non_unique ? Gio::APPLICATION_NON_UNIQUE : 0))),
       m_config_path(Glib::build_filename(Glib::get_user_config_dir(), "tox")),
       m_avatar_path(Glib::build_filename(m_config_path, "avatars")),
       m_config_global_path(Glib::build_filename(Glib::get_user_config_dir(), "gtox")) {
@@ -94,10 +96,10 @@ gTox::gTox()
     update_style();
 }
 
-Glib::RefPtr<gTox> gTox::create() {
+Glib::RefPtr<gTox> gTox::create(bool non_unique) {
     utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
     if (!m_instance) {
-        m_instance = Glib::RefPtr<gTox>( new gTox() );
+        m_instance = Glib::RefPtr<gTox>( new gTox(non_unique) );
     }
     return m_instance;
 }
@@ -233,7 +235,7 @@ int gTox::on_command_line(const Glib::RefPtr<Gio::ApplicationCommandLine>& comma
         } else if (Glib::str_has_prefix(value, "tox:")) {
             invites.push_back(value.substr(strlen("tox:")));
             std::clog << "Invite: " << invites.back() << std::endl;
-        } else {
+        } else if (value.find('-') != 0) {
             files.push_back(Gio::File::create_for_path(value));
             std::clog << "Open: " << value << std::endl;
         }
