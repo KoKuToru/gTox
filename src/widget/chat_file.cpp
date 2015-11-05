@@ -209,6 +209,11 @@ void file::update_complete() {
                         m_spinner->property_visible() = false;
                         m_info_revealer->set_reveal_child(false);
                     });
+                } else {
+                    dispatcher.emit([this, file]() {
+                        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
+                        m_spinner->property_visible() = false;
+                    });
                 }
             }
         });
