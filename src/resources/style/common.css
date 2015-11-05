@@ -134,3 +134,7 @@ GtkListBoxRow {
 	font-weight: bolder;
 	padding-right: 0.5em;
 }
+
+.gtox-opacity-0 {
+    opacity: 0;
+}

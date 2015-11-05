@@ -23,6 +23,11 @@
 
 using namespace widget;
 
+imagescaled::imagescaled() {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
+    show();
+}
+
 imagescaled::imagescaled(BaseObjectType* cobject,
                          utils::builder)
     : Gtk::Image(cobject) {
