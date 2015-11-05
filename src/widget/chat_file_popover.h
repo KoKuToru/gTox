@@ -29,18 +29,20 @@ namespace widget {
             std::shared_ptr<toxmm::file> m_file;
 
             Gtk::Box* m_body;
-            Gtk::ToggleButton*   m_file_resume;
-            Gtk::ToggleButton*   m_file_cancel;
-            Gtk::ToggleButton*   m_file_pause;
-            Gtk::ProgressBar*    m_file_progress;
-            Gtk::Widget*         m_file_open_bar;
-            Gtk::Label*          m_file_speed;
-            Gtk::Label*          m_file_size;
-            Gtk::Label*          m_file_time;
-            Gtk::Label*          m_file_name;
-            Gtk::Widget*         m_file_control;
-            Gtk::Button*         m_file_dir;
-            Gtk::Button*         m_file_open;
+            Gtk::ToggleButton* m_file_resume;
+            Gtk::ToggleButton* m_file_cancel;
+            Gtk::ToggleButton* m_file_pause;
+            Gtk::ProgressBar*  m_file_progress;
+            Gtk::Widget*       m_file_open_bar;
+            Gtk::Label*        m_file_speed;
+            Gtk::Label*        m_file_size;
+            Gtk::Label*        m_file_time;
+            Gtk::Label*        m_file_name;
+            Gtk::Widget*       m_file_control;
+            Gtk::Button*       m_file_dir;
+            Gtk::Button*       m_file_open;
+            Gtk::Widget*       m_file_info_box_1;
+            Gtk::Widget*       m_file_info_box_2;
 
             std::vector<Glib::RefPtr<Glib::Binding>> m_bindings;
 

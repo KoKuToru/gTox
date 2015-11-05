@@ -44,6 +44,8 @@ chat_file_popover::chat_file_popover(const std::shared_ptr<toxmm::file>& file): 
     builder.get_widget("file_dir", m_file_dir);
     builder.get_widget("file_open", m_file_open);
     builder.get_widget("file_control", m_file_control);
+    builder.get_widget("file_info_box_1", m_file_info_box_1);
+    builder.get_widget("file_info_box_2", m_file_info_box_2);
 
     auto binding_flags = Glib::BINDING_DEFAULT | Glib::BINDING_SYNC_CREATE;
 
@@ -68,6 +70,18 @@ chat_file_popover::chat_file_popover(const std::shared_ptr<toxmm::file>& file): 
                              m_file->property_progress(),
                              m_file_progress->property_fraction(),
                              binding_flags));
+    m_bindings.push_back(Glib::Binding::bind_property(
+                             m_file->property_complete(),
+                             m_file_progress->property_visible(),
+                             binding_flags | Glib::BINDING_INVERT_BOOLEAN));
+    m_bindings.push_back(Glib::Binding::bind_property(
+                             m_file->property_complete(),
+                             m_file_info_box_1->property_visible(),
+                             binding_flags | Glib::BINDING_INVERT_BOOLEAN));
+    m_bindings.push_back(Glib::Binding::bind_property(
+                             m_file->property_complete(),
+                             m_file_info_box_2->property_visible(),
+                             binding_flags | Glib::BINDING_INVERT_BOOLEAN));
     //Button handling
     auto proprety_state_update = [this]() {
         utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
