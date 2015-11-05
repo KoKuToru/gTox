@@ -43,6 +43,7 @@ namespace widget {
             Gtk::Button*       m_file_open;
             Gtk::Widget*       m_file_info_box_1;
             Gtk::Widget*       m_file_info_box_2;
+            Gtk::Label*        m_status;
 
             uint64_t m_last_position;
 

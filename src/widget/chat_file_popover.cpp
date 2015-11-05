@@ -47,6 +47,7 @@ chat_file_popover::chat_file_popover(const std::shared_ptr<toxmm::file>& file): 
     builder.get_widget("file_control", m_file_control);
     builder.get_widget("file_info_box_1", m_file_info_box_1);
     builder.get_widget("file_info_box_2", m_file_info_box_2);
+    builder.get_widget("status", m_status);
 
     auto binding_flags = Glib::BINDING_DEFAULT | Glib::BINDING_SYNC_CREATE;
 
@@ -82,6 +83,10 @@ chat_file_popover::chat_file_popover(const std::shared_ptr<toxmm::file>& file): 
     m_bindings.push_back(Glib::Binding::bind_property(
                              m_file->property_complete(),
                              m_file_info_box_2->property_visible(),
+                             binding_flags | Glib::BINDING_INVERT_BOOLEAN));
+    m_bindings.push_back(Glib::Binding::bind_property(
+                             m_file->property_complete(),
+                             m_status->property_visible(),
                              binding_flags | Glib::BINDING_INVERT_BOOLEAN));
     //Button handling
     auto proprety_state_update = [this]() {
@@ -213,6 +218,37 @@ chat_file_popover::chat_file_popover(const std::shared_ptr<toxmm::file>& file): 
         m_last_position = m_file->property_position();
         return !m_file->property_complete().get_value();
     }, *this), interval);
+
+    auto update_status = [this]() {
+        //m_status
+        auto local_state = m_file->property_state().get_value();
+        auto remote_state = m_file->property_state_remote().get_value();
+        m_status->set_text("");
+        if (local_state == TOX_FILE_CONTROL_RESUME && remote_state != TOX_FILE_CONTROL_RESUME) {
+            if (m_file->is_recv()) {
+                m_status->set_text(_("Waiting for sender to resume file transfer"));
+            } else {
+                m_status->set_text(_("Waiting for receiver to resume file transfer"));
+            }
+        }
+        if (local_state == TOX_FILE_CONTROL_PAUSE && remote_state == TOX_FILE_CONTROL_RESUME) {
+            if (m_file->is_recv()) {
+                m_status->set_text(_("Sender is waitig for you to resume file transfer"));
+            } else {
+                m_status->set_text(_("Receiver is waitig for you to resume file transfer"));
+            }
+        }
+        if (local_state == TOX_FILE_CONTROL_CANCEL || remote_state == TOX_FILE_CONTROL_CANCEL) {
+            m_status->set_text(_("File transfer is canceled"));
+        }
+    };
+    m_file->property_state()
+            .signal_changed()
+            .connect(sigc::track_obj(update_status, *this));
+    m_file->property_state_remote()
+            .signal_changed()
+            .connect(sigc::track_obj(update_status, *this));
+    update_status();
 
     m_file->property_complete()
             .signal_changed()
