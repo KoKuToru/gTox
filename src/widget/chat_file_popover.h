@@ -44,6 +44,8 @@ namespace widget {
             Gtk::Widget*       m_file_info_box_1;
             Gtk::Widget*       m_file_info_box_2;
 
+            uint64_t m_last_position;
+
             std::vector<Glib::RefPtr<Glib::Binding>> m_bindings;
 
         public:

@@ -20,6 +20,7 @@
 #include "utils/builder.h"
 #include <glibmm/i18n.h>
 #include <tox/contact/file/file.h>
+#include <limits>
 
 using namespace widget;
 
@@ -27,7 +28,7 @@ namespace sigc {
     SIGC_FUNCTORS_DEDUCE_RESULT_TYPE_WITH_DECLTYPE
 }
 
-chat_file_popover::chat_file_popover(const std::shared_ptr<toxmm::file>& file): m_file(file) {
+chat_file_popover::chat_file_popover(const std::shared_ptr<toxmm::file>& file): m_file(file), m_last_position(~uint64_t()) {
     utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
     utils::builder builder = Gtk::Builder::create_from_resource("/org/gtox/ui/chat_filerecv.ui");
 
@@ -168,6 +169,50 @@ chat_file_popover::chat_file_popover(const std::shared_ptr<toxmm::file>& file): 
             // TODO Show user error if no filemanager
         }
     });
+
+    auto interval = 2; //sec
+    Glib::signal_timeout().connect_seconds(sigc::track_obj([this, interval]() {
+        if (m_last_position != ~uint64_t()) {
+            m_file_speed->set_visible();
+            m_file_time->set_visible();
+
+            // calculate bytes per seconds
+            auto speed = (m_file->property_position().get_value() - m_last_position) / interval;
+
+            //TODO: Replace the following line with
+            //      Glib::format_size(input, G_FORMAT_SIZE_DEFAULT)
+            //      but will need Glib 2.45.31 or newer
+            m_file_speed->set_text(
+                        Glib::convert_return_gchar_ptr_to_ustring(
+                            g_format_size_full(speed, G_FORMAT_SIZE_IEC_UNITS)) + _("/s"));
+
+            // calculate remaining time
+            double re_bytes = m_file->property_size().get_value() - m_file->property_position().get_value();
+            auto re_time = (speed <= 0)
+                           ? std::numeric_limits<double>::infinity()
+                           : (re_bytes / speed);
+
+            if (std::isinf(re_time)) {
+                m_file_time->set_text(Glib::ustring(1, gunichar(0x221E )));
+            } else if (re_time < 60) {
+                m_file_time->set_text(Glib::ustring::compose(
+                                          _("%1 s"),
+                                          int(round(re_time))));
+            } else if (re_time < 60*60) {
+                m_file_time->set_text(Glib::ustring::compose(
+                                          _("%1 min and %2 s"),
+                                          int(re_time / 60),
+                                          int(round(re_time)) % 60));
+            } else {
+                m_file_time->set_text(Glib::ustring::compose(
+                                          _("%1 h and %2 min"),
+                                          int(re_time / 60 / 60),
+                                          int(round(re_time / 60)) % 60));
+            }
+        }
+        m_last_position = m_file->property_position();
+        return !m_file->property_complete().get_value();
+    }, *this), interval);
 
     m_file->property_complete()
             .signal_changed()
