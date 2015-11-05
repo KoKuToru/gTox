@@ -37,8 +37,11 @@ file::file(BaseObjectType* cobject,
     builder.get_widget("file_name", m_file_name);
     builder.get_widget("spinner", m_spinner);
     builder.get_widget("file_info", m_file_info);
+    builder.get_widget("file_info_2", m_file_info_2);
     builder.get_widget("preview_revealer", m_preview_revealer);
     builder.get_widget("preview", m_preview);
+    builder.get_widget("info_revealer", m_info_revealer);
+    builder.get_widget("eventbox", m_eventbox);
 
     /*auto preview_video_tmp = widget::videoplayer::create();
     m_preview_video = preview_video_tmp.raw();*/
@@ -58,6 +61,37 @@ file::file(BaseObjectType* cobject,
         utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
         m_file_info_popover.set_relative_to(*m_file_info);
         m_file_info_popover.set_visible();
+    }, *this));
+    m_file_info_2->signal_clicked().connect(sigc::track_obj([this]() {
+        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
+        m_file_info_popover.set_relative_to(*m_file_info_2);
+        m_file_info_popover.set_visible();
+    }, *this));
+
+    m_file_info_2->get_style_context()->add_class("gtox-opacity-0");
+    m_eventbox->add_events(Gdk::ENTER_NOTIFY_MASK);
+    m_eventbox->signal_enter_notify_event()
+            .connect(sigc::track_obj([this](GdkEventCrossing*) {
+        m_file_info_2->get_style_context()->remove_class("gtox-opacity-0");
+        //start time to detect leave
+        m_leave_timer.disconnect();
+        m_leave_timer = Glib::signal_timeout().connect_seconds(sigc::track_obj([this]() {
+            //check if mouse cursor is still in area of the eventbox
+            int x, y;
+            m_eventbox->get_pointer(x, y);
+
+            if (x < 0 ||
+                y < 0 ||
+                x > m_eventbox->get_allocated_width() ||
+                y > m_eventbox->get_allocated_height()) {
+                //we are outside !
+                m_file_info_2->get_style_context()->add_class("gtox-opacity-0");
+                //stop the timer
+                return false;
+            }
+            return true;
+        }, *this), 5);
+        return false;
     }, *this));
 
     m_file->property_complete()
@@ -147,6 +181,7 @@ void file::update_complete() {
                         m_preview_image.property_pixbuf() = img;
                         m_preview_revealer->property_reveal_child() = true;
                         m_spinner->property_visible() = false;
+                        m_info_revealer->set_reveal_child(false);
                     });
                 } else {
                     //TODO: gif..
@@ -172,6 +207,7 @@ void file::update_complete() {
                         //peview image got generated !
                         m_preview_revealer->property_reveal_child() = true;
                         m_spinner->property_visible() = false;
+                        m_info_revealer->set_reveal_child(false);
                     });
                 }
             }

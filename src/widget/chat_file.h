@@ -38,8 +38,13 @@ namespace widget {
             Gtk::Spinner*  m_spinner;
             Gtk::Label*    m_file_name;
             Gtk::Button*   m_file_info;
+            Gtk::Button*   m_file_info_2;
             Gtk::Revealer* m_preview_revealer;
-            Gtk::Box*    m_preview;
+            Gtk::Revealer* m_info_revealer;
+            Gtk::Box*      m_preview;
+            Gtk::EventBox* m_eventbox;
+
+            sigc::connection m_leave_timer;
 
             widget::imagescaled  m_preview_image;
             widget::videoplayer* m_preview_video;
