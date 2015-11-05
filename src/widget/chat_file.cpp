@@ -199,7 +199,7 @@ void file::update_complete() {
                 bool has_audio;
                 std::tie(has_video, has_audio) = utils::gstreamer
                                                  ::has_video_audio(file->get_uri());
-                if (has_video || has_audio) {
+                if (false /*has_video || has_audio*/) {
                     dispatcher.emit([this, file]() {
                         utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
                         m_preview_video->property_uri() = file->get_uri();
