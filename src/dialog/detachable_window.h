@@ -67,6 +67,10 @@ namespace dialog {
             Glib::Property<Gtk::HeaderBar*> m_prop_headerbar;
 
             type_signal_close m_signal_close;
+
+            sigc::connection m_con_map;
+            sigc::connection m_con_unmap;
+            sigc::connection m_con_active;
     };
 }
 
