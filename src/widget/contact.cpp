@@ -130,7 +130,9 @@ contact::contact(BaseObjectType* cobject,
 
     auto display_spinner = [this]() {
         utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
-        m_spin->start();
+        if (!m_chat || !m_chat->property_has_focus().get_value()) {
+            m_spin->start();
+        }
     };
 
     m_contact->signal_recv_message().connect(sigc::hide(sigc::track_obj(display_spinner, *this)));
@@ -328,6 +330,14 @@ void contact::activated() {
                                                 detach);
         m_chat->signal_close().connect(sigc::track_obj([this]() {
             m_chat.reset();
+        }, *this));
+        //stop spinner after reading message
+        m_chat->property_has_focus()
+                .signal_changed()
+                .connect(sigc::track_obj([this]() {
+            if (m_chat->property_has_focus().get_value()) {
+                m_spin->stop();
+            }
         }, *this));
     }
 }

@@ -126,6 +126,10 @@ detachable_window::detachable_window(type_slot_detachable_add main_add,
     auto update_has_focus = [this]() {
         utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
         auto body = property_body().get_value();
+        if (!body) {
+            m_prop_has_focus = false;
+            return;
+        }
         auto parent = dynamic_cast<Gtk::Window *>(body->get_toplevel());
 
         m_prop_has_focus = (property_is_attached()
@@ -157,13 +161,25 @@ detachable_window::detachable_window(type_slot_detachable_add main_add,
         }
 
         if (body) {
-            body->signal_map()
+            m_con_map.disconnect();
+            m_con_map = body->signal_map()
                     .connect_notify(
                         sigc::track_obj(update_has_focus, *this, *body));
-            body->signal_unmap()
+            m_con_unmap.disconnect();
+            m_con_unmap = body->signal_unmap()
                     .connect_notify(
                         sigc::track_obj(update_has_focus, *this, *body));
+
+            auto parent = dynamic_cast<Gtk::Window *>(body->get_toplevel());
+            if (parent) {
+                m_con_active.disconnect();
+                m_con_active = parent->property_is_active()
+                               .signal_changed().connect(
+                                   sigc::track_obj(update_has_focus, *this, *body));
+            }
         }
+
+        update_has_focus();
     }, *this));
 
     property_is_active()
