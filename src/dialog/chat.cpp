@@ -37,12 +37,14 @@ using namespace dialog;
 
 chat::chat(std::shared_ptr<toxmm::core> core,
            std::shared_ptr<toxmm::contact> contact,
+           std::shared_ptr<class config> config,
            detachable_window::type_slot_detachable_add slot_add_widget,
            detachable_window::type_slot_detachable_add slot_del_widget):
     Glib::ObjectBase(typeid(chat)),
     detachable_window(slot_add_widget, slot_del_widget),
     m_core(core),
-    m_contact(contact) {
+    m_contact(contact),
+    m_config(config) {
     utils::debug::scope_log log(DBG_LVL_1("gtox"), { contact->property_name_or_addr().get_value().raw() });
 
     utils::builder builder(Gtk::Builder::create_from_resource("/org/gtox/ui/dialog_chat.ui"));
@@ -154,7 +156,7 @@ chat::chat(std::shared_ptr<toxmm::core> core,
         if (file->property_kind() != TOX_FILE_KIND_DATA) {
             return;
         }
-        auto b_ref = widget::file::create(file);
+        auto b_ref = widget::file::create(file, m_config);
         auto widget = b_ref.raw();
         add_chat_line(
             LINE_APPEND_APPENDABLE,
@@ -169,7 +171,7 @@ chat::chat(std::shared_ptr<toxmm::core> core,
         }
         auto core = m_core.lock();
         if (core) {
-            auto b_ref = widget::file::create(file);
+            auto b_ref = widget::file::create(file, m_config);
             auto widget = b_ref.raw();
             add_chat_line(
                 LINE_APPEND_APPENDABLE,
@@ -532,8 +534,8 @@ void chat::load_log() {
                     auto file = fm->find(toxmm::uniqueId(std::string(f->uuid()->c_str())));
 
                     auto b_ref = file
-                                 ? widget::file::create(file)
-                                 : widget::file::create(f->path()->c_str());
+                                 ? widget::file::create(file, m_config)
+                                 : widget::file::create(f->path()->c_str(), m_config);
 
                     auto widget = Gtk::manage(b_ref.raw());
 

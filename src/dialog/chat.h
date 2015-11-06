@@ -29,6 +29,7 @@
 #include "resources/flatbuffers/generated/Log_generated.h"
 #include "utils/debug.h"
 #include "detachable_window.h"
+#include "config.h"
 
 namespace widget {
     class chat_input;
@@ -40,6 +41,7 @@ namespace dialog {
         private:
             std::weak_ptr<toxmm::core> m_core;
             std::shared_ptr<toxmm::contact> m_contact;
+            std::shared_ptr<config> m_config;
 
             utils::dispatcher m_dispatcher;
 
@@ -106,6 +108,7 @@ namespace dialog {
         public:
             chat(std::shared_ptr<toxmm::core> core,
                  std::shared_ptr<toxmm::contact> contact,
+                 std::shared_ptr<class config> config,
                  detachable_window::type_slot_detachable_add slot_add_widget,
                  detachable_window::type_slot_detachable_del slot_del_widget);
             ~chat();

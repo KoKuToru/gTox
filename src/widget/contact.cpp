@@ -323,6 +323,7 @@ void contact::activated() {
                                     &dialog::main::detachable_window_del);
         m_chat = std::make_shared<dialog::chat>(m_main.tox(),
                                                 m_contact,
+                                                m_main.config(),
                                                 attach,
                                                 detach);
         m_chat->signal_close().connect(sigc::track_obj([this]() {
