@@ -41,7 +41,7 @@ namespace toxmm {
             const std::vector<std::shared_ptr<contact>>& get_all();
 
             void add_contact(contactAddrPublic addr_public);
-            void add_contact(contactAddr addr, const Glib::ustring& message);
+            void add_contact(contactAddr addr, const std::string& message);
             void remove_contact(std::shared_ptr<contact> contact);
 
             void destroy();

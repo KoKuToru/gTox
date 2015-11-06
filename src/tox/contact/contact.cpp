@@ -235,14 +235,19 @@ TOX_CONNECTION contact::toxcore_get_connection() {
     return con;
 }
 
-std::shared_ptr<receipt> contact::send_message(const Glib::ustring& message) {
+std::shared_ptr<receipt> contact::send_message(const std::string& message) {
     auto c = core();
     if (!c) {
         throw std::runtime_error("core() is nullptr");
     }
 
     TOX_ERR_FRIEND_SEND_MESSAGE error;
-    auto receipt = tox_friend_send_message(c->toxcore(), property_nr().get_value(), TOX_MESSAGE_TYPE_NORMAL, (const uint8_t*)message.data(), message.size(), &error);
+    auto receipt = tox_friend_send_message(c->toxcore(),
+                                           property_nr().get_value(),
+                                           TOX_MESSAGE_TYPE_NORMAL,
+                                           (const uint8_t*)message.data(),
+                                           message.size(),
+                                           &error);
     if (error != TOX_ERR_FRIEND_SEND_MESSAGE_OK) {
         throw exception(error);
     }
@@ -251,14 +256,19 @@ std::shared_ptr<receipt> contact::send_message(const Glib::ustring& message) {
     return r;
 }
 
-std::shared_ptr<receipt> contact::send_action (const Glib::ustring& action) {
+std::shared_ptr<receipt> contact::send_action (const std::string& action) {
     auto c = core();
     if (!c) {
         throw std::runtime_error("core() is nullptr");
     }
 
     TOX_ERR_FRIEND_SEND_MESSAGE error;
-    auto receipt = tox_friend_send_message(c->toxcore(), property_nr().get_value(), TOX_MESSAGE_TYPE_ACTION, (const uint8_t*)action.data(), action.size(), &error);
+    auto receipt = tox_friend_send_message(c->toxcore(),
+                                           property_nr().get_value(),
+                                           TOX_MESSAGE_TYPE_ACTION,
+                                           (const uint8_t*)action.data(),
+                                           action.size(),
+                                           &error);
     if (error != TOX_ERR_FRIEND_SEND_MESSAGE_OK) {
         throw exception(error);
     }

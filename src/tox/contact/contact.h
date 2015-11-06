@@ -63,8 +63,8 @@ namespace toxmm {
             Glib::PropertyProxy_ReadOnly<bool>              property_typing();
 
             //functions
-            std::shared_ptr<receipt> send_message(const Glib::ustring& message);
-            std::shared_ptr<receipt> send_action (const Glib::ustring& action);
+            std::shared_ptr<receipt> send_message(const std::string& message);
+            std::shared_ptr<receipt> send_action (const std::string& action);
 
             std::shared_ptr<toxmm::core> core();
             std::shared_ptr<toxmm::contact_manager> contact_manager();

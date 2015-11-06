@@ -185,7 +185,7 @@ void contact_manager::add_contact(contactAddrPublic addr_public) {
     m_signal_added(contact);
 }
 
-void contact_manager::add_contact(contactAddr addr, const Glib::ustring& message) {
+void contact_manager::add_contact(contactAddr addr, const std::string& message) {
     auto c = core();
     if (!c) {
         return;
