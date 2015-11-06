@@ -366,7 +366,7 @@ void core::init() {
 
     //install change events for properties
     property_name().signal_changed().connect(sigc::track_obj([this]() {
-        auto name = property_name().get_value();
+        const std::string& name = property_name().get_value();
         TOX_ERR_SET_INFO error;
         tox_self_set_name(m_toxcore, (const uint8_t*)name.data(), name.size(), &error);
         if (error != TOX_ERR_SET_INFO_OK) {
@@ -374,7 +374,7 @@ void core::init() {
         }
     }, *this));
     property_status_message().signal_changed().connect(sigc::track_obj([this]() {
-        auto status_message = property_status_message().get_value();
+        const std::string& status_message = property_status_message().get_value();
         TOX_ERR_SET_INFO error;
         tox_self_set_status_message(m_toxcore, (const uint8_t*)status_message.data(), status_message.size(), &error);
         if (error != TOX_ERR_SET_INFO_OK) {

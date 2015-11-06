@@ -20,7 +20,7 @@ class TestContact : public CxxTest::TestSuite
             gfix.wait_for_online();
             gfix.wait_for_contact();
 
-            Glib::ustring msg = "Test message";
+            Glib::ustring msg = "Test message aą";
             Glib::ustring recv_message;
             Glib::ustring send_message;
             bool receipt_okay = false;
@@ -57,7 +57,7 @@ class TestContact : public CxxTest::TestSuite
             gfix.wait_for_online();
             gfix.wait_for_contact();
 
-            Glib::ustring msg = "Test message";
+            Glib::ustring msg = "Test message aą";
             Glib::ustring recv_message;
             Glib::ustring send_message;
             bool receipt_okay = false;
