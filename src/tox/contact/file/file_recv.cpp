@@ -17,6 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 **/
 #include "file_recv.h"
+#include "exception.h"
 
 using namespace toxmm;
 
@@ -35,7 +36,22 @@ void file_recv::resume() {
     m_stream->seek(std::min(goffset(property_size()), m_stream->tell()),
                    Glib::SEEK_TYPE_SET);
     m_stream->truncate(m_stream->tell());
-    seek(uint64_t(m_stream->tell()));
+    try {
+        seek(uint64_t(m_stream->tell()));
+    } catch (toxmm::exception) {
+        //this is pretty stupid
+        //when we pause and then resume
+        //seek is not possible !
+        //
+        //we effectly ignore the error now
+        //if we can seek we seek
+        //if we can't seek we think we seeked
+        //
+        //it looks like we can only seek once each file before resume
+        //but we have no way of knowing here if it's the first time we resume
+        //or the second time..
+        //so we will just try and hope
+    }
 }
 
 void file_recv::send_chunk_request(uint64_t, size_t) {

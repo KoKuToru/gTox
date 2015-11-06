@@ -165,6 +165,8 @@ void file::init() {
                     }
                     m_property_state = property_state();
                     m_property_active = true;
+                    //set our local state again, forces to set state to toxcore
+                    property_state() = m_property_state;
                 }
                 //recv files get handled in file_manager::init signal::recv_file section
             }
