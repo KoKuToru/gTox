@@ -29,7 +29,8 @@ using namespace widget;
 
 file::file(BaseObjectType* cobject,
            utils::builder builder,
-           const std::shared_ptr<toxmm::file>& file):
+           const std::shared_ptr<toxmm::file>& file,
+           const std::shared_ptr<class config>& config):
     Gtk::Frame(cobject),
     m_file_info_popover(file) {
 
@@ -98,17 +99,30 @@ file::file(BaseObjectType* cobject,
             .signal_changed()
             .connect(sigc::mem_fun(*this, &file::update_complete));
     update_complete();
+
+    //auto start file recv when smaller than 2mb
+    //TODO: make size setable in config
+    if (m_file->is_recv() &&
+            config->property_file_auto_accept().get_value() &&
+            !m_file->property_complete() &&
+            m_file->property_state() != TOX_FILE_CONTROL_RESUME &&
+            m_file->property_size() < 1024*1024*2) {
+        m_file->property_state() = TOX_FILE_CONTROL_RESUME;
+    }
 }
 
-utils::builder::ref<file> file::create(const std::shared_ptr<toxmm::file>& file) {
+utils::builder::ref<file> file::create(const std::shared_ptr<toxmm::file>& file,
+                                       const std::shared_ptr<class config>& config) {
     utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
     return utils::builder::create_ref<widget::file>(
                 "/org/gtox/ui/chat_filerecv.ui",
                 "chat_file",
-                file);
+                file,
+                config);
 }
 
-utils::builder::ref<file> file::create(const Glib::ustring& file_path) {
+utils::builder::ref<file> file::create(const Glib::ustring& file_path,
+                                       const std::shared_ptr<class config>& config) {
     utils::debug::scope_log log(DBG_LVL_1("gtox"), { file_path.raw() });
     class dummy_file: virtual public Glib::Object, public toxmm::file {
         public:
@@ -132,7 +146,8 @@ utils::builder::ref<file> file::create(const Glib::ustring& file_path) {
     return utils::builder::create_ref<widget::file>(
                 "/org/gtox/ui/chat_filerecv.ui",
                 "chat_file",
-                std::make_shared<dummy_file>(file_path));
+                std::make_shared<dummy_file>(file_path),
+                config);
 }
 
 void file::update_complete() {

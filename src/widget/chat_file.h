@@ -28,6 +28,7 @@
 #include <thread>
 #include "utils/debug.h"
 #include "widget/chat_file_popover.h"
+#include "config.h"
 
 namespace widget {
     class file: public Gtk::Frame, public utils::debug::track_obj<file> {
@@ -58,10 +59,13 @@ namespace widget {
         public:
             file(BaseObjectType* cobject,
                  utils::builder builder,
-                 const std::shared_ptr<toxmm::file>& file);
+                 const std::shared_ptr<toxmm::file>& file,
+                 const std::shared_ptr<class config>& config);
             virtual ~file();
-            static utils::builder::ref<file> create(const std::shared_ptr<toxmm::file>& file);
-            static utils::builder::ref<file> create(const Glib::ustring& file_path);
+            static utils::builder::ref<file> create(const std::shared_ptr<toxmm::file>& file,
+                                                    const std::shared_ptr<class config>& config);
+            static utils::builder::ref<file> create(const Glib::ustring& file_path,
+                                                    const std::shared_ptr<class config>& config);
 
         protected:
             void update_complete();

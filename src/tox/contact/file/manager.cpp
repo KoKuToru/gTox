@@ -87,6 +87,8 @@ void file_manager::init() {
            auto f = *iter;
            f->m_property_nr = nr;
            f->m_property_active = true;
+           //set our local state again, forces to set state to toxcore
+           f->property_state() = f->property_state().get_value();
            return;
        }
 
