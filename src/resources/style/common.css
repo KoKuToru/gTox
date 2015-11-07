@@ -138,3 +138,50 @@ GtkListBoxRow {
 .gtox-opacity-0 {
     opacity: 0;
 }
+
+
+
+
+.header-tab-child {
+    padding-left: 12px;
+    padding-right: 12px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+
+    border-image-source : -gtk-gradient (linear,
+                                         left top, left bottom,
+                                         color-stop(0, transparent),
+                                         color-stop(0.5, transparent),
+                                         color-stop(1, shade(@borders, 1.2)));
+    border-image-width: 0 1px 0px 0;
+    border-image-slice: 1;
+    background: transparent;
+}
+
+.header-tab-child:first-child {
+    border-image-width: 0 1px 0px 1px;
+}
+
+.header-tab-child:hover {
+    border-image-source : -gtk-gradient (linear,
+                                         left top, left bottom,
+                                         color-stop(0, transparent),
+                                         color-stop(0.5, transparent),
+                                         color-stop(1, shade(@borders, 1.2)));
+    border-image-width: 0 1px 3px 0;
+    border-image-slice: 1;
+}
+
+.header-tab-child:selected {
+    border-image-source : -gtk-gradient (linear,
+                                         left top, left bottom,
+                                         color-stop(0, transparent),
+                                         color-stop(0.5, transparent),
+                                         color-stop(1, #4a90d9));
+    border-image-width: 0 1px 3px 1px;
+    border-image-slice: 1;
+}
+
+.header-tab-child .titlebutton {
+    padding: 0;
+}
