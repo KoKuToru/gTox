@@ -36,7 +36,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
 find_package(Tox)
 include_directories(${TOX_INCLUDE_DIR})
 
-find_package(Flatbuffers 1.10 REQUIRED)
+find_package(Flatbuffers 1.2.0 REQUIRED)
 include_directories(${FLATBUFFERS_INCLUDE_DIR})
 
 add_subdirectory(tox)
@@ -85,14 +85,14 @@ add_executable(${PROJECT_NAME}
 )
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 if(WIN32)
-    target_link_libraries(${PROJECT_NAME} ${GTKMM_LIBRARIES} ${GSTREAMERMM_LIBRARIES} ${TOX_LIBRARY} -lpthread -lrpcrt4 toxmm)
+    target_link_libraries(${PROJECT_NAME} ${GTKMM_LIBRARIES} ${GSTREAMERMM_LIBRARIES} ${TOX_LIBRARY} ${FLATBUFFERS_LIBRARY} -lpthread -lrpcrt4 toxmm)
     #is there no cleaner way to get the .exe ?
     install(PROGRAMS "${PROJECT_BINARY_DIR}/${PROJECT_NAME}.exe"
         DESTINATION bin
         PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ WORLD_EXECUTE WORLD_READ)
 
 else()
-    target_link_libraries(${PROJECT_NAME} ${GTKMM_LIBRARIES} ${GSTREAMERMM_LIBRARIES} ${TOX_LIBRARY} -lpthread -luuid toxmm)
+    target_link_libraries(${PROJECT_NAME} ${GTKMM_LIBRARIES} ${GSTREAMERMM_LIBRARIES} ${TOX_LIBRARY} ${FLATBUFFERS_LIBRARY} -lpthread -luuid toxmm)
     install(PROGRAMS "${PROJECT_BINARY_DIR}/${PROJECT_NAME}"
         DESTINATION bin
         PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ WORLD_EXECUTE WORLD_READ)
