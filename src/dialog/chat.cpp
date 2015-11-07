@@ -462,7 +462,7 @@ void chat::load_log() {
         auto time = Glib::DateTime::create_now_utc(item->timestamp());
         auto sender = std::string(item->sender()->c_str());
         switch (item->data_type()) {
-            case flatbuffers::Log::Data_Message: {
+            case flatbuffers::Log::Data::Message: {
                 auto f = reinterpret_cast<const flatbuffers::Log::Message*>(
                              item->data());
                 auto contact = cm->find(toxmm::contactAddrPublic(
@@ -489,7 +489,7 @@ void chat::load_log() {
                     //TODO: will probably need this for group chat
                 }
             } break;
-            case flatbuffers::Log::Data_Action: {
+            case flatbuffers::Log::Data::Action: {
                 auto f = reinterpret_cast<const flatbuffers::Log::Action*>(
                              item->data());
                 auto contact = cm->find(toxmm::contactAddrPublic(sender));
@@ -516,7 +516,7 @@ void chat::load_log() {
                     //TODO: will probably need this for group chat
                 }
             } break;
-            case flatbuffers::Log::Data_File: {
+            case flatbuffers::Log::Data::File: {
                 auto f = reinterpret_cast<const flatbuffers::Log::File*>(
                              item->data());
                 auto contact = cm->find(toxmm::contactAddrPublic(sender));
@@ -696,7 +696,7 @@ void chat::add_log(std::shared_ptr<toxmm::storage> storage,
             flatbuffers::Offset<void> subdata;
             //is there a more efficent way to copy a flatbuffer directly ?
             switch (item->data_type()) {
-                case flatbuffers::Log::Data_Message: {
+                case flatbuffers::Log::Data::Message: {
                     auto f = reinterpret_cast<const flatbuffers::Log::Message*>(item->data());
                     subdata = flatbuffers::Log::CreateMessage(
                                   fbb,
@@ -705,7 +705,7 @@ void chat::add_log(std::shared_ptr<toxmm::storage> storage,
                                                        f->message()->end())),
                                   f->status()).Union();
                 } break;
-                case flatbuffers::Log::Data_Action: {
+                case flatbuffers::Log::Data::Action: {
                     auto f = reinterpret_cast<const flatbuffers::Log::Action*>(item->data());
                     subdata = flatbuffers::Log::CreateAction(
                                   fbb,
@@ -714,7 +714,7 @@ void chat::add_log(std::shared_ptr<toxmm::storage> storage,
                                                        f->action()->end())),
                                   f->status()).Union();
                 } break;
-                case flatbuffers::Log::Data_File: {
+                case flatbuffers::Log::Data::File: {
                     auto f = reinterpret_cast<const flatbuffers::Log::File*>(item->data());
                     subdata = flatbuffers::Log::CreateFile(
                                   fbb,

@@ -43,7 +43,7 @@ foreach(_item ${SRC})
     add_custom_command(
         OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/generated/${_item_we}_generated.h"
         POST_BUILD
-        COMMAND "${FLAT_C_EXECUTABLE}" -c -o ./generated --strict-json "${_item}"
+        COMMAND "${FLAT_C_EXECUTABLE}" -c --scoped-enums --gen-mutable -o ./generated --strict-json "${_item}"
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         DEPENDS ${_item}
     )

@@ -169,7 +169,7 @@ contact::contact(BaseObjectType* cobject,
            return flatbuffers::Log::CreateItem(fbb,
                                                fbb.CreateString(m_main.tox()->property_addr_public().get_value()),
                                                Glib::DateTime::create_now_utc().to_unix(),
-                                               flatbuffers::Log::Data_Message,
+                                               flatbuffers::Log::Data::Message,
                                                flatbuffers::Log::CreateMessage(
                                                     fbb,
                                                     fbb.CreateString(message))
@@ -183,7 +183,7 @@ contact::contact(BaseObjectType* cobject,
             return flatbuffers::Log::CreateItem(fbb,
                                                 fbb.CreateString(m_contact->property_addr_public().get_value()),
                                                 Glib::DateTime::create_now_utc().to_unix(),
-                                                flatbuffers::Log::Data_Message,
+                                                flatbuffers::Log::Data::Message,
                                                 flatbuffers::Log::CreateMessage(
                                                      fbb,
                                                      fbb.CreateString(message))
@@ -197,7 +197,7 @@ contact::contact(BaseObjectType* cobject,
             return flatbuffers::Log::CreateItem(fbb,
                                                 fbb.CreateString(m_main.tox()->property_addr_public().get_value()),
                                                 Glib::DateTime::create_now_utc().to_unix(),
-                                                flatbuffers::Log::Data_Action,
+                                                flatbuffers::Log::Data::Action,
                                                 flatbuffers::Log::CreateAction(
                                                      fbb,
                                                      fbb.CreateString(action))
@@ -211,7 +211,7 @@ contact::contact(BaseObjectType* cobject,
             return flatbuffers::Log::CreateItem(fbb,
                                                 fbb.CreateString(m_contact->property_addr_public().get_value()),
                                                 Glib::DateTime::create_now_utc().to_unix(),
-                                                flatbuffers::Log::Data_Action,
+                                                flatbuffers::Log::Data::Action,
                                                 flatbuffers::Log::CreateAction(
                                                      fbb,
                                                      fbb.CreateString(action))
@@ -230,13 +230,13 @@ contact::contact(BaseObjectType* cobject,
                 return flatbuffers::Log::CreateItem(fbb,
                                                     fbb.CreateString(m_main.tox()->property_addr_public().get_value()),
                                                     Glib::DateTime::create_now_utc().to_unix(),
-                                                    flatbuffers::Log::Data_File,
+                                                    flatbuffers::Log::Data::File,
                                                     flatbuffers::Log::CreateFile(
                                                          fbb,
                                                          fbb.CreateString(file->property_uuid().get_value()),
                                                          fbb.CreateString(file->property_name().get_value()),
                                                          fbb.CreateString(file->property_path().get_value()),
-                                                         flatbuffers::Log::FileStatus_PENDING,
+                                                         flatbuffers::Log::FileStatus::PENDING,
                                                          fbb.CreateString(m_contact->property_addr_public().get_value()))
                                                           .Union());
             });
@@ -251,13 +251,13 @@ contact::contact(BaseObjectType* cobject,
                 return flatbuffers::Log::CreateItem(fbb,
                                                     fbb.CreateString(m_contact->property_addr_public().get_value()),
                                                     Glib::DateTime::create_now_utc().to_unix(),
-                                                    flatbuffers::Log::Data_File,
+                                                    flatbuffers::Log::Data::File,
                                                     flatbuffers::Log::CreateFile(
                                                          fbb,
                                                          fbb.CreateString(file->property_uuid().get_value()),
                                                          fbb.CreateString(file->property_name().get_value()),
                                                          fbb.CreateString(file->property_path().get_value()),
-                                                         flatbuffers::Log::FileStatus_PENDING,
+                                                         flatbuffers::Log::FileStatus::PENDING,
                                                          fbb.CreateString(m_contact->property_addr_public().get_value()))
                                                           .Union());
             });
