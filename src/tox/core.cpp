@@ -255,6 +255,7 @@ void core::init() {
     //set prefix for storage
     {
         contactAddrPublic addr_public;
+        tox_self_get_public_key(m_toxcore, addr_public);
         m_storage->set_prefix_key(addr_public);
         m_config = config::create(m_storage);
     }
