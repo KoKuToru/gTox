@@ -168,7 +168,7 @@ GtkListBoxRow {
     border-image-slice: 1;
 }
 
-.header-tab-child:selected {
+.header-tab-child:active, .header-tab-child:selected {
     border-image-source : -gtk-gradient (linear,
                                          left top, left bottom,
                                          color-stop(0, transparent),
@@ -180,4 +180,8 @@ GtkListBoxRow {
 
 .header-tab-child .titlebutton {
     padding: 0;
+}
+
+.popover .header-tab-child {
+    border-image-width: 0 0 0 0;
 }

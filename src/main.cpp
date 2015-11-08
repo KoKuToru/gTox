@@ -124,11 +124,12 @@ class HeaderTabTitle: public Gtk::VBox {
         }
 };
 
-class HeaderTabChild: public /*Gtk::Frame*/Gtk::ToggleButton {
+class HeaderTabChild: public Gtk::Frame/*Gtk::ToggleButton*/ {
+        friend class HeaderTab;
     private:
-        Gtk::HBox m_box;
-        Gtk::Button m_close;
-        Gtk::Image m_close_icon;
+        Gtk::HBox    m_box;
+        Gtk::Button  m_close;
+        Gtk::Image   m_close_icon;
 
     public:
         HeaderTabChild(): Glib::ObjectBase(typeid(*this)) {
@@ -143,57 +144,124 @@ class HeaderTabChild: public /*Gtk::Frame*/Gtk::ToggleButton {
                                             Gtk::IconSize(1));
             m_close_icon.show();
             m_close.property_valign() = Gtk::ALIGN_CENTER;
-            Gtk::ToggleButton::add(m_box);
+            Gtk::Frame::add(m_box);
         }
 
         Glib::PropertyProxy<bool> property_visible_close_btn() {
             return m_close.property_visible();
         }
 
-        virtual void add (Widget& widget) {
+        virtual void add(Gtk::Widget& widget) {
             m_box.add(widget);
+        }
+
+        virtual bool on_motion_notify_event(GdkEventMotion*) override {
+            return true;
+        }
+};
+
+class HeaderTabChildBox: public Gtk::Box {
+        friend class HeaderTab;
+    private:
+        Gtk::Widget* m_widget = nullptr;
+
+    public:
+        virtual void add(Gtk::Widget& widget) {
+            m_widget = &widget;
+            Gtk::Box::add(widget);
         }
 };
 
 //https://developer.gnome.org/gtkmm-tutorial/stable/sec-custom-containers.html.en
 class HeaderTab: public Gtk::Container {
     private:
-        std::vector<HeaderTabChild*> m_children;
+        std::vector<HeaderTabChildBox*> m_children;
 
         Gtk::Arrow     m_more_arrow;
         HeaderTabChild m_more;
+
+        Gtk::Popover   m_more_popover;
+        Gtk::VBox      m_more_popover_box;
+
+        HeaderTabChild* m_prelight_child = nullptr;
+        HeaderTabChild* m_selected_child = nullptr;
 
     public:
         HeaderTab():
             Glib::ObjectBase(typeid(*this)),
             m_more_arrow(Gtk::ARROW_DOWN, Gtk::SHADOW_NONE) {
 
-            set_has_window(false);
-            set_redraw_on_allocate(false);
+            set_has_window(true);
+            set_redraw_on_allocate(true);
             get_style_context()->add_class("header-tab");
 
             m_more.add(m_more_arrow);
             m_more.show();
             m_more_arrow.show();
             m_more.property_visible_close_btn() = false;
+            m_more.set_parent(*this);
+
+            /*m_more.signal_clicked().connect(sigc::track_obj([this]() {
+                m_more_popover.set_position(Gtk::POS_BOTTOM);
+                m_more_popover.set_relative_to(m_more);
+                m_more_popover.show();
+            }, *this));*/
+
+            m_more_popover.get_style_context()->add_class("titlebar");
+
+            m_more_popover.add(m_more_popover_box);
+            m_more_popover_box.show();
+
+            /*m_more.property_active()
+                    .signal_changed()
+                    .connect(sigc::track_obj([this]() {
+                if (m_more.get_active() != false) {
+                    m_more.set_active(false);
+                }
+            }, *this));*/
+
+            add_events(Gdk::ENTER_NOTIFY_MASK
+                       | Gdk::LEAVE_NOTIFY_MASK
+                       | Gdk::POINTER_MOTION_MASK
+                       | Gdk::KEY_PRESS_MASK
+                       | Gdk::BUTTON_PRESS_MASK
+                       | Gdk::BUTTON_RELEASE_MASK);
         }
 
         ~HeaderTab() {
-            for (HeaderTabChild* child : m_children) {
+            for (Gtk::Widget* child : m_children) {
                 child->unparent();
             }
         }
 
-        virtual void add(Widget& widget) {
+        virtual void add(Widget& widget) override {
             //add a new child
-            HeaderTabChild* child = dynamic_cast<HeaderTabChild*>(&widget);
-            if (!child) {
-                child = new HeaderTabChild();
-                child->add(widget);
-                child->show();
+            HeaderTabChild* item = dynamic_cast<HeaderTabChild*>(&widget);
+            item = new HeaderTabChild();
+            item->add(widget);
+            item->show();
+            HeaderTabChildBox* box = new HeaderTabChildBox();
+            box->add(*item);
+            box->set_parent(*this);
+            box->show();
+            m_children.push_back(box);
+
+            /*item->signal_pressed().connect(sigc::track_obj([this, box]() {
+                for (auto child : m_children) {
+                    ((HeaderTabChild*)child->m_widget)->set_active(false);
+                }
+            }, *this, *box), false);*/
+        }
+
+        virtual void remove(Widget& widget) {
+            for (size_t i = 0; i < m_children.size(); ++i) {
+                if (m_children[i] == &widget ||
+                    m_children[i]->m_widget == &widget) {
+
+                    m_children.erase(m_children.begin() + i);
+                    break;
+                }
             }
-            child->set_parent(*this);
-            m_children.push_back(child);
         }
 
         virtual std::vector<Gtk::Widget*> get_children() {
@@ -207,25 +275,36 @@ class HeaderTab: public Gtk::Container {
             std::copy(m_children.begin(), m_children.end(), tmp.begin());
             return tmp;
         }
+
     protected:
         virtual void forall_vfunc(gboolean    include_internals,
                                   GtkCallback callback,
-                                  gpointer    callback_data ) {
+                                  gpointer    callback_data ) override {
             for (Gtk::Widget* child : m_children) {
                 callback(child->gobj(), callback_data);
             }
             if (include_internals) {
-                //callback(((Gtk::Widget*)&m_more)->gobj(), callback_data);
+                callback(((Gtk::Widget*)&m_more)->gobj(), callback_data);
             }
         }
 
-        virtual GType child_type_vfunc() const {
+        virtual GType child_type_vfunc() const override {
             return Gtk::Widget::get_type();
         }
 
-        virtual void on_size_allocate(Gtk::Allocation& allocation) {
+        virtual void on_size_allocate(Gtk::Allocation& allocation) override {
             //Use the offered allocation for this container:
             set_allocation(allocation);
+
+            //update window size
+            auto window = get_window();
+            if (window) {
+                window->move_resize(
+                            allocation.get_x(),
+                            allocation.get_y(),
+                            allocation.get_width(),
+                            allocation.get_height());
+            }
 
             int more_min_width, more_nat_width;
             m_more.get_preferred_width(more_min_width,
@@ -235,36 +314,42 @@ class HeaderTab: public Gtk::Container {
 
             //put all visible children into a row
             Gtk::Allocation child_allocation;
-            child_allocation.set_x(allocation.get_x());
-            child_allocation.set_y(allocation.get_y());
+            child_allocation.set_x(window ? 0 : allocation.get_x());
+            child_allocation.set_y(window ? 0 : allocation.get_y());
             child_allocation.set_width(0);
             child_allocation.set_height(allocation.get_height());
-            for (HeaderTabChild* child : m_children) {
-                if (!child->get_visible()) {
-                    continue;
-                }
+            for (HeaderTabChildBox* child : m_children) {
                 int child_min_width, child_nat_width;
-                child->get_preferred_width_for_height(child_allocation.get_height(),
+                child->m_widget->get_preferred_width_for_height(child_allocation.get_height(),
                                                       child_min_width,
                                                       child_nat_width);
                 child_allocation.set_width(std::max(child_min_width,
                                                     child_nat_width));
-                //check if possible
-                if (child_allocation.get_x() + child_allocation.get_width()
-                        > allocation.get_width() - more_min_width) {
-                    //outside
-                    //TODO: proper hide ?
-                    Gtk::Allocation hide = child_allocation;
-                    hide.set_y(-hide.get_height());
-                    child->size_allocate(hide);
 
+                if (child_allocation.get_x() + child_allocation.get_width()
+                        > allocation.get_x() + allocation.get_width() - more_min_width) {
+                    //outside
                     if (!in_hidden_area) {
                         in_hidden_area = true;
-                        m_more.size_allocate(child_allocation);
-                        m_more.show();
+                        Gtk::Allocation more_allocation = child_allocation;
+                        more_allocation.set_width(more_min_width);
+                        m_more.size_allocate(more_allocation);
                     }
+                }
+
+                if (in_hidden_area) {
+                    if (child->m_widget->get_parent() == child) {
+                        child->remove(*child->m_widget);
+                        m_more_popover_box.add(*child->m_widget);
+                    }
+                    child->hide();
                 } else {
+                    if (child->m_widget->get_parent() != child) {
+                        m_more_popover_box.remove(*child->m_widget);
+                        child->add(*child->m_widget);
+                    }
                     child->size_allocate(child_allocation);
+                    child->show();
                 }
                 //place for next
                 child_allocation.set_x(child_allocation.get_x() +
@@ -272,7 +357,12 @@ class HeaderTab: public Gtk::Container {
             }
 
             if (!in_hidden_area) {
-                m_more.hide();
+                Gtk::Allocation more_allocation;
+                more_allocation.set_width(1);
+                more_allocation.set_height(1);
+                more_allocation.set_y(-allocation.get_y()
+                                      -allocation.get_height());
+                m_more.size_allocate(more_allocation);
             }
         }
 
@@ -280,7 +370,7 @@ class HeaderTab: public Gtk::Container {
             return Gtk::SIZE_REQUEST_WIDTH_FOR_HEIGHT;
         }*/
 
-        virtual void get_preferred_width_vfunc(int& min_width, int& nat_width) const {
+        virtual void get_preferred_width_vfunc(int& min_width, int& nat_width) const override {
             int child_min_width, child_nat_width;
             min_width = 0;
             nat_width = 0;
@@ -291,8 +381,8 @@ class HeaderTab: public Gtk::Container {
                                      child_nat_width);
                 nat_width = 0;
             }
-            for (HeaderTabChild* child : m_children) {
-                child->get_preferred_width(child_min_width,
+            for (HeaderTabChildBox* child : m_children) {
+                child->m_widget->get_preferred_width(child_min_width,
                                            child_nat_width);
                 nat_width += std::max(child_min_width,
                                       child_nat_width) - 1;
@@ -302,25 +392,31 @@ class HeaderTab: public Gtk::Container {
                                        child_nat_width);
             min_width += child_min_width;
             nat_width += child_nat_width;
+            nat_width = std::max(nat_width, min_width);
             std::clog << "preferred_width: " << min_width << ", " << nat_width << std::endl;
         }
 
-        virtual void get_preferred_height_vfunc(int& min_height, int& nat_height) const {
+        virtual void get_preferred_height_vfunc(int& min_height, int& nat_height) const override {
             int child_min_height, child_nat_height;
             min_height = 0;
             nat_height = 0;
-            for (HeaderTabChild* child : m_children) {
-                child->get_preferred_height(child_min_height,
+            for (HeaderTabChildBox* child : m_children) {
+                child->m_widget->get_preferred_height(child_min_height,
                                             child_nat_height);
                 min_height = std::max(min_height, child_min_height);
                 nat_height = std::max(nat_height, child_nat_height);
             }
+            m_more.get_preferred_height(child_min_height,
+                                        child_nat_height);
+            min_height = std::max(min_height, child_min_height);
+            nat_height = std::max(nat_height, child_nat_height);
+            nat_height = std::max(nat_height, min_height);
             std::clog << "preferred_height: " << min_height << ", " << nat_height << std::endl;
         }
 
         virtual void get_preferred_width_for_height_vfunc(int height,
                                                           int& min_width,
-                                                          int& nat_width) const {
+                                                          int& nat_width) const override {
             int child_min_width, child_nat_width;
             min_width = 0;
             nat_width = 0;
@@ -333,8 +429,8 @@ class HeaderTab: public Gtk::Container {
                                      child_nat_width);
                 nat_width = 0;
             }
-            for (HeaderTabChild* child : m_children) {
-                child->get_preferred_width_for_height(
+            for (HeaderTabChildBox* child : m_children) {
+                child->m_widget->get_preferred_width_for_height(
                             height,
                             child_min_width,
                             child_nat_width);
@@ -346,24 +442,143 @@ class HeaderTab: public Gtk::Container {
                                        child_nat_width);
             min_width += child_min_width;
             nat_width += child_nat_width;
+            nat_width = std::max(nat_width, min_width);
             std::clog << "preferred_width_for_height: " << min_width << ", " << nat_width << std::endl;
         }
 
         virtual void get_preferred_height_for_width_vfunc(int width,
                                                           int& min_height,
-                                                          int& nat_height) const {
+                                                          int& nat_height) const override {
             int child_min_height, child_nat_height;
             min_height = 0;
             nat_height = 0;
-            for (HeaderTabChild* child : m_children) {
-                child->get_preferred_height_for_width(
+            for (HeaderTabChildBox* child : m_children) {
+                child->m_widget->get_preferred_height_for_width(
                             width, //this is hardly correct..
                             child_min_height,
                             child_nat_height);
                 min_height = std::max(min_height, child_min_height);
                 nat_height = std::max(nat_height, child_nat_height);
             }
+            m_more.get_preferred_height_for_width(
+                        width,
+                        child_min_height,
+                        child_nat_height);
+            min_height = std::max(min_height, child_min_height);
+            nat_height = std::max(nat_height, child_nat_height);
+            nat_height = std::max(nat_height, min_height);
             std::clog << "preferred_height_for_width: " << min_height << ", " << nat_height << std::endl;
+        }
+
+        virtual bool on_enter_notify_event(GdkEventCrossing* event) override {
+            HeaderTabChild* child = find_child_at_pos(event->x, event->y);
+            if (child != m_prelight_child) {
+                if (m_prelight_child) {
+                    auto ctx = m_prelight_child->get_style_context();
+                    ctx->set_state(ctx->get_state() & ~Gtk::STATE_FLAG_PRELIGHT);
+                }
+                if (child) {
+                    auto ctx = child->get_style_context();
+                    ctx->set_state(ctx->get_state() | Gtk::STATE_FLAG_PRELIGHT);
+                }
+                m_prelight_child = child;
+            }
+            return Gtk::Container::on_enter_notify_event(event);
+        }
+
+        virtual bool on_leave_notify_event(GdkEventCrossing* event) override {
+            if (m_prelight_child) {
+                auto ctx = m_prelight_child->get_style_context();
+                ctx->set_state(ctx->get_state() & ~Gtk::STATE_FLAG_PRELIGHT);
+                m_prelight_child = nullptr;
+            }
+            return Gtk::Container::on_leave_notify_event(event);
+        }
+
+        virtual bool on_motion_notify_event(GdkEventMotion* event) override {
+            HeaderTabChild* child = find_child_at_pos(event->x, event->y);
+            if (child != m_prelight_child) {
+                if (m_prelight_child) {
+                    auto ctx = m_prelight_child->get_style_context();
+                    ctx->set_state(ctx->get_state() & ~Gtk::STATE_FLAG_PRELIGHT);
+                }
+                if (child) {
+                    auto ctx = child->get_style_context();
+                    ctx->set_state(ctx->get_state() | Gtk::STATE_FLAG_PRELIGHT);
+                }
+                m_prelight_child = child;
+            }
+            return Gtk::Container::on_motion_notify_event(event);
+        }
+
+        virtual bool on_button_release_event(GdkEventButton* event) override {
+            if (event->window == get_window()->gobj()) {
+                if (event->button == 1) {
+                    HeaderTabChild* child = find_child_at_pos(event->x, event->y);
+                    if (child == &m_more) {
+                        //open popover
+                        m_more_popover.set_position(Gtk::POS_BOTTOM);
+                        m_more_popover.set_relative_to(m_more);
+                        m_more_popover.show();
+                    } else {
+                        if (child != m_selected_child) {
+                            if (m_selected_child) {
+                                auto ctx = m_selected_child->get_style_context();
+                                ctx->set_state(ctx->get_state() & ~Gtk::STATE_FLAG_SELECTED);
+                            }
+                            if (child) {
+                                auto ctx = child->get_style_context();
+                                ctx->set_state(ctx->get_state() | Gtk::STATE_FLAG_SELECTED);
+                            }
+                            m_selected_child = child;
+                        }
+                    }
+                }
+            }
+            return Gtk::Container::on_button_release_event(event);
+        }
+
+        virtual void on_realize() override {
+            Gtk::Allocation alloc = get_allocation();
+            Gtk::Widget::set_realized(true);
+            GdkWindowAttr attr = {0};
+            attr.x = alloc.get_x();
+            attr.y = alloc.get_y();
+            attr.width = alloc.get_width();
+            attr.height = alloc.get_height();
+            std::clog << attr.x << ", " << attr.y << "," << attr.width << "," << attr.height << std::endl;
+            attr.window_type = GDK_WINDOW_CHILD;
+            attr.event_mask = get_events();
+            attr.wclass = GDK_INPUT_OUTPUT;
+            auto window = Gdk::Window::create(get_parent_window(),
+                                              &attr,
+                                              GDK_WA_X | GDK_WA_Y);
+            register_window(window);
+            set_window(window);
+        }
+
+    private:
+        HeaderTabChild* find_child_at_pos(int x, int y) {
+            for (HeaderTabChildBox* child : m_children) {
+                if (child->m_widget->get_parent() == child) {
+                    auto rect = child->get_allocation();
+                    if (x >= rect.get_x() &&
+                        x < (rect.get_x() + rect.get_width()) &&
+                        y >= rect.get_y() &&
+                        y < (rect.get_y() + rect.get_height())) {
+                        return (HeaderTabChild*)child->m_widget;
+                    }
+                }
+            }
+            HeaderTabChild* child = &m_more;
+            auto rect = child->get_allocation();
+            if (x >= rect.get_x() &&
+                x < (rect.get_x() + rect.get_width()) &&
+                y >= rect.get_y() &&
+                y < (rect.get_y() + rect.get_height())) {
+                return (HeaderTabChild*)child;
+            }
+            return nullptr;
         }
 };
 
@@ -399,13 +614,19 @@ int headerbartab_test(int argc, char *argv[]) {
 
     HeaderTabTitle a("LabelA", "Sub 1");
     HeaderTabTitle b("LabelB", "Sub 2");
+    HeaderTabTitle c("LabelC", "Sub 3");
+    HeaderTabTitle d("LabelD", "Sub 4");
     demo.add(a);
     demo.add(b);
+    demo.add(c);
+    demo.add(d);
 
     a.get_style_context()->set_state(Gtk::STATE_FLAG_SELECTED);
 
     a.show();
     b.show();
+    c.show();
+    d.show();
 
     Gtk::HeaderBar bar;
     bar.set_custom_title(demo);
