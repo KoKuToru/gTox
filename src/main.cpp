@@ -146,6 +146,10 @@ class HeaderTabChild: public /*Gtk::Frame*/Gtk::ToggleButton {
             Gtk::ToggleButton::add(m_box);
         }
 
+        Glib::PropertyProxy<bool> property_visible_close_btn() {
+            return m_close.property_visible();
+        }
+
         virtual void add (Widget& widget) {
             m_box.add(widget);
         }
@@ -156,11 +160,22 @@ class HeaderTab: public Gtk::Container {
     private:
         std::vector<HeaderTabChild*> m_children;
 
+        Gtk::Arrow     m_more_arrow;
+        HeaderTabChild m_more;
+
     public:
-        HeaderTab(): Glib::ObjectBase(typeid(*this)) {
+        HeaderTab():
+            Glib::ObjectBase(typeid(*this)),
+            m_more_arrow(Gtk::ARROW_DOWN, Gtk::SHADOW_NONE) {
+
             set_has_window(false);
             set_redraw_on_allocate(false);
             get_style_context()->add_class("header-tab");
+
+            m_more.add(m_more_arrow);
+            m_more.show();
+            m_more_arrow.show();
+            m_more.property_visible_close_btn() = false;
         }
 
         ~HeaderTab() {
@@ -200,7 +215,7 @@ class HeaderTab: public Gtk::Container {
                 callback(child->gobj(), callback_data);
             }
             if (include_internals) {
-                //todo
+                //callback(((Gtk::Widget*)&m_more)->gobj(), callback_data);
             }
         }
 
@@ -211,6 +226,12 @@ class HeaderTab: public Gtk::Container {
         virtual void on_size_allocate(Gtk::Allocation& allocation) {
             //Use the offered allocation for this container:
             set_allocation(allocation);
+
+            int more_min_width, more_nat_width;
+            m_more.get_preferred_width(more_min_width,
+                                       more_nat_width);
+
+            bool in_hidden_area = false;
 
             //put all visible children into a row
             Gtk::Allocation child_allocation;
@@ -228,10 +249,30 @@ class HeaderTab: public Gtk::Container {
                                                       child_nat_width);
                 child_allocation.set_width(std::max(child_min_width,
                                                     child_nat_width));
-                child->size_allocate(child_allocation);
+                //check if possible
+                if (child_allocation.get_x() + child_allocation.get_width()
+                        > allocation.get_width() - more_min_width) {
+                    //outside
+                    //TODO: proper hide ?
+                    Gtk::Allocation hide = child_allocation;
+                    hide.set_y(-hide.get_height());
+                    child->size_allocate(hide);
+
+                    if (!in_hidden_area) {
+                        in_hidden_area = true;
+                        m_more.size_allocate(child_allocation);
+                        m_more.show();
+                    }
+                } else {
+                    child->size_allocate(child_allocation);
+                }
                 //place for next
                 child_allocation.set_x(child_allocation.get_x() +
-                                       child_allocation.get_width());
+                                       child_allocation.get_width() - 1);
+            }
+
+            if (!in_hidden_area) {
+                m_more.hide();
             }
         }
 
@@ -254,8 +295,13 @@ class HeaderTab: public Gtk::Container {
                 child->get_preferred_width(child_min_width,
                                            child_nat_width);
                 nat_width += std::max(child_min_width,
-                                      child_nat_width);
+                                      child_nat_width) - 1;
             }
+            nat_width += 1;
+            m_more.get_preferred_width(child_min_width,
+                                       child_nat_width);
+            min_width += child_min_width;
+            nat_width += child_nat_width;
             std::clog << "preferred_width: " << min_width << ", " << nat_width << std::endl;
         }
 
@@ -293,8 +339,13 @@ class HeaderTab: public Gtk::Container {
                             child_min_width,
                             child_nat_width);
                 nat_width += std::max(child_min_width,
-                                      child_nat_width);
+                                      child_nat_width) - 1;
             }
+            nat_width += 1;
+            m_more.get_preferred_width(child_min_width,
+                                       child_nat_width);
+            min_width += child_min_width;
+            nat_width += child_nat_width;
             std::clog << "preferred_width_for_height: " << min_width << ", " << nat_width << std::endl;
         }
 
