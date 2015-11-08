@@ -140,7 +140,16 @@ GtkListBoxRow {
 }
 
 
-
+.header-tab-wrapper {
+    border-image-source : -gtk-gradient (linear,
+                                         left top, left bottom,
+                                         color-stop(0, transparent),
+                                         color-stop(0.6, transparent),
+                                         color-stop(1, shade(@borders, 1.2)));
+    border-image-width: 0 1px 0 1px;
+    border-image-slice: 1;
+    background: transparent;
+}
 
 .header-tab-child {
     padding-left: 12px;
@@ -148,34 +157,20 @@ GtkListBoxRow {
     padding-top: 5px;
     padding-bottom: 5px;
 
-    border-image-source : -gtk-gradient (linear,
-                                         left top, left bottom,
-                                         color-stop(0, transparent),
-                                         color-stop(0.5, transparent),
-                                         color-stop(1, shade(@borders, 1.2)));
-    border-image-width: 0 1px 0px 1px;
-    border-image-slice: 1;
     background: transparent;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-left-width: 0;
+    border-bottom-color: transparent;
+    border-bottom-width: 3px;
 }
 
 .header-tab-child:hover {
-    border-image-source : -gtk-gradient (linear,
-                                         left top, left bottom,
-                                         color-stop(0, transparent),
-                                         color-stop(0.5, transparent),
-                                         color-stop(1, shade(@borders, 1.2)));
-    border-image-width: 0 1px 3px 1px;
-    border-image-slice: 1;
+    border-bottom-color: shade(@borders, 1.2);
 }
 
 .header-tab-child:active, .header-tab-child:selected {
-    border-image-source : -gtk-gradient (linear,
-                                         left top, left bottom,
-                                         color-stop(0, transparent),
-                                         color-stop(0.5, transparent),
-                                         color-stop(1, #4a90d9));
-    border-image-width: 0 1px 3px 1px;
-    border-image-slice: 1;
+    border-bottom-color: #4a90d9;
 }
 
 .header-tab-child .titlebutton {
@@ -183,5 +178,9 @@ GtkListBoxRow {
 }
 
 .popover .header-tab-child {
-    border-image-width: 0 0 0 0;
+    border: none;
+}
+
+.popover.titlebar {
+    box-shadow: none;
 }

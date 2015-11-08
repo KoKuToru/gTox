@@ -130,6 +130,7 @@ class HeaderTabChild: public Gtk::Frame/*Gtk::ToggleButton*/ {
         Gtk::HBox    m_box;
         Gtk::Button  m_close;
         Gtk::Image   m_close_icon;
+        Gtk::EventBox m_eventbox;
 
     public:
         HeaderTabChild(): Glib::ObjectBase(typeid(*this)) {
@@ -144,14 +145,45 @@ class HeaderTabChild: public Gtk::Frame/*Gtk::ToggleButton*/ {
                                             Gtk::IconSize(1));
             m_close_icon.show();
             m_close.property_valign() = Gtk::ALIGN_CENTER;
-            Gtk::Frame::add(m_box);
+            m_eventbox.add(m_box);
+            m_eventbox.show();
+            Gtk::Frame::add(m_eventbox);
+
+            //dnd should be done outside for gtox
+            std::vector<Gtk::TargetEntry> dnd_targets;
+            dnd_targets.push_back( Gtk::TargetEntry("gtox/chat_window")); //TODO: add unique identifier for the toxmm-instance
+            m_eventbox.drag_source_set(dnd_targets);
+            m_eventbox.signal_drag_data_get().connect([this](
+                                           const Glib::RefPtr<Gdk::DragContext>&,
+                                           Gtk::SelectionData& selection_data,
+                                           guint, guint) {
+                Glib::ustring data = "DEMO";
+                selection_data.set(selection_data.get_target(),
+                                   data.c_str());
+            });
+            m_eventbox.signal_drag_begin().connect([this](const Glib::RefPtr<Gdk::DragContext>& drag_context) {
+                auto surface = Cairo::ImageSurface::create(
+                                   Cairo::FORMAT_RGB24,
+                                   get_allocation().get_width(),
+                                   get_allocation().get_height());
+                auto ctx = Cairo::Context::create(surface);
+                ctx->set_source_rgb(1.0, 1.0, 1.0);
+                ctx->rectangle(0,
+                               0,
+                               get_allocation().get_width(),
+                               get_allocation().get_height());
+                ctx->fill();
+                //m_eventbox.draw(ctx); protected :(
+                gtk_widget_draw(GTK_WIDGET(gobj()), ctx->cobj());
+                drag_context->set_icon(surface);
+            });
         }
 
         Glib::PropertyProxy<bool> property_visible_close_btn() {
             return m_close.property_visible();
         }
 
-        virtual void add(Gtk::Widget& widget) {
+        virtual void add(Gtk::Widget& widget) override {
             m_box.add(widget);
         }
 
@@ -201,24 +233,10 @@ class HeaderTab: public Gtk::Container {
             m_more.property_visible_close_btn() = false;
             m_more.set_parent(*this);
 
-            /*m_more.signal_clicked().connect(sigc::track_obj([this]() {
-                m_more_popover.set_position(Gtk::POS_BOTTOM);
-                m_more_popover.set_relative_to(m_more);
-                m_more_popover.show();
-            }, *this));*/
-
             m_more_popover.get_style_context()->add_class("titlebar");
 
             m_more_popover.add(m_more_popover_box);
             m_more_popover_box.show();
-
-            /*m_more.property_active()
-                    .signal_changed()
-                    .connect(sigc::track_obj([this]() {
-                if (m_more.get_active() != false) {
-                    m_more.set_active(false);
-                }
-            }, *this));*/
 
             add_events(Gdk::ENTER_NOTIFY_MASK
                        | Gdk::LEAVE_NOTIFY_MASK
@@ -244,13 +262,8 @@ class HeaderTab: public Gtk::Container {
             box->add(*item);
             box->set_parent(*this);
             box->show();
+            box->get_style_context()->add_class("header-tab-wrapper");
             m_children.push_back(box);
-
-            /*item->signal_pressed().connect(sigc::track_obj([this, box]() {
-                for (auto child : m_children) {
-                    ((HeaderTabChild*)child->m_widget)->set_active(false);
-                }
-            }, *this, *box), false);*/
         }
 
         virtual void remove(Widget& widget) {
@@ -304,6 +317,8 @@ class HeaderTab: public Gtk::Container {
                             allocation.get_y(),
                             allocation.get_width(),
                             allocation.get_height());
+                allocation.set_x(0);
+                allocation.set_y(0);
             }
 
             int more_min_width, more_nat_width;
@@ -314,8 +329,8 @@ class HeaderTab: public Gtk::Container {
 
             //put all visible children into a row
             Gtk::Allocation child_allocation;
-            child_allocation.set_x(window ? 0 : allocation.get_x());
-            child_allocation.set_y(window ? 0 : allocation.get_y());
+            child_allocation.set_x(allocation.get_x());
+            child_allocation.set_y(allocation.get_y());
             child_allocation.set_width(0);
             child_allocation.set_height(allocation.get_height());
             for (HeaderTabChildBox* child : m_children) {
@@ -620,8 +635,6 @@ int headerbartab_test(int argc, char *argv[]) {
     demo.add(b);
     demo.add(c);
     demo.add(d);
-
-    a.get_style_context()->set_state(Gtk::STATE_FLAG_SELECTED);
 
     a.show();
     b.show();
