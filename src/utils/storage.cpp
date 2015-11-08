@@ -39,7 +39,7 @@ void storage::load(const std::initializer_list<std::string>& key, std::vector<ui
 }
 
 void storage::save(const std::initializer_list<std::string>& key, const std::vector<uint8_t>& data) {
-    utils::debug::scope_log log(DBG_LVL_1("gtox"), { std::vector<std::string>(key), data });
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), { std::vector<std::string>(key) });
     auto file_path = get_path_for_key(key);
 
     //open file
