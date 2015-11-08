@@ -122,10 +122,10 @@ void config::save_flatbuffer() {
     using namespace flatbuffers;
 
     FlatBufferBuilder fbb;
-    Config::ConfigBuilder fb(fbb);
     auto download_path = fbb.CreateString(property_download_path().get_value());
     auto avatar_path   = fbb.CreateString(property_avatar_path().get_value());
     auto proxy_host    = fbb.CreateString(property_proxy_host().get_value());
+    Config::ConfigBuilder fb(fbb);
     fb.add_download_path(download_path);
     fb.add_avatar_path(avatar_path);
     fb.add_connection_udp(property_connection_udp());
