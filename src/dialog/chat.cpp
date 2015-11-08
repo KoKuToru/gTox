@@ -28,6 +28,9 @@
 #include "widget/chat_file.h"
 #include "tox/contact/file/file.h"
 #include "tox/contact/manager.h"
+#include "flatbuffers/flatbuffers.h"
+#include "flatbuffers/idl.h"
+#include "flatbuffers/util.h"
 
 namespace sigc {
     SIGC_FUNCTORS_DEDUCE_RESULT_TYPE_WITH_DECLTYPE
@@ -684,73 +687,58 @@ void chat::add_log(std::shared_ptr<toxmm::storage> storage,
     std::vector<uint8_t> content;
     storage->load(key, content);
 
-    flatbuffers::FlatBufferBuilder fbb;
-    std::vector<flatbuffers::Offset<flatbuffers::Log::Item>> items;
-    if (!content.empty()) {
-        auto verify = flatbuffers::Verifier(content.data(), content.size());
-        if (!flatbuffers::Log::VerifyCollectionBuffer(verify)) {
-            throw std::runtime_error("flatbuffers::Log::VerifyCollectionBuffer failed");
-        }
-        auto data = flatbuffers::Log::GetCollection(content.data());
-        for (auto item : *data->items()) {
-            flatbuffers::Offset<void> subdata;
-            //is there a more efficent way to copy a flatbuffer directly ?
-            switch (item->data_type()) {
-                case flatbuffers::Log::Data::Message: {
-                    auto f = reinterpret_cast<const flatbuffers::Log::Message*>(item->data());
-                    subdata = flatbuffers::Log::CreateMessage(
-                                  fbb,
-                                  fbb.CreateString(std::string(
-                                                       f->message()->begin(),
-                                                       f->message()->end())),
-                                  f->status()).Union();
-                } break;
-                case flatbuffers::Log::Data::Action: {
-                    auto f = reinterpret_cast<const flatbuffers::Log::Action*>(item->data());
-                    subdata = flatbuffers::Log::CreateAction(
-                                  fbb,
-                                  fbb.CreateString(std::string(
-                                                       f->action()->begin(),
-                                                       f->action()->end())),
-                                  f->status()).Union();
-                } break;
-                case flatbuffers::Log::Data::File: {
-                    auto f = reinterpret_cast<const flatbuffers::Log::File*>(item->data());
-                    subdata = flatbuffers::Log::CreateFile(
-                                  fbb,
-                                  fbb.CreateString(f->uuid()->c_str()),
-                                  fbb.CreateString(std::string(
-                                                       f->name()->begin(),
-                                                       f->name()->end())),
-                                  fbb.CreateString(f->path()->c_str()),
-                                  f->status(),
-                                  fbb.CreateString(f->receiver()->c_str())).Union();
-                } break;
-                default:
-                    //TODO: What should we do ?
-                    break;
-            }
-            auto new_item = flatbuffers::Log::CreateItem(
-                                fbb,
-                                fbb.CreateString(item->sender()->c_str()),
-                                item->timestamp(),
-                                item->data_type(),
-                                subdata);
-            items.push_back(new_item);
-        }
+    if (content.empty()) {
+        //create empty collection
+        flatbuffers::FlatBufferBuilder fbb;
+        flatbuffers::Log::FinishCollectionBuffer(
+                    fbb,
+                    flatbuffers::Log::CreateCollection(
+                        fbb,
+                        fbb.CreateVector(std::vector<flatbuffers::Offset<flatbuffers::Log::Item>>())));
+
+        content.clear();
+        content.insert(content.end(),
+                       fbb.GetBufferPointer(),
+                       fbb.GetBufferPointer() + fbb.GetSize());
     }
 
-    items.push_back(create_func(fbb));
+    auto verify = flatbuffers::Verifier(content.data(), content.size());
+    if (!flatbuffers::Log::VerifyCollectionBuffer(verify)) {
+        throw std::runtime_error("flatbuffers::Log::VerifyCollectionBuffer failed");
+    }
+    auto data = flatbuffers::Log::GetMutableCollection(content.data());
 
-    flatbuffers::Log::FinishCollectionBuffer(
-                fbb,
-                flatbuffers::Log::CreateCollection(
-                    fbb,
-                    fbb.CreateVector(items)));
+    auto schema_binary = Gio::Resource::lookup_data_global("/org/gtox/flatbuffers/Log.bfbs");
+    gsize schmea_binary_size;
+    auto schema_binary_ptr = schema_binary->get_data(schmea_binary_size);
+    auto& schema = *reflection::GetSchema(schema_binary_ptr); //doesn't this leak memory ?
 
-    content.clear();
-    content.insert(content.end(),
-                   fbb.GetBufferPointer(),
-                   fbb.GetBufferPointer() + fbb.GetSize());
+    flatbuffers::ResizeVector<flatbuffers::Offset<flatbuffers::Log::Item>>(
+                schema,
+                data->items()->size() + 1,
+                0,
+                data->items(),
+                &content);
+
+    //reload (otherwise it will SEGFAULT)
+    data = flatbuffers::Log::GetMutableCollection(content.data());
+
+    flatbuffers::FlatBufferBuilder fbb;
+    fbb.Finish(create_func(fbb));
+    auto new_item = flatbuffers::AddFlatBuffer(content,
+                                               fbb.GetBufferPointer(),
+                                               fbb.GetSize());
+
+    //reload (otherwise it will SEGFAULT)
+    data = flatbuffers::Log::GetMutableCollection(content.data());
+
+    data->mutable_items()->MutateOffset(
+                data->items()->size() - 1,
+                new_item);
+
+    verify = flatbuffers::Verifier(content.data(), content.size());
+    if (!flatbuffers::Log::VerifyCollectionBuffer(verify)) {
+        throw std::runtime_error("flatbuffers::Log::VerifyCollectionBuffer failed");
+    }
     storage->save(key, content);
 }
