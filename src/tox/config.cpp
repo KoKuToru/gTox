@@ -96,7 +96,7 @@ config::config(const std::shared_ptr<toxmm::storage> storage):
 
 void config::load_flatbuffer() {
     std::vector<uint8_t> content;
-    m_storage->load({"config"}, content);
+    m_storage->load({"toxmm_config"}, content);
 
     if (content.empty()) {
         return;
@@ -139,7 +139,7 @@ void config::save_flatbuffer() {
     std::vector<uint8_t> content(fbb.GetBufferPointer(),
                                  fbb.GetBufferPointer() + fbb.GetSize());
 
-    m_storage->save({"config"}, content);
+    m_storage->save({"toxmm_config"}, content);
 }
 
 std::shared_ptr<config> config::create(const std::shared_ptr<toxmm::storage> storage) {
