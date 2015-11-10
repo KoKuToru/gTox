@@ -489,12 +489,10 @@ class HeaderTab: public Gtk::Container {
             HeaderTabChild* child = find_child_at_pos(event->x, event->y);
             if (child != m_prelight_child) {
                 if (m_prelight_child) {
-                    auto ctx = m_prelight_child->get_style_context();
-                    ctx->set_state(ctx->get_state() & ~Gtk::STATE_FLAG_PRELIGHT);
+                    m_prelight_child->unset_state_flags(Gtk::STATE_FLAG_PRELIGHT);
                 }
                 if (child) {
-                    auto ctx = child->get_style_context();
-                    ctx->set_state(ctx->get_state() | Gtk::STATE_FLAG_PRELIGHT);
+                    child->set_state_flags(Gtk::STATE_FLAG_PRELIGHT, false);
                 }
                 m_prelight_child = child;
             }
@@ -503,23 +501,26 @@ class HeaderTab: public Gtk::Container {
 
         virtual bool on_leave_notify_event(GdkEventCrossing* event) override {
             if (m_prelight_child) {
-                auto ctx = m_prelight_child->get_style_context();
-                ctx->set_state(ctx->get_state() & ~Gtk::STATE_FLAG_PRELIGHT);
+                m_prelight_child->unset_state_flags(Gtk::STATE_FLAG_PRELIGHT);
                 m_prelight_child = nullptr;
             }
             return Gtk::Container::on_leave_notify_event(event);
         }
 
         virtual bool on_motion_notify_event(GdkEventMotion* event) override {
-            HeaderTabChild* child = find_child_at_pos(event->x, event->y);
+            double relative_x = event->x;
+            double relative_y = event->y;
+            fix_coordinates(Glib::wrap(event->window, true),
+                            relative_x,
+                            relative_y);
+
+            HeaderTabChild* child = find_child_at_pos(relative_x, relative_y);
             if (child != m_prelight_child) {
                 if (m_prelight_child) {
-                    auto ctx = m_prelight_child->get_style_context();
-                    ctx->set_state(ctx->get_state() & ~Gtk::STATE_FLAG_PRELIGHT);
+                    m_prelight_child->unset_state_flags(Gtk::STATE_FLAG_PRELIGHT);
                 }
                 if (child) {
-                    auto ctx = child->get_style_context();
-                    ctx->set_state(ctx->get_state() | Gtk::STATE_FLAG_PRELIGHT);
+                    child->set_state_flags(Gtk::STATE_FLAG_PRELIGHT, false);
                 }
                 m_prelight_child = child;
             }
@@ -527,26 +528,28 @@ class HeaderTab: public Gtk::Container {
         }
 
         virtual bool on_button_release_event(GdkEventButton* event) override {
-            if (event->window == get_window()->gobj()) {
-                if (event->button == 1) {
-                    HeaderTabChild* child = find_child_at_pos(event->x, event->y);
-                    if (child == &m_more) {
-                        //open popover
-                        m_more_popover.set_position(Gtk::POS_BOTTOM);
-                        m_more_popover.set_relative_to(m_more);
-                        m_more_popover.show();
-                    } else {
-                        if (child != m_selected_child) {
-                            if (m_selected_child) {
-                                auto ctx = m_selected_child->get_style_context();
-                                ctx->set_state(ctx->get_state() & ~Gtk::STATE_FLAG_SELECTED);
-                            }
-                            if (child) {
-                                auto ctx = child->get_style_context();
-                                ctx->set_state(ctx->get_state() | Gtk::STATE_FLAG_SELECTED);
-                            }
-                            m_selected_child = child;
+            double relative_x = event->x;
+            double relative_y = event->y;
+            fix_coordinates(Glib::wrap(event->window, true),
+                            relative_x,
+                            relative_y);
+
+            if (event->button == 1) {
+                HeaderTabChild* child = find_child_at_pos(relative_x, relative_y);
+                if (child == &m_more) {
+                    //open popover
+                    m_more_popover.set_position(Gtk::POS_BOTTOM);
+                    m_more_popover.set_relative_to(m_more);
+                    m_more_popover.show();
+                } else {
+                    if (child != m_selected_child) {
+                        if (m_selected_child) {
+                            m_selected_child->unset_state_flags(Gtk::STATE_FLAG_SELECTED);
                         }
+                        if (child) {
+                            child->set_state_flags(Gtk::STATE_FLAG_SELECTED, false);
+                        }
+                        m_selected_child = child;
                     }
                 }
             }
@@ -556,7 +559,8 @@ class HeaderTab: public Gtk::Container {
         virtual void on_realize() override {
             Gtk::Allocation alloc = get_allocation();
             Gtk::Widget::set_realized(true);
-            GdkWindowAttr attr = {0};
+            GdkWindowAttr attr;
+            memset(&attr, 0, sizeof(attr));
             attr.x = alloc.get_x();
             attr.y = alloc.get_y();
             attr.width = alloc.get_width();
@@ -595,6 +599,20 @@ class HeaderTab: public Gtk::Container {
             }
             return nullptr;
         }
+
+        void fix_coordinates(Glib::RefPtr<Gdk::Window> event_window,
+                             double& relative_x,
+                             double& relative_y) {
+            while (event_window && event_window != get_window()) {
+                double parent_x, parent_y;
+                event_window->coords_to_parent(relative_x, relative_y,
+                                               parent_x, parent_y);
+                relative_x = parent_x;
+                relative_y = parent_y;
+                event_window = event_window->get_effective_parent();
+            }
+        }
+
 };
 
 int headerbartab_test(int argc, char *argv[]) {
