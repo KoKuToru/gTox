@@ -1,4 +1,6 @@
 find_path(FLATBUFFERS_INCLUDE_DIR flatbuffers/flatbuffers.h)
 
+find_library(FLATBUFFERS_LIBRARY flatbuffers)
+
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(Flatbuffers DEFAULT_MSG FLATBUFFERS_INCLUDE_DIR)
+find_package_handle_standard_args(Flatbuffers DEFAULT_MSG FLATBUFFERS_INCLUDE_DIR FLATBUFFERS_LIBRARY)
