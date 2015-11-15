@@ -124,10 +124,24 @@ class HeaderTabTitle: public Gtk::VBox {
         }
 };
 
+class HeaderTabChildBox: public Gtk::Box {
+        friend class HeaderTab;
+    private:
+        Gtk::Widget* m_widget = nullptr;
+
+    public:
+        explicit HeaderTabChildBox(Gtk::Widget& widget):
+            Glib::ObjectBase(typeid(*this)) {
+
+            get_style_context()->add_class("header-tab-wrapper");
+            m_widget = &widget;
+            add(widget);
+        }
+};
+
 class HeaderTabChild: public Gtk::Frame/*Gtk::ToggleButton*/ {
         friend class HeaderTab;
     private:
-        bool m_clean_up = false;
         Gtk::HBox    m_box;
         Gtk::Button  m_close;
         Gtk::Image   m_close_icon;
@@ -153,14 +167,17 @@ class HeaderTabChild: public Gtk::Frame/*Gtk::ToggleButton*/ {
             //dnd should be done outside for gtox
             std::vector<Gtk::TargetEntry> dnd_targets;
             dnd_targets.push_back( Gtk::TargetEntry("gtox/chat_window")); //TODO: add unique identifier for the toxmm-instance
-            m_eventbox.drag_source_set(dnd_targets);
+            m_eventbox.drag_source_set(dnd_targets,
+                                       Gdk::BUTTON1_MASK,
+                                       Gdk::ACTION_MOVE);
             m_eventbox.signal_drag_data_get().connect([this](
                                            const Glib::RefPtr<Gdk::DragContext>&,
                                            Gtk::SelectionData& selection_data,
                                            guint, guint) {
-                Glib::ustring data = "DEMO";
+                auto point_as_string = std::to_string((unsigned long long)this);
+                std::clog << "send data: " << point_as_string << std::endl;
                 selection_data.set(selection_data.get_target(),
-                                   data.c_str());
+                                   point_as_string);
             });
             m_eventbox.signal_drag_begin().connect([this](const Glib::RefPtr<Gdk::DragContext>& drag_context) {
                 auto surface = Cairo::ImageSurface::create(
@@ -177,7 +194,18 @@ class HeaderTabChild: public Gtk::Frame/*Gtk::ToggleButton*/ {
                 //m_eventbox.draw(ctx); protected :(
                 gtk_widget_draw(GTK_WIDGET(gobj()), ctx->cobj());
                 drag_context->set_icon(surface);
+
+                //hide();
             });
+            /*m_eventbox.signal_drag_failed().connect([this](Glib::RefPtr<Gdk::DragContext>&, Gtk::DragResult) {
+                //nothing
+                return false;
+            });*/
+            /*m_eventbox.signal_drag_data_delete().connect([this](const Glib::RefPtr<Gdk::DragContext>&) {
+                std::clog << "data_delete" << std::endl;
+                //nothing
+                hide();
+            });*/
         }
 
         Glib::PropertyProxy<bool> property_visible_close_btn() {
@@ -194,21 +222,6 @@ class HeaderTabChild: public Gtk::Frame/*Gtk::ToggleButton*/ {
 
         virtual bool on_motion_notify_event(GdkEventMotion*) override {
             return true;
-        }
-};
-
-class HeaderTabChildBox: public Gtk::Box {
-        friend class HeaderTab;
-    private:
-        Gtk::Widget* m_widget = nullptr;
-
-    public:
-        explicit HeaderTabChildBox(HeaderTabChild& widget):
-            Glib::ObjectBase(typeid(*this)) {
-
-            get_style_context()->add_class("header-tab-wrapper");
-            m_widget = &widget;
-            add(widget);
         }
 };
 
@@ -656,7 +669,7 @@ int headerbartab_test(int argc, char *argv[]) {
     update_style();
 
     Gtk::Window window;
-    window.set_default_size(200, 200);
+    //window.set_default_size(200, 200);
 
     Gtk::HeaderBar bar; //<- very important to be destroyed after HeaderTab !!!
     HeaderTab demo;
@@ -690,6 +703,41 @@ int headerbartab_test(int argc, char *argv[]) {
     //window.add(demo);
 
     window.set_titlebar(bar);
+
+
+    Gtk::Window window2;
+    Gtk::HeaderBar bar2;
+    HeaderTab demo2;
+    demo2.show();
+    HeaderTabTitle a2("LabelA2", "Sub 12");
+    HeaderTabChild ac2;
+    HeaderTabChildBox acb2(ac2);
+    ac2.add_widget(a2);
+    demo2.add(acb2);
+    acb2.show_all();
+    std::vector<Gtk::TargetEntry> dnd_targets;
+    dnd_targets.push_back( Gtk::TargetEntry("gtox/chat_window")); //TODO: add unique identifier for the toxmm-instance
+    window2.drag_dest_set(dnd_targets,
+                          Gtk::DEST_DEFAULT_MOTION | Gtk::DEST_DEFAULT_DROP,
+                          Gdk::ACTION_MOVE);
+    window2.signal_drag_data_received().connect([&](const Glib::RefPtr<Gdk::DragContext>&, int, int, const Gtk::SelectionData& data, guint, guint) {
+        std::clog << "got data: " << data.get_data() << std::endl;
+        HeaderTabChild* item = (HeaderTabChild*)std::stoull((const char*)data.get_data());
+        if (!item) {
+            return;
+        }
+        HeaderTabChildBox* box = dynamic_cast<HeaderTabChildBox*>(item->get_parent());
+        if (!box) {
+            return;
+        }
+        demo.remove(*box);
+        demo2.add(*box);
+    });
+    bar2.set_custom_title(demo2);
+    bar2.show();
+    window2.set_titlebar(bar2);
+    window2.show();
+
     return app->run(window);
 }
 
