@@ -127,6 +127,7 @@ class HeaderTabTitle: public Gtk::VBox {
 class HeaderTabChild: public Gtk::Frame/*Gtk::ToggleButton*/ {
         friend class HeaderTab;
     private:
+        bool m_clean_up = false;
         Gtk::HBox    m_box;
         Gtk::Button  m_close;
         Gtk::Image   m_close_icon;
@@ -183,8 +184,12 @@ class HeaderTabChild: public Gtk::Frame/*Gtk::ToggleButton*/ {
             return m_close.property_visible();
         }
 
-        virtual void add(Gtk::Widget& widget) override {
+        virtual void add_widget(Gtk::Widget& widget) {
             m_box.add(widget);
+        }
+
+        virtual void remove_widget(Gtk::Widget& widget) {
+            m_box.remove(widget);
         }
 
         virtual bool on_motion_notify_event(GdkEventMotion*) override {
@@ -198,9 +203,12 @@ class HeaderTabChildBox: public Gtk::Box {
         Gtk::Widget* m_widget = nullptr;
 
     public:
-        virtual void add(Gtk::Widget& widget) {
+        explicit HeaderTabChildBox(HeaderTabChild& widget):
+            Glib::ObjectBase(typeid(*this)) {
+
+            get_style_context()->add_class("header-tab-wrapper");
             m_widget = &widget;
-            Gtk::Box::add(widget);
+            add(widget);
         }
 };
 
@@ -227,7 +235,7 @@ class HeaderTab: public Gtk::Container {
             set_redraw_on_allocate(true);
             get_style_context()->add_class("header-tab");
 
-            m_more.add(m_more_arrow);
+            m_more.add_widget(m_more_arrow);
             m_more.show();
             m_more_arrow.show();
             m_more.property_visible_close_btn() = false;
@@ -247,31 +255,37 @@ class HeaderTab: public Gtk::Container {
         }
 
         ~HeaderTab() {
+            std::clog << "~HeaderTab" << std::endl;
             for (Gtk::Widget* child : m_children) {
                 child->unparent();
             }
+            m_more.unparent();
         }
 
-        virtual void add(Widget& widget) override {
+        virtual void on_add(Widget* widget) override {
+            std::clog << "add widget " << widget << std::endl;
             //add a new child
-            HeaderTabChild* item = dynamic_cast<HeaderTabChild*>(&widget);
-            item = new HeaderTabChild();
-            item->add(widget);
-            item->show();
-            HeaderTabChildBox* box = new HeaderTabChildBox();
-            box->add(*item);
-            box->set_parent(*this);
-            box->show();
-            box->get_style_context()->add_class("header-tab-wrapper");
-            m_children.push_back(box);
+            HeaderTabChildBox& item = dynamic_cast<HeaderTabChildBox&>(*widget);
+            item.set_parent(*this);
+            m_children.push_back(&item);
         }
 
-        virtual void remove(Widget& widget) {
+        virtual void on_remove(Widget* widget) override {
+            std::clog << "remove widget " << widget << std::endl;
             for (size_t i = 0; i < m_children.size(); ++i) {
-                if (m_children[i] == &widget ||
-                    m_children[i]->m_widget == &widget) {
+                if (m_children[i] == widget) {
+                    for (Gtk::Widget* w : m_more_popover_box.get_children()) {
+                        if (w == m_children[i]->m_widget) {
+                            m_more_popover_box.remove(*m_children[i]->m_widget);
+                            m_children[i]->add(*m_children[i]->m_widget);
+                            break;
+                        }
+                    }
 
+                    m_children[i]->unparent();
                     m_children.erase(m_children.begin() + i);
+
+                    queue_resize();
                     break;
                 }
             }
@@ -293,12 +307,14 @@ class HeaderTab: public Gtk::Container {
         virtual void forall_vfunc(gboolean    include_internals,
                                   GtkCallback callback,
                                   gpointer    callback_data ) override {
+            std::clog << "forall_vfunc start" << std::endl;
             for (Gtk::Widget* child : m_children) {
                 callback(child->gobj(), callback_data);
             }
             if (include_internals) {
                 callback(((Gtk::Widget*)&m_more)->gobj(), callback_data);
             }
+            std::clog << "forall_vfunc end" << std::endl;
         }
 
         virtual GType child_type_vfunc() const override {
@@ -381,9 +397,10 @@ class HeaderTab: public Gtk::Container {
             }
         }
 
-        /*virtual Gtk::SizeRequestMode get_request_mode_vfunc() const {
-            return Gtk::SIZE_REQUEST_WIDTH_FOR_HEIGHT;
-        }*/
+        virtual Gtk::SizeRequestMode get_request_mode_vfunc() const override {
+            return Gtk::Container::get_request_mode_vfunc();
+            //return Gtk::SIZE_REQUEST_WIDTH_FOR_HEIGHT;
+        }
 
         virtual void get_preferred_width_vfunc(int& min_width, int& nat_width) const override {
             int child_min_width, child_nat_width;
@@ -612,7 +629,6 @@ class HeaderTab: public Gtk::Container {
                 event_window = event_window->get_effective_parent();
             }
         }
-
 };
 
 int headerbartab_test(int argc, char *argv[]) {
@@ -642,6 +658,7 @@ int headerbartab_test(int argc, char *argv[]) {
     Gtk::Window window;
     window.set_default_size(200, 200);
 
+    Gtk::HeaderBar bar; //<- very important to be destroyed after HeaderTab !!!
     HeaderTab demo;
     demo.show();
 
@@ -649,19 +666,28 @@ int headerbartab_test(int argc, char *argv[]) {
     HeaderTabTitle b("LabelB", "Sub 2");
     HeaderTabTitle c("LabelC", "Sub 3");
     HeaderTabTitle d("LabelD", "Sub 4");
-    demo.add(a);
-    demo.add(b);
-    demo.add(c);
-    demo.add(d);
+    HeaderTabChild ac, bc, cc, dc;
+    HeaderTabChildBox acb(ac), bcb(bc), ccb(cc), dcb(dc);
+    ac.add_widget(a);
+    bc.add_widget(b);
+    cc.add_widget(c);
+    dc.add_widget(d);
 
-    a.show();
-    b.show();
-    c.show();
-    d.show();
+    demo.add(acb);
+    demo.add(bcb);
+    demo.add(ccb);
+    demo.add(dcb);
 
-    Gtk::HeaderBar bar;
+    acb.show_all();
+    bcb.show_all();
+    ccb.show_all();
+    dcb.show_all();
+
     bar.set_custom_title(demo);
     bar.show();
+
+
+    //window.add(demo);
 
     window.set_titlebar(bar);
     return app->run(window);
