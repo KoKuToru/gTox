@@ -43,6 +43,7 @@ file::file(BaseObjectType* cobject,
     builder.get_widget("preview", m_preview);
     builder.get_widget("info_revealer", m_info_revealer);
     builder.get_widget("eventbox", m_eventbox);
+    builder.get_widget("network_icon", m_net_icon);
 
     /*auto preview_video_tmp = widget::videoplayer::create();
     m_preview_video = preview_video_tmp.raw();*/
@@ -99,6 +100,31 @@ file::file(BaseObjectType* cobject,
             .signal_changed()
             .connect(sigc::mem_fun(*this, &file::update_complete));
     update_complete();
+
+    m_bindings.push_back(Glib::Binding::bind_property(
+                             m_file->property_state(),
+                             m_net_icon->property_icon_name(),
+                             binding_flags,
+                             sigc::track_obj([this](const TOX_FILE_CONTROL& in, Glib::ustring& out) {
+        if (m_file->property_complete()) {
+            out = "network-idle-symbolic";
+            return true;
+        }
+        switch (in) {
+            case TOX_FILE_CONTROL_RESUME:
+                if (m_file->is_recv()) {
+                    out = "network-receive-symbolic";
+                } else {
+                    out = "network-transmit-symbolic";
+                }
+                break;
+            case TOX_FILE_CONTROL_PAUSE:
+            case TOX_FILE_CONTROL_CANCEL:
+                out = "network-offline-symbolic";
+                break;
+        }
+        return true;
+    }, *this)));
 
     //auto start file recv when smaller than 2mb
     //TODO: make size setable in config

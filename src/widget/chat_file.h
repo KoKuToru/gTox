@@ -44,6 +44,7 @@ namespace widget {
             Gtk::Revealer* m_info_revealer;
             Gtk::Box*      m_preview;
             Gtk::EventBox* m_eventbox;
+            Gtk::Image*    m_net_icon;
 
             sigc::connection m_leave_timer;
 
