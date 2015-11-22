@@ -152,7 +152,6 @@ gstreamer::gstreamer():
                 } else {
                     m_signal_error(_("unknow gstreamer error"));
                 }
-                property_state() = Gst::STATE_NULL;
                 break;
             default:
                 break;
