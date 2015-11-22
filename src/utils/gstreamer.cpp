@@ -77,16 +77,15 @@ gstreamer::gstreamer():
         if (!preroll) {
             return Gst::FLOW_OK;
         }
-        auto caps = preroll->get_caps();
+        //C++ version is buggy, use C version
+        auto caps = Glib::wrap(gst_sample_get_caps(preroll->gobj()));
         if (!caps) {
             return Gst::FLOW_OK;
         }
         if (caps->empty()) {
             return Gst::FLOW_OK;
         }
-        if (caps->empty()) {
-            return Gst::FLOW_OK;
-        }
+
         auto struc = caps->get_structure(0);
         int w,h;
         if (!struc.get_field("width", w)) {
@@ -181,7 +180,7 @@ gstreamer::gstreamer():
 
 gstreamer::~gstreamer() {
     utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
-    property_state() = Gst::STATE_NULL;
+    m_playbin->set_state(Gst::STATE_NULL);
 }
 
 std::pair<bool, bool> gstreamer::has_video_audio(Glib::ustring uri) {
