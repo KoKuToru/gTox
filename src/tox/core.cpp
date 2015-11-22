@@ -407,39 +407,20 @@ std::shared_ptr<toxmm::storage> core::storage() {
 
 void core::update() {
     tox_iterate(toxcore());
-    if (property_connection() == TOX_CONNECTION_NONE) {
-        if (m_bootstrap_timer.elapsed() >= 10) {
-            auto nodes = get_bootstrap_nodes();
-            for (auto i = 0; i < 5; ++i) {
-                auto index = rand() % nodes.size();
-                TOX_ERR_BOOTSTRAP berror;
-                auto pub = from_hex(nodes[index].pubkey);
-                auto host = nodes[index].ipv4;
-                auto port = nodes[index].port;
-                if (!host.empty()) {
-                    if (!tox_bootstrap(m_toxcore,
-                                       host.c_str(),
-                                       port, pub.data(),
-                                       &berror)) {
-                        throw exception(berror);
-                    }
-                }
-                host = nodes[index].ipv6;
-                if (!host.empty()) {
-                    if (!tox_bootstrap(m_toxcore,
-                                       host.c_str(),
-                                       port, pub.data(),
-                                       &berror)) {
-                        throw exception(berror);
-                    }
-                }
-            }
-            m_bootstrap_timer.reset();
-        }
-    } else {
-        if (m_bootstrap_timer.elapsed() >= 60) {
-            auto nodes = get_bootstrap_nodes();
-            //connect to a random node
+
+    auto timer_wait = 10;
+    auto timer_connections = 5;
+    auto conenction_type = config()->property_connection_udp()
+                           ?TOX_CONNECTION_UDP
+                           :TOX_CONNECTION_TCP;
+    if (property_connection() != conenction_type) {
+        timer_wait = 60;
+        timer_connections = 1;
+    }
+
+    if (m_bootstrap_timer.elapsed() >= timer_wait) {
+        auto nodes = get_bootstrap_nodes();
+        for (auto i = 0; i < timer_connections; ++i) {
             auto index = rand() % nodes.size();
             TOX_ERR_BOOTSTRAP berror;
             auto pub = from_hex(nodes[index].pubkey);
@@ -450,7 +431,13 @@ void core::update() {
                                    host.c_str(),
                                    port, pub.data(),
                                    &berror)) {
-                    throw exception(berror);
+                    if (berror == TOX_ERR_BOOTSTRAP_BAD_HOST) {
+                        std::cerr << "TOX_ERR_BOOTSTRAP_BAD_HOST on host:" << host << " port:" << port << std::endl;
+                    } else if (berror == TOX_ERR_BOOTSTRAP_BAD_PORT) {
+                        std::cerr << "TOX_ERR_BOOTSTRAP_BAD_PORT on host:" << host << " port:" << port << std::endl;
+                    } else {
+                        throw exception(berror);
+                    }
                 }
             }
             host = nodes[index].ipv6;
@@ -459,11 +446,17 @@ void core::update() {
                                    host.c_str(),
                                    port, pub.data(),
                                    &berror)) {
-                    throw exception(berror);
+                    if (berror == TOX_ERR_BOOTSTRAP_BAD_HOST) {
+                        std::cerr << "TOX_ERR_BOOTSTRAP_BAD_HOST on host:" << host << " port:" << port << std::endl;
+                    } else if (berror == TOX_ERR_BOOTSTRAP_BAD_PORT) {
+                        std::cerr << "TOX_ERR_BOOTSTRAP_BAD_PORT on host:" << host << " port:" << port << std::endl;
+                    } else {
+                        throw exception(berror);
+                    }
                 }
             }
-            m_bootstrap_timer.reset();
         }
+        m_bootstrap_timer.reset();
     }
 }
 
