@@ -45,11 +45,13 @@ file::file(BaseObjectType* cobject,
     builder.get_widget("eventbox", m_eventbox);
     builder.get_widget("network_icon", m_net_icon);
 
-    /*auto preview_video_tmp = widget::videoplayer::create();
-    m_preview_video = preview_video_tmp.raw();*/
+    auto preview_video_tmp = widget::videoplayer::create();
+    m_preview_video = preview_video_tmp.raw();
 
     m_preview->add(m_preview_image);
-    //m_preview->add(*Gtk::manage(m_preview_video));
+    m_preview_image.hide();
+    m_preview->add(*Gtk::manage(m_preview_video));
+    m_preview_video->hide();
 
     m_file = file;
 
@@ -220,6 +222,7 @@ void file::update_complete() {
                     dispatcher.emit([this, img]() {
                         utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
                         m_preview_image.property_pixbuf() = img;
+                        m_preview_image.show();
                         m_preview_revealer->property_reveal_child() = true;
                         m_spinner->property_visible() = false;
                         m_info_revealer->set_reveal_child(false);
@@ -240,10 +243,11 @@ void file::update_complete() {
                 bool has_audio;
                 std::tie(has_video, has_audio) = utils::gstreamer
                                                  ::has_video_audio(file->get_uri());
-                if (false /*has_video || has_audio*/) {
+                if (has_video || has_audio) {
                     dispatcher.emit([this, file]() {
                         utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
                         m_preview_video->property_uri() = file->get_uri();
+                        m_preview_video->show();
                         //TODO: reveal and stop spinner after
                         //peview image got generated !
                         m_preview_revealer->property_reveal_child() = true;
