@@ -49,7 +49,11 @@ namespace dialog {
                               type_slot_detachable_del main_del);
             virtual ~detachable_window();
 
+            void present();
+
         private:
+            type_slot_detachable_add m_attach;
+
             Gtk::HeaderBar* m_headerbar_attached;
             Gtk::HeaderBar* m_headerbar_detached;
             Gtk::Button* m_btn_attach;

@@ -317,7 +317,7 @@ std::shared_ptr<toxmm::contact> contact::get_contact() {
 void contact::activated() {
     utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
     if (m_chat) {
-        //m_chat->activated();
+        m_chat->present();
     } else {
         auto attach = sigc::mem_fun(m_main,
                                     &dialog::main::detachable_window_add);
