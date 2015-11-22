@@ -20,6 +20,7 @@
 #include "tox/contact/file/file.h"
 #include <iostream>
 #include <mutex>
+#include "utils/audio_notification.h"
 
 namespace sigc {
     SIGC_FUNCTORS_DEDUCE_RESULT_TYPE_WITH_DECLTYPE
@@ -102,6 +103,14 @@ file::file(BaseObjectType* cobject,
             .signal_changed()
             .connect(sigc::mem_fun(*this, &file::update_complete));
     update_complete();
+
+    m_file->property_complete()
+            .signal_changed()
+            .connect(sigc::track_obj([this]() {
+        if (m_file->property_complete()) {
+            new utils::audio_notification("file:///usr/share/gtox/audio/Isotoxin/Notification Sounds/isotoxin_FileDownloaded.flac");
+        }
+    }, *this));
 
     m_bindings.push_back(Glib::Binding::bind_property(
                              m_file->property_state(),

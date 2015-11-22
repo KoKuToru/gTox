@@ -6,6 +6,7 @@ Not ready for daily use ! Please wait for the first release (not alpha/beta).
 
 * [Features](#features)
 * [Debug Features](#debug-features)
+* [Audio Notifications](#audio-notifications)
 * [How to install](#how-to-install)
   * [ArchLinux](#archlinux)
   * [Linux](#linux)
@@ -85,6 +86,19 @@ For comparison https://wiki.tox.chat/clients#features
 
 Special to gTox:
 * Markup support bold(crtl+b), italic(crtl+i), underline(crtl+u)
+
+Audio Notifications
+============
+
+```bash
+git submodule update --init --recursive
+```
+
+This will download the audio files from the https://github.com/Tox/Sounds repository.  
+gTox will load these files from `/usr/share/gtox/audio`.  
+Make sure your files are correctly installed!
+
+`make install` will copy the files into the right folder as long as your `CMAKE_INSTALL_PREFIX` is correct.
 
 Screenshot
 ============

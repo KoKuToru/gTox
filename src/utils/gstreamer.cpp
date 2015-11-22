@@ -175,6 +175,8 @@ gstreamer::gstreamer():
         utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
         m_playbin->set_state(property_state());
     }, *this));
+
+    m_playbin->set_state(Gst::STATE_NULL);
 }
 
 gstreamer::~gstreamer() {
