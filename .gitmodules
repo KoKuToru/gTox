@@ -1,0 +1,3 @@
+[submodule "src/audio"]
+	path = src/audio
+	url = https://github.com/Tox/Sounds

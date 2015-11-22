@@ -4,20 +4,26 @@ branches:
 cache: ccache
 language: cpp
 sudo: required
-services:
-- docker
 matrix:
   include:
-  - compiler: gcc
-    env: DOCKER=kokutoru/gtox-travis-build CMAKE=cmake TEST=1
-  - compiler: clang
-    env: DOCKER=kokutoru/gtox-travis-build CMAKE=cmake TEST=1
-  - compiler: gcc
-    env: DOCKER=kokutoru/gtox-travis-build-mingw-w64 CMAKE=i686-w64-mingw32-cmake TEST=0 PUB_WIN=1 PUB_COPY=i686-w64-mingw32 PUB_FILE=gtox.win.i686
-  - compiler: gcc
-    env: DOCKER=kokutoru/gtox-travis-build-mingw-w64 CMAKE=x86_64-w64-mingw32-cmake TEST=0 PUB_WIN=1 PUB_COPY=x86_64-w64-mingw32 PUB_FILE=gtox.win.x86-64
+    - compiler: gcc
+      env: DOCKER=kokutoru/gtox-travis-build CMAKE=cmake TEST=1
+      services:
+        - docker
+    - compiler: clang
+      env: DOCKER=kokutoru/gtox-travis-build CMAKE=cmake TEST=1
+      services:
+        - docker
+    - compiler: gcc
+      env: DOCKER=kokutoru/gtox-travis-build-mingw-w64 CMAKE=i686-w64-mingw32-cmake TEST=0 PUB_WIN=1 PUB_COPY=i686-w64-mingw32 PUB_FILE=gtox.win.i686
+      services:
+        - docker
+    - compiler: gcc
+      env: DOCKER=kokutoru/gtox-travis-build-mingw-w64 CMAKE=x86_64-w64-mingw32-cmake TEST=0 PUB_WIN=1 PUB_COPY=x86_64-w64-mingw32 PUB_FILE=gtox.win.x86-64
+      services:
+        - docker
 git:
-  submodules: false
+  submodules: true
 before_install:
   - ccache -s
   - docker pull $DOCKER
@@ -31,5 +37,5 @@ after_success:
   - ccache -s
 env:
   global:
-  - secure: XNEZRZwimLwOjmco3uL2kOZM3NJmPW7X6PtpuOKtmVYRfrWAtNf+egrsOko1sGW0SR+2p2O2EljtRRJpIWwquGksQr1dtkuQC0JnwYo9rPGw+BaV3dRybR1bbN/622XpVv6C2RQPzf8u94I9itH/Qa7uU4NofdByPPkqWZXSZ7fup3Dcbn4L0EfrTOJjg8cvYqWWYTB3F1v/tjNwoi4SZd80EofSo1UpBei/EVWNAqf/T+7kRqEWhbhqrtrQVLAxVEkRSqYgfmtQ6UmVFXVm+JhIvOW82Bf8xmS9WYf0hqZ8ZCcdq6no8FmszzNXrIDBlqd53ePCt+RLTZkShxArqWB/sYE2KfHv3ISA4K0WsmTrN3Y9zVwI2f7G2w2E5drNcYg2pOr32vgeTnVisiRPlT+IJtBKkplGMFDKYjcqB3eDPdgQ1glBN/ndg7jyUggvoXDkBWj3pKcfVR+UMqGtpXj29UTE3GtgsTXv9ZLeMQFhRhfu0KAl0qnjZGfvy2CX+iI13rFTSMRGJG2pssb0BL7KZqKqo2SwHOhFl+FB5WiWi5mpzde5J9QILpfkwqVJxs8/qcRgxufLsHQKbn52teNKyHncx6KTZTf2MjZOfrajy3DvLne2W/BdJ7qVbqfCe3EGeaT3xU1q2TBw8zDaIpqM04C0xxgqnaLPX6wN0Qo=
-  - secure: DyAYT7w9QeXLk9alHcGVxAcC+88tW2/3iBsPoF017119lrQWaGqnb4UCxVw9TkhTNQeQJUq7LSFdrL7z2+jzbONoQgUysoWFCgDWpZy1E4x+F/13E9z3O+YZ5tVwHH738uqD9ZOW8Rz0SDEpZKe4QEE/3vdzsmjsFQ8rtNPPraSNKoDDkjs0xy5qPUcIK2V3+nG+802bQ4kuyjiB0kk7tRjrhcdVlr9TcCH/FjzjJYOe0GNw+F1IGi+/rZq9KKNmThiQ2JOEDIbianj2umO12weBDU0Ygxb0PQ11fZxFsZP+vB9isSRVTWQYXbyVJZB0twFav3aQM8nHspO0MZPSB6SRxYRS/CS3kA+duonG3nuGKW3gHsCTe/v4qByFGKUeQyDPXOc4Hl/aBhykkT0rPIOtc6ob6jD9m9MiSqJxSc/Q3K0WrSORkKaGx7tKeMI1hG+bckjjRGl/mAw94hO7+8ETRzxFnwc+O31sLwPBClCPStr9j+jkwbCqwqiAe8mmXanjRJGpXBWOhzxIRtr1/hx/Jxx85XbUbgCACzevDALjWrXYPYW3e2h3zveq514ej6aUOMEA8CFVzuoBCe0eeVU1wAPZUOz13PboufZKs6PRFz254Iwjw06E2e0RASDeJXhzCNPteyi2mhZIkJVlIMftLDq6FinfJ9uxF4lWh+c=
+    - secure: XNEZRZwimLwOjmco3uL2kOZM3NJmPW7X6PtpuOKtmVYRfrWAtNf+egrsOko1sGW0SR+2p2O2EljtRRJpIWwquGksQr1dtkuQC0JnwYo9rPGw+BaV3dRybR1bbN/622XpVv6C2RQPzf8u94I9itH/Qa7uU4NofdByPPkqWZXSZ7fup3Dcbn4L0EfrTOJjg8cvYqWWYTB3F1v/tjNwoi4SZd80EofSo1UpBei/EVWNAqf/T+7kRqEWhbhqrtrQVLAxVEkRSqYgfmtQ6UmVFXVm+JhIvOW82Bf8xmS9WYf0hqZ8ZCcdq6no8FmszzNXrIDBlqd53ePCt+RLTZkShxArqWB/sYE2KfHv3ISA4K0WsmTrN3Y9zVwI2f7G2w2E5drNcYg2pOr32vgeTnVisiRPlT+IJtBKkplGMFDKYjcqB3eDPdgQ1glBN/ndg7jyUggvoXDkBWj3pKcfVR+UMqGtpXj29UTE3GtgsTXv9ZLeMQFhRhfu0KAl0qnjZGfvy2CX+iI13rFTSMRGJG2pssb0BL7KZqKqo2SwHOhFl+FB5WiWi5mpzde5J9QILpfkwqVJxs8/qcRgxufLsHQKbn52teNKyHncx6KTZTf2MjZOfrajy3DvLne2W/BdJ7qVbqfCe3EGeaT3xU1q2TBw8zDaIpqM04C0xxgqnaLPX6wN0Qo=
+    - secure: DyAYT7w9QeXLk9alHcGVxAcC+88tW2/3iBsPoF017119lrQWaGqnb4UCxVw9TkhTNQeQJUq7LSFdrL7z2+jzbONoQgUysoWFCgDWpZy1E4x+F/13E9z3O+YZ5tVwHH738uqD9ZOW8Rz0SDEpZKe4QEE/3vdzsmjsFQ8rtNPPraSNKoDDkjs0xy5qPUcIK2V3+nG+802bQ4kuyjiB0kk7tRjrhcdVlr9TcCH/FjzjJYOe0GNw+F1IGi+/rZq9KKNmThiQ2JOEDIbianj2umO12weBDU0Ygxb0PQ11fZxFsZP+vB9isSRVTWQYXbyVJZB0twFav3aQM8nHspO0MZPSB6SRxYRS/CS3kA+duonG3nuGKW3gHsCTe/v4qByFGKUeQyDPXOc4Hl/aBhykkT0rPIOtc6ob6jD9m9MiSqJxSc/Q3K0WrSORkKaGx7tKeMI1hG+bckjjRGl/mAw94hO7+8ETRzxFnwc+O31sLwPBClCPStr9j+jkwbCqwqiAe8mmXanjRJGpXBWOhzxIRtr1/hx/Jxx85XbUbgCACzevDALjWrXYPYW3e2h3zveq514ej6aUOMEA8CFVzuoBCe0eeVU1wAPZUOz13PboufZKs6PRFz254Iwjw06E2e0RASDeJXhzCNPteyi2mhZIkJVlIMftLDq6FinfJ9uxF4lWh+c=

@@ -107,6 +107,7 @@ main::main(BaseObjectType* cobject,
     auto setting_btn = builder.get_widget<Gtk::Button>("setting_btn");
     setting_btn->signal_clicked().connect([this, setting_btn]() {
         utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
+        m_menu->set_position(Gtk::POS_BOTTOM);
         m_menu->set_relative_to(*setting_btn);
         m_menu->set_visible();
     });

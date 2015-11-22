@@ -77,6 +77,7 @@ set(SOURCES
     utils/storage.cpp
     utils/gstreamer.cpp
     utils/debug.cpp
+    utils/audio_notification.cpp
 )
 SET_SOURCE_FILES_PROPERTIES(${GRESOURCE} PROPERTIES GENERATED 1)
 add_executable(${PROJECT_NAME}
@@ -147,4 +148,9 @@ add_custom_command(
     WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
 install(DIRECTORY "${PROJECT_BINARY_DIR}/share/applications"
     DESTINATION share
+    FILE_PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)
+
+#audio files
+install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/audio"
+    DESTINATION share/gtox
     FILE_PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)

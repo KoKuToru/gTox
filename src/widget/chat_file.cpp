@@ -20,6 +20,7 @@
 #include "tox/contact/file/file.h"
 #include <iostream>
 #include <mutex>
+#include "utils/audio_notification.h"
 
 namespace sigc {
     SIGC_FUNCTORS_DEDUCE_RESULT_TYPE_WITH_DECLTYPE
@@ -43,12 +44,15 @@ file::file(BaseObjectType* cobject,
     builder.get_widget("preview", m_preview);
     builder.get_widget("info_revealer", m_info_revealer);
     builder.get_widget("eventbox", m_eventbox);
+    builder.get_widget("network_icon", m_net_icon);
 
-    /*auto preview_video_tmp = widget::videoplayer::create();
-    m_preview_video = preview_video_tmp.raw();*/
+    auto preview_video_tmp = widget::videoplayer::create();
+    m_preview_video = preview_video_tmp.raw();
 
     m_preview->add(m_preview_image);
-    //m_preview->add(*Gtk::manage(m_preview_video));
+    m_preview_image.hide();
+    m_preview->add(*Gtk::manage(m_preview_video));
+    m_preview_video->hide();
 
     m_file = file;
 
@@ -99,6 +103,39 @@ file::file(BaseObjectType* cobject,
             .signal_changed()
             .connect(sigc::mem_fun(*this, &file::update_complete));
     update_complete();
+
+    m_file->property_complete()
+            .signal_changed()
+            .connect(sigc::track_obj([this]() {
+        if (m_file->property_complete()) {
+            new utils::audio_notification("file:///usr/share/gtox/audio/Isotoxin/Notification Sounds/isotoxin_FileDownloaded.flac");
+        }
+    }, *this));
+
+    m_bindings.push_back(Glib::Binding::bind_property(
+                             m_file->property_state(),
+                             m_net_icon->property_icon_name(),
+                             binding_flags,
+                             sigc::track_obj([this](const TOX_FILE_CONTROL& in, Glib::ustring& out) {
+        if (m_file->property_complete()) {
+            out = "network-idle-symbolic";
+            return true;
+        }
+        switch (in) {
+            case TOX_FILE_CONTROL_RESUME:
+                if (m_file->is_recv()) {
+                    out = "network-receive-symbolic";
+                } else {
+                    out = "network-transmit-symbolic";
+                }
+                break;
+            case TOX_FILE_CONTROL_PAUSE:
+            case TOX_FILE_CONTROL_CANCEL:
+                out = "network-offline-symbolic";
+                break;
+        }
+        return true;
+    }, *this)));
 
     //auto start file recv when smaller than 2mb
     //TODO: make size setable in config
@@ -194,6 +231,7 @@ void file::update_complete() {
                     dispatcher.emit([this, img]() {
                         utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
                         m_preview_image.property_pixbuf() = img;
+                        m_preview_image.show();
                         m_preview_revealer->property_reveal_child() = true;
                         m_spinner->property_visible() = false;
                         m_info_revealer->set_reveal_child(false);
@@ -214,10 +252,11 @@ void file::update_complete() {
                 bool has_audio;
                 std::tie(has_video, has_audio) = utils::gstreamer
                                                  ::has_video_audio(file->get_uri());
-                if (false /*has_video || has_audio*/) {
+                if (has_video || has_audio) {
                     dispatcher.emit([this, file]() {
                         utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
                         m_preview_video->property_uri() = file->get_uri();
+                        m_preview_video->show();
                         //TODO: reveal and stop spinner after
                         //peview image got generated !
                         m_preview_revealer->property_reveal_child() = true;

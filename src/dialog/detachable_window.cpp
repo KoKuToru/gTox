@@ -51,6 +51,7 @@ detachable_window::type_signal_close detachable_window::signal_close() {
 detachable_window::detachable_window(type_slot_detachable_add main_add,
                                      type_slot_detachable_del main_del)
     : Glib::ObjectBase(typeid(detachable_window)),
+      m_attach(main_add),
       m_prop_has_focus(*this, "detachable-window-has-focus", false),
       m_prop_is_attached(*this, "detachable-window-is-attached", true),
       m_prop_headerbar_title(*this, "detachable-window-headerbar-title"),
@@ -194,4 +195,14 @@ detachable_window::~detachable_window() {
 
     delete m_headerbar_attached;
     delete m_headerbar_detached;
+}
+
+void detachable_window::present() {
+    utils::debug::scope_log(DBG_LVL_1("gtox"), {});
+
+    if (property_is_attached()) {
+        m_attach(this);
+    } else {
+        Gtk::Window::present();
+    }
 }

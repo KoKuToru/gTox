@@ -25,6 +25,7 @@
 #include "tox/contact/file/manager.h"
 #include <flatbuffers/flatbuffers.h>
 #include "dialog/detachable_window.h"
+#include "utils/audio_notification.h"
 
 using namespace widget;
 
@@ -135,8 +136,37 @@ contact::contact(BaseObjectType* cobject,
         }
     };
 
+    auto sigc_hide_4 = [](auto x) {
+        return sigc::hide(sigc::hide(sigc::hide(sigc::hide(x))));
+    };
+
     m_contact->signal_recv_message().connect(sigc::hide(sigc::track_obj(display_spinner, *this)));
     m_contact->signal_recv_action().connect(sigc::hide(sigc::track_obj(display_spinner, *this)));
+    m_contact->signal_recv_file().connect(sigc_hide_4(sigc::track_obj(display_spinner, *this)));
+
+    // audio notifications
+    m_contact->signal_recv_message().connect(sigc::hide(sigc::track_obj([this]() {
+        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
+        new utils::audio_notification("file:///usr/share/gtox/audio/Isotoxin/Notification Sounds/isotoxin_NewMessage.flac");
+    }, *this)));
+    m_contact->signal_recv_action().connect(sigc::hide(sigc::track_obj([this]() {
+        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
+        new utils::audio_notification("file:///usr/share/gtox/audio/Isotoxin/Notification Sounds/isotoxin_NewMessage.flac");
+    }, *this)));
+    m_contact->signal_recv_file().connect(sigc_hide_4(sigc::track_obj([this]() {
+        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
+        new utils::audio_notification("file:///usr/share/gtox/audio/Isotoxin/Notification Sounds/isotoxin_IncomingFile.flac");
+    }, *this)));
+    m_contact->property_connection().signal_changed().connect(sigc::track_obj([this]() {
+        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
+        //TODO: udp/tcp don't play audio twice..
+        if (m_contact->property_connection() != TOX_CONNECTION_NONE) {
+            new utils::audio_notification("file:///usr/share/gtox/audio/Isotoxin/Notification Sounds/isotoxin_FriendOnline.flac");
+        } else {
+            new utils::audio_notification("file:///usr/share/gtox/audio/Isotoxin/Notification Sounds/isotoxin_FriendOffline.flac");
+        }
+    }, *this));
+
 
     auto update_visibility = [this]() {
         utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
@@ -317,7 +347,7 @@ std::shared_ptr<toxmm::contact> contact::get_contact() {
 void contact::activated() {
     utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
     if (m_chat) {
-        //m_chat->activated();
+        m_chat->present();
     } else {
         auto attach = sigc::mem_fun(m_main,
                                     &dialog::main::detachable_window_add);
