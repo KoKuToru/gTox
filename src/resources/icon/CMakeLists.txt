@@ -13,13 +13,16 @@ set(SRC
     status_online.svg
     status_offline.svg
     status_busy.svg
+    status_message.svg
+    status_away.svg
+    status_online_tcp.svg
+    status_busy_tcp.svg
+    status_away_tcp.svg
     avatar.svg
     plus-symbolic.svg
     remove-symbolic.svg
     clipboard-symbolic.svg
-    status_message.svg
-    notification.svg
-    status_away.svg)
+    notification.svg)
 
 find_program(GLIB_COMPILE_RESOURCE_EXECUTEABLE glib-compile-resources)
 if(NOT GLIB_COMPILE_RESOURCE_EXECUTEABLE)

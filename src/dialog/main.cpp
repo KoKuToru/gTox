@@ -102,8 +102,6 @@ main::main(BaseObjectType* cobject,
         m_headerbar->get_style_context()->remove_class("gtox-headerbar-right");
     });
 
-    m_btn_status->set_sensitive(false);
-
     auto setting_btn = builder.get_widget<Gtk::Button>("setting_btn");
     setting_btn->signal_clicked().connect([this, setting_btn]() {
         utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
@@ -210,8 +208,19 @@ main::main(BaseObjectType* cobject,
         }
     }, *this));
 
-    auto update_status_icon = [this]() {
+    auto update_status_icon = sigc::track_obj([this]() {
         utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
+        auto connection = m_toxcore->property_connection().get_value();
+        if (connection == TOX_CONNECTION_NONE) {
+            m_status_icon->set_from_icon_name("status_offline", Gtk::BuiltinIconSize::ICON_SIZE_BUTTON);
+            m_status_icon->reset_style();
+            m_status_icon->queue_resize();
+            return;
+        }
+        std::string tcp = "";
+        if (connection == TOX_CONNECTION_TCP) {
+            tcp = "_tcp";
+        }
         switch (m_toxcore->property_status().get_value()) {
             case TOX_USER_STATUS_AWAY:
                 m_status_icon->set_from_icon_name("status_away", Gtk::BuiltinIconSize::ICON_SIZE_BUTTON);
@@ -225,21 +234,10 @@ main::main(BaseObjectType* cobject,
         }
         m_status_icon->reset_style();
         m_status_icon->queue_resize();
-    };
+    }, *this);
 
-    m_toxcore->property_status().signal_changed().connect(sigc::track_obj(update_status_icon, *this));
-    m_toxcore->property_connection().signal_changed().connect(sigc::track_obj([this, update_status_icon]() {
-        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
-        if (m_toxcore->property_connection().get_value() == TOX_CONNECTION_NONE) {
-            m_btn_status->set_sensitive(false);
-            m_status_icon->set_from_icon_name("status_offline", Gtk::BuiltinIconSize::ICON_SIZE_BUTTON);
-            m_status_icon->reset_style();
-            m_status_icon->queue_resize();
-        } else {
-            m_btn_status->set_sensitive(true);
-            update_status_icon();
-        }
-    }, *this));
+    m_toxcore->property_status().signal_changed().connect(update_status_icon);
+    m_toxcore->property_connection().signal_changed().connect(update_status_icon);
 
     m_toxcore->contact_manager()->signal_removed().connect(sigc::track_obj([this](std::shared_ptr<toxmm::contact> contact) {
         utils::debug::scope_log log(DBG_LVL_2("gtox"), { contact->property_name_or_addr().get_value().raw() });
@@ -283,7 +281,6 @@ main::main(BaseObjectType* cobject,
     Glib::RefPtr<Glib::Object> object = menu_builder->get_object("status-menu");
     Glib::RefPtr<Gio::Menu> gmenu = Glib::RefPtr<Gio::Menu>::cast_dynamic(object);
     m_btn_status->set_menu_model(gmenu);
-    m_btn_status->set_sensitive(false);
 
     m_action = Gio::SimpleActionGroup::create();
     m_action->add_action("online", [this]() {
