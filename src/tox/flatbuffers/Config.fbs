@@ -6,7 +6,7 @@ table Config {
     download_path:string;
     avatar_path:string;
     connection_udp:bool;
-    connection_tcp:bool;
+    connection_tcp:bool (deprecated);
     proxy_type:int;
     proxy_host:string;
     proxy_port:int;

@@ -647,7 +647,6 @@
                     <child>
                       <object class="GtkSwitch" id="ft_auto_accept">
                         <property name="visible">True</property>
-                        <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
                         <property name="halign">end</property>
                         <property name="active">True</property>
@@ -683,7 +682,6 @@
                     <child>
                       <object class="GtkSwitch" id="ft_display_inline">
                         <property name="visible">True</property>
-                        <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
                         <property name="halign">end</property>
                         <property name="active">True</property>
@@ -798,18 +796,6 @@
                       <packing>
                         <property name="left_attach">0</property>
                         <property name="top_attach">1</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkLabel" id="label3">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="halign">start</property>
-                        <property name="label" translatable="yes">TCP</property>
-                      </object>
-                      <packing>
-                        <property name="left_attach">0</property>
-                        <property name="top_attach">2</property>
                       </packing>
                     </child>
                     <child>
@@ -935,18 +921,6 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkSwitch" id="connection_tcp">
-                        <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="halign">end</property>
-                        <property name="active">True</property>
-                      </object>
-                      <packing>
-                        <property name="left_attach">1</property>
-                        <property name="top_attach">2</property>
-                      </packing>
-                    </child>
-                    <child>
                       <object class="GtkSwitch" id="p_remember">
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
@@ -1016,6 +990,12 @@
                         <property name="left_attach">1</property>
                         <property name="top_attach">8</property>
                       </packing>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
                     </child>
                   </object>
                 </child>

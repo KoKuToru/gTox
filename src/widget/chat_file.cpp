@@ -35,6 +35,8 @@ file::file(BaseObjectType* cobject,
     Gtk::Frame(cobject),
     m_file_info_popover(file) {
 
+    m_display_inline = config->property_file_display_inline().get_value();
+
     utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
     builder.get_widget("file_name", m_file_name);
     builder.get_widget("spinner", m_spinner);
@@ -203,51 +205,51 @@ void file::update_complete() {
         m_spinner->property_visible() = true;
         m_preview_thread = std::thread([this,
                                        dispatcher = utils::dispatcher::ref(m_dispatcher),
-                                       file]() {
+                                       file,
+                                       preview = m_display_inline]() {
             utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
             static std::mutex limit_mutex;
             std::lock_guard<std::mutex> lg(limit_mutex);
-            //TODO: check file size before generating preview ?
-            double max_size = 1024; //max size if an image will be 1024x1024
 
-            //try to load image
-            auto ani = Gdk::PixbufAnimation
-                       ::create_from_file(file->get_path());
-            if (ani) {
-                if (ani->is_static_image()) {
-                    ani.reset();
-                    auto img = Gdk::Pixbuf
-                               ::create_from_file(file->get_path());
-                    if (std::max(img->get_width(), img->get_height()) > max_size) {
-                        auto scale_w = max_size / img->get_width();
-                        auto scale_h = max_size / img->get_height();
-                        auto scale = std::min(scale_w, scale_h);
-                        auto w = img->get_width() * scale;
-                        auto h = img->get_height() * scale;
-                        std::clog << w << "x" << h << std::endl;
-                        img = img->scale_simple(int(w), int(h),
-                                                Gdk::InterpType::INTERP_BILINEAR);
+            if (preview) {
+                //TODO: check file size before generating preview ?
+                double max_size = 1024; //max size if an image will be 1024x1024
+
+                //try to load image
+                auto ani = Gdk::PixbufAnimation
+                           ::create_from_file(file->get_path());
+                if (ani) {
+                    if (ani->is_static_image()) {
+                        ani.reset();
+                        auto img = Gdk::Pixbuf
+                                   ::create_from_file(file->get_path());
+                        if (std::max(img->get_width(), img->get_height()) > max_size) {
+                            auto scale_w = max_size / img->get_width();
+                            auto scale_h = max_size / img->get_height();
+                            auto scale = std::min(scale_w, scale_h);
+                            auto w = img->get_width() * scale;
+                            auto h = img->get_height() * scale;
+                            std::clog << w << "x" << h << std::endl;
+                            img = img->scale_simple(int(w), int(h),
+                                                    Gdk::InterpType::INTERP_BILINEAR);
+                        }
+                        dispatcher.emit([this, img]() {
+                            utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
+                            m_preview_image.property_pixbuf() = img;
+                            m_preview_image.show();
+                            m_preview_revealer->property_reveal_child() = true;
+                            m_spinner->property_visible() = false;
+                            m_info_revealer->set_reveal_child(false);
+                        });
+                        return;
                     }
-                    dispatcher.emit([this, img]() {
-                        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
-                        m_preview_image.property_pixbuf() = img;
-                        m_preview_image.show();
-                        m_preview_revealer->property_reveal_child() = true;
-                        m_spinner->property_visible() = false;
-                        m_info_revealer->set_reveal_child(false);
-                    });
-                } else {
                     //TODO: gif..
                     /*
-                      widget::imagescaled should be updated to support
-                      animated images..
-                    */
-                    dispatcher.emit([this]() {
-                        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
-                        m_spinner->property_visible() = false;
-                    });
+                    widget::imagescaled should be updated to support
+                    animated images..
+                */
                 }
-            } else {
+
                 bool has_video;
                 bool has_audio;
                 std::tie(has_video, has_audio) = utils::gstreamer
@@ -257,19 +259,19 @@ void file::update_complete() {
                         utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
                         m_preview_video->property_uri() = file->get_uri();
                         m_preview_video->show();
-                        //TODO: reveal and stop spinner after
-                        //peview image got generated !
                         m_preview_revealer->property_reveal_child() = true;
                         m_spinner->property_visible() = false;
                         m_info_revealer->set_reveal_child(false);
                     });
-                } else {
-                    dispatcher.emit([this, file]() {
-                        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
-                        m_spinner->property_visible() = false;
-                    });
+                    return;
                 }
             }
+
+            // disable spinner, don't display any preview
+            dispatcher.emit([this, file]() {
+                utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
+                m_spinner->property_visible() = false;
+            });
         });
     }
 }

@@ -33,10 +33,6 @@ Glib::PropertyProxy<bool> config::property_connection_udp() {
     return m_property_connection_udp.get_proxy();
 }
 
-Glib::PropertyProxy<bool> config::property_connection_tcp() {
-    return m_property_connection_tcp.get_proxy();
-}
-
 Glib::PropertyProxy<TOX_PROXY_TYPE> config::property_proxy_type() {
     return m_property_proxy_type.get_proxy();
 }
@@ -72,7 +68,6 @@ config::config(const std::shared_ptr<toxmm::storage> storage):
                                "tox",
                                "avatars")),
     m_property_connection_udp(*this, "toxmm-config-connection-udp", true),
-    m_property_connection_tcp(*this, "toxmm-config-connection-tcp", true),
     m_property_proxy_type(*this, "toxmm-config-proxy-type"),
     m_property_proxy_host(*this, "toxmm-config-proxy-host", ""),
     m_property_proxy_port(*this, "toxmm-config-proxy-port") {
@@ -83,7 +78,6 @@ config::config(const std::shared_ptr<toxmm::storage> storage):
                           property_download_path(),
                           property_avatar_path(),
                           property_connection_udp(),
-                          property_connection_tcp(),
                           property_proxy_type(),
                           property_proxy_host(),
                           property_proxy_port()),
@@ -112,7 +106,6 @@ void config::load_flatbuffer() {
     property_download_path() = std::string(data->download_path()->begin(), data->download_path()->end());
     property_avatar_path() = std::string(data->avatar_path()->begin(), data->avatar_path()->end());
     property_connection_udp() = data->connection_udp();
-    property_connection_tcp() = data->connection_tcp();
     property_proxy_type() = TOX_PROXY_TYPE(data->proxy_type());
     property_proxy_host() = std::string(data->proxy_host()->begin(), data->proxy_host()->end());
     property_proxy_port() = data->proxy_port();
@@ -129,7 +122,6 @@ void config::save_flatbuffer() {
     fb.add_download_path(download_path);
     fb.add_avatar_path(avatar_path);
     fb.add_connection_udp(property_connection_udp());
-    fb.add_connection_tcp(property_connection_tcp());
     fb.add_proxy_type(int(property_proxy_type()));
     fb.add_proxy_host(proxy_host);
     fb.add_proxy_port(property_proxy_port());

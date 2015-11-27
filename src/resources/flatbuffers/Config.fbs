@@ -13,7 +13,7 @@ table Config {
 	chat_send_typing: bool;
 	chat_logging: bool;
 	
-	file_save_path: string;
+	file_save_path: string (deprecated);
 	file_auto_accept: bool;
 	file_display_inline: bool;
 	

@@ -30,7 +30,6 @@ namespace toxmm {
             Glib::PropertyProxy<Glib::ustring> property_avatar_path();
 
             Glib::PropertyProxy<bool> property_connection_udp();
-            Glib::PropertyProxy<bool> property_connection_tcp();
 
             Glib::PropertyProxy<TOX_PROXY_TYPE> property_proxy_type();
             Glib::PropertyProxy<Glib::ustring>  property_proxy_host();
@@ -48,7 +47,6 @@ namespace toxmm {
             Glib::Property<Glib::ustring> m_property_avatar_path;
 
             Glib::Property<bool> m_property_connection_udp;
-            Glib::Property<bool> m_property_connection_tcp;
 
             Glib::Property<TOX_PROXY_TYPE> m_property_proxy_type;
             Glib::Property<Glib::ustring>  m_property_proxy_host;

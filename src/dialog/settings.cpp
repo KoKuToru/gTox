@@ -59,7 +59,6 @@ settings::settings(main& main)
     builder.get_widget("cl_display_active", m_cl_display_active);
 
     builder.get_widget("connection_udp", m_connection_udp);
-    builder.get_widget("connection_tcp", m_connection_tcp);
     builder.get_widget("proxy_type", m_proxy_type);
     builder.get_widget("proxy_host", m_proxy_host);
     builder.get_widget("proxy_port", m_proxy_port);
@@ -126,14 +125,21 @@ settings::settings(main& main)
                              binding_flag));
 
     //FILETRANSFER-SETTINGS
-    m_main.config()->property_file_save_path().signal_changed().connect(sigc::track_obj([this]() {
+    m_main.tox()->config()->property_download_path()
+            .signal_changed().connect(sigc::track_obj([this]() {
         utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
-        m_ft_save_to->set_file(Gio::File::create_for_path(m_main.config()->property_file_save_path().get_value()));
+        m_ft_save_to->set_file(Gio::File::create_for_path(
+                                   m_main.tox()->config()
+                                   ->property_download_path().get_value()));
     }, *this));
-    m_ft_save_to->set_file(Gio::File::create_for_path(m_main.config()->property_file_save_path().get_value()));
+    m_ft_save_to->set_file(Gio::File::create_for_path(
+                               m_main.tox()->config()
+                               ->property_download_path().get_value()));
     m_ft_save_to->signal_file_set().connect(sigc::track_obj([this]() {
         utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
-        m_main.config()->property_file_save_path() = m_ft_save_to->get_file()->get_path();
+        m_main.tox()->config()
+                ->property_download_path() = m_ft_save_to->get_file()
+                                             ->get_path();
     }, *this));
     m_bindings.push_back(Glib::Binding::bind_property(
                              m_main.config()->property_file_auto_accept(),
@@ -155,10 +161,6 @@ settings::settings(main& main)
                              binding_flag));
 
     //GLOBAL CONNECTION-SETTINGS
-    m_bindings.push_back(Glib::Binding::bind_property(
-                             m_main.tox()->config()->property_connection_tcp(),
-                             m_connection_tcp->property_active(),
-                             binding_flag));
     m_bindings.push_back(Glib::Binding::bind_property(
                              m_main.tox()->config()->property_connection_udp(),
                              m_connection_udp->property_active(),

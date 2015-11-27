@@ -57,9 +57,8 @@ class config: public Glib::Object {
         Glib::PropertyProxy<bool> property_chat_send_typing();
         Glib::PropertyProxy<bool> property_chat_logging();
 
-        Glib::PropertyProxy<Glib::ustring> property_file_save_path();
-        Glib::PropertyProxy<bool>          property_file_auto_accept();
-        Glib::PropertyProxy<bool>          property_file_display_inline();
+        Glib::PropertyProxy<bool> property_file_auto_accept();
+        Glib::PropertyProxy<bool> property_file_display_inline();
 
         Glib::PropertyProxy<bool> property_contacts_compact_list();
         Glib::PropertyProxy<bool> property_contacts_display_active();
@@ -84,7 +83,6 @@ class config: public Glib::Object {
         Glib::Property<bool> m_property_chat_send_typing;
         Glib::Property<bool> m_property_chat_logging;
 
-        Glib::Property<Glib::ustring> m_property_file_save_path;
         Glib::Property<bool>          m_property_file_auto_accept;
         Glib::Property<bool>          m_property_file_display_inline;
 

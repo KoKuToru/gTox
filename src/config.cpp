@@ -47,9 +47,6 @@ Glib::PropertyProxy<bool> config::property_chat_send_typing()
 Glib::PropertyProxy<bool> config::property_chat_logging()
 { return m_property_chat_logging.get_proxy(); }
 
-Glib::PropertyProxy<Glib::ustring> config::property_file_save_path()
-{ return m_property_file_save_path.get_proxy(); }
-
 Glib::PropertyProxy<bool> config::property_file_auto_accept()
 { return m_property_file_auto_accept.get_proxy(); }
 
@@ -121,7 +118,6 @@ config::config(Glib::ustring config_file):
     m_property_chat_auto_away(*this, "property-chat-auto-away", 0),
     m_property_chat_send_typing(*this, "property-chat-send-typing", true),
     m_property_chat_logging(*this, "property-chat-logging", true),
-    m_property_file_save_path(*this, "config-file-save-path", Glib::get_user_special_dir(GUserDirectory::G_USER_DIRECTORY_DOWNLOAD)),
     m_property_file_auto_accept(*this, "config-file-auto-accept", true),
     m_property_file_display_inline(*this, "config-file-display-inline", true),
     m_property_contacts_compact_list  (*this, "config-contacts-compact-list", false),
@@ -140,7 +136,6 @@ config::config(Glib::ustring config_file):
                           property_chat_auto_away(),
                           property_chat_send_typing(),
                           property_chat_logging(),
-                          property_file_save_path(),
                           property_file_auto_accept(),
                           property_file_display_inline(),
                           property_contacts_compact_list(),
@@ -185,8 +180,6 @@ void config::load_flatbuffer() {
     property_chat_auto_away() = conf->chat_auto_away();
     property_chat_send_typing() = conf->chat_send_typing();
     property_chat_logging() = conf->chat_logging();
-    property_file_save_path() = std::string(conf->file_save_path()->begin(),
-                                            conf->file_save_path()->end());
     property_file_auto_accept() = conf->file_auto_accept();
     property_file_display_inline() = conf->file_display_inline();
     property_contacts_compact_list() = conf->contacts_compact_list();
@@ -197,8 +190,6 @@ void config::load_flatbuffer() {
 void config::save_flatbuffer() {
     utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
     flatbuffers::FlatBufferBuilder fbb;
-
-    auto file_save_path = fbb.CreateString(property_file_save_path().get_value());
 
     auto builder = flatbuffers::Config::ConfigBuilder(fbb);
 
@@ -212,7 +203,6 @@ void config::save_flatbuffer() {
     builder.add_chat_send_typing(property_chat_send_typing());
     builder.add_chat_logging(property_chat_logging());
 
-    builder.add_file_save_path(file_save_path);
     builder.add_file_auto_accept(property_file_auto_accept());
     builder.add_file_display_inline(property_file_display_inline());
 
