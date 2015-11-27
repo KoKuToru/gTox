@@ -51,7 +51,6 @@ namespace dialog {
             Gtk::Switch* m_cl_display_active;
 
             Gtk::Switch*   m_connection_udp;
-            Gtk::Switch*   m_connection_tcp;
             Gtk::ComboBox* m_proxy_type;
             Gtk::Entry*    m_proxy_host;
             Gtk::Entry*    m_proxy_port;

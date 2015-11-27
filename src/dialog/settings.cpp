@@ -59,7 +59,6 @@ settings::settings(main& main)
     builder.get_widget("cl_display_active", m_cl_display_active);
 
     builder.get_widget("connection_udp", m_connection_udp);
-    builder.get_widget("connection_tcp", m_connection_tcp);
     builder.get_widget("proxy_type", m_proxy_type);
     builder.get_widget("proxy_host", m_proxy_host);
     builder.get_widget("proxy_port", m_proxy_port);
@@ -155,10 +154,6 @@ settings::settings(main& main)
                              binding_flag));
 
     //GLOBAL CONNECTION-SETTINGS
-    m_bindings.push_back(Glib::Binding::bind_property(
-                             m_main.tox()->config()->property_connection_tcp(),
-                             m_connection_tcp->property_active(),
-                             binding_flag));
     m_bindings.push_back(Glib::Binding::bind_property(
                              m_main.tox()->config()->property_connection_udp(),
                              m_connection_udp->property_active(),
