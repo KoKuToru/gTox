@@ -43,7 +43,7 @@ namespace utils {
         public:
             auto property_uri()      -> Glib::PropertyProxy<Glib::ustring>;
             auto property_state()    -> Glib::PropertyProxy<Gst::State>;
-            auto property_position() -> Glib::PropertyProxy<gint64>;
+            auto property_position() -> Glib::PropertyProxy_ReadOnly<gint64>;
             auto property_duration() -> Glib::PropertyProxy_ReadOnly<gint64>;
             auto property_volume()   -> Glib::PropertyProxy<double>;
             auto property_pixbuf()   -> Glib::PropertyProxy_ReadOnly<Glib::RefPtr<Gdk::Pixbuf>>;
@@ -58,7 +58,12 @@ namespace utils {
             gstreamer(const gstreamer&) = delete;
             void operator=(const gstreamer&) = delete;
 
+            void set_position(gint64 pos);
+
+            // ! the following function will block !
             static std::pair<bool, bool> has_video_audio(Glib::ustring uri);
+            // ! the following function will block !
+            static Glib::RefPtr<Gdk::Pixbuf> get_video_preview(Glib::ustring uri);
 
         private:
             Glib::Property<Glib::ustring>             m_property_uri;

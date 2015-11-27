@@ -20,6 +20,7 @@
 #include <gstreamermm/bus.h>
 #include <glibmm/i18n.h>
 #include <gstreamermm/uridecodebin.h>
+#include <future>
 
 namespace sigc {
     SIGC_FUNCTORS_DEDUCE_RESULT_TYPE_WITH_DECLTYPE
@@ -37,8 +38,8 @@ auto gstreamer::property_uri()      -> Glib::PropertyProxy<Glib::ustring> {
 auto gstreamer::property_state()    -> Glib::PropertyProxy<Gst::State> {
     return m_property_state.get_proxy();
 }
-auto gstreamer::property_position() -> Glib::PropertyProxy<gint64> {
-    return m_property_position.get_proxy();
+auto gstreamer::property_position() -> Glib::PropertyProxy_ReadOnly<gint64> {
+    return Glib::PropertyProxy_ReadOnly<gint64>(this, "gstreamer-position");
 }
 auto gstreamer::property_duration() -> Glib::PropertyProxy_ReadOnly<gint64> {
     return Glib::PropertyProxy_ReadOnly<gint64>(this, "gstreamer-duration");
@@ -189,7 +190,7 @@ gstreamer::gstreamer():
     m_property_pixbuf(*this, "gstreamer-pixbuf") {
 
     property_state().signal_changed().connect(sigc::track_obj([this]() {
-       if (!m_playbin && property_state() == Gst::STATE_PLAYING) {
+       if (!m_playbin && property_state() != Gst::STATE_NULL) {
            init();
        } else if (property_state() == Gst::STATE_NULL) {
            destroy();
@@ -207,6 +208,17 @@ gstreamer::gstreamer():
 gstreamer::~gstreamer() {
     utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
     destroy();
+}
+
+void gstreamer::set_position(gint64 pos) {
+    if (!m_playbin) {
+        return;
+    }
+    m_property_position = pos;
+    m_playbin->seek(
+                Gst::FORMAT_TIME,
+                Gst::SEEK_FLAG_FLUSH | Gst::SEEK_FLAG_KEY_UNIT,
+                pos);
 }
 
 std::pair<bool, bool> gstreamer::has_video_audio(Glib::ustring uri) {
@@ -257,6 +269,50 @@ std::pair<bool, bool> gstreamer::has_video_audio(Glib::ustring uri) {
     pipeline->set_state(Gst::STATE_NULL);
 
     return {found_video_stream, found_audio_stream};
+}
+
+Glib::RefPtr<Gdk::Pixbuf> gstreamer::get_video_preview(Glib::ustring uri) {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), { uri.raw() });
+
+    bool has_video, has_audio;
+    std::tie(has_video, has_audio) = gstreamer::has_video_audio(uri);
+    if (!has_video) {
+        return Glib::RefPtr<Gdk::Pixbuf>();
+    }
+
+    gstreamer video;
+    video.property_uri() = uri;
+
+    bool seeked = false;
+    video.property_duration().signal_changed().connect([&]() {
+        if (seeked) {
+            return;
+        }
+        // seek to 1/3 of the video
+        video.set_position(video.property_duration().get_value() / 3);
+        seeked = true;
+    });
+
+    std::promise<Glib::RefPtr<Gdk::Pixbuf>> pix_promise;
+    bool ignore_first = true;
+    video.property_pixbuf().signal_changed().connect([&]() {
+        if (ignore_first) {
+            ignore_first = false;
+            return;
+        }
+        // set the preview image
+        pix_promise.set_value(video.property_pixbuf());
+    });
+
+    video.signal_error().connect([&](Glib::ustring) {
+        // set empty preview image
+        pix_promise.set_value(Glib::RefPtr<Gdk::Pixbuf>());
+    });
+
+    video.property_state() = Gst::STATE_PAUSED;
+
+    // the future will wait until the preview image exists !
+    return pix_promise.get_future().get();
 }
 
 Glib::RefPtr<Gdk::Pixbuf> gstreamer::extract_frame(Glib::RefPtr<Gst::Sample> sample,
