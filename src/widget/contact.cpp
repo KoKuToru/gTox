@@ -48,7 +48,8 @@ contact::contact(BaseObjectType* cobject,
     : Gtk::ListBoxRow(cobject),
       m_main(main),
       m_contact(contact),
-      m_for_active_chats(for_active_chats) {
+      m_for_active_chats(for_active_chats),
+      m_played_online_sound(false) {
     utils::debug::scope_log log(DBG_LVL_1("gtox"), { contact->property_name_or_addr().get_value().raw() });
     builder.get_widget("contact_list_grid_mini", m_contact_list_grid_mini);
     builder.get_widget("contact_list_grid", m_contact_list_grid);
@@ -103,31 +104,36 @@ contact::contact(BaseObjectType* cobject,
 
     m_status_icon->set_from_icon_name("status_offline", Gtk::BuiltinIconSize::ICON_SIZE_BUTTON);
 
-    m_contact->property_status().signal_changed().connect(sigc::track_obj([this]() {
+    auto update_status_icon = sigc::track_obj([this]() {
         utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
+        auto connection = m_contact->property_connection().get_value();
+        if (connection == TOX_CONNECTION_NONE) {
+            m_status_icon->set_from_icon_name("status_offline", Gtk::BuiltinIconSize::ICON_SIZE_BUTTON);
+            m_status_icon->reset_style();
+            m_status_icon->queue_resize();
+            return;
+        }
+        std::string tcp = "";
+        if (connection == TOX_CONNECTION_TCP) {
+            tcp = "_tcp";
+        }
         switch (m_contact->property_status().get_value()) {
             case TOX_USER_STATUS_AWAY:
-                m_status_icon->set_from_icon_name("status_away", Gtk::BuiltinIconSize::ICON_SIZE_BUTTON);
+                m_status_icon->set_from_icon_name("status_away" + tcp, Gtk::BuiltinIconSize::ICON_SIZE_BUTTON);
                 break;
             case TOX_USER_STATUS_BUSY:
-                m_status_icon->set_from_icon_name("status_busy", Gtk::BuiltinIconSize::ICON_SIZE_BUTTON);
+                m_status_icon->set_from_icon_name("status_busy" + tcp, Gtk::BuiltinIconSize::ICON_SIZE_BUTTON);
                 break;
             case TOX_USER_STATUS_NONE:
-                m_status_icon->set_from_icon_name("status_online", Gtk::BuiltinIconSize::ICON_SIZE_BUTTON);
+                m_status_icon->set_from_icon_name("status_online" + tcp, Gtk::BuiltinIconSize::ICON_SIZE_BUTTON);
                 break;
         }
         m_status_icon->reset_style();
         m_status_icon->queue_resize();
-    }, *this));
+    }, *this);
 
-    m_contact->property_connection().signal_changed().connect(sigc::track_obj([this]() {
-        utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
-        if (m_contact->property_connection().get_value() == TOX_CONNECTION_NONE) {
-            m_status_icon->set_from_icon_name("status_offline", Gtk::BuiltinIconSize::ICON_SIZE_BUTTON);
-            m_status_icon->reset_style();
-            m_status_icon->queue_resize();
-        }
-    }, *this));
+    m_contact->property_status().signal_changed().connect(update_status_icon);
+    m_contact->property_connection().signal_changed().connect(update_status_icon);
 
     auto display_spinner = [this]() {
         utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
@@ -162,7 +168,9 @@ contact::contact(BaseObjectType* cobject,
         //TODO: udp/tcp don't play audio twice..
         if (m_contact->property_connection() != TOX_CONNECTION_NONE) {
             new utils::audio_notification("file:///usr/share/gtox/audio/Isotoxin/Notification Sounds/isotoxin_FriendOnline.flac");
-        } else {
+            m_played_online_sound = false;
+        } else  if (!m_played_online_sound) {
+            m_played_online_sound = true;
             new utils::audio_notification("file:///usr/share/gtox/audio/Isotoxin/Notification Sounds/isotoxin_FriendOffline.flac");
         }
     }, *this));
