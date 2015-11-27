@@ -78,20 +78,20 @@ gstreamer::gstreamer():
             return Gst::FLOW_OK;
         }
         //C++ version is buggy, use C version
-        auto caps = Glib::wrap(gst_sample_get_caps(preroll->gobj()));
+        auto caps = gst_sample_get_caps(preroll->gobj());
         if (!caps) {
             return Gst::FLOW_OK;
         }
-        if (caps->empty()) {
+        if (gst_caps_is_empty(caps)) {
             return Gst::FLOW_OK;
         }
 
-        auto struc = caps->get_structure(0);
+        auto struc = gst_caps_get_structure(caps, 0); // < can this fail ?
         int w,h;
-        if (!struc.get_field("width", w)) {
+        if (!gst_structure_get_int(struc, "width", &w)) {
             return Gst::FLOW_OK;
         }
-        if (!struc.get_field("height", h)) {
+        if (!gst_structure_get_int(struc, "height", &h)) {
             return Gst::FLOW_OK;
         }
         resolution->first = w;
