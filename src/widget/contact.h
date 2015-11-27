@@ -63,6 +63,7 @@ namespace widget {
             Glib::RefPtr<Glib::Binding> m_bindings[7];
 
             bool m_for_active_chats;
+            bool m_played_online_sound;
 
         public:
             contact(BaseObjectType* cobject,

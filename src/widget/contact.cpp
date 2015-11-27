@@ -48,7 +48,8 @@ contact::contact(BaseObjectType* cobject,
     : Gtk::ListBoxRow(cobject),
       m_main(main),
       m_contact(contact),
-      m_for_active_chats(for_active_chats) {
+      m_for_active_chats(for_active_chats),
+      m_played_online_sound(false) {
     utils::debug::scope_log log(DBG_LVL_1("gtox"), { contact->property_name_or_addr().get_value().raw() });
     builder.get_widget("contact_list_grid_mini", m_contact_list_grid_mini);
     builder.get_widget("contact_list_grid", m_contact_list_grid);
@@ -167,7 +168,9 @@ contact::contact(BaseObjectType* cobject,
         //TODO: udp/tcp don't play audio twice..
         if (m_contact->property_connection() != TOX_CONNECTION_NONE) {
             new utils::audio_notification("file:///usr/share/gtox/audio/Isotoxin/Notification Sounds/isotoxin_FriendOnline.flac");
-        } else {
+            m_played_online_sound = false;
+        } else  if (!m_played_online_sound) {
+            m_played_online_sound = true;
             new utils::audio_notification("file:///usr/share/gtox/audio/Isotoxin/Notification Sounds/isotoxin_FriendOffline.flac");
         }
     }, *this));
