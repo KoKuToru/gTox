@@ -57,6 +57,8 @@ namespace widget {
 
             std::thread m_preview_thread;
 
+            bool m_display_inline;
+
         public:
             file(BaseObjectType* cobject,
                  utils::builder builder,

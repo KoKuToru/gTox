@@ -647,7 +647,6 @@
                     <child>
                       <object class="GtkSwitch" id="ft_auto_accept">
                         <property name="visible">True</property>
-                        <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
                         <property name="halign">end</property>
                         <property name="active">True</property>
@@ -683,7 +682,6 @@
                     <child>
                       <object class="GtkSwitch" id="ft_display_inline">
                         <property name="visible">True</property>
-                        <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
                         <property name="halign">end</property>
                         <property name="active">True</property>
