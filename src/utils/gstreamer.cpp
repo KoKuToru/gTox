@@ -50,14 +50,7 @@ auto gstreamer::property_pixbuf()   -> Glib::PropertyProxy_ReadOnly<Glib::RefPtr
     return Glib::PropertyProxy_ReadOnly<Glib::RefPtr<Gdk::Pixbuf>>(this, "gstreamer-pixbuf");
 }
 
-gstreamer::gstreamer():
-    Glib::ObjectBase(typeid(gstreamer)),
-    m_property_uri(*this, "gstreamer-uri"),
-    m_property_state(*this, "gstreamer-state", Gst::STATE_NULL),
-    m_property_position(*this, "gstreamer-position", 0),
-    m_property_duration(*this, "gstreamer-duration", 0),
-    m_property_volume(*this, "gstreamer-volume", 0.5),
-    m_property_pixbuf(*this, "gstreamer-pixbuf") {
+void gstreamer::init() {
     utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
 
     m_playbin = Gst::PlayBin::create();
@@ -78,20 +71,20 @@ gstreamer::gstreamer():
             return Gst::FLOW_OK;
         }
         //C++ version is buggy, use C version
-        auto caps = Glib::wrap(gst_sample_get_caps(preroll->gobj()));
+        auto caps = gst_sample_get_caps(preroll->gobj());
         if (!caps) {
             return Gst::FLOW_OK;
         }
-        if (caps->empty()) {
+        if (gst_caps_is_empty(caps)) {
             return Gst::FLOW_OK;
         }
 
-        auto struc = caps->get_structure(0);
+        auto struc = gst_caps_get_structure(caps, 0); // < can this fail ?
         int w,h;
-        if (!struc.get_field("width", w)) {
+        if (!gst_structure_get_int(struc, "width", &w)) {
             return Gst::FLOW_OK;
         }
-        if (!struc.get_field("height", h)) {
+        if (!gst_structure_get_int(struc, "height", &h)) {
             return Gst::FLOW_OK;
         }
         resolution->first = w;
@@ -160,10 +153,7 @@ gstreamer::gstreamer():
         return true;
     }, *this));
 
-    m_uri_binding = Glib::Binding::bind_property(
-                        property_uri(),
-                        m_playbin->property_uri(),
-                        Glib::BINDING_DEFAULT);
+    m_playbin->property_uri().set_value(property_uri());
 
     m_volume  = Glib::Binding::bind_property(
                         property_volume(),
@@ -173,15 +163,50 @@ gstreamer::gstreamer():
 
     property_state().signal_changed().connect(sigc::track_obj([this]() {
         utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
-        m_playbin->set_state(property_state());
+        if (m_playbin) {
+            m_playbin->set_state(property_state());
+        }
     }, *this));
 
-    m_playbin->set_state(Gst::STATE_NULL);
+    m_playbin->set_state(property_state());
+}
+
+void gstreamer::destroy() {
+    if (m_playbin) {
+        m_playbin->set_state(Gst::STATE_NULL);
+    }
+    m_appsink = Glib::RefPtr<Gst::AppSink>();
+    m_playbin = Glib::RefPtr<Gst::PlayBin>();
+}
+
+gstreamer::gstreamer():
+    Glib::ObjectBase(typeid(gstreamer)),
+    m_property_uri(*this, "gstreamer-uri"),
+    m_property_state(*this, "gstreamer-state", Gst::STATE_NULL),
+    m_property_position(*this, "gstreamer-position", 0),
+    m_property_duration(*this, "gstreamer-duration", 0),
+    m_property_volume(*this, "gstreamer-volume", 0.5),
+    m_property_pixbuf(*this, "gstreamer-pixbuf") {
+
+    property_state().signal_changed().connect(sigc::track_obj([this]() {
+       if (!m_playbin && property_state() == Gst::STATE_PLAYING) {
+           init();
+       } else if (property_state() == Gst::STATE_NULL) {
+           destroy();
+       }
+    }, *this));
+
+    property_uri().signal_changed().connect(sigc::track_obj([this]() {
+        // uri changed
+        destroy();
+        m_property_position.set_value(0);
+        m_property_duration.set_value(0);
+    }, *this));
 }
 
 gstreamer::~gstreamer() {
     utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
-    m_playbin->set_state(Gst::STATE_NULL);
+    destroy();
 }
 
 std::pair<bool, bool> gstreamer::has_video_audio(Glib::ustring uri) {
