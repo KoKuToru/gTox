@@ -37,6 +37,9 @@ namespace utils {
             Glib::RefPtr<Glib::Binding> m_uri_binding;
             Glib::RefPtr<Glib::Binding> m_volume;
 
+            void init();
+            void destroy();
+
         public:
             auto property_uri()      -> Glib::PropertyProxy<Glib::ustring>;
             auto property_state()    -> Glib::PropertyProxy<Gst::State>;
