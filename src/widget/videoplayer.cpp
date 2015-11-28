@@ -25,8 +25,13 @@ namespace sigc {
 
 using namespace widget;
 
+Glib::PropertyProxy<Glib::RefPtr<Gdk::Pixbuf>> videoplayer::property_preview_pixbuf() {
+    return m_property_helper.m_property_preview_pixbuf.get_proxy();
+}
+
 videoplayer::videoplayer(BaseObjectType* cobject,
                          utils::builder builder):
+    Glib::ObjectBase(typeid(videoplayer)),
     Gtk::Revealer(cobject) {
     utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
 
@@ -100,6 +105,10 @@ videoplayer::videoplayer(BaseObjectType* cobject,
         if (stopped != m_stop_btn->property_active()) {
             m_stop_btn->property_active() = stopped;
         }
+
+        if (stopped) {
+            m_video->property_pixbuf() = property_preview_pixbuf().get_value();
+        }
     };
     m_streamer.property_state()
             .signal_changed()
@@ -135,13 +144,12 @@ videoplayer::videoplayer(BaseObjectType* cobject,
         utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
         if (m_stop_btn->property_active()) {
             m_streamer.property_state() = Gst::STATE_NULL;
-            m_streamer.property_state() = Gst::STATE_PAUSED;
         }
     }, *this));
 
     m_streamer.property_uri().signal_changed().connect(sigc::track_obj([this]() {
         utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
-        m_streamer.property_state() = Gst::STATE_PAUSED;
+        m_streamer.property_state() = Gst::STATE_NULL;
     }, *this));
 
     //display frame
@@ -149,6 +157,10 @@ videoplayer::videoplayer(BaseObjectType* cobject,
                              m_streamer.property_pixbuf(),
                              m_video->property_pixbuf(),
                              flags));
+
+    property_preview_pixbuf().signal_changed().connect(sigc::track_obj([this]() {
+        m_video->property_pixbuf() = property_preview_pixbuf().get_value();
+    }, *this));
 }
 
 videoplayer::~videoplayer() {

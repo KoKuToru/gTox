@@ -43,6 +43,15 @@ namespace widget {
 
             std::vector<Glib::RefPtr<Glib::Binding>> m_bindings;
 
+            // no idea why I can't do this directly in videoplayer
+            class property_helper: public Glib::Object {
+                public:
+                    Glib::Property<Glib::RefPtr<Gdk::Pixbuf>> m_property_preview_pixbuf;
+                    property_helper():
+                        Glib::ObjectBase(typeid(property_helper)),
+                        m_property_preview_pixbuf(*this, "videoplayer-preview-image") {}
+            } m_property_helper;
+
         public:
             videoplayer(BaseObjectType* cobject,
                         utils::builder builder);
@@ -51,6 +60,8 @@ namespace widget {
             auto property_uri() {
                 return m_streamer.property_uri();
             }
+
+            Glib::PropertyProxy<Glib::RefPtr<Gdk::Pixbuf>> property_preview_pixbuf();
 
             static utils::builder::ref<videoplayer> create();
     };
