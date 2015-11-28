@@ -25,13 +25,17 @@ namespace sigc {
 
 using namespace widget;
 
+Glib::PropertyProxy<Glib::RefPtr<Gdk::Pixbuf>> videoplayer::property_preview_pixbuf() {
+    return m_property_helper.m_property_preview_pixbuf.get_proxy();
+}
+
 videoplayer::videoplayer(BaseObjectType* cobject,
                          utils::builder builder):
-    Gtk::Revealer(cobject) {
+    Glib::ObjectBase(typeid(videoplayer)),
+    Gtk::Box(cobject) {
     utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
 
     builder.get_widget("video_control", m_eventbox);
-    builder.get_widget("video_revealer", m_video_revealer);
     builder.get_widget("video_control_box", m_control);
     builder.get_widget("video_seek", m_seek);
     builder.get_widget("video_play", m_play_btn);
@@ -83,6 +87,32 @@ videoplayer::videoplayer(BaseObjectType* cobject,
         return true;
     }));
 
+    m_control->get_style_context()->add_class("gtox-opacity-0");
+    m_eventbox->add_events(Gdk::ENTER_NOTIFY_MASK);
+    m_eventbox->signal_enter_notify_event()
+            .connect(sigc::track_obj([this](GdkEventCrossing*) {
+        m_control->get_style_context()->remove_class("gtox-opacity-0");
+        //start time to detect leave
+        m_leave_timer.disconnect();
+        m_leave_timer = Glib::signal_timeout().connect_seconds(sigc::track_obj([this]() {
+            //check if mouse cursor is still in area of the eventbox
+            int x, y;
+            m_eventbox->get_pointer(x, y);
+
+            if (x < 0 ||
+                y < 0 ||
+                x > m_eventbox->get_allocated_width() ||
+                y > m_eventbox->get_allocated_height()) {
+                //we are outside !
+                m_control->get_style_context()->add_class("gtox-opacity-0");
+                //stop the timer
+                return false;
+            }
+            return true;
+        }, *this), 5);
+        return false;
+    }, *this));
+
     //Button handling
     auto property_state_update = [this]() {
         utils::debug::scope_log log(DBG_LVL_4("gtox"), {});
@@ -99,6 +129,10 @@ videoplayer::videoplayer(BaseObjectType* cobject,
         }
         if (stopped != m_stop_btn->property_active()) {
             m_stop_btn->property_active() = stopped;
+        }
+
+        if (stopped) {
+            m_video->property_pixbuf() = property_preview_pixbuf().get_value();
         }
     };
     m_streamer.property_state()
@@ -135,13 +169,12 @@ videoplayer::videoplayer(BaseObjectType* cobject,
         utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
         if (m_stop_btn->property_active()) {
             m_streamer.property_state() = Gst::STATE_NULL;
-            m_streamer.property_state() = Gst::STATE_PAUSED;
         }
     }, *this));
 
     m_streamer.property_uri().signal_changed().connect(sigc::track_obj([this]() {
         utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
-        m_streamer.property_state() = Gst::STATE_PAUSED;
+        m_streamer.property_state() = Gst::STATE_NULL;
     }, *this));
 
     //display frame
@@ -149,6 +182,10 @@ videoplayer::videoplayer(BaseObjectType* cobject,
                              m_streamer.property_pixbuf(),
                              m_video->property_pixbuf(),
                              flags));
+
+    property_preview_pixbuf().signal_changed().connect(sigc::track_obj([this]() {
+        m_video->property_pixbuf() = property_preview_pixbuf().get_value();
+    }, *this));
 }
 
 videoplayer::~videoplayer() {

@@ -255,9 +255,11 @@ void file::update_complete() {
                 std::tie(has_video, has_audio) = utils::gstreamer
                                                  ::has_video_audio(file->get_uri());
                 if (has_video || has_audio) {
-                    dispatcher.emit([this, file]() {
+                    auto img = utils::gstreamer::get_video_preview(file->get_uri());
+                    dispatcher.emit([this, file, img]() {
                         utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
                         m_preview_video->property_uri() = file->get_uri();
+                        m_preview_video->property_preview_pixbuf() = img;
                         m_preview_video->show();
                         m_preview_revealer->property_reveal_child() = true;
                         m_spinner->property_visible() = false;
