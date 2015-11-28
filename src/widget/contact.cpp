@@ -166,12 +166,12 @@ contact::contact(BaseObjectType* cobject,
     m_contact->property_connection().signal_changed().connect(sigc::track_obj([this]() {
         utils::debug::scope_log log(DBG_LVL_2("gtox"), {});
         //TODO: udp/tcp don't play audio twice..
-        if (m_contact->property_connection() != TOX_CONNECTION_NONE) {
-            new utils::audio_notification("file:///usr/share/gtox/audio/Isotoxin/Notification Sounds/isotoxin_FriendOnline.flac");
+        if (m_contact->property_connection() == TOX_CONNECTION_NONE) {
+            new utils::audio_notification("file:///usr/share/gtox/audio/Isotoxin/Notification Sounds/isotoxin_FriendOffline.flac");
             m_played_online_sound = false;
         } else  if (!m_played_online_sound) {
             m_played_online_sound = true;
-            new utils::audio_notification("file:///usr/share/gtox/audio/Isotoxin/Notification Sounds/isotoxin_FriendOffline.flac");
+            new utils::audio_notification("file:///usr/share/gtox/audio/Isotoxin/Notification Sounds/isotoxin_FriendOnline.flac");
         }
     }, *this));
 
