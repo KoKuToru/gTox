@@ -25,12 +25,11 @@
 #include "utils/debug.h"
 
 namespace widget {
-    class videoplayer: public Gtk::Revealer, public utils::debug::track_obj<videoplayer> {
+    class videoplayer: public Gtk::Box, public utils::debug::track_obj<videoplayer> {
         private:
             utils::gstreamer m_streamer;
 
             Gtk::EventBox*       m_eventbox;
-            Gtk::Revealer*       m_video_revealer;
             widget::imagescaled* m_video;
             Gtk::Box*            m_control;
             Gtk::Scale*          m_seek;
@@ -40,6 +39,8 @@ namespace widget {
             Gtk::Label*          m_position;
             Gtk::Label*          m_duration;
             Gtk::VolumeButton*   m_volume;
+
+            sigc::connection m_leave_timer;
 
             std::vector<Glib::RefPtr<Glib::Binding>> m_bindings;
 

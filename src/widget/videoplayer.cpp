@@ -32,11 +32,10 @@ Glib::PropertyProxy<Glib::RefPtr<Gdk::Pixbuf>> videoplayer::property_preview_pix
 videoplayer::videoplayer(BaseObjectType* cobject,
                          utils::builder builder):
     Glib::ObjectBase(typeid(videoplayer)),
-    Gtk::Revealer(cobject) {
+    Gtk::Box(cobject) {
     utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
 
     builder.get_widget("video_control", m_eventbox);
-    builder.get_widget("video_revealer", m_video_revealer);
     builder.get_widget("video_control_box", m_control);
     builder.get_widget("video_seek", m_seek);
     builder.get_widget("video_play", m_play_btn);
@@ -87,6 +86,32 @@ videoplayer::videoplayer(BaseObjectType* cobject,
                     Glib::ustring::format(std::setw(3), std::setfill(L'0'), std::right, Gst::get_seconds(input)));
         return true;
     }));
+
+    m_control->get_style_context()->add_class("gtox-opacity-0");
+    m_eventbox->add_events(Gdk::ENTER_NOTIFY_MASK);
+    m_eventbox->signal_enter_notify_event()
+            .connect(sigc::track_obj([this](GdkEventCrossing*) {
+        m_control->get_style_context()->remove_class("gtox-opacity-0");
+        //start time to detect leave
+        m_leave_timer.disconnect();
+        m_leave_timer = Glib::signal_timeout().connect_seconds(sigc::track_obj([this]() {
+            //check if mouse cursor is still in area of the eventbox
+            int x, y;
+            m_eventbox->get_pointer(x, y);
+
+            if (x < 0 ||
+                y < 0 ||
+                x > m_eventbox->get_allocated_width() ||
+                y > m_eventbox->get_allocated_height()) {
+                //we are outside !
+                m_control->get_style_context()->add_class("gtox-opacity-0");
+                //stop the timer
+                return false;
+            }
+            return true;
+        }, *this), 5);
+        return false;
+    }, *this));
 
     //Button handling
     auto property_state_update = [this]() {
