@@ -194,8 +194,8 @@ gstreamer::gstreamer():
            init();
        } else if (property_state() == Gst::STATE_NULL) {
            destroy();
-           m_property_position.set_value(0);
-           m_property_duration.set_value(0);
+           /*m_property_position.set_value(0);
+           m_property_duration.set_value(0);*/
        }
     }, *this));
 
