@@ -23,7 +23,8 @@
 
 using namespace widget;
 
-imagescaled::imagescaled() {
+imagescaled::imagescaled():
+    Glib::ObjectBase(typeid(imagescaled)) {
     utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
     show();
 }
@@ -99,8 +100,8 @@ void imagescaled::get_preferred_width_vfunc(int& minimum_width,
     Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
     auto padding = style->get_padding();
 
-    minimum_width = 0;
-    natural_width = 0;
+    minimum_width = 1;
+    natural_width = 1;
 
     Glib::RefPtr<Gdk::Pixbuf> pix = property_pixbuf();
     if (pix) {
@@ -116,8 +117,8 @@ void imagescaled::get_preferred_height_vfunc(int& minimum_height,
     Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
     auto padding = style->get_padding();
 
-    minimum_height = 0;
-    natural_height = 0;
+    minimum_height = 1;
+    natural_height = 1;
 
     Glib::RefPtr<Gdk::Pixbuf> pix = property_pixbuf();
     if (pix) {
@@ -146,4 +147,24 @@ void imagescaled::get_preferred_height_for_width_vfunc(
     }
     minimum_height += padding.get_top() + padding.get_bottom();
     natural_height += padding.get_top() + padding.get_bottom();
+}
+
+void imagescaled::get_preferred_width_for_height_vfunc(
+        int height,
+        int& minimum_width,
+        int& natural_width) const {
+    utils::debug::scope_log log(DBG_LVL_5("gtox"), {});
+    Glib::RefPtr<Gtk::StyleContext> stylecontext = get_style_context();
+    auto padding = stylecontext->get_padding();
+
+    auto pix = property_pixbuf().get_value();
+    if (pix) {
+        double pw = pix->get_width();
+        double ph = pix->get_height();
+        double nw = pw * (height - padding.get_top() - padding.get_bottom()) / ph;
+        minimum_width = nw;
+        natural_width = nw;
+    }
+    minimum_width += padding.get_left() + padding.get_right();
+    natural_width += padding.get_left() + padding.get_right();
 }

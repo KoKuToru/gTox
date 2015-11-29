@@ -44,6 +44,10 @@ namespace widget {
                     int width,
                     int& minimum_height,
                     int& natural_height) const override;
+            void get_preferred_width_for_height_vfunc(
+                    int height,
+                    int& minimum_width,
+                    int& natural_width) const override;
     };
 }
 #endif
