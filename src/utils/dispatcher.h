@@ -21,13 +21,14 @@ namespace utils {
                     std::weak_ptr<bool> m_exists;
                 public:
                     ref(const dispatcher& o): m_exists(o.m_exists) {}
-                    template<typename T> void emit(T f) const {
+                    template<typename T> sigc::connection emit(T f) const {
                         std::weak_ptr<bool> weak = m_exists;
-                        Glib::signal_idle().connect_once([f, weak]() {
+                        return Glib::signal_idle().connect([f, weak]() {
                             auto strong = weak.lock();
                             if (strong) {
                                 f();
                             }
+                            return false;
                         });
                     }
             };
@@ -36,14 +37,15 @@ namespace utils {
         private:
             std::shared_ptr<bool> m_exists = std::make_shared<bool>(true);
         public:
-            template<typename T> void emit(T f) const {
+            template<typename T> sigc::connection emit(T f) const {
                 std::weak_ptr<bool> weak = m_exists;
-                Glib::signal_idle().connect_once([f, weak]() {
+                return Glib::signal_idle().connect([f, weak]() {
                     auto strong = weak.lock();
                     //make sure our dispatcher still exists !
                     if (strong) {
                         f();
                     }
+                    return false;
                 });
             }
             dispatcher() {}
