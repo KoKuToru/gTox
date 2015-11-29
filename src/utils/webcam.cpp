@@ -64,7 +64,7 @@ void webcam::init() {
     utils::dispatcher::ref weak_dispatcher = m_dispatcher;
     auto resolution = std::make_shared<std::pair<int, int>>();
 
-    m_appsink->signal_new_preroll().connect(sigc::track_obj([this, sink = m_appsink, weak_dispatcher, resolution]() {
+    m_appsink->signal_new_preroll().connect(sigc::track_obj([this, sink = m_appsink, weak_dispatcher, resolution, prev_dispatched = sigc::connection()]() mutable {
         utils::debug::scope_log log(DBG_LVL_5("gtox"), {});
         auto preroll = sink->pull_preroll();
         if (!preroll) {
@@ -91,18 +91,20 @@ void webcam::init() {
         resolution->second = h;
 
         auto frame = extract_frame(preroll, resolution);
-        weak_dispatcher.emit([this, frame]() {
+        prev_dispatched.disconnect();
+        prev_dispatched = weak_dispatcher.emit([this, frame]() {
             utils::debug::scope_log log(DBG_LVL_5("gtox"), {});
             m_property_pixbuf.set_value(frame);
         });
         return Gst::FLOW_OK;
 
     }, *this));
-    m_appsink->signal_new_sample().connect(sigc::track_obj([this, sink = m_appsink, weak_dispatcher, resolution]() {
+    m_appsink->signal_new_sample().connect(sigc::track_obj([this, sink = m_appsink, weak_dispatcher, resolution, prev_dispatched = sigc::connection()]() mutable {
         utils::debug::scope_log log(DBG_LVL_5("gtox"), {});
         auto sample = sink->pull_sample();
         auto frame = extract_frame(sample, resolution);
-        weak_dispatcher.emit([this, frame]() {
+        prev_dispatched.disconnect();
+        prev_dispatched = weak_dispatcher.emit([this, frame]() {
             utils::debug::scope_log log(DBG_LVL_5("gtox"), {});
             m_property_pixbuf.set_value(frame);
         });
@@ -246,13 +248,13 @@ Glib::RefPtr<Gdk::Pixbuf> webcam::extract_frame(Glib::RefPtr<Gst::Sample> sample
     buffer->unmap(map);
 
     return Gdk::Pixbuf::create_from_data(mem,
-                                               Gdk::COLORSPACE_RGB,
-                                               false,
-                                               8,
-                                               resolution->first,
-                                               resolution->second,
-                                               GST_ROUND_UP_4( resolution->first*3 ),
-                                               [](const guint8* data) {
+                                         Gdk::COLORSPACE_RGB,
+                                         false,
+                                         8,
+                                         resolution->first,
+                                         resolution->second,
+                                         GST_ROUND_UP_4( resolution->first*3 ),
+                                         [](const guint8* data) {
         delete[] data;
     });
 }
