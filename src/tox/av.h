@@ -53,13 +53,13 @@ namespace toxmm {
                     pixel() {}
                     pixel(uint8_t r, uint8_t g, uint8_t b)
                         : m_r(r), m_g(g), m_b(b) {}
-                    unsigned char red() {
+                    unsigned char red() const {
                         return m_r;
                     }
-                    unsigned char green() {
+                    unsigned char green() const {
                         return m_g;
                     }
-                    unsigned char blue() {
+                    unsigned char blue() const {
                         return m_b;
                     }
             };
@@ -68,15 +68,19 @@ namespace toxmm {
                 private:
                     int m_w;
                     int m_h;
-                    std::vector<pixel> m_pixels;
+                    std::shared_ptr<std::vector<pixel>> m_pixels;
                 public:
+                    image()
+                        : m_pixels(std::make_shared<std::vector<pixel>>()) {}
                     image(int w, int h)
-                        : m_pixels(w*h) {}
+                        : m_w(w),
+                          m_h(h),
+                          m_pixels(std::make_shared<std::vector<pixel>>(w*h)) {}
                     pixel& operator[](const std::pair<int, int>& pos) {
-                        return m_pixels.at(pos.first + pos.second * m_w);
+                        return m_pixels->at(pos.first + pos.second * m_w);
                     }
                     const pixel& operator[](const std::pair<int, int>& pos) const {
-                        return m_pixels.at(pos.first + pos.second * m_w);
+                        return m_pixels->at(pos.first + pos.second * m_w);
                     }
                     int width() const {
                         return m_w;
@@ -85,13 +89,13 @@ namespace toxmm {
                         return m_h;
                     }
                     pixel* data() {
-                        return m_pixels.data();
+                        return m_pixels->data();
                     }
                     const pixel* data() const {
-                        return m_pixels.data();
+                        return m_pixels->data();
                     }
                     size_t size() const {
-                        return m_pixels.size();
+                        return m_pixels->size();
                     }
             };
 
@@ -121,22 +125,24 @@ namespace toxmm {
                     al m_audio_length;
                     ch m_channels;
                     sr m_sampling_rate;
-                    std::vector<int16_t> m_data;
+                    std::shared_ptr<std::vector<int16_t>> m_data;
                 public:
+                    audio()
+                        : m_data(std::make_shared<std::vector<int16_t>>()){}
                     audio(al audio_length,
                           ch channels,
                           sr sampling_rate)
                         : m_audio_length(audio_length),
                           m_channels(channels),
                           m_sampling_rate(sampling_rate),
-                          m_data(sampling_rate * channels * audio_length / 1000) {}
+                          m_data(std::make_shared<std::vector<int16_t>>(sampling_rate * channels * audio_length / 1000)) {}
                     // sample, channel
                     int16_t& operator[](std::pair<size_t, size_t> pos) {
-                        return m_data.at(pos.first * 2 + pos.second);
+                        return m_data->at(pos.first * 2 + pos.second);
                     }
                     // sample, channel
                     const int16_t& operator[](std::pair<size_t, size_t> pos) const {
-                        return m_data.at(pos.first * 2 + pos.second);
+                        return m_data->at(pos.first * 2 + pos.second);
                     }
                     al audio_length() const {
                         return m_audio_length;
@@ -148,16 +154,16 @@ namespace toxmm {
                         return m_sampling_rate;
                     }
                     size_t sample_count() const {
-                        return m_data.size() / m_channels;
+                        return m_data->size() / m_channels;
                     }
                     int16_t* data() {
-                        return m_data.data();
+                        return m_data->data();
                     }
                     const int16_t* data() const {
-                        return m_data.data();
+                        return m_data->data();
                     }
                     size_t size() const {
-                        return m_data.size();
+                        return m_data->size();
                     }
             };
 

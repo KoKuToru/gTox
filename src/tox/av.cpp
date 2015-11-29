@@ -19,6 +19,7 @@
 #include "av.h"
 #include "core.h"
 #include "exception.h"
+#include <iostream>
 
 using namespace toxmm;
 
@@ -46,6 +47,8 @@ av::av(const std::shared_ptr<toxmm::core>& core)
     : m_av(nullptr),
       m_core(core) {
 }
+
+int iter_id = 0;
 
 void av::init() {
     auto c = core();
@@ -77,21 +80,23 @@ void av::init() {
         ((av*)_this)->m_signal_audio_receive_frame(contactNr(nr), ad);
     }, this);
     toxav_callback_video_receive_frame(m_av, [](ToxAV*, uint32_t nr, uint16_t width, uint16_t height, const uint8_t *y, const uint8_t *u, const uint8_t *v, int32_t ystride, int32_t ustride, int32_t vstride, void* _this) {
+        std::clog << iter_id << " Got frame " << std::endl;
         image img(width, height);
 
-        /*
-          TODO: when negative stride ?
+        int y_size = std::max(width/1, std::abs(ystride)) * height;
+        int u_size = std::max(width/2, std::abs(ustride)) * (height / 2);
+        int v_size = std::max(width/2, std::abs(vstride)) * (height / 2);
 
-          int y_size = std::max(width/1, std::abs(ystride)) * height;
-          int u_size = std::max(width/2, std::abs(ustride)) * (height / 2);
-          int v_size = std::max(width/2, std::abs(ustride)) * (height / 2);
+        if (ystride < 0) {
+            y = y + y_size;
+        }
+        if (ustride < 0) {
+            u = u + u_size;
+        }
+        if (vstride < 0) {
+            v = v + v_size;
+        }
 
-          y = y + y_size;
-          u = u + u_size;
-          v = v + v_size;
-
-          maybe ?
-         */
         for (int cy = 0; cy < height; ++cy) {
             const uint8_t* row_y = y + ystride * cy;
             const uint8_t* row_u = u + ustride * (cy / 2);
@@ -201,6 +206,7 @@ void av::send_audio_frame(contactNr nr,
 
 void av::send_video_frame(contactNr nr,
                           const av::image &img) {
+    std::clog << "send frame" << std::endl;
     if (!m_av) {
         return;
     }
@@ -212,9 +218,9 @@ void av::send_video_frame(contactNr nr,
     for (int cy = 0; cy < img.height(); ++cy) {
         for (int cx = 0; cx < img.width(); ++cx) {
             img[{cx, cy}].as_yuv(
-                        y[cx + cy * img.width()],
-                        u[(cx / 2) + cy * (img.width() / 2)],
-                        v[(cx / 2) + cy * (img.width() / 2)]);
+                        y.at(cx + cy * img.width()),
+                        u.at((cx / 2) + (cy / 2) * (img.width() / 2)),
+                        v.at((cx / 2) + (cy / 2) * (img.width() / 2)));
         }
     }
 
@@ -244,13 +250,15 @@ bool av::update() {
     m_update_interval.disconnect();
 
     if (m_av) {
+        iter_id += 1;
         toxav_iterate(m_av);
     }
 
     //next round:
     m_update_interval = Glib::signal_timeout()
                         .connect(sigc::mem_fun(this, &av::update),
-                                 update_optimal_interval());
+                                 update_optimal_interval(),
+                                 Glib::PRIORITY_DEFAULT_IDLE);
     return false;
 }
 
