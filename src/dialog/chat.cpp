@@ -31,6 +31,9 @@
 #include "flatbuffers/flatbuffers.h"
 #include "flatbuffers/idl.h"
 #include "flatbuffers/util.h"
+#include "tox/contact/call.h"
+#include "widget/imagescaled.h"
+#include "tox/exception.h"
 
 namespace sigc {
     SIGC_FUNCTORS_DEDUCE_RESULT_TYPE_WITH_DECLTYPE
@@ -60,6 +63,9 @@ chat::chat(std::shared_ptr<toxmm::core> core,
     builder.get_widget("eventbox", m_eventbox);
     builder.get_widget("scrolled", m_scrolled);
     builder.get_widget("viewport", m_viewport);
+    builder.get_widget("av_call", m_av_call);
+    m_image_webcam_local  = builder.get_widget_derived<widget::imagescaled>("image10");
+    m_image_webcam_remote = builder.get_widget_derived<widget::imagescaled>("image_webcam_remote");
 
     property_body() = m_body;
 
@@ -296,6 +302,134 @@ chat::chat(std::shared_ptr<toxmm::core> core,
             fmng->send_file(Glib::filename_from_uri(uri));
         }
     }, *this));
+
+    // av support
+    m_av_call->signal_clicked().connect(sigc::track_obj([this]() {
+        auto ct = m_contact;
+        std::clog << "call the contact" << std::endl;
+        ct->call()->property_state() = toxmm::call::CALL_RESUME;
+    }, *this));
+
+    m_contact->call()->property_state().signal_changed().connect(sigc::track_obj([this]() {
+        std::clog << "call state changed to ";
+        switch (m_contact->call()->property_state().get_value()) {
+            case toxmm::call::CALL_RESUME:
+                std::clog << " RESUME" << std::endl;
+                break;
+            case toxmm::call::CALL_PAUSE:
+                std::clog << " PAUSE" << std::endl;
+                break;
+            case toxmm::call::CALL_CANCEL:
+                std::clog << " CANCEL" << std::endl;
+                break;
+        }
+    }, *this));
+
+    m_contact->call()->property_remote_state().signal_changed().connect(sigc::track_obj([this]() {
+        std::clog << "remote call state changed to ";
+        switch (m_contact->call()->property_remote_state().get_value()) {
+            case toxmm::call::CALL_RESUME:
+                std::clog << " RESUME" << std::endl;
+                break;
+            case toxmm::call::CALL_PAUSE:
+                std::clog << " PAUSE" << std::endl;
+                break;
+            case toxmm::call::CALL_CANCEL:
+                std::clog << " CANCEL" << std::endl;
+                break;
+        }
+    }, *this));
+
+    auto update_webcam_state = sigc::track_obj([this]() {
+        std::clog << "update webcame state" << std::endl;
+        auto remote_state = m_contact->call()->property_remote_state().get_value();
+        auto state = m_contact->call()->property_state().get_value();
+
+        if (remote_state == toxmm::call::CALL_CANCEL  ||
+            state == toxmm::call::CALL_CANCEL) {
+            std::clog << "stop webcam" << std::endl;
+            m_webcam.property_state() = Gst::STATE_NULL;
+            return;
+        }
+        std::clog << "start webcam" << std::endl;
+        m_webcam.property_state() = Gst::STATE_PLAYING;
+    }, *this);
+
+    m_webcam.property_device() = m_webcam.get_webcam_devices().at(1);
+    m_webcam.signal_error().connect([](Glib::ustring msg) {
+        std::clog << "WEBCAM ERROR ! " << msg << std::endl;
+    });
+
+    m_contact->call()->property_state().signal_changed().connect(update_webcam_state);
+    m_contact->call()->property_remote_state().signal_changed().connect(update_webcam_state);
+
+    m_contact->call()->signal_incoming_call().connect(sigc::track_obj([this]() {
+        std::clog << "new incoming call" << std::endl;
+    }, *this));
+
+    m_contact->call()->signal_finish().connect(sigc::track_obj([this]() {
+        std::clog << "call ended" << std::endl;
+    }, *this));
+
+    m_contact->call()->signal_suggestion_updated().connect(sigc::track_obj([this]() {
+        std::clog << "suggested bitrate updated to V: " <<
+                     m_contact->call()->property_suggested_video_kilobitrate() <<
+                     " A: " <<
+                     m_contact->call()->property_suggested_audio_kilobitrate() <<
+                     std::endl;
+    }, *this));
+
+    m_webcam_bind_preview = Glib::Binding::bind_property(m_webcam.property_pixbuf(),
+                                                         m_contact->call()->property_video_frame(),
+                                                         Glib::BINDING_DEFAULT,
+                                                         [this](const Glib::RefPtr<Gdk::Pixbuf>& in, toxmm::av::image& out) {
+        std::clog << "got a frame for sending" << std::endl;
+        if (in) {
+            int n = in->property_n_channels();
+            uint8_t* pixels = in->get_pixels();
+
+            std::clog << in->get_width() << "x" << in->get_height() << std::endl;
+            size_t size = in->get_width() * in->get_height();
+            out = toxmm::av::image(in->get_width(),
+                                   in->get_height());
+            for (size_t i = 0; i < size; ++i) {
+                out.data()[i] = toxmm::av::pixel(
+                                    pixels[i*n + 0],
+                                    pixels[i*n + 1],
+                                    pixels[i*n + 2]);
+            }
+        }
+        return true;
+    });
+
+    m_webcam_bind_preview_2 = Glib::Binding::bind_property(m_webcam.property_pixbuf(),
+                                                           m_image_webcam_local->property_pixbuf(),
+                                                           Glib::BINDING_DEFAULT);
+
+    m_webcam_bind_preview_test = Glib::Binding::bind_property(m_contact->call()->property_remote_video_frame(),
+                                                              m_image_webcam_remote->property_pixbuf(),
+                                                              Glib::BINDING_DEFAULT | Glib::BINDING_SYNC_CREATE,
+                                                              [](const toxmm::av::image& in, Glib::RefPtr<Gdk::Pixbuf>& out) {
+        if (in.size() > 0) {
+            auto mem = new uint8_t[in.size() * 3];
+            for (size_t i = 0; i < in.size(); ++i) {
+                mem[i*3 + 0] = in.data()[i].red();
+                mem[i*3 + 1] = in.data()[i].green();
+                mem[i*3 + 2] = in.data()[i].blue();
+            }
+            out = Gdk::Pixbuf::create_from_data(mem,
+                                                Gdk::COLORSPACE_RGB,
+                                                false,
+                                                8,
+                                                in.width(),
+                                                in.height(),
+                                                in.width() * 3,
+                                                [](const guint8* data) {
+                delete[] data;
+            });
+        }
+        return true;
+    });
 
     load_log();
 }
