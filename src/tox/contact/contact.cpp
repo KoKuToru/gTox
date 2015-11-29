@@ -23,6 +23,7 @@
 #include "receipt.h"
 #include "file/manager.h"
 #include "file/file.h"
+#include "call.h"
 
 using namespace toxmm;
 
@@ -35,6 +36,18 @@ contact::type_signal_send_file_chunk_rq contact::signal_send_file_chunk_request(
 contact::type_signal_recv_file          contact::signal_recv_file() { return m_signal_recv_file; }
 contact::type_signal_recv_file_chunk    contact::signal_recv_file_chunk() { return m_signal_recv_file_chunk; }
 contact::type_signal_recv_file_control  contact::signal_recv_file_control() { return m_signal_recv_file_control; }
+contact::type_signal_recv_av_video_frame contact::signal_recv_av_video_frame() { return m_signal_send_av_video_frame; }
+contact::type_signal_send_av_video_frame contact::signal_send_av_video_frame() { return m_signal_recv_av_video_frame; }
+contact::type_signal_send_av_audio_frame contact::signal_send_av_audio_frame() { return m_signal_send_av_audio_frame; }
+contact::type_signal_recv_av_audio_frame contact::signal_recv_av_audio_frame() { return m_signal_recv_av_audio_frame; }
+contact::type_signal_send_av_call        contact::signal_send_av_call() { return m_signal_send_av_call; }
+contact::type_signal_recv_av_call        contact::signal_recv_av_call() { return m_signal_recv_av_call; }
+contact::type_signal_send_av_answer      contact::signal_send_av_answer() { return m_signal_send_av_answer; }
+contact::type_signal_send_av_control     contact::signal_send_av_control() { return m_signal_send_av_control; }
+contact::type_signal_recv_av_error       contact::signal_recv_av_error() { return m_signal_recv_av_error; }
+contact::type_signal_recv_av_finish      contact::signal_recv_av_finish() { return m_signal_recv_av_finish; }
+contact::type_signal_recv_av_state       contact::signal_recv_av_state() { return m_signal_recv_av_state; }
+contact::type_signal_recv_av_bit_rate_status contact::signal_recv_av_bit_rate_status() { return m_signal_recv_av_bit_rate_status; }
 
 Glib::PropertyProxy_ReadOnly<contactNr>         contact::property_nr()
 { return Glib::PropertyProxy_ReadOnly<contactNr>(this, "contact-nr"); }
@@ -50,8 +63,26 @@ Glib::PropertyProxy_ReadOnly<TOX_USER_STATUS>   contact::property_status()
 { return Glib::PropertyProxy_ReadOnly<TOX_USER_STATUS>(this, "contact-status"); }
 Glib::PropertyProxy_ReadOnly<TOX_CONNECTION>    contact::property_connection()
 { return Glib::PropertyProxy_ReadOnly<TOX_CONNECTION>(this, "contact-connection"); }
-Glib::PropertyProxy_ReadOnly<bool>              contact::property_typing()
-{ return Glib::PropertyProxy_ReadOnly<bool>(this, "contact-typing"); }
+Glib::PropertyProxy<bool>                       contact::property_typing()
+{ return m_property_typing.get_proxy(); }
+Glib::PropertyProxy_ReadOnly<bool>              contact::property_remote_typing()
+{ return Glib::PropertyProxy_ReadOnly<bool>(this, "contact-remote-typing"); }
+Glib::PropertyProxy<bool>                       contact::property_av_sending_audio()
+{ return m_property_av_sending_audio.get_proxy(); }
+Glib::PropertyProxy<bool>                       contact::property_av_sending_video()
+{ return m_property_av_sending_video.get_proxy(); }
+Glib::PropertyProxy<bool>                       contact::property_av_accepting_audio()
+{ return m_property_av_accepting_audio.get_proxy(); }
+Glib::PropertyProxy<bool>                       contact::property_av_accepting_video()
+{ return m_property_av_accepting_video.get_proxy(); }
+Glib::PropertyProxy_ReadOnly<bool>              contact::property_av_remote_sending_audio()
+{ return Glib::PropertyProxy_ReadOnly<bool>(this, "contact-remote-sending-audio"); }
+Glib::PropertyProxy_ReadOnly<bool>              contact::property_av_remote_sending_video()
+{ return Glib::PropertyProxy_ReadOnly<bool>(this, "contact-remote-sending-video"); }
+Glib::PropertyProxy_ReadOnly<bool>              contact::property_av_remote_accepting_audio()
+{ return Glib::PropertyProxy_ReadOnly<bool>(this, "contact-remote-accepting-audio"); }
+Glib::PropertyProxy_ReadOnly<bool>              contact::property_av_remote_accepting_video()
+{ return Glib::PropertyProxy_ReadOnly<bool>(this, "contact-remote-accepting-video"); }
 
 contact::contact(std::shared_ptr<toxmm::contact_manager> manager, contactNr nr):
     Glib::ObjectBase(typeid(contact)),
@@ -63,7 +94,16 @@ contact::contact(std::shared_ptr<toxmm::contact_manager> manager, contactNr nr):
     m_property_status_message(*this, "contact-status-message"),
     m_property_status(*this, "contact-status"),
     m_property_connection(*this, "contact-connection"),
-    m_property_typing(*this, "contact-typing") {
+    m_property_typing(*this, "contact-typing"),
+    m_property_remote_typing(*this, "contact-remote-typing"),
+    m_property_av_sending_audio(*this, "contact-av-sending-audio"),
+    m_property_av_sending_video(*this, "contact-av-sending-video"),
+    m_property_av_accepting_audio(*this, "contact-av-accepting-audio"),
+    m_property_av_accepting_video(*this, "contact-av-accepting-video"),
+    m_property_av_remote_sending_audio(*this, "contact-av-remote-sending-audio"),
+    m_property_av_remote_sending_video(*this, "contact-av-remote-sending-video"),
+    m_property_av_remote_accepting_audio(*this, "contact-av-remote-accepting-audio"),
+    m_property_av_remote_accepting_video(*this, "contact-av-remote-accepting-video") {
 
     auto update_name_or_addr = [this]() {
         if (property_name().get_value().empty()) {
@@ -138,6 +178,39 @@ void contact::init() {
             }, *this));
         }
     }, *this));
+
+    signal_recv_av_state().connect(sigc::track_obj([this](int state) {
+        if (state & TOXAV_FRIEND_CALL_STATE_ERROR) {
+            signal_recv_av_error();
+        }
+        if (state & TOXAV_FRIEND_CALL_STATE_FINISHED) {
+            signal_recv_av_finish();
+        }
+        if (state & (TOXAV_FRIEND_CALL_STATE_ERROR | TOXAV_FRIEND_CALL_STATE_FINISHED)) {
+            m_property_av_remote_sending_audio = false;
+            m_property_av_remote_sending_video = false;
+            m_property_av_remote_accepting_audio = false;
+            m_property_av_remote_accepting_video = false;
+            return;
+        }
+        m_property_av_remote_sending_audio = state & TOXAV_FRIEND_CALL_STATE_SENDING_A;
+        m_property_av_remote_sending_video = state & TOXAV_FRIEND_CALL_STATE_SENDING_V;
+        m_property_av_remote_accepting_audio = state & TOXAV_FRIEND_CALL_STATE_ACCEPTING_A;
+        m_property_av_remote_accepting_video = state & TOXAV_FRIEND_CALL_STATE_ACCEPTING_V;
+    }, *this));
+
+    type_signal_recv_av_bit_rate_status().connect(sigc::track_obj([this](int audio_bit_rate, int video_bit_rate) {
+        auto c = core();
+        if (!c) {
+            return;
+        }
+        // hm...
+        c->av()->set_bit_rate(m_property_nr.get_value(),
+                              audio_bit_rate,
+                              video_bit_rate);
+    }, *this));
+
+    m_call = std::shared_ptr<toxmm::call>(new toxmm::call(shared_from_this()));
 }
 
 contactAddrPublic contact::toxcore_get_addr() {
@@ -288,4 +361,100 @@ std::shared_ptr<toxmm::contact_manager> contact::contact_manager() {
 
 std::shared_ptr<toxmm::file_manager> contact::file_manager() {
     return m_file_manager;
+}
+
+std::shared_ptr<toxmm::call> contact::call() {
+    return m_call;
+}
+
+void contact::send_av_call() {
+    auto c = core();
+    if (!c) {
+        return;
+    }
+
+    c->av()->call(property_nr().get_value(),
+                  30,
+                  128);
+
+    m_signal_send_av_call(30, 128);
+}
+
+void contact::send_av_call_accept() {
+    auto c = core();
+    if (!c) {
+        return;
+    }
+
+    c->av()->answer(property_nr().get_value(),
+                    30,
+                    128);
+
+    m_signal_send_av_answer(30, 128);
+}
+
+void contact::send_av_call_pause() {
+    auto c = core();
+    if (!c) {
+        return;
+    }
+
+    c->av()->call_control(property_nr().get_value(),
+                          TOXAV_CALL_CONTROL_PAUSE);
+}
+
+void contact::send_av_call_resume() {
+    auto c = core();
+    if (!c) {
+        return;
+    }
+
+    c->av()->call_control(property_nr().get_value(),
+                          TOXAV_CALL_CONTROL_RESUME);
+}
+
+void contact::send_av_call_cancel() {
+    auto c = core();
+    if (!c) {
+        return;
+    }
+
+    c->av()->call_control(property_nr().get_value(),
+                          TOXAV_CALL_CONTROL_CANCEL);
+}
+
+void contact::send_av_video_frame(const toxmm::av::image& img) {
+    auto c = core();
+    if (!c) {
+        return;
+    }
+
+    c->av()->send_video_frame(property_nr().get_value(),
+                              img);
+
+    m_signal_send_av_video_frame(img);
+}
+
+void contact::send_av_audio_frame(const toxmm::av::audio& ad) {
+    auto c = core();
+    if (!c) {
+        return;
+    }
+
+    c->av()->send_audio_frame(property_nr().get_value(),
+                              ad);
+
+    m_signal_send_av_audio_frame(ad);
+}
+
+void contact::send_av_control(TOXAV_CALL_CONTROL control) {
+    auto c = core();
+    if (!c) {
+        return;
+    }
+
+    c->av()->call_control(property_nr().get_value(),
+                          control);
+
+    m_signal_send_av_control(control);
 }
