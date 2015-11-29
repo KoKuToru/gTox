@@ -409,6 +409,10 @@ std::shared_ptr<toxmm::storage> core::storage() {
     return m_storage;
 }
 
+std::shared_ptr<toxmm::av> core::av() {
+    return m_av;
+}
+
 void core::update() {
     tox_iterate(toxcore());
 
