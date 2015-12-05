@@ -524,7 +524,7 @@ msgid "toxcore file"
 msgstr "toxcore Datei"
 
 #: utils/gstreamer.cpp
-msgid "unknow gstreamer error"
+msgid "unknown gstreamer error"
 msgstr "unbekanntes Problem mit gstreamer"
 
 #. dark theme
