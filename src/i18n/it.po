@@ -144,7 +144,7 @@ msgstr "Sei sicuro di voler rimuovere questo contatto?"
 
 #: resources/ui/dialog_settings.ui
 msgid "Audio notification on new message"
-msgstr ""
+msgstr "Notifica audio ad ogni messaggio"
 
 #: resources/ui/dialog_settings.ui
 msgid "Auto accept"
@@ -211,7 +211,7 @@ msgstr "Dispositivo di default"
 
 #: resources/ui/dialog_settings.ui
 msgid "Display inline"
-msgstr ""
+msgstr "Visualizza in fila"
 
 #: widget/main_menu.cpp
 msgid "Empty message"
@@ -253,7 +253,7 @@ msgstr "Nuovo"
 
 #: resources/ui/dialog_settings.ui
 msgid "Notification on new message"
-msgstr ""
+msgstr "Notifica ad ogni messaggio"
 
 #: resources/ui/status_menu.ui
 msgid "Online"
@@ -262,7 +262,7 @@ msgstr "Online"
 #. Open file with file-explorer
 #: resources/ui/chat_filerecv.ui
 msgid "Open containing folder"
-msgstr ""
+msgstr "Apri la cartella contenente"
 
 #. Open the downloaded file
 #: resources/ui/chat_filerecv.ui
@@ -271,7 +271,7 @@ msgstr "Apri file"
 
 #: dialog/profile_selection.cpp
 msgid "Open this profile in file manager"
-msgstr ""
+msgstr "Aprire questo profilo nel file manager"
 
 #: resources/ui/list_item_profile.ui
 msgid "Path of file"
@@ -280,7 +280,7 @@ msgstr "Percorso del file"
 #. Pauses the download
 #: resources/ui/chat_filerecv.ui
 msgid "Pause download"
-msgstr ""
+msgstr "Ferma il download"
 
 #: resources/ui/dialog_settings.ui
 msgid "Profile"
@@ -308,7 +308,7 @@ msgstr "Proxy"
 
 #: resources/ui/dialog_settings.ui
 msgid "Put into systemtray on close"
-msgstr ""
+msgstr "Mettilo nella barra di sistema alla chisura"
 
 #: resources/ui/dialog_settings.ui
 msgid "Remember last used profile"
