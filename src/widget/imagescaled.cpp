@@ -40,6 +40,27 @@ imagescaled::~imagescaled() {
     utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
 }
 
+void imagescaled::calculate_size(int w, int h,
+                                 double& out_pw, double& out_ph,
+                                 double& out_scale) const {
+    Glib::RefPtr<Gdk::Pixbuf> pix = property_pixbuf();
+    if (!pix) {
+        out_scale = 1;
+        out_pw = 1;
+        out_ph = 1;
+        return;
+    }
+    w = std::max(1, w);
+    h = std::max(1, h);
+    out_pw = pix->get_width();
+    out_ph = pix->get_height();
+    double scale_w = w / out_pw;
+    double scale_h = h / out_ph;
+    out_scale = std::max(scale_w, scale_h);
+    out_pw *= out_scale;
+    out_ph *= out_scale;
+}
+
 bool imagescaled::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
     utils::debug::scope_log log(DBG_LVL_5("gtox"), {});
     Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
@@ -55,13 +76,10 @@ bool imagescaled::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
     Glib::RefPtr<Gdk::Pixbuf> pix = property_pixbuf();
     if (pix) {
         tmp_cr->save();
-        double pw = pix->get_width();
-        double ph = pix->get_height();
-        double scale_w = w/pw;
-        double scale_h = h/ph;
-        double scale = std::max(scale_w, scale_h);
-        pw *= scale;
-        ph *= scale;
+        double pw = 1;
+        double ph = 1;
+        double scale = 1;
+        calculate_size(w, h, pw, ph, scale);
         tmp_cr->scale(scale, scale);
         Gdk::Cairo::set_source_pixbuf(tmp_cr,
                                       pix,
@@ -97,8 +115,6 @@ Gtk::SizeRequestMode imagescaled::get_request_mode_vfunc() const {
 void imagescaled::get_preferred_width_vfunc(int& minimum_width,
                                             int& natural_width) const {
     utils::debug::scope_log log(DBG_LVL_5("gtox"), {});
-    Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
-    auto padding = style->get_padding();
 
     minimum_width = 1;
     natural_width = 1;
@@ -107,26 +123,18 @@ void imagescaled::get_preferred_width_vfunc(int& minimum_width,
     if (pix) {
         natural_width = pix->get_width();
     }
-
-    minimum_width += padding.get_left() + padding.get_right();
-    natural_width += padding.get_left() + padding.get_right();
 }
 void imagescaled::get_preferred_height_vfunc(int& minimum_height,
                                              int& natural_height) const {
     utils::debug::scope_log log(DBG_LVL_5("gtox"), {});
-    Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
-    auto padding = style->get_padding();
 
-    minimum_height = 1;
-    natural_height = 1;
-
-    Glib::RefPtr<Gdk::Pixbuf> pix = property_pixbuf();
-    if (pix) {
-        natural_height = pix->get_height();
-    }
-
-    minimum_height += padding.get_top() + padding.get_bottom();
-    natural_height += padding.get_top() + padding.get_bottom();
+    int minimum_width = 1;
+    int natural_width = 1;
+    get_preferred_width_vfunc(minimum_width,
+                              natural_width);
+    get_preferred_height_for_width_vfunc(minimum_width,
+                                         minimum_height,
+                                         natural_height);
 }
 
 void imagescaled::get_preferred_height_for_width_vfunc(
@@ -134,19 +142,16 @@ void imagescaled::get_preferred_height_for_width_vfunc(
         int& minimum_height,
         int& natural_height) const {
     utils::debug::scope_log log(DBG_LVL_5("gtox"), {});
-    Glib::RefPtr<Gtk::StyleContext> stylecontext = get_style_context();
-    auto padding = stylecontext->get_padding();
 
     auto pix = property_pixbuf().get_value();
     if (pix) {
-        double pw = pix->get_width();
-        double ph = pix->get_height();
-        double nh = ph * (width - padding.get_left() - padding.get_right()) / pw;
-        minimum_height = nh;
-        natural_height = nh;
+        double pw = 1;
+        double ph = 1;
+        double scale = 1;
+        calculate_size(width, 0, pw, ph, scale);
+        minimum_height = std::ceil(ph);
+        natural_height = std::ceil(ph);
     }
-    minimum_height += padding.get_top() + padding.get_bottom();
-    natural_height += padding.get_top() + padding.get_bottom();
 }
 
 void imagescaled::get_preferred_width_for_height_vfunc(
@@ -154,17 +159,14 @@ void imagescaled::get_preferred_width_for_height_vfunc(
         int& minimum_width,
         int& natural_width) const {
     utils::debug::scope_log log(DBG_LVL_5("gtox"), {});
-    Glib::RefPtr<Gtk::StyleContext> stylecontext = get_style_context();
-    auto padding = stylecontext->get_padding();
 
     auto pix = property_pixbuf().get_value();
     if (pix) {
-        double pw = pix->get_width();
-        double ph = pix->get_height();
-        double nw = pw * (height - padding.get_top() - padding.get_bottom()) / ph;
-        minimum_width = nw;
-        natural_width = nw;
+        double pw = 1;
+        double ph = 1;
+        double scale = 1;
+        calculate_size(0, height, pw, ph, scale);
+        minimum_width = std::ceil(pw);
+        natural_width = std::ceil(pw);
     }
-    minimum_width += padding.get_left() + padding.get_right();
-    natural_width += padding.get_left() + padding.get_right();
 }
