@@ -179,7 +179,6 @@
             <property name="can_focus">True</property>
             <property name="hexpand">True</property>
             <property name="vexpand">True</property>
-            <property name="hscrollbar_policy">never</property>
             <child>
               <object class="GtkViewport" id="viewport">
                 <property name="visible">True</property>
@@ -588,5 +587,51 @@
         <property name="position">1</property>
       </packing>
     </child>
+  </object>
+  <object class="GtkBox" id="headerbar_buttons">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="halign">end</property>
+    <child>
+      <object class="GtkButton" id="btn_send_file">
+        <property name="visible">True</property>
+        <property name="can_focus">True</property>
+        <property name="receives_default">True</property>
+        <child>
+          <object class="GtkImage" id="image11">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="icon_name">call-start-symbolic</property>
+          </object>
+        </child>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">True</property>
+        <property name="position">0</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkButton" id="btn_call">
+        <property name="visible">True</property>
+        <property name="can_focus">True</property>
+        <property name="receives_default">True</property>
+        <child>
+          <object class="GtkImage" id="image14">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="icon_name">mail-attachment-symbolic</property>
+          </object>
+        </child>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">True</property>
+        <property name="position">1</property>
+      </packing>
+    </child>
+    <style>
+      <class name="linked"/>
+    </style>
   </object>
 </interface>

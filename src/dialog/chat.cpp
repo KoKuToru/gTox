@@ -64,10 +64,13 @@ chat::chat(std::shared_ptr<toxmm::core> core,
     builder.get_widget("scrolled", m_scrolled);
     builder.get_widget("viewport", m_viewport);
     builder.get_widget("av_call", m_av_call);
+    builder.get_widget("headerbar_buttons", m_headerbar_buttons);
+
     m_image_webcam_local  = builder.get_widget_derived<widget::imagescaled>("image10");
     m_image_webcam_remote = builder.get_widget_derived<widget::imagescaled>("image_webcam_remote");
 
     property_body() = m_body;
+    property_headerbar().get_value()->pack_end(*m_headerbar_buttons);
 
     m_binding_name = Glib::Binding::bind_property(m_contact->property_name_or_addr(),
                                                   property_headerbar_title(),

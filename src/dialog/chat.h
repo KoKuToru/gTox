@@ -68,6 +68,7 @@ namespace dialog {
             Glib::RefPtr<Glib::Binding> m_binding_online;
 
             Gtk::Button* m_av_call;
+            Gtk::Box* m_headerbar_buttons;
 
             utils::webcam m_webcam;
             Glib::RefPtr<Glib::Binding> m_webcam_bind_preview;
