@@ -63,17 +63,12 @@ namespace dialog {
 
             Gtk::Box* m_chat_box;
 
-            Glib::RefPtr<Glib::Binding> m_binding_name;
-            Glib::RefPtr<Glib::Binding> m_binding_status;
-            Glib::RefPtr<Glib::Binding> m_binding_online;
-
             Gtk::Button* m_av_call;
             Gtk::Box* m_headerbar_buttons;
 
             utils::webcam m_webcam;
-            Glib::RefPtr<Glib::Binding> m_webcam_bind_preview;
-            Glib::RefPtr<Glib::Binding> m_webcam_bind_preview_2;
-            Glib::RefPtr<Glib::Binding> m_webcam_bind_preview_test;
+
+            std::vector<Glib::RefPtr<Glib::Binding>> m_bindings;
 
             enum class SIDE {
                 NONE,

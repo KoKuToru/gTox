@@ -72,22 +72,22 @@ chat::chat(std::shared_ptr<toxmm::core> core,
     property_body() = m_body;
     property_headerbar().get_value()->pack_end(*m_headerbar_buttons);
 
-    m_binding_name = Glib::Binding::bind_property(m_contact->property_name_or_addr(),
-                                                  property_headerbar_title(),
-                                                  Glib::BINDING_DEFAULT | Glib::BINDING_SYNC_CREATE);
+    m_bindings.push_back(Glib::Binding::bind_property(m_contact->property_name_or_addr(),
+                                                      property_headerbar_title(),
+                                                      Glib::BINDING_DEFAULT | Glib::BINDING_SYNC_CREATE));
 
-    m_binding_status = Glib::Binding::bind_property(m_contact->property_status_message(),
-                                                    property_headerbar_subtitle(),
-                                                    Glib::BINDING_DEFAULT | Glib::BINDING_SYNC_CREATE);
+    m_bindings.push_back(Glib::Binding::bind_property(m_contact->property_status_message(),
+                                                      property_headerbar_subtitle(),
+                                                      Glib::BINDING_DEFAULT | Glib::BINDING_SYNC_CREATE));
 
-    m_binding_online = Glib::Binding::bind_property(m_contact->property_connection(),
-                                 m_input_revealer->property_reveal_child(),
-                                 Glib::BINDING_DEFAULT | Glib::BINDING_SYNC_CREATE,
-                                 [](const TOX_CONNECTION& connection, bool& is_online) {
+    m_bindings.push_back(Glib::Binding::bind_property(m_contact->property_connection(),
+                                                      m_input_revealer->property_reveal_child(),
+                                                      Glib::BINDING_DEFAULT | Glib::BINDING_SYNC_CREATE,
+                                                      [](const TOX_CONNECTION& connection, bool& is_online) {
         utils::debug::scope_log log(DBG_LVL_5("gtox"), { connection });
         is_online = connection != TOX_CONNECTION_NONE;
         return true;
-    });
+    }));
 
     m_input->signal_key_press_event().connect(sigc::track_obj([this](GdkEventKey* event) {
         utils::debug::scope_log log(DBG_LVL_3("gtox"), {});
@@ -382,7 +382,7 @@ chat::chat(std::shared_ptr<toxmm::core> core,
                      std::endl;
     }, *this));
 
-    m_webcam_bind_preview = Glib::Binding::bind_property(m_webcam.property_pixbuf(),
+    m_bindings.push_back(Glib::Binding::bind_property(m_webcam.property_pixbuf(),
                                                          m_contact->call()->property_video_frame(),
                                                          Glib::BINDING_DEFAULT,
                                                          [this](const Glib::RefPtr<Gdk::Pixbuf>& in, toxmm::av::image& out) {
@@ -403,16 +403,16 @@ chat::chat(std::shared_ptr<toxmm::core> core,
             }
         }
         return true;
-    });
+    }));
 
-    m_webcam_bind_preview_2 = Glib::Binding::bind_property(m_webcam.property_pixbuf(),
-                                                           m_image_webcam_local->property_pixbuf(),
-                                                           Glib::BINDING_DEFAULT);
+    m_bindings.push_back(Glib::Binding::bind_property(m_webcam.property_pixbuf(),
+                                                      m_image_webcam_local->property_pixbuf(),
+                                                      Glib::BINDING_DEFAULT));
 
-    m_webcam_bind_preview_test = Glib::Binding::bind_property(m_contact->call()->property_remote_video_frame(),
-                                                              m_image_webcam_remote->property_pixbuf(),
-                                                              Glib::BINDING_DEFAULT | Glib::BINDING_SYNC_CREATE,
-                                                              [](const toxmm::av::image& in, Glib::RefPtr<Gdk::Pixbuf>& out) {
+    m_bindings.push_back(Glib::Binding::bind_property(m_contact->call()->property_remote_video_frame(),
+                                                      m_image_webcam_remote->property_pixbuf(),
+                                                      Glib::BINDING_DEFAULT | Glib::BINDING_SYNC_CREATE,
+                                                      [](const toxmm::av::image& in, Glib::RefPtr<Gdk::Pixbuf>& out) {
         if (in.size() > 0) {
             auto mem = new uint8_t[in.size() * 3];
             for (size_t i = 0; i < in.size(); ++i) {
@@ -432,7 +432,7 @@ chat::chat(std::shared_ptr<toxmm::core> core,
             });
         }
         return true;
-    });
+    }));
 
     load_log();
 }
