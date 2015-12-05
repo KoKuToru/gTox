@@ -89,23 +89,31 @@ bool setup_translation(std::string path) {
 void terminate_handler() {
     utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
     std::exception_ptr exptr = std::current_exception();
+    std::string title = "Fatal Unexpected Exception";
+    std::string message = "unknow exception !";
     try {
         std::rethrow_exception(exptr);
     } catch (const Glib::Exception &ex) {
-        dialog::error(true, "Fatal Unexpected Glib Exception", ex.what()).run();
+        title = "Fatal Unexpected Glib Exception";
+        message = ex.what();
     } catch (const toxmm::exception &ex) {
-        dialog::error(true, "Fatal Unexpected Tox Exception", ex.what()).run();
+        title = "Fatal Unexpected Tox Exception";
+        message = ex.what();
     } catch (const std::exception &ex) {
-        dialog::error(true, "Fatal Unexpected Exception", ex.what()).run();
+        title = "Fatal Unexpected Exception";
+        message = ex.what();
     } catch (const std::string &ex) {
-        dialog::error(true, "Fatal Unexpected String Exception", ex).run();
+        title = "Fatal Unexpected String Exception";
+        message = ex;
     } catch (...) {
-        dialog::error(true, "Fatal Unexpected Exception", "unknow exception !")
-            .run();
+        // not to read..
     }
+    std::cerr << title << ": " << message << std::endl;
+    dialog::error(true, title, message)
+            .run();
     abort();
 }
-#include <assert.h>
+
 int main(int argc, char* argv[]) {
     utils::debug::scope_log log(DBG_LVL_1("gtox"), {
                                   argc,
