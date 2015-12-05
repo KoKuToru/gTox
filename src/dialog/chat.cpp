@@ -66,7 +66,7 @@ chat::chat(std::shared_ptr<toxmm::core> core,
     builder.get_widget("btn_call", m_av_call);
     builder.get_widget("headerbar_buttons", m_headerbar_buttons);
 
-    m_image_webcam_local  = builder.get_widget_derived<widget::imagescaled>("image10");
+    m_image_webcam_local  = builder.get_widget_derived<widget::imagescaled>("image_webcam_local");
     m_image_webcam_remote = builder.get_widget_derived<widget::imagescaled>("image_webcam_remote");
 
     property_body() = m_body;
