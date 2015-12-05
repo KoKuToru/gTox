@@ -50,13 +50,13 @@ void imagescaled::calculate_size(int w, int h,
         out_ph = 1;
         return;
     }
-    w = std::max(1, w);
-    h = std::max(1, h);
     out_pw = pix->get_width();
     out_ph = pix->get_height();
-    double scale_w = w / out_pw;
-    double scale_h = h / out_ph;
-    out_scale = std::max(scale_w, scale_h);
+    double scale_w = std::max(1, w) / out_pw;
+    double scale_h = std::max(1, h) / out_ph;
+    out_scale = (w > 0 && h > 0)
+                ? std::min(scale_w, scale_h)
+                : std::max(scale_w, scale_h);
     out_pw *= out_scale;
     out_ph *= out_scale;
 }
@@ -83,8 +83,8 @@ bool imagescaled::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
         tmp_cr->scale(scale, scale);
         Gdk::Cairo::set_source_pixbuf(tmp_cr,
                                       pix,
-                                      (w - pw) / 2,
-                                      (h - ph) / 2);
+                                      (w - pw) / scale / 2,
+                                      (h - ph) / scale / 2);
         tmp_cr->paint();
         tmp_cr->restore();
     }
@@ -115,6 +115,14 @@ Gtk::SizeRequestMode imagescaled::get_request_mode_vfunc() const {
 void imagescaled::get_preferred_width_vfunc(int& minimum_width,
                                             int& natural_width) const {
     utils::debug::scope_log log(DBG_LVL_5("gtox"), {});
+    std::clog << (void*)this << " get_preferred_width_vfunc" << std::endl;
+    int rw, rh;
+    get_size_request(rw, rh);
+    if (rw > 0) {
+        minimum_width = rw;
+        natural_width = rw;
+        return;
+    }
 
     minimum_width = 1;
     natural_width = 1;
@@ -123,10 +131,20 @@ void imagescaled::get_preferred_width_vfunc(int& minimum_width,
     if (pix) {
         natural_width = pix->get_width();
     }
+
+    std::clog << (void*)this << " get_preferred_width_vfunc return " << minimum_width << " - " << natural_width << std::endl;
 }
 void imagescaled::get_preferred_height_vfunc(int& minimum_height,
                                              int& natural_height) const {
     utils::debug::scope_log log(DBG_LVL_5("gtox"), {});
+    std::clog << (void*)this << " get_preferred_height_vfunc" << std::endl;
+    int rw, rh;
+    get_size_request(rw, rh);
+    if (rh > 0) {
+        minimum_height = rh;
+        natural_height = rh;
+        return;
+    }
 
     int minimum_width = 1;
     int natural_width = 1;
@@ -135,6 +153,8 @@ void imagescaled::get_preferred_height_vfunc(int& minimum_height,
     get_preferred_height_for_width_vfunc(minimum_width,
                                          minimum_height,
                                          natural_height);
+
+    std::clog << (void*)this << " get_preferred_height_vfunc return " << minimum_height << " - " << natural_height << std::endl;
 }
 
 void imagescaled::get_preferred_height_for_width_vfunc(
@@ -142,6 +162,14 @@ void imagescaled::get_preferred_height_for_width_vfunc(
         int& minimum_height,
         int& natural_height) const {
     utils::debug::scope_log log(DBG_LVL_5("gtox"), {});
+    std::clog << (void*)this << " get_preferred_height_for_width_vfunc " << width << std::endl;
+    int rw, rh;
+    get_size_request(rw, rh);
+    if (rh > 0) {
+        minimum_height = rh;
+        natural_height = rh;
+        return;
+    }
 
     auto pix = property_pixbuf().get_value();
     if (pix) {
@@ -149,9 +177,11 @@ void imagescaled::get_preferred_height_for_width_vfunc(
         double ph = 1;
         double scale = 1;
         calculate_size(width, 0, pw, ph, scale);
-        minimum_height = std::ceil(ph);
+        minimum_height = 1;
         natural_height = std::ceil(ph);
     }
+
+    std::clog << (void*)this << " get_preferred_height_for_width_vfunc return " << minimum_height << " - " << natural_height << std::endl;
 }
 
 void imagescaled::get_preferred_width_for_height_vfunc(
@@ -159,6 +189,14 @@ void imagescaled::get_preferred_width_for_height_vfunc(
         int& minimum_width,
         int& natural_width) const {
     utils::debug::scope_log log(DBG_LVL_5("gtox"), {});
+    std::clog << (void*)this << " get_preferred_width_for_height_vfunc " << height << std::endl;
+    int rw, rh;
+    get_size_request(rw, rh);
+    if (rw > 0) {
+        minimum_width = rw;
+        natural_width = rw;
+        return;
+    }
 
     auto pix = property_pixbuf().get_value();
     if (pix) {
@@ -166,7 +204,9 @@ void imagescaled::get_preferred_width_for_height_vfunc(
         double ph = 1;
         double scale = 1;
         calculate_size(0, height, pw, ph, scale);
-        minimum_width = std::ceil(pw);
+        minimum_width = 1;
         natural_width = std::ceil(pw);
     }
+
+    std::clog << (void*)this << " get_preferred_width_for_height_vfunc return " << minimum_width << " - " << natural_width << std::endl;
 }
