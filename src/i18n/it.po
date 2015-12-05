@@ -235,7 +235,7 @@ msgstr "Immagine"
 
 #: widget/chat_bubble.cpp
 msgid "Just now"
-msgstr "Giusto adesso"
+msgstr "Proprio adesso"
 
 #: resources/ui/popover_settings.ui
 msgid "Message"
@@ -292,7 +292,7 @@ msgstr "Il profilo non può essere caricato"
 
 #: dialog/profile_selection.cpp
 msgid "Profile not loaded for an unknown reason"
-msgstr "Profilo non caricato per ragioni sconosciute"
+msgstr "Profilo non caricato per un motivo sconosciuto"
 
 #: resources/ui/dialog_settings.ui
 msgid "Proxy host"
