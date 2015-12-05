@@ -63,7 +63,7 @@ chat::chat(std::shared_ptr<toxmm::core> core,
     builder.get_widget("eventbox", m_eventbox);
     builder.get_widget("scrolled", m_scrolled);
     builder.get_widget("viewport", m_viewport);
-    builder.get_widget("av_call", m_av_call);
+    builder.get_widget("btn_call", m_av_call);
     builder.get_widget("headerbar_buttons", m_headerbar_buttons);
 
     m_image_webcam_local  = builder.get_widget_derived<widget::imagescaled>("image10");
@@ -439,7 +439,7 @@ chat::chat(std::shared_ptr<toxmm::core> core,
 
 chat::~chat() {
     utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
-
+    delete m_headerbar_buttons;
     delete m_body;
 }
 
