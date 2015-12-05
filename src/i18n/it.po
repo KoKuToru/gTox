@@ -127,7 +127,7 @@ msgid ""
 "that is already on the friend list."
 msgstr ""
 "Una richiesta di contatto è già stata inviata, o l'indirizzo appartiene ad un contatto "
-"che è già nella lista amici."
+"già presente nella lista amici."
 
 #: resources/ui/dialog_settings.ui
 msgid "About"
@@ -376,7 +376,7 @@ msgstr "Messaggio"
 
 #: resources/ui/list_item_profile.ui resources/ui/popover_settings.ui
 msgid "Statusmessage"
-msgstr ""
+msgstr "Messaggio"
 
 #: resources/ui/popover_settings.ui
 msgid "Submit"
@@ -404,7 +404,7 @@ msgstr "Il contatto era già lì, ma il valore nospam era diverso"
 
 #: widget/main_menu.cpp
 msgid "The length of the contact request message exceeded 1016 bytes."
-msgstr "La lunghezza del messaggio di richiesta di contatto supera 1016 byte."
+msgstr "La lunghezza del messaggio di richiesta di contatto supera 1016 bytes."
 
 #: widget/main_menu.cpp
 msgid "This contact address belongs to you"
@@ -511,7 +511,7 @@ msgstr "Impostazioni gTox"
 #. Text next to the spinner, while profiles are loading
 #: resources/ui/dialog_profile.ui
 msgid "loading profiles..."
-msgstr "caricamento profilo..."
+msgstr "caricamento profili..."
 
 #: resources/ui/dialog_settings.ui
 msgid "never"
