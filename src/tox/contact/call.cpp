@@ -19,6 +19,7 @@
 #include "call.h"
 #include "contact.h"
 #include "core.h"
+#include "exception.h"
 
 using namespace toxmm;
 
@@ -102,8 +103,17 @@ call::call(const std::shared_ptr<toxmm::contact>& contact)
             return;
         }
         std::clog << "before send frame" << std::endl;
-        av->send_video_frame(contact->property_nr(),
-                             property_video_frame());
+        try {
+            av->send_video_frame(contact->property_nr(),
+                                 property_video_frame());
+        } catch (const exception& ex) {
+            if (ex.type() != std::type_index(typeid(TOXAV_ERR_SEND_FRAME))) {
+                throw;
+            }
+            if (ex.what_id() != TOXAV_ERR_SEND_FRAME_FRIEND_NOT_IN_CALL) {
+                throw;
+            }
+        }
     }, *this));
     property_audio_frame().signal_changed().connect(sigc::track_obj([this]() {
         auto contact = toxmm::call::contact();
@@ -111,8 +121,17 @@ call::call(const std::shared_ptr<toxmm::contact>& contact)
         if (!contact || !av) {
             return;
         }
-        av->send_audio_frame(contact->property_nr(),
-                             property_audio_frame());
+        try {
+            av->send_audio_frame(contact->property_nr(),
+                                 property_audio_frame());
+        } catch (const exception& ex) {
+            if (ex.type() != std::type_index(typeid(TOXAV_ERR_SEND_FRAME))) {
+                throw;
+            }
+            if (ex.what_id() != TOXAV_ERR_SEND_FRAME_FRIEND_NOT_IN_CALL) {
+                throw;
+            }
+        }
     }, *this));
     auto update_kilobitrate = sigc::track_obj([this]() {
         auto contact = toxmm::call::contact();
