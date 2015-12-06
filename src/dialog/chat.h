@@ -31,6 +31,7 @@
 #include "detachable_window.h"
 #include "config.h"
 #include "utils/webcam.h"
+#include "widget/avatar.h"
 
 namespace widget {
     class chat_input;
@@ -71,6 +72,9 @@ namespace dialog {
             utils::webcam m_webcam;
 
             std::vector<Glib::RefPtr<Glib::Binding>> m_bindings;
+
+            widget::avatar m_avatar_local;
+            widget::avatar m_avatar_remote;
 
             enum class SIDE {
                 NONE,

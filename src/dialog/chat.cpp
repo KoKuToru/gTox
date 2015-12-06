@@ -50,7 +50,10 @@ chat::chat(std::shared_ptr<toxmm::core> core,
     detachable_window(slot_add_widget, slot_del_widget),
     m_core(core),
     m_contact(contact),
-    m_config(config) {
+    m_config(config),
+    m_avatar_local(core->property_addr_public()),
+    m_avatar_remote(contact->property_addr_public()) {
+
     utils::debug::scope_log log(DBG_LVL_1("gtox"), { contact->property_name_or_addr().get_value().raw() });
 
     utils::builder builder(Gtk::Builder::create_from_resource("/org/gtox/ui/dialog_chat.ui"));
@@ -312,6 +315,9 @@ chat::chat(std::shared_ptr<toxmm::core> core,
     m_av_call_start->signal_clicked().connect(sigc::track_obj([this]() {
         auto ct = m_contact;
         std::clog << "call the contact" << std::endl;
+        //update previews
+        m_image_webcam_local->property_pixbuf() = m_avatar_local.property_pixbuf().get_value();
+        m_image_webcam_remote->property_pixbuf() = m_avatar_remote.property_pixbuf().get_value();
         ct->call()->property_state() = toxmm::call::CALL_RESUME;
     }, *this));
     m_av_call_stop->signal_clicked().connect(sigc::track_obj([this]() {
@@ -339,6 +345,16 @@ chat::chat(std::shared_ptr<toxmm::core> core,
                                                       Glib::BINDING_DEFAULT
                                                       | Glib::BINDING_SYNC_CREATE
                                                       | Glib::BINDING_INVERT_BOOLEAN));
+
+    // bind avatar to webcam preview
+    m_bindings.push_back(Glib::Binding::bind_property(m_avatar_local.property_pixbuf(),
+                                                      m_image_webcam_local->property_pixbuf(),
+                                                      Glib::BINDING_DEFAULT
+                                                      | Glib::BINDING_SYNC_CREATE));
+    m_bindings.push_back(Glib::Binding::bind_property(m_avatar_remote.property_pixbuf(),
+                                                      m_image_webcam_remote->property_pixbuf(),
+                                                      Glib::BINDING_DEFAULT
+                                                      | Glib::BINDING_SYNC_CREATE));
 
     m_contact->call()->property_state().signal_changed().connect(sigc::track_obj([this]() {
         std::clog << "call state changed to ";
