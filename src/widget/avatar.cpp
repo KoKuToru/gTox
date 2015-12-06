@@ -115,6 +115,15 @@ avatar::avatar(BaseObjectType* cobject,
                toxmm::contactAddrPublic addr)
     : Gtk::Image(cobject) {
     utils::debug::scope_log log(DBG_LVL_1("gtox"), { std::string(addr) });
+    load(addr);
+}
+
+avatar::avatar(toxmm::contactAddrPublic addr) {
+    utils::debug::scope_log log(DBG_LVL_1("gtox"), { std::string(addr) });
+    load(addr);
+}
+
+void avatar::load(toxmm::contactAddrPublic addr) {
     //load image
     static std::map<toxmm::contactAddrPublic, std::shared_ptr<image>> m_image;
     auto iter = m_image.find(addr);

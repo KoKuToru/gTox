@@ -30,11 +30,13 @@ namespace widget {
     class avatar : public Gtk::Image, public utils::debug::track_obj<avatar> {
         public:
             avatar() {}
+            avatar(toxmm::contactAddrPublic addr);
             avatar(BaseObjectType* cobject,
                    utils::builder,
                    toxmm::contactAddrPublic addr);
             virtual ~avatar();
 
+            void load(toxmm::contactAddrPublic addr);
             void save_for(toxmm::contactAddrPublic addr);
 
         protected:
