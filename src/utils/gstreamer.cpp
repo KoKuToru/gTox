@@ -144,7 +144,7 @@ void gstreamer::init() {
                 if (error) {
                     m_signal_error(error->parse().what());
                 } else {
-                    m_signal_error(_("unknow gstreamer error"));
+                    m_signal_error(_("unknown gstreamer error"));
                 }
                 break;
             default:
