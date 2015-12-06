@@ -62,8 +62,10 @@ namespace dialog {
             widget::imagescaled* m_image_webcam_remote;
 
             Gtk::Box* m_chat_box;
+            Gtk::Box* m_av_area;
 
-            Gtk::Button* m_av_call;
+            Gtk::Button* m_av_call_start;
+            Gtk::Button* m_av_call_stop;
             Gtk::Box* m_headerbar_buttons;
 
             utils::webcam m_webcam;

@@ -6,7 +6,7 @@
     <property name="visible">True</property>
     <property name="can_focus">True</property>
     <child>
-      <object class="GtkBox" id="box7">
+      <object class="GtkBox" id="av_area">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="orientation">vertical</property>
@@ -71,16 +71,19 @@
             <property name="can_focus">False</property>
             <property name="halign">center</property>
             <property name="border_width">6</property>
+            <property name="spacing">2</property>
             <child>
-              <object class="GtkButton" id="btn_call_pause">
+              <object class="GtkToggleButton" id="send_video">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <property name="tooltip_text" translatable="yes" comments="tooltip">send video</property>
+                <property name="relief">none</property>
                 <child>
-                  <object class="GtkImage" id="image13">
+                  <object class="GtkImage" id="image12">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="icon_name">microphone-sensitivity-muted</property>
+                    <property name="icon_name">camera-web-symbolic</property>
                   </object>
                 </child>
               </object>
@@ -91,15 +94,34 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="btn_call_stop">
+              <object class="GtkVolumeButton" id="recv_audio_volume">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <child>
-                  <object class="GtkImage" id="image12">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="icon_name">call-stop-symbolic</property>
+                <property name="relief">none</property>
+                <property name="focus_on_click">False</property>
+                <property name="orientation">vertical</property>
+                <property name="value">0.5</property>
+                <property name="icons">microphone-sensitivity-muted-symbolic
+microphone-sensitivity-high-symbolic
+microphone-sensitivity-low-symbolic
+microphone-sensitivity-medium-symbolic</property>
+                <child internal-child="plus_button">
+                  <object class="GtkButton" id="volumebutton-plus_button3">
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <property name="halign">center</property>
+                    <property name="valign">center</property>
+                    <property name="relief">none</property>
+                  </object>
+                </child>
+                <child internal-child="minus_button">
+                  <object class="GtkButton" id="volumebutton-minus_button3">
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <property name="halign">center</property>
+                    <property name="valign">center</property>
+                    <property name="relief">none</property>
                   </object>
                 </child>
               </object>
@@ -109,9 +131,56 @@
                 <property name="position">1</property>
               </packing>
             </child>
-            <style>
-              <class name="linked"/>
-            </style>
+            <child>
+              <object class="GtkSeparator" id="separator3">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="orientation">vertical</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkVolumeButton" id="send_audio_volume">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="relief">none</property>
+                <property name="focus_on_click">False</property>
+                <property name="orientation">vertical</property>
+                <property name="value">0.5</property>
+                <property name="icons">audio-volume-muted-symbolic
+audio-volume-high-symbolic
+audio-volume-low-symbolic
+audio-volume-medium-symbolic</property>
+                <child internal-child="plus_button">
+                  <object class="GtkButton" id="volumebutton-plus_button1">
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <property name="halign">center</property>
+                    <property name="valign">center</property>
+                    <property name="relief">none</property>
+                  </object>
+                </child>
+                <child internal-child="minus_button">
+                  <object class="GtkButton" id="volumebutton-minus_button1">
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <property name="halign">center</property>
+                    <property name="valign">center</property>
+                    <property name="relief">none</property>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">3</property>
+              </packing>
+            </child>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -539,10 +608,11 @@
     <property name="can_focus">False</property>
     <property name="halign">end</property>
     <child>
-      <object class="GtkButton" id="btn_call">
+      <object class="GtkButton" id="btn_call_start">
         <property name="visible">True</property>
         <property name="can_focus">True</property>
         <property name="receives_default">True</property>
+        <property name="tooltip_text" translatable="yes" comments="tooltip">Start call</property>
         <child>
           <object class="GtkImage" id="image11">
             <property name="visible">True</property>
@@ -555,6 +625,25 @@
         <property name="expand">False</property>
         <property name="fill">True</property>
         <property name="position">0</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkButton" id="btn_call_stop">
+        <property name="can_focus">True</property>
+        <property name="receives_default">True</property>
+        <property name="tooltip_text" translatable="yes" comments="Tooltip">Stop call</property>
+        <child>
+          <object class="GtkImage" id="image9">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="icon_name">call-stop-symbolic</property>
+          </object>
+        </child>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">True</property>
+        <property name="position">1</property>
       </packing>
     </child>
     <child>
@@ -573,7 +662,7 @@
       <packing>
         <property name="expand">False</property>
         <property name="fill">True</property>
-        <property name="position">1</property>
+        <property name="position">2</property>
       </packing>
     </child>
     <style>

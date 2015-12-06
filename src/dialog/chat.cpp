@@ -63,8 +63,10 @@ chat::chat(std::shared_ptr<toxmm::core> core,
     builder.get_widget("eventbox", m_eventbox);
     builder.get_widget("scrolled", m_scrolled);
     builder.get_widget("viewport", m_viewport);
-    builder.get_widget("btn_call", m_av_call);
+    builder.get_widget("btn_call_start", m_av_call_start);
+    builder.get_widget("btn_call_stop", m_av_call_stop);
     builder.get_widget("headerbar_buttons", m_headerbar_buttons);
+    builder.get_widget("av_area", m_av_area);
 
     m_image_webcam_local  = builder.get_widget_derived<widget::imagescaled>("image_webcam_local");
     m_image_webcam_remote = builder.get_widget_derived<widget::imagescaled>("image_webcam_remote");
@@ -307,11 +309,36 @@ chat::chat(std::shared_ptr<toxmm::core> core,
     }, *this));
 
     // av support
-    m_av_call->signal_clicked().connect(sigc::track_obj([this]() {
+    m_av_call_start->signal_clicked().connect(sigc::track_obj([this]() {
         auto ct = m_contact;
         std::clog << "call the contact" << std::endl;
         ct->call()->property_state() = toxmm::call::CALL_RESUME;
     }, *this));
+    m_av_call_stop->signal_clicked().connect(sigc::track_obj([this]() {
+        auto ct = m_contact;
+        ct->call()->property_state() = toxmm::call::CALL_CANCEL;
+    }, *this));
+
+    // only show m_av_call_start when we aren't in a call
+    m_bindings.push_back(Glib::Binding::bind_property(m_contact->call()->property_state(),
+                                                      m_av_call_start->property_visible(),
+                                                      Glib::BINDING_DEFAULT | Glib::BINDING_SYNC_CREATE,
+                                                      [](const toxmm::call::CALL_STATE& state, bool& visible) {
+        visible = state == toxmm::call::CALL_CANCEL;
+        return true;
+    }));
+    // only show m_av_call_stop when m_av_call_start is not visible
+    m_bindings.push_back(Glib::Binding::bind_property(m_av_call_start->property_visible(),
+                                                      m_av_call_stop->property_visible(),
+                                                      Glib::BINDING_DEFAULT
+                                                      | Glib::BINDING_SYNC_CREATE
+                                                      | Glib::BINDING_INVERT_BOOLEAN));
+    // only show av area when in call
+    m_bindings.push_back(Glib::Binding::bind_property(m_av_call_start->property_visible(),
+                                                      m_av_area->property_visible(),
+                                                      Glib::BINDING_DEFAULT
+                                                      | Glib::BINDING_SYNC_CREATE
+                                                      | Glib::BINDING_INVERT_BOOLEAN));
 
     m_contact->call()->property_state().signal_changed().connect(sigc::track_obj([this]() {
         std::clog << "call state changed to ";
@@ -431,6 +458,15 @@ chat::chat(std::shared_ptr<toxmm::core> core,
                 delete[] data;
             });
         }
+        return true;
+    }));
+
+    // hide headerbar buttons when offline
+    m_bindings.push_back(Glib::Binding::bind_property(m_contact->property_connection(),
+                                                      m_headerbar_buttons->property_visible(),
+                                                      Glib::BINDING_DEFAULT | Glib::BINDING_SYNC_CREATE,
+                                                      [](const TOX_CONNECTION& connection, bool& is_online) {
+        is_online = connection != TOX_CONNECTION_NONE;
         return true;
     }));
 
