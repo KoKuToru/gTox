@@ -57,7 +57,6 @@ namespace dialog {
 
             widget::chat_input* m_input;
             Gtk::Revealer* m_input_revealer;
-            Gtk::Revealer* m_input_format_revealer;
 
             widget::imagescaled* m_image_webcam_local;
             widget::imagescaled* m_image_webcam_remote;
@@ -66,8 +65,11 @@ namespace dialog {
             Gtk::Box* m_av_area;
 
             Gtk::Button* m_av_call_start;
+            Gtk::Button* m_av_call_start2;
             Gtk::Button* m_av_call_stop;
+            Gtk::Button* m_av_call_stop2;
             Gtk::Box* m_headerbar_buttons;
+            Gtk::Revealer* m_incoming_call_revealer;
 
             utils::webcam m_webcam;
 

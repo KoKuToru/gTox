@@ -61,15 +61,17 @@ chat::chat(std::shared_ptr<toxmm::core> core,
     builder.get_widget("chat_body", m_body);
     m_input = builder.get_widget_derived<widget::chat_input>("chat_input");
     builder.get_widget("chat_input_revealer", m_input_revealer);
-    builder.get_widget("chat_input_format_revealer", m_input_format_revealer);
     builder.get_widget("chat_box", m_chat_box);
     builder.get_widget("eventbox", m_eventbox);
     builder.get_widget("scrolled", m_scrolled);
     builder.get_widget("viewport", m_viewport);
     builder.get_widget("btn_call_start", m_av_call_start);
     builder.get_widget("btn_call_stop", m_av_call_stop);
+    builder.get_widget("btn_incoming_call_accept", m_av_call_start2);
+    builder.get_widget("btn_incoming_call_decline", m_av_call_stop2);
     builder.get_widget("headerbar_buttons", m_headerbar_buttons);
     builder.get_widget("av_area", m_av_area);
+    builder.get_widget("incoming_call_revealer", m_incoming_call_revealer);
 
     m_image_webcam_local  = builder.get_widget_derived<widget::imagescaled>("image_webcam_local");
     m_image_webcam_remote = builder.get_widget_derived<widget::imagescaled>("image_webcam_remote");
@@ -314,15 +316,23 @@ chat::chat(std::shared_ptr<toxmm::core> core,
     // av support
     m_av_call_start->signal_clicked().connect(sigc::track_obj([this]() {
         auto ct = m_contact;
-        std::clog << "call the contact" << std::endl;
+        //update previews
+        m_image_webcam_local->property_pixbuf() = m_avatar_local.property_pixbuf().get_value();
+        m_image_webcam_remote->property_pixbuf() = m_avatar_remote.property_pixbuf().get_value();
+        ct->call()->property_state() = toxmm::call::CALL_RESUME;
+    }, *this));
+    m_av_call_start2->signal_clicked().connect(sigc::track_obj([this]() {
+        auto ct = m_contact;
         //update previews
         m_image_webcam_local->property_pixbuf() = m_avatar_local.property_pixbuf().get_value();
         m_image_webcam_remote->property_pixbuf() = m_avatar_remote.property_pixbuf().get_value();
         ct->call()->property_state() = toxmm::call::CALL_RESUME;
     }, *this));
     m_av_call_stop->signal_clicked().connect(sigc::track_obj([this]() {
-        auto ct = m_contact;
-        ct->call()->property_state() = toxmm::call::CALL_CANCEL;
+        m_contact->call()->property_state() = toxmm::call::CALL_CANCEL;
+    }, *this));
+    m_av_call_stop2->signal_clicked().connect(sigc::track_obj([this]() {
+        m_contact->call()->property_state() = toxmm::call::CALL_CANCEL;
     }, *this));
 
     // only show m_av_call_start when we aren't in a call
@@ -409,13 +419,18 @@ chat::chat(std::shared_ptr<toxmm::core> core,
     m_contact->call()->property_state().signal_changed().connect(update_webcam_state);
     m_contact->call()->property_remote_state().signal_changed().connect(update_webcam_state);
 
-    m_contact->call()->signal_incoming_call().connect(sigc::track_obj([this]() {
-        std::clog << "new incoming call" << std::endl;
-    }, *this));
-
-    m_contact->call()->signal_finish().connect(sigc::track_obj([this]() {
-        std::clog << "call ended" << std::endl;
-    }, *this));
+    auto update_incoming_revealer = sigc::track_obj([this]() {
+        m_incoming_call_revealer->property_reveal_child() =
+                m_contact->call()->property_state()
+                    .get_value() == toxmm::call::CALL_CANCEL &&
+                m_contact->call()->property_remote_state()
+                    .get_value() != toxmm::call::CALL_CANCEL;
+    }, *this);
+    m_contact->call()->property_state()
+            .signal_changed().connect(update_incoming_revealer);
+    m_contact->call()->property_remote_state()
+            .signal_changed().connect(update_incoming_revealer);
+    update_incoming_revealer();
 
     m_contact->call()->signal_suggestion_updated().connect(sigc::track_obj([this]() {
         std::clog << "suggested bitrate updated to V: " <<
@@ -491,6 +506,9 @@ chat::chat(std::shared_ptr<toxmm::core> core,
 
 chat::~chat() {
     utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
+    // close call on exit
+    m_contact->call()->property_state() = toxmm::call::CALL_CANCEL;
+
     delete m_headerbar_buttons;
     delete m_body;
 }
