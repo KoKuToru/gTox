@@ -180,7 +180,7 @@ void av::set_bit_rate(contactNr nr,
                        audio_bit_rate,
                        video_bit_rate,
                        &error);
-    if (!error != TOXAV_ERR_BIT_RATE_SET_OK) {
+    if (error != TOXAV_ERR_BIT_RATE_SET_OK) {
         throw exception(error);
     }
 }
