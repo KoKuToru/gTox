@@ -108,21 +108,20 @@ call::call(const std::shared_ptr<toxmm::contact>& contact)
                     break;
             }
         } catch(const exception& ex) {
+            if (property_state() != CALL_CANCEL) {
+                property_state() = CALL_CANCEL;
+            }
             if (ex.type() == std::type_index(typeid(TOXAV_ERR_CALL_CONTROL)) &&
                 (ex.what_id() == TOXAV_ERR_CALL_CONTROL_FRIEND_NOT_IN_CALL ||
                  ex.what_id() == TOXAV_ERR_CALL_CONTROL_FRIEND_NOT_FOUND)) {
-                if (property_state() != CALL_CANCEL) {
-                    property_state() = CALL_CANCEL;
-                }
+                // ignore this error
             } else if (ex.type() == std::type_index(typeid(TOXAV_ERR_CALL)) &&
                        (ex.what_id() == TOXAV_ERR_CALL_FRIEND_NOT_FOUND ||
                         ex.what_id() == TOXAV_ERR_CALL_FRIEND_NOT_CONNECTED ||
                         ex.what_id() == TOXAV_ERR_CALL_FRIEND_ALREADY_IN_CALL)) {
-                m_prev_call_state = CALL_CANCEL;
+                // ignore this errro
             } else {
-                if (property_state() != CALL_CANCEL) {
-                    property_state() = CALL_CANCEL;
-                }
+                throw;
             }
         }
         m_prev_call_state = property_state();
