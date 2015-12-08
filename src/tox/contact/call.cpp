@@ -64,13 +64,13 @@ call::call(const std::shared_ptr<toxmm::contact>& contact)
         if (!contact || !av) {
             return;
         }
-        if (m_prev_call_state == property_state().get_value()) {
-            return;
-        }
         try {
             switch (property_state().get_value()) {
                 case CALL_RESUME:
                     if (property_remote_state() == CALL_CANCEL) {
+                        if (m_prev_call_state != CALL_CANCEL) {
+                            break;
+                        }
                         av->call(contact->property_nr(),
                                  property_suggested_audio_kilobitrate(),
                                  property_suggested_video_kilobitrate());
@@ -88,7 +88,8 @@ call::call(const std::shared_ptr<toxmm::contact>& contact)
                     }
                     break;
                 case CALL_PAUSE:
-                    if (property_remote_state() == CALL_CANCEL) {
+                    if (property_remote_state() == CALL_CANCEL ||
+                        m_prev_call_state == CALL_PAUSE) {
                         break;
                     }
                     av->call_control(contact->property_nr(),
