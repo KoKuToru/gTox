@@ -3,6 +3,10 @@
 #include <memory>
 #include <glibmm.h>
 
+namespace sigc {
+    SIGC_FUNCTORS_DEDUCE_RESULT_TYPE_WITH_DECLTYPE
+}
+
 namespace utils {
     /**
      * @brief The Dispatcher, executes given function on gtk main loop.
