@@ -33,6 +33,11 @@ namespace widget {
                    utils::builder);
             ~imagescaled();
 
+        private:
+            void calculate_size(int w, int h,
+                                double& out_pw, double& out_ph,
+                                double& out_scale) const;
+
         protected:
             bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
             Gtk::SizeRequestMode get_request_mode_vfunc() const override;
@@ -44,6 +49,10 @@ namespace widget {
                     int width,
                     int& minimum_height,
                     int& natural_height) const override;
+            void get_preferred_width_for_height_vfunc(
+                    int height,
+                    int& minimum_width,
+                    int& natural_width) const override;
     };
 }
 #endif

@@ -84,6 +84,7 @@ namespace toxmm {
             std::shared_ptr<toxmm::contact_manager> contact_manager();
             std::shared_ptr<toxmm::config> config();
             std::shared_ptr<toxmm::storage> storage();
+            std::shared_ptr<toxmm::av> av();
             static void try_load(std::string path, Glib::ustring& out_name, Glib::ustring& out_status, contactAddrPublic& out_addr, bool& out_writeable);
             static std::vector<uint8_t> create_state(std::string name, std::string status, contactAddrPublic& out_addr);
 
@@ -96,6 +97,8 @@ namespace toxmm {
             std::shared_ptr<toxmm::config> m_config;
             std::shared_ptr<toxmm::storage> m_storage;
             std::shared_ptr<toxmm::contact_manager> m_contact_manager;
+            std::shared_ptr<toxmm::av> m_av;
+
             profile m_profile;
             Glib::Timer m_bootstrap_timer;
 

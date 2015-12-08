@@ -23,6 +23,7 @@
 #include "receipt.h"
 #include "file/manager.h"
 #include "file/file.h"
+#include "call.h"
 
 using namespace toxmm;
 
@@ -50,8 +51,10 @@ Glib::PropertyProxy_ReadOnly<TOX_USER_STATUS>   contact::property_status()
 { return Glib::PropertyProxy_ReadOnly<TOX_USER_STATUS>(this, "contact-status"); }
 Glib::PropertyProxy_ReadOnly<TOX_CONNECTION>    contact::property_connection()
 { return Glib::PropertyProxy_ReadOnly<TOX_CONNECTION>(this, "contact-connection"); }
-Glib::PropertyProxy_ReadOnly<bool>              contact::property_typing()
-{ return Glib::PropertyProxy_ReadOnly<bool>(this, "contact-typing"); }
+Glib::PropertyProxy<bool>                       contact::property_typing()
+{ return m_property_typing.get_proxy(); }
+Glib::PropertyProxy_ReadOnly<bool>              contact::property_remote_typing()
+{ return Glib::PropertyProxy_ReadOnly<bool>(this, "contact-remote-typing"); }
 
 contact::contact(std::shared_ptr<toxmm::contact_manager> manager, contactNr nr):
     Glib::ObjectBase(typeid(contact)),
@@ -63,7 +66,8 @@ contact::contact(std::shared_ptr<toxmm::contact_manager> manager, contactNr nr):
     m_property_status_message(*this, "contact-status-message"),
     m_property_status(*this, "contact-status"),
     m_property_connection(*this, "contact-connection"),
-    m_property_typing(*this, "contact-typing") {
+    m_property_typing(*this, "contact-typing"),
+    m_property_remote_typing(*this, "contact-remote-typing") {
 
     auto update_name_or_addr = [this]() {
         if (property_name().get_value().empty()) {
@@ -138,6 +142,8 @@ void contact::init() {
             }, *this));
         }
     }, *this));
+
+    m_call = std::shared_ptr<toxmm::call>(new toxmm::call(shared_from_this()));
 }
 
 contactAddrPublic contact::toxcore_get_addr() {
@@ -288,4 +294,8 @@ std::shared_ptr<toxmm::contact_manager> contact::contact_manager() {
 
 std::shared_ptr<toxmm::file_manager> contact::file_manager() {
     return m_file_manager;
+}
+
+std::shared_ptr<toxmm::call> contact::call() {
+    return m_call;
 }

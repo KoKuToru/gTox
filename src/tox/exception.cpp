@@ -308,3 +308,104 @@ exception::exception(TOX_ERR_FILE_SEND_CHUNK error):
         throw std::runtime_error("TOX_ERR_FILE_SEND_CHUNK unknow error code " + std::to_string(error));
     }
 }
+
+exception::exception(TOXAV_ERR_NEW error):
+    m_type(typeid(error)) {
+    static std::map<decltype(error), std::string> enum2str =
+    {{TOXAV_ERR_NEW_NULL, _("TOXAV_ERR_NEW_NULL")},
+    {TOXAV_ERR_NEW_MALLOC, _("TOXAV_ERR_NEW_MALLOC")},
+    {TOXAV_ERR_NEW_MULTIPLE, _("TOXAV_ERR_NEW_MULTIPLE")}};
+    auto iter = enum2str.find(error);
+    if (iter != enum2str.end()) {
+        m_what = iter->second;
+        m_what_id = error;
+    } else {
+        throw std::runtime_error("TOXAV_ERR_NEW unknow error code " + std::to_string(error));
+    }
+}
+
+exception::exception(TOXAV_ERR_CALL error):
+    m_type(typeid(error)) {
+    static std::map<decltype(error), std::string> enum2str =
+    {{TOXAV_ERR_CALL_MALLOC, _("TOXAV_ERR_CALL_MALLOC")},
+    {TOXAV_ERR_CALL_SYNC, _("TOXAV_ERR_CALL_SYNC")},
+    {TOXAV_ERR_CALL_FRIEND_NOT_FOUND, _("TOXAV_ERR_CALL_FRIEND_NOT_FOUND")},
+    {TOXAV_ERR_CALL_FRIEND_NOT_CONNECTED, _("TOXAV_ERR_CALL_FRIEND_NOT_CONNECTED")},
+    {TOXAV_ERR_CALL_FRIEND_ALREADY_IN_CALL, _("TOXAV_ERR_CALL_FRIEND_ALREADY_IN_CALL")},
+    {TOXAV_ERR_CALL_INVALID_BIT_RATE, _("TOXAV_ERR_CALL_INVALID_BIT_RATE")}};
+    auto iter = enum2str.find(error);
+    if (iter != enum2str.end()) {
+        m_what = iter->second;
+        m_what_id = error;
+    } else {
+        throw std::runtime_error("TOXAV_ERR_CALL unknow error code " + std::to_string(error));
+    }
+}
+
+exception::exception(TOXAV_ERR_ANSWER error):
+    m_type(typeid(error)) {
+    static std::map<decltype(error), std::string> enum2str =
+    {{TOXAV_ERR_ANSWER_SYNC, _("TOXAV_ERR_ANSWER_SYNC")},
+    {TOXAV_ERR_ANSWER_CODEC_INITIALIZATION, _("TOXAV_ERR_ANSWER_CODEC_INITIALIZATION")},
+    {TOXAV_ERR_ANSWER_FRIEND_NOT_FOUND, _("TOXAV_ERR_ANSWER_FRIEND_NOT_FOUND")},
+    {TOXAV_ERR_ANSWER_FRIEND_NOT_CALLING, _("TOXAV_ERR_ANSWER_FRIEND_NOT_CALLING")},
+    {TOXAV_ERR_ANSWER_INVALID_BIT_RATE, _("TOXAV_ERR_ANSWER_INVALID_BIT_RATE")}};
+    auto iter = enum2str.find(error);
+    if (iter != enum2str.end()) {
+        m_what = iter->second;
+        m_what_id = error;
+    } else {
+        throw std::runtime_error("TOXAV_ERR_ANSWER unknow error code " + std::to_string(error));
+    }
+}
+
+exception::exception(TOXAV_ERR_CALL_CONTROL error):
+    m_type(typeid(error)) {
+    static std::map<decltype(error), std::string> enum2str =
+    {{TOXAV_ERR_CALL_CONTROL_SYNC, _("TOXAV_ERR_CALL_CONTROL_SYNC")},
+    {TOXAV_ERR_CALL_CONTROL_FRIEND_NOT_FOUND, _("TOXAV_ERR_CALL_CONTROL_FRIEND_NOT_FOUND")},
+    {TOXAV_ERR_CALL_CONTROL_FRIEND_NOT_IN_CALL, _("TOXAV_ERR_CALL_CONTROL_FRIEND_NOT_IN_CALL")},
+    {TOXAV_ERR_CALL_CONTROL_INVALID_TRANSITION, _("TOXAV_ERR_CALL_CONTROL_INVALID_TRANSITION")}};
+    auto iter = enum2str.find(error);
+    if (iter != enum2str.end()) {
+        m_what = iter->second;
+        m_what_id = error;
+    } else {
+        throw std::runtime_error("TOXAV_ERR_CALL_CONTROL unknow error code " + std::to_string(error));
+    }
+}
+
+exception::exception(TOXAV_ERR_BIT_RATE_SET error):
+    m_type(typeid(error)) {
+    static std::map<decltype(error), std::string> enum2str =
+    {{TOXAV_ERR_BIT_RATE_SET_SYNC, _("TOXAV_ERR_BIT_RATE_SET_SYNC")},
+    {TOXAV_ERR_BIT_RATE_SET_INVALID_AUDIO_BIT_RATE, _("TOXAV_ERR_BIT_RATE_SET_INVALID_AUDIO_BIT_RATE")},
+    {TOXAV_ERR_BIT_RATE_SET_FRIEND_NOT_FOUND, _("TOXAV_ERR_BIT_RATE_SET_FRIEND_NOT_FOUND")},
+    {TOXAV_ERR_BIT_RATE_SET_FRIEND_NOT_IN_CALL, _("TOXAV_ERR_BIT_RATE_SET_FRIEND_NOT_IN_CALL")}};
+    auto iter = enum2str.find(error);
+    if (iter != enum2str.end()) {
+        m_what = iter->second;
+        m_what_id = error;
+    } else {
+        throw std::runtime_error("TOXAV_ERR_BIT_RATE_SET unknow error code " + std::to_string(error));
+    }
+}
+
+exception::exception(TOXAV_ERR_SEND_FRAME error):
+    m_type(typeid(error)) {
+    static std::map<decltype(error), std::string> enum2str =
+    {{TOXAV_ERR_SEND_FRAME_NULL, _("TOXAV_ERR_SEND_FRAME_NULL")},
+    {TOXAV_ERR_SEND_FRAME_FRIEND_NOT_FOUND, _("TOXAV_ERR_SEND_FRAME_FRIEND_NOT_FOUND")},
+    {TOXAV_ERR_SEND_FRAME_FRIEND_NOT_IN_CALL, _("TOXAV_ERR_SEND_FRAME_FRIEND_NOT_IN_CALL")},
+    {TOXAV_ERR_SEND_FRAME_SYNC, _("TOXAV_ERR_SEND_FRAME_SYNC")},
+    {TOXAV_ERR_SEND_FRAME_INVALID, _("TOXAV_ERR_SEND_FRAME_INVALID")},
+    {TOXAV_ERR_SEND_FRAME_PAYLOAD_TYPE_DISABLED, _("TOXAV_ERR_SEND_FRAME_PAYLOAD_TYPE_DISABLED")},
+    {TOXAV_ERR_SEND_FRAME_RTP_FAILED, _("TOXAV_ERR_SEND_FRAME_RTP_FAILED")}};
+    auto iter = enum2str.find(error);
+    if (iter != enum2str.end()) {
+        m_what = iter->second;
+        m_what_id = error;
+    } else {
+        throw std::runtime_error("TOXAV_ERR_BIT_RATE_SET unknow error code " + std::to_string(error));
+    }
+}

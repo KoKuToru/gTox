@@ -19,6 +19,7 @@
 #include "core.h"
 #include "contact/manager.h"
 #include "exception.h"
+#include "av.h"
 #include <iostream>
 
 using namespace toxmm;
@@ -118,6 +119,7 @@ void core::save() {
 void core::destroy() {
     m_contact_manager->destroy();
     m_contact_manager.reset();
+    m_av.reset();
 }
 
 core::~core() {
@@ -380,6 +382,8 @@ void core::init() {
     }, *this));
 
     //start sub systems:
+    m_av = std::shared_ptr<toxmm::av>(new toxmm::av(shared_from_this()));
+    m_av->init();
     m_contact_manager = std::shared_ptr<toxmm::contact_manager>(new toxmm::contact_manager(shared_from_this()));
     m_contact_manager->init();
 
@@ -403,6 +407,10 @@ std::shared_ptr<toxmm::config> core::config() {
 
 std::shared_ptr<toxmm::storage> core::storage() {
     return m_storage;
+}
+
+std::shared_ptr<toxmm::av> core::av() {
+    return m_av;
 }
 
 void core::update() {

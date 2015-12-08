@@ -30,9 +30,12 @@
 #include "utils/debug.h"
 #include "detachable_window.h"
 #include "config.h"
+#include "utils/webcam.h"
+#include "widget/avatar.h"
 
 namespace widget {
     class chat_input;
+    class imagescaled;
 }
 
 namespace dialog {
@@ -54,13 +57,26 @@ namespace dialog {
 
             widget::chat_input* m_input;
             Gtk::Revealer* m_input_revealer;
-            Gtk::Revealer* m_input_format_revealer;
+
+            widget::imagescaled* m_image_webcam_local;
+            widget::imagescaled* m_image_webcam_remote;
 
             Gtk::Box* m_chat_box;
+            Gtk::Box* m_av_area;
 
-            Glib::RefPtr<Glib::Binding> m_binding_name;
-            Glib::RefPtr<Glib::Binding> m_binding_status;
-            Glib::RefPtr<Glib::Binding> m_binding_online;
+            Gtk::Button* m_av_call_start;
+            Gtk::Button* m_av_call_start2;
+            Gtk::Button* m_av_call_stop;
+            Gtk::Button* m_av_call_stop2;
+            Gtk::Box* m_headerbar_buttons;
+            Gtk::Revealer* m_incoming_call_revealer;
+
+            utils::webcam m_webcam;
+
+            std::vector<Glib::RefPtr<Glib::Binding>> m_bindings;
+
+            widget::avatar m_avatar_local;
+            widget::avatar m_avatar_remote;
 
             enum class SIDE {
                 NONE,

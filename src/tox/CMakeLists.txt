@@ -11,6 +11,7 @@ include_directories(${GLIBMM_INCLUDE_DIRS})
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
 find_package(Tox)
 include_directories(${TOX_INCLUDE_DIR})
+include_directories(${TOXAV_INCLUDE_DIR})
 
 set(SOURCES
 
@@ -27,12 +28,14 @@ set(SOURCES
     contact/file/file.cpp
     contact/file/file_recv.cpp
     contact/file/file_send.cpp
+    av.cpp
+    contact/call.cpp
 )
 
 add_library(${PROJECT_NAME} STATIC
     ${SOURCES}
 )
-target_link_libraries(${PROJECT_NAME} ${GLIBMM_LIBRARIES} ${TOX_LIBRARY})
+target_link_libraries(${PROJECT_NAME} ${GLIBMM_LIBRARIES} ${TOX_LIBRARY} ${TOXAV_LIBRARY})
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_subdirectory(flatbuffers)

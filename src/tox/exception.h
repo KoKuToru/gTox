@@ -23,6 +23,7 @@
 #include <typeinfo>
 #include <typeindex>
 #include <tox/tox.h>
+#include <tox/toxav.h>
 
 namespace toxmm {
     class exception: public std::exception {
@@ -49,6 +50,13 @@ namespace toxmm {
             exception(TOX_ERR_FILE_GET error);
             exception(TOX_ERR_FILE_SEND error);
             exception(TOX_ERR_FILE_SEND_CHUNK error);
+
+            exception(TOXAV_ERR_NEW error);
+            exception(TOXAV_ERR_CALL error);
+            exception(TOXAV_ERR_ANSWER error);
+            exception(TOXAV_ERR_CALL_CONTROL error);
+            exception(TOXAV_ERR_BIT_RATE_SET error);
+            exception(TOXAV_ERR_SEND_FRAME error);
 
             virtual const char* what() const noexcept;
             virtual std::type_index type() const noexcept;

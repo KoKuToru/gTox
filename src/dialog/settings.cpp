@@ -20,12 +20,16 @@
 #include "settings.h"
 #include "main.h"
 #include <glibmm/i18n.h>
+#include "utils/webcam.h"
 
 using namespace dialog;
 
+#ifndef SIGC_CPP11_HACK
+#define SIGC_CPP11_HACK
 namespace sigc {
     SIGC_FUNCTORS_DEDUCE_RESULT_TYPE_WITH_DECLTYPE
 }
+#endif
 
 #include <iostream>
 
@@ -68,6 +72,9 @@ settings::settings(main& main)
     builder.get_widget("p_remember", m_p_remember);
 
     builder.get_widget("video_default_device", m_video_device);
+    builder.get_widget("settings_video_error", m_video_error);
+    m_video_preview = builder.get_widget_derived<widget::imagescaled>(
+                          "settings_video_player");
 
     property_body() = m_body;
 
@@ -249,14 +256,42 @@ settings::settings(main& main)
                              binding_flag));
 
     //GLOBAL VIDEO-SETTINGS
+    auto webcam_devices_store = Glib::RefPtr<Gtk::ListStore>
+                                ::cast_dynamic(m_video_device->get_model());
+    for (auto device : utils::webcam::get_webcam_devices()) {
+        auto new_row = webcam_devices_store->append();
+        new_row->set_value(0, utils::webcam::get_webcam_device_name(device));
+    }
     m_bindings.push_back(Glib::Binding::bind_property(
                              config::global().property_video_default_device(),
                              m_video_device->property_active_id(),
                              binding_flag));
+    m_bindings.push_back(Glib::Binding::bind_property(
+                             m_webcam.property_pixbuf(),
+                             m_video_preview->property_pixbuf(),
+                             binding_flag & (~Glib::BINDING_BIDIRECTIONAL)));
+    auto change_video_source = sigc::track_obj([this]() {
+        m_video_error->set_label("");
+        auto name = m_video_device->property_active_id().get_value();
+        auto device = utils::webcam::get_webcam_device_by_name(name);
+        m_webcam.property_device() = device;
+        if (device) {
+            m_webcam.property_state() = Gst::STATE_PLAYING;
+        }
+    }, *this);
+    m_video_device->property_active_id()
+            .signal_changed().connect(change_video_source);
+    m_video_preview->signal_unmap().connect_notify(sigc::track_obj([this](){
+        m_webcam.property_state() = Gst::STATE_NULL;
+    }, *this));
+    m_video_preview->signal_map().connect_notify(change_video_source);
+    m_webcam.signal_error().connect(sigc::track_obj([this](Glib::ustring error) {
+        m_video_error->set_label(error);
+    }, *this));
 }
 
 settings::~settings() {
     utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
-
+    delete m_video_preview;
     delete m_body;
 }

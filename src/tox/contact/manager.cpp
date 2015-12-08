@@ -20,6 +20,7 @@
 #include "core.h"
 #include "contact.h"
 #include "exception.h"
+#include "call.h"
 
 using namespace toxmm;
 
@@ -122,6 +123,62 @@ void contact_manager::init() {
         auto contact = find(contact_nr);
         if (contact) {
             contact->m_signal_recv_file_control(file_nr, state);
+        }
+    }, *this));
+
+    c->av()->signal_call().connect(sigc::track_obj([this](contactNr contact_nr, bool, bool) {
+        auto contact = find(contact_nr);
+        if (contact) {
+            contact->call()->m_property_remote_state = toxmm::call::CALL_RESUME;
+            contact->call()->signal_incoming_call();
+        }
+    }, *this));
+
+    c->av()->signal_call_state().connect(sigc::track_obj([this](contactNr contact_nr, uint32_t state) {
+        auto contact = find(contact_nr);
+        if (contact) {
+            if (state & TOXAV_FRIEND_CALL_STATE_ERROR) {
+                contact->call()->m_property_remote_state = toxmm::call::CALL_CANCEL;
+                contact->call()->m_signal_error();
+                return;
+            }
+            if (state & TOXAV_FRIEND_CALL_STATE_FINISHED) {
+                contact->call()->m_property_remote_state = toxmm::call::CALL_CANCEL;
+                contact->call()->m_signal_finish();
+                return;
+            }
+            auto send_or_recv = TOXAV_FRIEND_CALL_STATE_ACCEPTING_A
+                              | TOXAV_FRIEND_CALL_STATE_ACCEPTING_V
+                              | TOXAV_FRIEND_CALL_STATE_SENDING_A
+                              | TOXAV_FRIEND_CALL_STATE_SENDING_V;
+            if (state & send_or_recv) {
+                contact->call()->m_property_remote_state = toxmm::call::CALL_RESUME;
+            } else {
+                contact->call()->m_property_remote_state = toxmm::call::CALL_PAUSE;
+            }
+        }
+    }, *this));
+
+    c->av()->signal_bit_rate_status().connect(sigc::track_obj([this](contactNr contact_nr, uint32_t audio_bit_rate, uint32_t video_bit_rate) {
+        auto contact = find(contact_nr);
+        if (contact) {
+            contact->call()->m_property_suggested_video_kilobitrate = video_bit_rate;
+            contact->call()->m_property_suggested_audio_kilobitrate = audio_bit_rate;
+            contact->call()->m_signal_suggestion_updated();
+        }
+    }, *this));
+
+    c->av()->signal_audio_receive_frame().connect(sigc::track_obj([this](contactNr contact_nr, const av::audio& ad) {
+        auto contact = find(contact_nr);
+        if (contact) {
+            contact->call()->m_property_remote_audio_frame = ad;
+        }
+    }, *this));
+
+    c->av()->signal_video_receive_frame().connect(sigc::track_obj([this](contactNr contact_nr, const av::image& img) {
+        auto contact = find(contact_nr);
+        if (contact) {
+            contact->call()->m_property_remote_video_frame = img;
         }
     }, *this));
 

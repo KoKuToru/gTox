@@ -24,6 +24,8 @@
 #include "config.h"
 #include "utils/debug.h"
 #include "detachable_window.h"
+#include "widget/imagescaled.h"
+#include "utils/webcam.h"
 
 namespace dialog {
     class main;
@@ -59,9 +61,13 @@ namespace dialog {
 
             Gtk::Switch* m_p_remember;
 
-            Gtk::ComboBox* m_video_device;
+            Gtk::ComboBox*       m_video_device;
+            widget::imagescaled* m_video_preview;
+            Gtk::Label*          m_video_error;
 
             std::vector<Glib::RefPtr<Glib::Binding>> m_bindings;
+
+            utils::webcam m_webcam;
 
         public:
             settings(main& main);

@@ -22,9 +22,12 @@
 #include <gstreamermm/uridecodebin.h>
 #include <future>
 
+#ifndef SIGC_CPP11_HACK
+#define SIGC_CPP11_HACK
 namespace sigc {
     SIGC_FUNCTORS_DEDUCE_RESULT_TYPE_WITH_DECLTYPE
 }
+#endif
 
 using namespace utils;
 
@@ -65,7 +68,7 @@ void gstreamer::init() {
     utils::dispatcher::ref weak_dispatcher = m_dispatcher;
     auto resolution = std::make_shared<std::pair<int, int>>();
 
-    m_appsink->signal_new_preroll().connect(sigc::track_obj([this, sink = m_appsink, weak_dispatcher, resolution]() {
+    m_appsink->signal_new_preroll().connect(sigc::track_obj([this, sink = m_appsink, weak_dispatcher, resolution, prev_dispatched = sigc::connection()]() mutable {
         utils::debug::scope_log log(DBG_LVL_5("gtox"), {});
         auto preroll = sink->pull_preroll();
         if (!preroll) {
@@ -92,7 +95,8 @@ void gstreamer::init() {
         resolution->second = h;
 
         auto frame = extract_frame(preroll, resolution);
-        weak_dispatcher.emit([this, frame]() {
+        prev_dispatched.disconnect();
+        prev_dispatched = weak_dispatcher.emit([this, frame]() {
             utils::debug::scope_log log(DBG_LVL_5("gtox"), {});
             gint64 pos, dur;
             if (m_playbin
@@ -107,11 +111,12 @@ void gstreamer::init() {
         return Gst::FLOW_OK;
 
     }, *this));
-    m_appsink->signal_new_sample().connect(sigc::track_obj([this, sink = m_appsink, weak_dispatcher, resolution]() {
+    m_appsink->signal_new_sample().connect(sigc::track_obj([this, sink = m_appsink, weak_dispatcher, resolution, prev_dispatched = sigc::connection()]() mutable {
         utils::debug::scope_log log(DBG_LVL_5("gtox"), {});
         auto sample = sink->pull_sample();
         auto frame = extract_frame(sample, resolution);
-        weak_dispatcher.emit([this, frame]() {
+        prev_dispatched.disconnect();
+        prev_dispatched = weak_dispatcher.emit([this, frame]() {
             utils::debug::scope_log log(DBG_LVL_5("gtox"), {});
             gint64 pos, dur;
             if (m_playbin
@@ -194,8 +199,8 @@ gstreamer::gstreamer():
            init();
        } else if (property_state() == Gst::STATE_NULL) {
            destroy();
-           m_property_position.set_value(0);
-           m_property_duration.set_value(0);
+           /*m_property_position.set_value(0);
+           m_property_duration.set_value(0);*/
        }
     }, *this));
 

@@ -23,10 +23,12 @@
 #include <memory>
 #include "types.h"
 #include <giomm.h>
+#include "av.h"
 
 namespace toxmm {
     class file_manager;
     class receipt;
+    class call;
     class contact : public Glib::Object, public std::enable_shared_from_this<contact> {
             friend class contact_manager;
             friend class file_manager;
@@ -60,7 +62,8 @@ namespace toxmm {
             Glib::PropertyProxy_ReadOnly<Glib::ustring>     property_status_message();
             Glib::PropertyProxy_ReadOnly<TOX_USER_STATUS>   property_status();
             Glib::PropertyProxy_ReadOnly<TOX_CONNECTION>    property_connection();
-            Glib::PropertyProxy_ReadOnly<bool>              property_typing();
+            Glib::PropertyProxy<bool>                       property_typing();
+            Glib::PropertyProxy_ReadOnly<bool>              property_remote_typing();
 
             //functions
             std::shared_ptr<receipt> send_message(const std::string& message);
@@ -69,10 +72,12 @@ namespace toxmm {
             std::shared_ptr<toxmm::core> core();
             std::shared_ptr<toxmm::contact_manager> contact_manager();
             std::shared_ptr<toxmm::file_manager> file_manager();
+            std::shared_ptr<toxmm::call> call();
 
         private:
             std::weak_ptr<toxmm::contact_manager> m_contact_manager;
             std::shared_ptr<toxmm::file_manager>  m_file_manager;
+            std::shared_ptr<toxmm::call>          m_call;
 
             Glib::Property<contactNr>         m_property_nr;
             Glib::Property<contactAddrPublic> m_property_addr;
@@ -82,6 +87,7 @@ namespace toxmm {
             Glib::Property<TOX_USER_STATUS>   m_property_status;
             Glib::Property<TOX_CONNECTION>    m_property_connection;
             Glib::Property<bool>              m_property_typing;
+            Glib::Property<bool>              m_property_remote_typing;
 
             type_signal_receipt            m_signal_receipt;
             type_signal_recv_message       m_signal_recv_message;

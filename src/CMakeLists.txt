@@ -78,6 +78,7 @@ set(SOURCES
     utils/gstreamer.cpp
     utils/debug.cpp
     utils/audio_notification.cpp
+    utils/webcam.cpp
 )
 SET_SOURCE_FILES_PROPERTIES(${GRESOURCE} PROPERTIES GENERATED 1)
 add_executable(${PROJECT_NAME}

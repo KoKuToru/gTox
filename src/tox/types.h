@@ -28,6 +28,7 @@ namespace toxmm {
     class contact;
     class contact_manager;
     class profile;
+    class av;
 
     class contactNr {
         private:

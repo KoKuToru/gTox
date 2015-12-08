@@ -31,11 +31,16 @@
 #include "flatbuffers/flatbuffers.h"
 #include "flatbuffers/idl.h"
 #include "flatbuffers/util.h"
+#include "tox/contact/call.h"
+#include "widget/imagescaled.h"
+#include "tox/exception.h"
 
+#ifndef SIGC_CPP11_HACK
+#define SIGC_CPP11_HACK
 namespace sigc {
     SIGC_FUNCTORS_DEDUCE_RESULT_TYPE_WITH_DECLTYPE
 }
-
+#endif
 using namespace dialog;
 
 chat::chat(std::shared_ptr<toxmm::core> core,
@@ -47,7 +52,10 @@ chat::chat(std::shared_ptr<toxmm::core> core,
     detachable_window(slot_add_widget, slot_del_widget),
     m_core(core),
     m_contact(contact),
-    m_config(config) {
+    m_config(config),
+    m_avatar_local(core->property_addr_public()),
+    m_avatar_remote(contact->property_addr_public()) {
+
     utils::debug::scope_log log(DBG_LVL_1("gtox"), { contact->property_name_or_addr().get_value().raw() });
 
     utils::builder builder(Gtk::Builder::create_from_resource("/org/gtox/ui/dialog_chat.ui"));
@@ -55,30 +63,40 @@ chat::chat(std::shared_ptr<toxmm::core> core,
     builder.get_widget("chat_body", m_body);
     m_input = builder.get_widget_derived<widget::chat_input>("chat_input");
     builder.get_widget("chat_input_revealer", m_input_revealer);
-    builder.get_widget("chat_input_format_revealer", m_input_format_revealer);
     builder.get_widget("chat_box", m_chat_box);
     builder.get_widget("eventbox", m_eventbox);
     builder.get_widget("scrolled", m_scrolled);
     builder.get_widget("viewport", m_viewport);
+    builder.get_widget("btn_call_start", m_av_call_start);
+    builder.get_widget("btn_call_stop", m_av_call_stop);
+    builder.get_widget("btn_incoming_call_accept", m_av_call_start2);
+    builder.get_widget("btn_incoming_call_decline", m_av_call_stop2);
+    builder.get_widget("headerbar_buttons", m_headerbar_buttons);
+    builder.get_widget("av_area", m_av_area);
+    builder.get_widget("incoming_call_revealer", m_incoming_call_revealer);
+
+    m_image_webcam_local  = builder.get_widget_derived<widget::imagescaled>("image_webcam_local");
+    m_image_webcam_remote = builder.get_widget_derived<widget::imagescaled>("image_webcam_remote");
 
     property_body() = m_body;
+    property_headerbar().get_value()->pack_end(*m_headerbar_buttons);
 
-    m_binding_name = Glib::Binding::bind_property(m_contact->property_name_or_addr(),
-                                                  property_headerbar_title(),
-                                                  Glib::BINDING_DEFAULT | Glib::BINDING_SYNC_CREATE);
+    m_bindings.push_back(Glib::Binding::bind_property(m_contact->property_name_or_addr(),
+                                                      property_headerbar_title(),
+                                                      Glib::BINDING_DEFAULT | Glib::BINDING_SYNC_CREATE));
 
-    m_binding_status = Glib::Binding::bind_property(m_contact->property_status_message(),
-                                                    property_headerbar_subtitle(),
-                                                    Glib::BINDING_DEFAULT | Glib::BINDING_SYNC_CREATE);
+    m_bindings.push_back(Glib::Binding::bind_property(m_contact->property_status_message(),
+                                                      property_headerbar_subtitle(),
+                                                      Glib::BINDING_DEFAULT | Glib::BINDING_SYNC_CREATE));
 
-    m_binding_online = Glib::Binding::bind_property(m_contact->property_connection(),
-                                 m_input_revealer->property_reveal_child(),
-                                 Glib::BINDING_DEFAULT | Glib::BINDING_SYNC_CREATE,
-                                 [](const TOX_CONNECTION& connection, bool& is_online) {
+    m_bindings.push_back(Glib::Binding::bind_property(m_contact->property_connection(),
+                                                      m_input_revealer->property_reveal_child(),
+                                                      Glib::BINDING_DEFAULT | Glib::BINDING_SYNC_CREATE,
+                                                      [](const TOX_CONNECTION& connection, bool& is_online) {
         utils::debug::scope_log log(DBG_LVL_5("gtox"), { connection });
         is_online = connection != TOX_CONNECTION_NONE;
         return true;
-    });
+    }));
 
     m_input->signal_key_press_event().connect(sigc::track_obj([this](GdkEventKey* event) {
         utils::debug::scope_log log(DBG_LVL_3("gtox"), {});
@@ -297,12 +315,166 @@ chat::chat(std::shared_ptr<toxmm::core> core,
         }
     }, *this));
 
+    // av support
+    m_av_call_start->signal_clicked().connect(sigc::track_obj([this]() {
+        auto ct = m_contact;
+        //update previews
+        m_image_webcam_local->property_pixbuf() = m_avatar_local.property_pixbuf().get_value();
+        m_image_webcam_remote->property_pixbuf() = m_avatar_remote.property_pixbuf().get_value();
+        ct->call()->property_state() = toxmm::call::CALL_RESUME;
+    }, *this));
+    m_av_call_start2->signal_clicked().connect(sigc::track_obj([this]() {
+        auto ct = m_contact;
+        //update previews
+        m_image_webcam_local->property_pixbuf() = m_avatar_local.property_pixbuf().get_value();
+        m_image_webcam_remote->property_pixbuf() = m_avatar_remote.property_pixbuf().get_value();
+        ct->call()->property_state() = toxmm::call::CALL_RESUME;
+    }, *this));
+    m_av_call_stop->signal_clicked().connect(sigc::track_obj([this]() {
+        m_contact->call()->property_state() = toxmm::call::CALL_CANCEL;
+    }, *this));
+    m_av_call_stop2->signal_clicked().connect(sigc::track_obj([this]() {
+        m_contact->call()->property_state() = toxmm::call::CALL_CANCEL;
+    }, *this));
+
+    // only show m_av_call_start when we aren't in a call
+    m_bindings.push_back(Glib::Binding::bind_property(m_contact->call()->property_state(),
+                                                      m_av_call_start->property_visible(),
+                                                      Glib::BINDING_DEFAULT | Glib::BINDING_SYNC_CREATE,
+                                                      [](const toxmm::call::CALL_STATE& state, bool& visible) {
+        visible = state == toxmm::call::CALL_CANCEL;
+        return true;
+    }));
+    // only show m_av_call_stop when m_av_call_start is not visible
+    m_bindings.push_back(Glib::Binding::bind_property(m_av_call_start->property_visible(),
+                                                      m_av_call_stop->property_visible(),
+                                                      Glib::BINDING_DEFAULT
+                                                      | Glib::BINDING_SYNC_CREATE
+                                                      | Glib::BINDING_INVERT_BOOLEAN));
+    // only show av area when in call
+    m_bindings.push_back(Glib::Binding::bind_property(m_av_call_start->property_visible(),
+                                                      m_av_area->property_visible(),
+                                                      Glib::BINDING_DEFAULT
+                                                      | Glib::BINDING_SYNC_CREATE
+                                                      | Glib::BINDING_INVERT_BOOLEAN));
+
+    // bind avatar to webcam preview
+    m_bindings.push_back(Glib::Binding::bind_property(m_avatar_local.property_pixbuf(),
+                                                      m_image_webcam_local->property_pixbuf(),
+                                                      Glib::BINDING_DEFAULT
+                                                      | Glib::BINDING_SYNC_CREATE));
+    m_bindings.push_back(Glib::Binding::bind_property(m_avatar_remote.property_pixbuf(),
+                                                      m_image_webcam_remote->property_pixbuf(),
+                                                      Glib::BINDING_DEFAULT
+                                                      | Glib::BINDING_SYNC_CREATE));
+
+    auto update_webcam_state = sigc::track_obj([this]() {
+        auto remote_state = m_contact->call()->property_remote_state().get_value();
+        auto state = m_contact->call()->property_state().get_value();
+
+        if (remote_state == toxmm::call::CALL_CANCEL  ||
+            state == toxmm::call::CALL_CANCEL) {
+            m_webcam.property_state() = Gst::STATE_NULL;
+            return;
+        }
+        m_webcam.property_state() = Gst::STATE_PLAYING;
+    }, *this);
+
+    m_webcam.property_device() = utils::webcam::get_webcam_device_by_name(
+                                     config->global().property_video_default_device());
+    config->global().property_video_default_device()
+            .signal_changed().connect(sigc::track_obj([this]() {
+        auto device = utils::webcam::get_webcam_device_by_name(
+                          m_config->global().property_video_default_device());
+        m_webcam.property_device() = device;
+    }, *this));
+    config->global().property_video_default_device()
+            .signal_changed().connect(update_webcam_state);
+
+    m_contact->call()->property_state().signal_changed().connect(update_webcam_state);
+    m_contact->call()->property_remote_state().signal_changed().connect(update_webcam_state);
+
+    auto update_incoming_revealer = sigc::track_obj([this]() {
+        m_incoming_call_revealer->property_reveal_child() =
+                m_contact->call()->property_state()
+                    .get_value() == toxmm::call::CALL_CANCEL &&
+                m_contact->call()->property_remote_state()
+                    .get_value() != toxmm::call::CALL_CANCEL;
+    }, *this);
+    m_contact->call()->property_state()
+            .signal_changed().connect(update_incoming_revealer);
+    m_contact->call()->property_remote_state()
+            .signal_changed().connect(update_incoming_revealer);
+    update_incoming_revealer();
+
+    m_bindings.push_back(Glib::Binding::bind_property(m_webcam.property_pixbuf(),
+                                                         m_contact->call()->property_video_frame(),
+                                                         Glib::BINDING_DEFAULT,
+                                                         [this](const Glib::RefPtr<Gdk::Pixbuf>& in, toxmm::av::image& out) {
+        if (in) {
+            int n = in->property_n_channels();
+            uint8_t* pixels = in->get_pixels();
+
+            size_t size = in->get_width() * in->get_height();
+            out = toxmm::av::image(in->get_width(),
+                                   in->get_height());
+            for (size_t i = 0; i < size; ++i) {
+                out.data()[i] = toxmm::av::pixel(
+                                    pixels[i*n + 0],
+                                    pixels[i*n + 1],
+                                    pixels[i*n + 2]);
+            }
+        }
+        return true;
+    }));
+
+    m_bindings.push_back(Glib::Binding::bind_property(m_webcam.property_pixbuf(),
+                                                      m_image_webcam_local->property_pixbuf(),
+                                                      Glib::BINDING_DEFAULT));
+
+    m_bindings.push_back(Glib::Binding::bind_property(m_contact->call()->property_remote_video_frame(),
+                                                      m_image_webcam_remote->property_pixbuf(),
+                                                      Glib::BINDING_DEFAULT | Glib::BINDING_SYNC_CREATE,
+                                                      [](const toxmm::av::image& in, Glib::RefPtr<Gdk::Pixbuf>& out) {
+        if (in.size() > 0) {
+            auto mem = new uint8_t[in.size() * 3];
+            for (size_t i = 0; i < in.size(); ++i) {
+                mem[i*3 + 0] = in.data()[i].red();
+                mem[i*3 + 1] = in.data()[i].green();
+                mem[i*3 + 2] = in.data()[i].blue();
+            }
+            out = Gdk::Pixbuf::create_from_data(mem,
+                                                Gdk::COLORSPACE_RGB,
+                                                false,
+                                                8,
+                                                in.width(),
+                                                in.height(),
+                                                in.width() * 3,
+                                                [](const guint8* data) {
+                delete[] data;
+            });
+        }
+        return true;
+    }));
+
+    // hide headerbar buttons when offline
+    m_bindings.push_back(Glib::Binding::bind_property(m_contact->property_connection(),
+                                                      m_headerbar_buttons->property_visible(),
+                                                      Glib::BINDING_DEFAULT | Glib::BINDING_SYNC_CREATE,
+                                                      [](const TOX_CONNECTION& connection, bool& is_online) {
+        is_online = connection != TOX_CONNECTION_NONE;
+        return true;
+    }));
+
     load_log();
 }
 
 chat::~chat() {
     utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
+    // close call on exit
+    m_contact->call()->property_state() = toxmm::call::CALL_CANCEL;
 
+    delete m_headerbar_buttons;
     delete m_body;
 }
 
