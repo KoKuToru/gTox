@@ -2,19 +2,27 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-06-21 13:09+0200\n"
-"PO-Revision-Date: \n"
-"Last-Translator: \n"
-"Language-Team: \n"
+"POT-Creation-Date: 2015-12-08 13:25+0100\n"
+"PO-Revision-Date: 2015-12-08 14:43+0100\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.4\n"
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-06-21 13:09+0200\n"
+"PO-Revision-Date: \n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.8.6\n"
+"Last-Translator: \n"
+"Language-Team: \n"
 
-#: main.cpp
-msgid "TRANSLATION_CHECKER"
-msgstr "Okay"
+#: widget/chat_file_popover.cpp
+msgid "%1 h and %2 min"
+msgstr "%1 Stunde und %2 Min."
 
 #: widget/chat_bubble.cpp
 msgid "%1 hr"
@@ -28,6 +36,10 @@ msgstr "vor %1 Stunden"
 msgid "%1 min"
 msgstr "vor %1 Minute"
 
+#: widget/chat_file_popover.cpp
+msgid "%1 min and %2 s"
+msgstr "%1 Minuten und %2 Sek."
+
 #: widget/chat_bubble.cpp
 msgid "%1 mins"
 msgstr "vor %1 Minuten"
@@ -35,6 +47,10 @@ msgstr "vor %1 Minuten"
 #: resources/ui/dialog_contact.ui
 msgid "%1 new contact request"
 msgstr "%1 neue Kontaktanfrage"
+
+#: widget/chat_file_popover.cpp
+msgid "%1 s"
+msgstr "%1 Sekunden"
 
 #: dialog/main.cpp
 msgid ""
@@ -59,6 +75,10 @@ msgstr "%e. %B %Y, %R"
 #: widget/chat_bubble.cpp
 msgid "%e. %B, %R"
 msgstr "%e. %B, %R"
+
+#: widget/chat_file_popover.cpp
+msgid "/s"
+msgstr "/Sek."
 
 #: dialog/error.cpp
 msgid ""
@@ -134,6 +154,11 @@ msgstr ""
 msgid "About"
 msgstr "Über"
 
+#. tooltip
+#: resources/ui/dialog_chat.ui
+msgid "Accept call"
+msgstr "Anruf annehmen"
+
 #. Button for adding a new contact
 #: resources/ui/popover_settings.ui
 msgid "Add contact"
@@ -179,7 +204,7 @@ msgstr "Farben"
 
 #: resources/ui/dialog_settings.ui
 msgid "Compact list"
-msgstr "Kontaktliste"
+msgstr "Kompakte Kontaktliste"
 
 #: dialog/settings.cpp
 msgid "Configure gTox"
@@ -206,6 +231,11 @@ msgstr "Copyright © 2014 - das gTox Team"
 msgid "Corrupted profile"
 msgstr "Beschädigtes Profil"
 
+#. Tooltip
+#: resources/ui/dialog_chat.ui
+msgid "Decline call"
+msgstr "Anruf ablehnen"
+
 #: resources/ui/dialog_settings.ui
 msgid "Default device"
 msgstr "Standardgerät"
@@ -226,13 +256,31 @@ msgstr "Verschlüsseltes Profil"
 msgid "Exit"
 msgstr "Beenden"
 
+#: widget/chat_file_popover.cpp
+msgid "File transfer is canceled"
+msgstr "Datenübetragung abgebrochen"
+
 #: resources/ui/dialog_settings.ui
 msgid "Global"
 msgstr "Global"
 
+#. TOX_PROXY_TYPE_HTTP
+#: resources/ui/dialog_settings.ui
+msgid "Http"
+msgstr "Http"
+
 #: widget/main_menu.cpp
 msgid "Image"
 msgstr "Bild"
+
+#: resources/ui/dialog_chat.ui
+msgid "Incoming call"
+msgstr "Ankommender Anruf"
+
+#. Open the downloaded file
+#: resources/ui/chat_filerecv.ui
+msgid "Info"
+msgstr "Information"
 
 #: widget/chat_bubble.cpp
 msgid "Just now"
@@ -251,6 +299,11 @@ msgstr "Name"
 #: resources/ui/dialog_profile.ui
 msgid "New"
 msgstr "Neu"
+
+#. proxy type none
+#: resources/ui/dialog_settings.ui
+msgid "None"
+msgstr "Keine"
 
 #: resources/ui/dialog_settings.ui
 msgid "Notification on new message"
@@ -280,8 +333,8 @@ msgstr "Dateipfad"
 
 #. Pauses the download
 #: resources/ui/chat_filerecv.ui
-msgid "Pause download"
-msgstr "Download pausieren"
+msgid "Pause file transfer"
+msgstr "Datenübertragung pausieren"
 
 #: resources/ui/dialog_settings.ui
 msgid "Profile"
@@ -311,6 +364,10 @@ msgstr "Proxy Typ"
 msgid "Put into systemtray on close"
 msgstr "Beim Schließen im Infobereich ablegen"
 
+#: widget/chat_file_popover.cpp
+msgid "Receiver is waitig for you to resume file transfer"
+msgstr "Die ist von Ihnen Datenübertragung pausierte"
+
 #: resources/ui/dialog_settings.ui
 msgid "Remember last used profile"
 msgstr "Letztes Profil merken"
@@ -321,12 +378,17 @@ msgstr "Kontakt entfernen"
 
 #. Stop/Remove the download
 #: resources/ui/chat_filerecv.ui
-msgid "Remove download"
-msgstr "Download entfernen"
+msgid "Remove file transfer"
+msgstr "Datenübertragung entfernen"
 
 #: dialog/error.cpp
 msgid "Report"
 msgstr "Melden"
+
+#. Starts the download
+#: resources/ui/chat_filerecv.ui
+msgid "Resume file transfer"
+msgstr "Datenübertragung fortsetzen"
 
 #: resources/ui/dialog_settings.ui
 msgid "Save to"
@@ -349,6 +411,10 @@ msgstr "Profil auswählen"
 msgid "Send typing notification"
 msgstr "Tippen Status senden"
 
+#: widget/chat_file_popover.cpp
+msgid "Sender is waitig for you to resume file transfer"
+msgstr "Der Empfänger hat die Datenübertragung pausiert"
+
 #: resources/ui/popover_settings.ui
 msgid "Settings"
 msgstr "Einstellungen"
@@ -361,10 +427,15 @@ msgstr "Aktive Unterhaltungen anzeigen"
 msgid "Show in systemtray"
 msgstr "Im Infobereich anzeigen"
 
-#. Starts the download
-#: resources/ui/chat_filerecv.ui
-msgid "Start download"
-msgstr "Download starten"
+#. TOX_PROXY_TYPE_SOCKS5
+#: resources/ui/dialog_settings.ui
+msgid "Socks5"
+msgstr "Socks5"
+
+#. tooltip
+#: resources/ui/dialog_chat.ui
+msgid "Start call"
+msgstr "Anruf starten"
 
 #: resources/ui/dialog_settings.ui
 msgid "Start in systemtray"
@@ -379,6 +450,11 @@ msgstr "Status Nachricht"
 msgid "Statusmessage"
 msgstr "Status"
 
+#. Tooltip
+#: resources/ui/dialog_chat.ui
+msgid "Stop call"
+msgstr "Anruf beenden"
+
 #: resources/ui/popover_settings.ui
 msgid "Submit"
 msgstr "Absenden"
@@ -386,10 +462,6 @@ msgstr "Absenden"
 #: resources/ui/status_menu.ui
 msgid "Switch Profile"
 msgstr "Profil ändern"
-
-#: resources/ui/dialog_settings.ui
-msgid "TCP"
-msgstr "TCP"
 
 #: widget/main_menu.cpp
 msgid "The contact address checksum failed."
@@ -426,6 +498,14 @@ msgstr "Name"
 #: resources/ui/dialog_settings.ui
 msgid "Video"
 msgstr "Videoname"
+
+#: widget/chat_file_popover.cpp
+msgid "Waiting for receiver to resume file transfer"
+msgstr "Empfänger hat die Datenübertragung pausiert"
+
+#: widget/chat_file_popover.cpp
+msgid "Waiting for sender to resume file transfer"
+msgstr "Die Datenübertragung ist pausiert"
 
 #. Welcome text in profile creation, should warn about alpha-software
 #: resources/ui/dialog_assistant.ui
@@ -518,6 +598,15 @@ msgstr "lade Profile..."
 msgid "never"
 msgstr "Nie"
 
+#. tooltip
+#: resources/ui/dialog_chat.ui
+msgid "send video"
+msgstr "Video senden"
+
+#: resources/ui/chat_filerecv.ui
+msgid "status"
+msgstr "Status"
+
 #. Label for the toxcore profile save path
 #: resources/ui/dialog_assistant.ui
 msgid "toxcore file"
@@ -531,3 +620,26 @@ msgstr "unbekanntes Problem mit gstreamer"
 #: resources/ui/dialog_settings.ui
 msgid "white on black"
 msgstr "Weiß auf Schwarz"
+
+#: main.cpp
+msgid "TRANSLATION_CHECKER"
+msgstr "Okay"
+
+#. Pauses the download
+#: resources/ui/chat_filerecv.ui
+msgid "Pause download"
+msgstr "Download pausieren"
+
+#. Stop/Remove the download
+#: resources/ui/chat_filerecv.ui
+msgid "Remove download"
+msgstr "Download entfernen"
+
+#. Starts the download
+#: resources/ui/chat_filerecv.ui
+msgid "Start download"
+msgstr "Download starten"
+
+#: resources/ui/dialog_settings.ui
+msgid "TCP"
+msgstr "TCP"
