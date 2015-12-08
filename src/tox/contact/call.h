@@ -74,6 +74,8 @@ namespace toxmm {
 
             call(const std::shared_ptr<toxmm::contact>& contact);
 
+            CALL_STATE m_prev_call_state;
+
             // Install all properties
             INST_PROP    (CALL_STATE, property_state, "call-state")
             INST_PROP    (av::image , property_video_frame, "call-video-frame")

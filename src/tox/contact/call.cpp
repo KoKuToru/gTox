@@ -55,6 +55,7 @@ call::call(const std::shared_ptr<toxmm::contact>& contact)
     m_property_remote_state = CALL_CANCEL;
     m_property_suggested_audio_kilobitrate = 30;
     m_property_suggested_video_kilobitrate = 128;
+    m_prev_call_state = CALL_CANCEL;
 
     //install all events
     property_state().signal_changed().connect(sigc::track_obj([this]() {
@@ -63,37 +64,65 @@ call::call(const std::shared_ptr<toxmm::contact>& contact)
         if (!contact || !av) {
             return;
         }
-        switch (property_state().get_value()) {
-            case CALL_RESUME:
-                if (property_remote_state() == CALL_CANCEL) {
-                    av->call(contact->property_nr(),
-                             property_suggested_audio_kilobitrate(),
-                             property_suggested_video_kilobitrate());
-                    m_property_video_kilobitrate.set_value(property_suggested_audio_kilobitrate());
-                    m_property_audio_kilobitrate.set_value(property_suggested_video_kilobitrate());
-                } else if (property_state() == CALL_CANCEL) {
-                    av->answer(contact->property_nr(),
-                               property_suggested_audio_kilobitrate(),
-                               property_suggested_video_kilobitrate());
-                    m_property_video_kilobitrate.set_value(property_suggested_audio_kilobitrate());
-                    m_property_audio_kilobitrate.set_value(property_suggested_video_kilobitrate());
-                } else {
-                    av->call_control(contact->property_nr(),
-                                     TOXAV_CALL_CONTROL_RESUME);
-                }
-                break;
-            case CALL_PAUSE:
-                av->call_control(contact->property_nr(),
-                                 TOXAV_CALL_CONTROL_PAUSE);
-                break;
-            case CALL_CANCEL:
-                av->call_control(contact->property_nr(),
-                                 TOXAV_CALL_CONTROL_CANCEL);
-                m_property_video_kilobitrate.set_value(0);
-                m_property_audio_kilobitrate.set_value(0);
-                m_property_remote_state.set_value(CALL_CANCEL);
-                break;
+        if (m_prev_call_state == property_state().get_value()) {
+            return;
         }
+        try {
+            switch (property_state().get_value()) {
+                case CALL_RESUME:
+                    if (property_remote_state() == CALL_CANCEL) {
+                        av->call(contact->property_nr(),
+                                 property_suggested_audio_kilobitrate(),
+                                 property_suggested_video_kilobitrate());
+                        m_property_video_kilobitrate.set_value(property_suggested_audio_kilobitrate());
+                        m_property_audio_kilobitrate.set_value(property_suggested_video_kilobitrate());
+                    } else if (m_prev_call_state == CALL_CANCEL) {
+                        av->answer(contact->property_nr(),
+                                   property_suggested_audio_kilobitrate(),
+                                   property_suggested_video_kilobitrate());
+                        m_property_video_kilobitrate.set_value(property_suggested_audio_kilobitrate());
+                        m_property_audio_kilobitrate.set_value(property_suggested_video_kilobitrate());
+                    } else {
+                        av->call_control(contact->property_nr(),
+                                         TOXAV_CALL_CONTROL_RESUME);
+                    }
+                    break;
+                case CALL_PAUSE:
+                    if (property_remote_state() == CALL_CANCEL) {
+                        break;
+                    }
+                    av->call_control(contact->property_nr(),
+                                     TOXAV_CALL_CONTROL_PAUSE);
+                    break;
+                case CALL_CANCEL:
+                    if (property_remote_state() == CALL_CANCEL) {
+                        break;
+                    }
+                    av->call_control(contact->property_nr(),
+                                     TOXAV_CALL_CONTROL_CANCEL);
+                    m_property_video_kilobitrate.set_value(0);
+                    m_property_audio_kilobitrate.set_value(0);
+                    m_property_suggested_audio_kilobitrate = 30;
+                    m_property_suggested_video_kilobitrate = 128;
+                    m_property_remote_state.set_value(CALL_CANCEL);
+                    break;
+            }
+        } catch(const exception& ex) {
+            if (ex.type() == std::type_index(typeid(TOXAV_ERR_CALL_CONTROL)) &&
+                (ex.what_id() == TOXAV_ERR_CALL_CONTROL_FRIEND_NOT_IN_CALL ||
+                 ex.what_id() == TOXAV_ERR_CALL_CONTROL_FRIEND_NOT_FOUND)) {
+                m_prev_call_state = CALL_CANCEL;
+            } else if (ex.type() == std::type_index(typeid(TOXAV_ERR_CALL)) &&
+                       (ex.what_id() == TOXAV_ERR_CALL_FRIEND_NOT_FOUND ||
+                        ex.what_id() == TOXAV_ERR_CALL_FRIEND_NOT_CONNECTED ||
+                        ex.what_id() == TOXAV_ERR_CALL_FRIEND_ALREADY_IN_CALL)) {
+                m_prev_call_state = CALL_CANCEL;
+            } else {
+                throw;
+            }
+            return;
+        }
+        m_prev_call_state = property_state();
     }, *this));
     property_video_frame().signal_changed().connect(sigc::track_obj([this]() {
         std::clog << "frame for sending changed" << std::endl;
@@ -131,6 +160,8 @@ call::call(const std::shared_ptr<toxmm::contact>& contact)
             if (ex.what_id() != TOXAV_ERR_SEND_FRAME_FRIEND_NOT_IN_CALL) {
                 throw;
             }
+            m_property_remote_state = CALL_CANCEL;
+            m_signal_error();
         }
     }, *this));
     auto update_kilobitrate = sigc::track_obj([this]() {
@@ -139,10 +170,27 @@ call::call(const std::shared_ptr<toxmm::contact>& contact)
         if (!contact || !av) {
             return;
         }
-        av->set_bit_rate(contact->property_nr(),
-                         property_audio_kilobitrate(),
-                         property_video_kilobitrate());
+        try {
+            av->set_bit_rate(contact->property_nr(),
+                             property_audio_kilobitrate(),
+                             property_video_kilobitrate());
+        } catch (const exception& ex) {
+            if (ex.type() != std::type_index(typeid(TOXAV_ERR_BIT_RATE_SET))) {
+                throw;
+            }
+            if (ex.what_id() != TOXAV_ERR_BIT_RATE_SET_FRIEND_NOT_IN_CALL) {
+                throw;
+            }
+            m_property_remote_state = CALL_CANCEL;
+            m_signal_error();
+        }
     }, *this);
     property_video_kilobitrate().signal_changed().connect(update_kilobitrate);
     property_audio_kilobitrate().signal_changed().connect(update_kilobitrate);
+    signal_error().connect(sigc::track_obj([this]() {
+        property_state() = CALL_CANCEL;
+    }, *this));
+    signal_finish().connect(sigc::track_obj([this]() {
+        property_state() = CALL_CANCEL;
+    }, *this));
 }
