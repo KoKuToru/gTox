@@ -24,9 +24,12 @@
 
 using namespace widget;
 
+#ifndef SIGC_CPP11_HACK
+#define SIGC_CPP11_HACK
 namespace sigc {
     SIGC_FUNCTORS_DEDUCE_RESULT_TYPE_WITH_DECLTYPE
 }
+#endif
 
 chat_file_popover::chat_file_popover(const std::shared_ptr<toxmm::file>& file): m_file(file), m_last_position(~uint64_t()) {
     utils::debug::scope_log log(DBG_LVL_1("gtox"), {});

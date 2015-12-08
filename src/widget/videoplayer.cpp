@@ -19,10 +19,12 @@
 #include "videoplayer.h"
 #include <iomanip>
 
+#ifndef SIGC_CPP11_HACK
+#define SIGC_CPP11_HACK
 namespace sigc {
     SIGC_FUNCTORS_DEDUCE_RESULT_TYPE_WITH_DECLTYPE
 }
-
+#endif
 using namespace widget;
 
 Glib::PropertyProxy<Glib::RefPtr<Gdk::Pixbuf>> videoplayer::property_preview_pixbuf() {

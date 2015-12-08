@@ -35,10 +35,12 @@
 #include "widget/imagescaled.h"
 #include "tox/exception.h"
 
+#ifndef SIGC_CPP11_HACK
+#define SIGC_CPP11_HACK
 namespace sigc {
     SIGC_FUNCTORS_DEDUCE_RESULT_TYPE_WITH_DECLTYPE
 }
-
+#endif
 using namespace dialog;
 
 chat::chat(std::shared_ptr<toxmm::core> core,

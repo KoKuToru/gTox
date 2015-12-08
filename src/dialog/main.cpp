@@ -31,10 +31,12 @@
 
 #include "gtox.h"
 
+#ifndef SIGC_CPP11_HACK
+#define SIGC_CPP11_HACK
 namespace sigc {
     SIGC_FUNCTORS_DEDUCE_RESULT_TYPE_WITH_DECLTYPE
 }
-
+#endif
 using namespace dialog;
 
 main::main(BaseObjectType* cobject,
