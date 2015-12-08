@@ -111,16 +111,19 @@ call::call(const std::shared_ptr<toxmm::contact>& contact)
             if (ex.type() == std::type_index(typeid(TOXAV_ERR_CALL_CONTROL)) &&
                 (ex.what_id() == TOXAV_ERR_CALL_CONTROL_FRIEND_NOT_IN_CALL ||
                  ex.what_id() == TOXAV_ERR_CALL_CONTROL_FRIEND_NOT_FOUND)) {
-                m_prev_call_state = CALL_CANCEL;
+                if (property_state() != CALL_CANCEL) {
+                    property_state() = CALL_CANCEL;
+                }
             } else if (ex.type() == std::type_index(typeid(TOXAV_ERR_CALL)) &&
                        (ex.what_id() == TOXAV_ERR_CALL_FRIEND_NOT_FOUND ||
                         ex.what_id() == TOXAV_ERR_CALL_FRIEND_NOT_CONNECTED ||
                         ex.what_id() == TOXAV_ERR_CALL_FRIEND_ALREADY_IN_CALL)) {
                 m_prev_call_state = CALL_CANCEL;
             } else {
-                throw;
+                if (property_state() != CALL_CANCEL) {
+                    property_state() = CALL_CANCEL;
+                }
             }
-            return;
         }
         m_prev_call_state = property_state();
     }, *this));
@@ -173,14 +176,13 @@ call::call(const std::shared_ptr<toxmm::contact>& contact)
                              property_audio_kilobitrate(),
                              property_video_kilobitrate());
         } catch (const exception& ex) {
-            if (ex.type() != std::type_index(typeid(TOXAV_ERR_BIT_RATE_SET))) {
+            if (ex.type() != std::type_index(typeid(TOXAV_ERR_BIT_RATE_SET)) ||
+                ex.what_id() != TOXAV_ERR_BIT_RATE_SET_FRIEND_NOT_IN_CALL) {
+                m_property_state = CALL_CANCEL;
+                m_property_remote_state = CALL_CANCEL;
+                m_signal_error();
                 throw;
             }
-            if (ex.what_id() != TOXAV_ERR_BIT_RATE_SET_FRIEND_NOT_IN_CALL) {
-                throw;
-            }
-            m_property_remote_state = CALL_CANCEL;
-            m_signal_error();
         }
     }, *this);
     property_video_kilobitrate().signal_changed().connect(update_kilobitrate);

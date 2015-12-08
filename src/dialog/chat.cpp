@@ -343,6 +343,7 @@ chat::chat(std::shared_ptr<toxmm::core> core,
                                                       Glib::BINDING_DEFAULT | Glib::BINDING_SYNC_CREATE,
                                                       [](const toxmm::call::CALL_STATE& state, bool& visible) {
         visible = state == toxmm::call::CALL_CANCEL;
+        std::clog << "visible: " << visible << std::endl;
         return true;
     }));
     // only show m_av_call_stop when m_av_call_start is not visible
