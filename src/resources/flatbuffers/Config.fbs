@@ -3,22 +3,27 @@ namespace flatbuffers.Config;
 //never reorder these properties !
 
 table Config {
-	systemtray_visible: bool;
-	systemtray_on_start: bool;
-	systemtray_on_close: bool;
+	systemtray_visible: bool = true;
+	systemtray_on_start: bool = false;
+	systemtray_on_close: bool = true;
 	
-	chat_notification_on_message: bool;
-	chat_notification_with_audio: bool;
-	chat_auto_away: int;
-	chat_send_typing: bool;
-	chat_logging: bool;
+	chat_notification_on_message: bool = true;
+	chat_notification_with_audio: bool = true;
+	chat_auto_away: int = 0;
+	chat_send_typing: bool = true;
+	chat_logging: bool = true;
 	
 	file_save_path: string (deprecated);
-	file_auto_accept: bool;
-	file_display_inline: bool;
+	file_auto_accept: bool = true;
+	file_display_inline: bool = true;
 	
-	contacts_compact_list: bool;
-	contacts_display_active: bool;
+	contacts_compact_list: bool = true;
+	contacts_display_active: bool = false;
+	
+	window_x: int = -1;
+	window_y: int = -1;
+	window_w: int = -1;
+	window_h: int = -1;
 }
 
 root_type Config;
