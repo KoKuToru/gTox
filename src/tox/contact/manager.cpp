@@ -130,7 +130,7 @@ void contact_manager::init() {
         auto contact = find(contact_nr);
         if (contact) {
             contact->call()->m_property_remote_state = toxmm::call::CALL_RESUME;
-            contact->call()->signal_incoming_call();
+            contact->call()->m_signal_incoming_call();
         }
     }, *this));
 
