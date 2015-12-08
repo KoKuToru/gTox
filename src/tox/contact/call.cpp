@@ -192,4 +192,14 @@ call::call(const std::shared_ptr<toxmm::contact>& contact)
     signal_finish().connect(sigc::track_obj([this]() {
         property_state() = CALL_CANCEL;
     }, *this));
+    contact->property_connection().signal_changed().connect(sigc::track_obj([this]() {
+        auto ct = toxmm::call::contact();
+        if (!ct) {
+            return;
+        }
+        if (ct->property_connection().get_value() == TOX_CONNECTION_NONE) {
+            m_property_state = CALL_CANCEL;
+            m_property_remote_state = CALL_CANCEL;
+        }
+    }, *this));
 }
