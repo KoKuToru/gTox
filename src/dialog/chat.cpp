@@ -413,7 +413,16 @@ chat::chat(std::shared_ptr<toxmm::core> core,
         m_webcam.property_state() = Gst::STATE_PLAYING;
     }, *this);
 
-    m_webcam.property_device() = m_webcam.get_webcam_devices().at(1);
+    m_webcam.property_device() = utils::webcam::get_webcam_device_by_name(
+                                     config->global().property_video_default_device());
+    config->global().property_video_default_device()
+            .signal_changed().connect(sigc::track_obj([this]() {
+        auto device = utils::webcam::get_webcam_device_by_name(
+                          m_config->global().property_video_default_device());
+        m_webcam.property_device() = device;
+    }, *this));
+    config->global().property_video_default_device()
+            .signal_changed().connect(update_webcam_state);
     m_webcam.signal_error().connect([](Glib::ustring msg) {
         std::clog << "WEBCAM ERROR ! " << msg << std::endl;
     });
