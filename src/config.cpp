@@ -59,6 +59,18 @@ Glib::PropertyProxy<bool> config::property_contacts_compact_list()
 Glib::PropertyProxy<bool> config::property_contacts_display_active()
 { return m_property_contacts_display_active.get_proxy(); }
 
+Glib::PropertyProxy<int> config::property_window_x()
+{ return m_property_window_x.get_proxy(); }
+
+Glib::PropertyProxy<int> config::property_window_y()
+{ return m_property_window_y.get_proxy(); }
+
+Glib::PropertyProxy<int> config::property_window_w()
+{ return m_property_window_w.get_proxy(); }
+
+Glib::PropertyProxy<int> config::property_window_h()
+{ return m_property_window_h.get_proxy(); }
+
 //GLOBAL:
 Glib::PropertyProxy<int> config_global::property_theme_color()
 { return m_property_theme_color.get_proxy(); }
@@ -121,7 +133,11 @@ config::config(Glib::ustring config_file):
     m_property_file_auto_accept(*this, "config-file-auto-accept", true),
     m_property_file_display_inline(*this, "config-file-display-inline", true),
     m_property_contacts_compact_list  (*this, "config-contacts-compact-list", false),
-    m_property_contacts_display_active(*this, "config-contacts-display-active", true)
+    m_property_contacts_display_active(*this, "config-contacts-display-active", true),
+    m_property_window_x(*this, "config-window-x", -1),
+    m_property_window_y(*this, "config-window-y", -1),
+    m_property_window_w(*this, "config-window-w", -1),
+    m_property_window_h(*this, "config-window-h", -1)
 {
     utils::debug::scope_log log(DBG_LVL_1("gtox"), { config_file.raw() });
     load_flatbuffer();
@@ -139,7 +155,11 @@ config::config(Glib::ustring config_file):
                           property_file_auto_accept(),
                           property_file_display_inline(),
                           property_contacts_compact_list(),
-                          property_contacts_display_active()),
+                          property_contacts_display_active(),
+                          property_window_x(),
+                          property_window_y(),
+                          property_window_w(),
+                          property_window_h()),
                       [this](auto property) {
         property.signal_changed().connect(sigc::track_obj([this]() {
             this->save_flatbuffer();
@@ -185,6 +205,10 @@ void config::load_flatbuffer() {
     property_contacts_compact_list() = conf->contacts_compact_list();
     property_contacts_display_active() = conf->contacts_display_active();
 
+    property_window_x() = conf->window_x();
+    property_window_y() = conf->window_y();
+    property_window_w() = conf->window_w();
+    property_window_h() = conf->window_h();
 }
 
 void config::save_flatbuffer() {
@@ -208,6 +232,11 @@ void config::save_flatbuffer() {
 
     builder.add_contacts_compact_list(property_contacts_compact_list());
     builder.add_contacts_display_active(property_contacts_display_active());
+
+    builder.add_window_x(property_window_x());
+    builder.add_window_y(property_window_y());
+    builder.add_window_w(property_window_w());
+    builder.add_window_h(property_window_h());
 
     flatbuffers::Config::FinishConfigBuffer(fbb, builder.Finish());
 

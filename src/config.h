@@ -63,6 +63,11 @@ class config: public Glib::Object {
         Glib::PropertyProxy<bool> property_contacts_compact_list();
         Glib::PropertyProxy<bool> property_contacts_display_active();
 
+        Glib::PropertyProxy<int> property_window_x();
+        Glib::PropertyProxy<int> property_window_y();
+        Glib::PropertyProxy<int> property_window_w();
+        Glib::PropertyProxy<int> property_window_h();
+
         config(Glib::ustring config_file);
 
         static config_global& global();
@@ -83,11 +88,16 @@ class config: public Glib::Object {
         Glib::Property<bool> m_property_chat_send_typing;
         Glib::Property<bool> m_property_chat_logging;
 
-        Glib::Property<bool>          m_property_file_auto_accept;
-        Glib::Property<bool>          m_property_file_display_inline;
+        Glib::Property<bool> m_property_file_auto_accept;
+        Glib::Property<bool> m_property_file_display_inline;
 
         Glib::Property<bool> m_property_contacts_compact_list;
         Glib::Property<bool> m_property_contacts_display_active;
+
+        Glib::Property<int> m_property_window_x;
+        Glib::Property<int> m_property_window_y;
+        Glib::Property<int> m_property_window_w;
+        Glib::Property<int> m_property_window_h;
 };
 
 #endif
