@@ -71,6 +71,11 @@ main::main(BaseObjectType* cobject,
     builder.get_widget("request_btn", m_request_btn);
 
     set_icon(Gdk::Pixbuf::create_from_resource("/org/gtox/icon/icon_128.svg"));
+    signal_delete_event().connect(sigc::track_obj([this](GdkEventAny*) {
+        // minimize window on close-btn
+        iconify();
+        return true;
+    }, *this));
 
     set_border_width(0);
     set_default_geometry(300, 600);
