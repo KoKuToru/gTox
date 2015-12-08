@@ -144,6 +144,7 @@ void contact_manager::init() {
             }
             if (state & TOXAV_FRIEND_CALL_STATE_FINISHED) {
                 contact->call()->m_property_remote_state = toxmm::call::CALL_CANCEL;
+                contact->call()->m_signal_finish();
                 return;
             }
             auto send_or_recv = TOXAV_FRIEND_CALL_STATE_ACCEPTING_A
