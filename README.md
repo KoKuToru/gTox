@@ -21,7 +21,7 @@ Translation Status
 
 translation | untranslated
 :-----------|------------:
-de.po       |           24
+de.po       | 
 es.po       |           24
 fr.po       |           24
 it.po       |           27
