@@ -125,13 +125,11 @@ call::call(const std::shared_ptr<toxmm::contact>& contact)
         m_prev_call_state = property_state();
     }, *this));
     property_video_frame().signal_changed().connect(sigc::track_obj([this]() {
-        std::clog << "frame for sending changed" << std::endl;
         auto contact = toxmm::call::contact();
         auto av = toxmm::call::av();
         if (!contact || !av) {
             return;
         }
-        std::clog << "before send frame" << std::endl;
         try {
             av->send_video_frame(contact->property_nr(),
                                  property_video_frame());

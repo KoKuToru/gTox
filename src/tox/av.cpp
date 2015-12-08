@@ -48,8 +48,6 @@ av::av(const std::shared_ptr<toxmm::core>& core)
       m_core(core) {
 }
 
-int iter_id = 0;
-
 void av::init() {
     auto c = core();
     if (!c) {
@@ -80,7 +78,6 @@ void av::init() {
         ((av*)_this)->m_signal_audio_receive_frame(contactNr(nr), ad);
     }, this);
     toxav_callback_video_receive_frame(m_av, [](ToxAV*, uint32_t nr, uint16_t width, uint16_t height, const uint8_t *y, const uint8_t *u, const uint8_t *v, int32_t ystride, int32_t ustride, int32_t vstride, void* _this) {
-        std::clog << iter_id << " Got frame " << std::endl;
         image img(width, height);
 
         int y_size = std::max(width/1, std::abs(ystride)) * height;
@@ -206,7 +203,6 @@ void av::send_audio_frame(contactNr nr,
 
 void av::send_video_frame(contactNr nr,
                           const av::image &img) {
-    std::clog << "send frame" << std::endl;
     if (!m_av) {
         return;
     }
@@ -250,7 +246,6 @@ bool av::update() {
     m_update_interval.disconnect();
 
     if (m_av) {
-        iter_id += 1;
         toxav_iterate(m_av);
     }
 

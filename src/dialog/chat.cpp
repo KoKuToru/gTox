@@ -368,48 +368,15 @@ chat::chat(std::shared_ptr<toxmm::core> core,
                                                       Glib::BINDING_DEFAULT
                                                       | Glib::BINDING_SYNC_CREATE));
 
-    m_contact->call()->property_state().signal_changed().connect(sigc::track_obj([this]() {
-        std::clog << "call state changed to ";
-        switch (m_contact->call()->property_state().get_value()) {
-            case toxmm::call::CALL_RESUME:
-                std::clog << " RESUME" << std::endl;
-                break;
-            case toxmm::call::CALL_PAUSE:
-                std::clog << " PAUSE" << std::endl;
-                break;
-            case toxmm::call::CALL_CANCEL:
-                std::clog << " CANCEL" << std::endl;
-                break;
-        }
-    }, *this));
-
-    m_contact->call()->property_remote_state().signal_changed().connect(sigc::track_obj([this]() {
-        std::clog << "remote call state changed to ";
-        switch (m_contact->call()->property_remote_state().get_value()) {
-            case toxmm::call::CALL_RESUME:
-                std::clog << " RESUME" << std::endl;
-                break;
-            case toxmm::call::CALL_PAUSE:
-                std::clog << " PAUSE" << std::endl;
-                break;
-            case toxmm::call::CALL_CANCEL:
-                std::clog << " CANCEL" << std::endl;
-                break;
-        }
-    }, *this));
-
     auto update_webcam_state = sigc::track_obj([this]() {
-        std::clog << "update webcame state" << std::endl;
         auto remote_state = m_contact->call()->property_remote_state().get_value();
         auto state = m_contact->call()->property_state().get_value();
 
         if (remote_state == toxmm::call::CALL_CANCEL  ||
             state == toxmm::call::CALL_CANCEL) {
-            std::clog << "stop webcam" << std::endl;
             m_webcam.property_state() = Gst::STATE_NULL;
             return;
         }
-        std::clog << "start webcam" << std::endl;
         m_webcam.property_state() = Gst::STATE_PLAYING;
     }, *this);
 
@@ -423,9 +390,6 @@ chat::chat(std::shared_ptr<toxmm::core> core,
     }, *this));
     config->global().property_video_default_device()
             .signal_changed().connect(update_webcam_state);
-    m_webcam.signal_error().connect([](Glib::ustring msg) {
-        std::clog << "WEBCAM ERROR ! " << msg << std::endl;
-    });
 
     m_contact->call()->property_state().signal_changed().connect(update_webcam_state);
     m_contact->call()->property_remote_state().signal_changed().connect(update_webcam_state);
@@ -443,19 +407,10 @@ chat::chat(std::shared_ptr<toxmm::core> core,
             .signal_changed().connect(update_incoming_revealer);
     update_incoming_revealer();
 
-    m_contact->call()->signal_suggestion_updated().connect(sigc::track_obj([this]() {
-        std::clog << "suggested bitrate updated to V: " <<
-                     m_contact->call()->property_suggested_video_kilobitrate() <<
-                     " A: " <<
-                     m_contact->call()->property_suggested_audio_kilobitrate() <<
-                     std::endl;
-    }, *this));
-
     m_bindings.push_back(Glib::Binding::bind_property(m_webcam.property_pixbuf(),
                                                          m_contact->call()->property_video_frame(),
                                                          Glib::BINDING_DEFAULT,
                                                          [this](const Glib::RefPtr<Gdk::Pixbuf>& in, toxmm::av::image& out) {
-        std::clog << "got a frame for sending" << std::endl;
         if (in) {
             int n = in->property_n_channels();
             uint8_t* pixels = in->get_pixels();
