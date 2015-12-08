@@ -21,11 +21,11 @@ Translation Status
 
 translation | untranslated
 :-----------|------------:
-de.po       |           17
-es.po       |           17
-fr.po       |           17
-it.po       |           21
-ru.po       |           17
+de.po       |           24
+es.po       |           24
+fr.po       |           24
+it.po       |           27
+ru.po       |           24
 
 **If you are a `gettext`-Master, please contact me !  
 I have some serious problems with this..**
