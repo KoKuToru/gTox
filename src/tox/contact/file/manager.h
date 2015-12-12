@@ -22,6 +22,7 @@
 #include <glibmm.h>
 #include <memory>
 #include "types.h"
+#include "utils.h"
 
 namespace toxmm {
     class file;
@@ -31,30 +32,6 @@ namespace toxmm {
             friend class contact;
         public:
             ~file_manager();
-
-            //signals
-            using type_signal_recv          = sigc::signal<void, std::shared_ptr<file>&>;
-            using type_signal_send          = sigc::signal<void, std::shared_ptr<file>&>;
-            using type_signal_recv_chunk    = sigc::signal<void, std::shared_ptr<file>&, const std::vector<uint8_t>&>;
-            using type_signal_send_chunk    = sigc::signal<void, std::shared_ptr<file>&, const std::vector<uint8_t>&>;
-            using type_signal_send_chunk_rq = sigc::signal<void, std::shared_ptr<file>&, uint64_t, size_t>;
-            using type_signal_recv_control  = sigc::signal<void, std::shared_ptr<file>&, TOX_FILE_CONTROL>;
-            using type_signal_send_control  = sigc::signal<void, std::shared_ptr<file>&, TOX_FILE_CONTROL>;
-
-            //! Emits when a new file is incoming
-            type_signal_recv          signal_recv_file();
-            //! Emits when a new file will go out
-            type_signal_send          signal_send_file();
-            //! Emits when a chunk for a incoming file was received
-            type_signal_recv_chunk    signal_recv_chunk();
-            //! Emits when a chunk for a outgoing file will be send
-            type_signal_send_chunk    signal_send_chunk();
-            //! Emits when a chunk for a outgoing file is requested
-            type_signal_send_chunk_rq signal_send_chunk_request();
-            //! Emits when a when a control-command was received
-            type_signal_recv_control  signal_recv_control();
-            //! Emits when a when a control-command will be send
-            type_signal_send_control  signal_send_control();
 
             //functions
             std::shared_ptr<file> find(fileNr nr);
@@ -70,14 +47,6 @@ namespace toxmm {
             std::weak_ptr<toxmm::contact> m_contact;
             std::vector<std::shared_ptr<file>> m_file;
 
-            type_signal_recv          m_signal_recv_file;
-            type_signal_send          m_signal_send_file;
-            type_signal_recv_chunk    m_signal_recv_chunk;
-            type_signal_send_chunk    m_signal_send_chunk;
-            type_signal_send_chunk_rq m_signal_send_chunk_rq;
-            type_signal_recv_control  m_signal_recv_control;
-            type_signal_send_control  m_signal_send_control;
-
             file_manager(std::shared_ptr<toxmm::contact> contact);
             file_manager(const file_manager&) = delete;
             void operator=(const file_manager&) = delete;
@@ -85,6 +54,23 @@ namespace toxmm {
             void init();
             void load();
             void save();
+
+            // Install signals
+            //! Emits when a new file is incoming
+            INST_SIGNAL (signal_recv_file          , void, std::shared_ptr<file>&)
+            //! Emits when a new file will go out
+            INST_SIGNAL (signal_send_file          , void, std::shared_ptr<file>&)
+            //! Emits when a chunk for a incoming file was received
+            INST_SIGNAL (signal_recv_chunk         , void, std::shared_ptr<file>&, const std::vector<uint8_t>&)
+            //! Emits when a chunk for a outgoing file will be send
+            INST_SIGNAL (signal_send_chunk         , void, std::shared_ptr<file>&, const std::vector<uint8_t>&)
+            //! Emits when a chunk for a outgoing file is requested
+            INST_SIGNAL (signal_send_chunk_request , void, std::shared_ptr<file>&, uint64_t, size_t)
+            //! Emits when a when a control-command was received
+            INST_SIGNAL (signal_recv_control       , void, std::shared_ptr<file>&, TOX_FILE_CONTROL)
+            //! Emits when a when a control-command will be send
+            INST_SIGNAL (signal_send_control       , void, std::shared_ptr<file>&, TOX_FILE_CONTROL)
+
     };
 }
 
