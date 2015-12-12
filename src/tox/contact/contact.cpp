@@ -27,51 +27,13 @@
 
 using namespace toxmm;
 
-contact::type_signal_receipt            contact::signal_receipt() { return m_signal_receipt; }
-contact::type_signal_recv_message       contact::signal_recv_message() { return m_signal_recv_message; }
-contact::type_signal_recv_action        contact::signal_recv_action() { return m_signal_recv_action; }
-contact::type_signal_send_message       contact::signal_send_message() { return m_signal_send_message; }
-contact::type_signal_send_action        contact::signal_send_action() { return m_signal_send_action; }
-contact::type_signal_send_file_chunk_rq contact::signal_send_file_chunk_request() { return m_signal_send_file_chunk_rq; }
-contact::type_signal_recv_file          contact::signal_recv_file() { return m_signal_recv_file; }
-contact::type_signal_recv_file_chunk    contact::signal_recv_file_chunk() { return m_signal_recv_file_chunk; }
-contact::type_signal_recv_file_control  contact::signal_recv_file_control() { return m_signal_recv_file_control; }
-
-Glib::PropertyProxy_ReadOnly<contactNr>         contact::property_nr()
-{ return Glib::PropertyProxy_ReadOnly<contactNr>(this, "contact-nr"); }
-Glib::PropertyProxy_ReadOnly<contactAddrPublic> contact::property_addr_public()
-{ return Glib::PropertyProxy_ReadOnly<contactAddrPublic>(this, "contact-addr"); }
-Glib::PropertyProxy_ReadOnly<Glib::ustring>     contact::property_name()
-{ return Glib::PropertyProxy_ReadOnly<Glib::ustring>(this, "contact-name"); }
-Glib::PropertyProxy_ReadOnly<Glib::ustring>     contact::property_name_or_addr()
-{ return Glib::PropertyProxy_ReadOnly<Glib::ustring>(this, "contact-name-or-addr"); }
-Glib::PropertyProxy_ReadOnly<Glib::ustring>     contact::property_status_message()
-{ return Glib::PropertyProxy_ReadOnly<Glib::ustring>(this, "contact-status-message"); }
-Glib::PropertyProxy_ReadOnly<TOX_USER_STATUS>   contact::property_status()
-{ return Glib::PropertyProxy_ReadOnly<TOX_USER_STATUS>(this, "contact-status"); }
-Glib::PropertyProxy_ReadOnly<TOX_CONNECTION>    contact::property_connection()
-{ return Glib::PropertyProxy_ReadOnly<TOX_CONNECTION>(this, "contact-connection"); }
-Glib::PropertyProxy<bool>                       contact::property_typing()
-{ return m_property_typing.get_proxy(); }
-Glib::PropertyProxy_ReadOnly<bool>              contact::property_remote_typing()
-{ return Glib::PropertyProxy_ReadOnly<bool>(this, "contact-remote-typing"); }
-
 contact::contact(std::shared_ptr<toxmm::contact_manager> manager, contactNr nr):
     Glib::ObjectBase(typeid(contact)),
-    m_contact_manager(manager),
-    m_property_nr  (*this, "contact-nr"),
-    m_property_addr(*this, "contact-addr"),
-    m_property_name(*this, "contact-name"),
-    m_property_name_or_addr(*this, "contact-name-or-addr"),
-    m_property_status_message(*this, "contact-status-message"),
-    m_property_status(*this, "contact-status"),
-    m_property_connection(*this, "contact-connection"),
-    m_property_typing(*this, "contact-typing"),
-    m_property_remote_typing(*this, "contact-remote-typing") {
+    m_contact_manager(manager) {
 
     auto update_name_or_addr = [this]() {
         if (property_name().get_value().empty()) {
-            m_property_name_or_addr = Glib::ustring(m_property_addr.get_value());
+            m_property_name_or_addr = Glib::ustring(m_property_addr_public.get_value());
         } else {
             m_property_name_or_addr = property_name().get_value();
         }
@@ -80,11 +42,13 @@ contact::contact(std::shared_ptr<toxmm::contact_manager> manager, contactNr nr):
     property_addr_public().signal_changed().connect(sigc::track_obj(update_name_or_addr, *this));
 
     m_property_nr = nr;
-    m_property_addr = toxcore_get_addr();
+    m_property_addr_public = toxcore_get_addr();
     m_property_name = toxcore_get_name();
     m_property_status_message = toxcore_get_status_message();
     m_property_status = toxcore_get_status();
     m_property_connection = toxcore_get_connection();
+    m_property_typing = false;
+    m_property_remote_typing = false;
 }
 
 void contact::init() {

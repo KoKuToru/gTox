@@ -101,7 +101,7 @@ void contact_manager::init() {
     c->signal_file_chunk_request().connect(sigc::track_obj([this](contactNr contact_nr, fileNr file_nr, uint64_t position, size_t length) {
         auto contact = find(contact_nr);
         if (contact) {
-            contact->m_signal_send_file_chunk_rq(file_nr, position, length);
+            contact->m_signal_send_file_chunk_request(file_nr, position, length);
         }
     }, *this));
 
@@ -202,7 +202,7 @@ contact_manager::~contact_manager() {
 std::shared_ptr<contact> contact_manager::find(contactAddrPublic addr) {
     std::shared_ptr<contact> res;
     auto iter = std::find_if(m_contact.begin(), m_contact.end(), [addr](auto contact) {
-        return contact->m_property_addr.get_value() == addr;
+        return contact->m_property_addr_public.get_value() == addr;
     });
     if (iter != m_contact.end()) {
         res = *iter;
