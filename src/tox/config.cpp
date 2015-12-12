@@ -21,30 +21,6 @@
 
 using namespace toxmm;
 
-Glib::PropertyProxy<Glib::ustring> config::property_download_path() {
-    return m_property_download_path.get_proxy();
-}
-
-Glib::PropertyProxy<Glib::ustring> config::property_avatar_path() {
-    return m_property_avatar_path.get_proxy();
-}
-
-Glib::PropertyProxy<bool> config::property_connection_udp() {
-    return m_property_connection_udp.get_proxy();
-}
-
-Glib::PropertyProxy<TOX_PROXY_TYPE> config::property_proxy_type() {
-    return m_property_proxy_type.get_proxy();
-}
-
-Glib::PropertyProxy<Glib::ustring> config::property_proxy_host() {
-    return m_property_proxy_host.get_proxy();
-}
-
-Glib::PropertyProxy<int>           config::property_proxy_port() {
-    return m_property_proxy_port.get_proxy();
-}
-
 template<size_t I = 0, typename Func, typename ...Ts>
 typename std::enable_if<I == sizeof...(Ts)>::type
 for_each_in_tuple(const std::tuple<Ts...> &, Func) {}
@@ -58,19 +34,19 @@ for_each_in_tuple(const std::tuple<Ts...> & tpl, Func func) {
 
 config::config(const std::shared_ptr<toxmm::storage> storage):
     Glib::ObjectBase(typeid(this)),
-    m_storage(storage),
-    m_property_download_path(*this, "toxmm-config-download-path",
-                             Glib::get_user_special_dir(
-                                 GUserDirectory::G_USER_DIRECTORY_DOWNLOAD)),
-    m_property_avatar_path(*this, "toxmm-config-avatar-path",
-                           Glib::build_filename(
-                               Glib::get_user_config_dir(),
-                               "tox",
-                               "avatars")),
-    m_property_connection_udp(*this, "toxmm-config-connection-udp", true),
-    m_property_proxy_type(*this, "toxmm-config-proxy-type"),
-    m_property_proxy_host(*this, "toxmm-config-proxy-host", ""),
-    m_property_proxy_port(*this, "toxmm-config-proxy-port") {
+    m_storage(storage) {
+
+    m_property_download_path = Glib::get_user_special_dir(
+                                   GUserDirectory::G_USER_DIRECTORY_DOWNLOAD);
+    m_property_avatar_path = Glib::build_filename(
+                                 Glib::get_user_config_dir(),
+                                 "tox",
+                                 "avatars");
+    m_property_connection_udp = true;
+    m_property_proxy_type = TOX_PROXY_TYPE_NONE;
+    m_property_proxy_host = "";
+    m_property_proxy_port = 0;
+
     load_flatbuffer();
 
     //setup properties
