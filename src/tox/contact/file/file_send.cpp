@@ -94,6 +94,12 @@ void file_send::iterate() {
         }
 
         m_queue.pop_front();
+
+        if (position + size >= property_size().get_value()) {
+            //upload complete
+            m_property_complete = true;
+            m_property_active   = false;
+        }
     }
 }
 
