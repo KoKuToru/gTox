@@ -25,64 +25,15 @@
 
 using namespace toxmm;
 
-auto file::property_uuid()          -> PropProxy<uniqueId, false> {
-    return proxy<false>(this, m_property_uuid);
-}
-
-auto file::property_id()           -> PropProxy<fileId, false> {
-    return proxy<false>(this, m_property_id);
-}
-auto file::property_nr()           -> PropProxy<fileNr, false> {
-    return proxy<false>(this, m_property_nr);
-}
-auto file::property_kind()         -> PropProxy<TOX_FILE_KIND, false> {
-    return proxy<false>(this, m_property_kind);
-}
-auto file::property_position()     -> PropProxy<uint64_t, false> {
-    return proxy<false>(this, m_property_position);
-}
-auto file::property_size()         -> PropProxy<uint64_t, false> {
-    return proxy<false>(this, m_property_size);
-}
-auto file::property_name()         -> PropProxy<Glib::ustring, false> {
-    return proxy<false>(this, m_property_name);
-}
-auto file::property_path()         -> PropProxy<Glib::ustring, false> {
-    return proxy<false>(this, m_property_path);
-}
-auto file::property_state()        -> PropProxy<TOX_FILE_CONTROL> {
-    return proxy(this, m_property_state);
-}
-auto file::property_state_remote() -> PropProxy<TOX_FILE_CONTROL, false> {
-    return proxy<false>(this, m_property_state_remote);
-}
-auto file::property_progress()     -> PropProxy<double, false> {
-    return proxy<false>(this, m_property_progress);
-}
-auto file::property_complete()     -> PropProxy<bool, false> {
-    return proxy<false>(this, m_property_complete);
-}
-auto file::property_active()     -> PropProxy<bool, false> {
-    return proxy<false>(this, m_property_active);
-}
-
 file::file():
-    Glib::ObjectBase(typeid(file)),
-    m_property_uuid (*this, "file-gid"),
-    m_property_id  (*this, "file-id"),
-    m_property_nr  (*this, "file-nr"),
-    m_property_kind(*this, "file-kind"),
-    m_property_position(*this, "file-position"),
-    m_property_size (*this, "file-size"),
-    m_property_name (*this, "file-name"),
-    m_property_path (*this, "file-path"),
-    m_property_state(*this, "file-state", TOX_FILE_CONTROL_PAUSE),
-    m_property_state_remote(*this, "file-state-remote", TOX_FILE_CONTROL_RESUME),
-    m_property_progress(*this, "file-progress", 0.0),
-    m_property_complete(*this, "file-complete", false),
-    m_property_active(*this, "file-active", false) {
+    Glib::ObjectBase(typeid(file)) {
     //set gid
     m_property_uuid = uniqueId::create_random();
+    m_property_state = TOX_FILE_CONTROL_PAUSE;
+    m_property_state_remote = TOX_FILE_CONTROL_RESUME;
+    m_property_progress = 0.0;
+    m_property_complete = false;
+    m_property_active = false;
 }
 
 file::file(std::shared_ptr<toxmm::file_manager> manager):

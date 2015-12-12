@@ -18,7 +18,7 @@
 **/
 #ifndef INST_PROP
 #define INST_PROP(t, a, n) \
-    private: \
+    protected: \
     Glib::Property<t> m_ ## a{*this, n}; \
     public: \
     Glib::PropertyProxy<t> a() { \
@@ -30,7 +30,7 @@
 #endif
 #ifndef INST_PROP_RO
 #define INST_PROP_RO(t, a, n) \
-    private: \
+    protected: \
     Glib::Property<t> m_ ## a{*this, n}; \
     public: \
     Glib::PropertyProxy_ReadOnly<t> a() { \
@@ -39,7 +39,7 @@
 #endif
 #ifndef INST_SIGNAL
 #define INST_SIGNAL(n, ...) \
-    private: \
+    protected: \
     using type_ ## n = sigc::signal<__VA_ARGS__>; \
     type_ ## n m_ ## n; \
     public: \
