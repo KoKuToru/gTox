@@ -21,6 +21,7 @@
 
 #include "types.h"
 #include <tox/toxav.h>
+#include "utils.h"
 
 namespace toxmm {
     class av : public Glib::Object, public std::enable_shared_from_this<av> {
@@ -167,19 +168,6 @@ namespace toxmm {
                     }
             };
 
-            //signals
-            using type_signal_call                = sigc::signal<void, contactNr, bool, bool>;
-            using type_signal_call_state          = sigc::signal<void, contactNr, uint32_t>;
-            using type_signal_bit_rate_status     = sigc::signal<void, contactNr, uint32_t, uint32_t>;
-            using type_signal_audio_receive_frame = sigc::signal<void, contactNr, const audio&>;
-            using type_signal_video_receive_frame = sigc::signal<void, contactNr, const image&>;
-
-            type_signal_call                signal_call();
-            type_signal_call_state          signal_call_state();
-            type_signal_bit_rate_status     signal_bit_rate_status();
-            type_signal_audio_receive_frame signal_audio_receive_frame();
-            type_signal_video_receive_frame signal_video_receive_frame();
-
             std::shared_ptr<toxmm::core> core();
 
             void call(contactNr nr,
@@ -205,12 +193,6 @@ namespace toxmm {
             std::weak_ptr<toxmm::core> m_core;
             sigc::connection m_update_interval;
 
-            type_signal_call                m_signal_call;
-            type_signal_call_state          m_signal_call_state;
-            type_signal_bit_rate_status     m_signal_bit_rate_status;
-            type_signal_audio_receive_frame m_signal_audio_receive_frame;
-            type_signal_video_receive_frame m_signal_video_receive_frame;
-
             av(const std::shared_ptr<toxmm::core>& core);
             av(const av&) = delete;
             void operator=(const av&) = delete;
@@ -219,6 +201,13 @@ namespace toxmm {
 
             bool update();
             uint32_t update_optimal_interval();
+
+            // Install signals
+            INST_SIGNAL (signal_call               , void, contactNr, bool, bool)
+            INST_SIGNAL (signal_call_state         , void, contactNr, uint32_t)
+            INST_SIGNAL (signal_bit_rate_status    , void, contactNr, uint32_t, uint32_t)
+            INST_SIGNAL (signal_audio_receive_frame, void, contactNr, const audio&)
+            INST_SIGNAL (signal_video_receive_frame, void, contactNr, const image&)
     };
 }
 
