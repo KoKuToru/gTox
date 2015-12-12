@@ -24,10 +24,6 @@
 
 using namespace toxmm;
 
-contact_manager::type_signal_request contact_manager::signal_request() { return m_signal_request; }
-contact_manager::type_signal_removed contact_manager::signal_removed() { return m_signal_removed; }
-contact_manager::type_signal_removed contact_manager::signal_added  () { return m_signal_added; }
-
 contact_manager::contact_manager(std::shared_ptr<toxmm::core> core):
     m_core(core) {
 }
