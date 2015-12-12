@@ -28,14 +28,6 @@
 
 using namespace toxmm;
 
-file_manager::type_signal_recv          file_manager::signal_recv_file() { return m_signal_recv_file; }
-file_manager::type_signal_send          file_manager::signal_send_file() { return m_signal_send_file; }
-file_manager::type_signal_recv_chunk    file_manager::signal_recv_chunk() { return m_signal_recv_chunk; }
-file_manager::type_signal_send_chunk    file_manager::signal_send_chunk() { return m_signal_send_chunk; }
-file_manager::type_signal_send_chunk_rq file_manager::signal_send_chunk_request() { return m_signal_send_chunk_rq; }
-file_manager::type_signal_recv_control  file_manager::signal_recv_control() { return m_signal_recv_control; }
-file_manager::type_signal_send_control  file_manager::signal_send_control() { return m_signal_send_control; }
-
 file_manager::file_manager(std::shared_ptr<toxmm::contact> contact)
     : m_contact(contact) {
 
@@ -51,7 +43,7 @@ void file_manager::init() {
         auto file = find(nr);
         if (file) {
             file->pre_send_chunk_request(position, length);
-            m_signal_send_chunk_rq(file, position, length);
+            m_signal_send_chunk_request(file, position, length);
         }
     }, *this));
 

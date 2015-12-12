@@ -21,20 +21,11 @@
 #include <glibmm.h>
 #include "storage.h"
 #include <tox/tox.h>
+#include "utils.h"
 
 namespace toxmm {
     class config : public Glib::Object, public std::enable_shared_from_this<config> {
         public:
-            //props
-            Glib::PropertyProxy<Glib::ustring> property_download_path();
-            Glib::PropertyProxy<Glib::ustring> property_avatar_path();
-
-            Glib::PropertyProxy<bool> property_connection_udp();
-
-            Glib::PropertyProxy<TOX_PROXY_TYPE> property_proxy_type();
-            Glib::PropertyProxy<Glib::ustring>  property_proxy_host();
-            Glib::PropertyProxy<int>            property_proxy_port();
-
             static std::shared_ptr<config> create(const std::shared_ptr<toxmm::storage> storage);
 
         private:
@@ -43,18 +34,17 @@ namespace toxmm {
 
             std::shared_ptr<toxmm::storage> m_storage;
 
-            Glib::Property<Glib::ustring> m_property_download_path;
-            Glib::Property<Glib::ustring> m_property_avatar_path;
-
-            Glib::Property<bool> m_property_connection_udp;
-
-            Glib::Property<TOX_PROXY_TYPE> m_property_proxy_type;
-            Glib::Property<Glib::ustring>  m_property_proxy_host;
-            Glib::Property<int>            m_property_proxy_port;
-
             config(const std::shared_ptr<toxmm::storage> storage);
             config(const config&) = delete;
             void operator=(const config&) = delete;
+
+            // Install properties
+            INST_PROP (Glib::ustring , property_download_path, "config-download-path")
+            INST_PROP (Glib::ustring , property_avatar_path, "config-avatar-path")
+            INST_PROP (bool          , property_connection_udp, "config-connection-udp")
+            INST_PROP (TOX_PROXY_TYPE, property_proxy_type, "config-proxy-type")
+            INST_PROP (Glib::ustring , property_proxy_host, "config-proxy-host")
+            INST_PROP (int           , property_proxy_port, "config-proxy-port")
     };
 }
 

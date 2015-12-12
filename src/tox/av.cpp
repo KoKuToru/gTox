@@ -23,26 +23,6 @@
 
 using namespace toxmm;
 
-av::type_signal_call                av::signal_call() {
-    return m_signal_call;
-}
-
-av::type_signal_call_state          av::signal_call_state() {
-    return m_signal_call_state;
-}
-
-av::type_signal_bit_rate_status     av::signal_bit_rate_status() {
-    return m_signal_bit_rate_status;
-}
-
-av::type_signal_audio_receive_frame av::signal_audio_receive_frame() {
-    return m_signal_audio_receive_frame;
-}
-
-av::type_signal_video_receive_frame av::signal_video_receive_frame() {
-    return m_signal_video_receive_frame;
-}
-
 av::av(const std::shared_ptr<toxmm::core>& core)
     : m_av(nullptr),
       m_core(core) {

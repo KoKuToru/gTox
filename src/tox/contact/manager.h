@@ -22,19 +22,12 @@
 #include <glibmm.h>
 #include <memory>
 #include "types.h"
+#include "utils.h"
 
 namespace toxmm {
     class contact_manager : public std::enable_shared_from_this<contact_manager> {
             friend class core;
         public:
-            using type_signal_request = sigc::signal<void, contactAddrPublic, Glib::ustring>;
-            using type_signal_removed = sigc::signal<void, std::shared_ptr<contact>>;
-            using type_signal_added   = sigc::signal<void, std::shared_ptr<contact>>;
-
-            type_signal_request signal_request();
-            type_signal_removed signal_removed();
-            type_signal_added   signal_added();
-
             std::shared_ptr<contact> find(contactAddrPublic addr);
             std::shared_ptr<contact> find(contactNr nr);
 
@@ -54,15 +47,16 @@ namespace toxmm {
 
             std::vector<std::shared_ptr<contact>> m_contact;
 
-            type_signal_request m_signal_request;
-            type_signal_removed m_signal_removed;
-            type_signal_added   m_signal_added;
-
             contact_manager(std::shared_ptr<toxmm::core> core);
             contact_manager(const contact_manager&) = delete;
             void operator=(const contact_manager&) = delete;
 
             void init();
+
+            // Install signals
+            INST_SIGNAL (signal_request, void, contactAddrPublic, Glib::ustring)
+            INST_SIGNAL (signal_removed, void, std::shared_ptr<contact>)
+            INST_SIGNAL (signal_added  , void, std::shared_ptr<contact>)
     };
 
 }

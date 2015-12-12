@@ -51,7 +51,6 @@ namespace dialog {
 
             Gtk::Image* m_status_icon;
 
-            sigc::connection m_update_interval;
             sigc::connection m_store_pos_size;
 
             std::string m_config_path;

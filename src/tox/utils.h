@@ -16,30 +16,37 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 **/
-#ifndef TOXMM_CONTACT_RECEIPT_H
-#define TOXMM_CONTACT_RECEIPT_H
-
-#include <glibmm.h>
-#include "types.h"
-#include "utils.h"
-
-namespace toxmm {
-    class receipt : public Glib::Object, public std::enable_shared_from_this<receipt> {
-            friend class contact;
-        private:
-            sigc::connection m_connection;
-
-            receipt(std::shared_ptr<contact> contact, receiptNr nr);
-            receipt(const receipt&) = delete;
-            void operator=(const receipt&) = delete;
-
-            // Install properties
-            INST_PROP (receiptNr, property_nr, "receipt-nr")
-
-            // Install signals
-            INST_SIGNAL (signal_okay, void)
-            INST_SIGNAL (signal_lost, void)
-    };
-}
-
+#ifndef INST_PROP
+#define INST_PROP(t, a, n) \
+    protected: \
+    Glib::Property<t> m_ ## a{*this, n}; \
+    public: \
+    Glib::PropertyProxy<t> a() { \
+    return {this, n}; \
+    } \
+    Glib::PropertyProxy_ReadOnly<t> a() const { \
+    return {this, n}; \
+    }
+#endif
+#ifndef INST_PROP_RO
+#define INST_PROP_RO(t, a, n) \
+    protected: \
+    Glib::Property<t> m_ ## a{*this, n}; \
+    public: \
+    Glib::PropertyProxy_ReadOnly<t> a() { \
+    return {this, n}; \
+    }
+#endif
+#ifndef INST_SIGNAL
+#define INST_SIGNAL(n, ...) \
+    protected: \
+    using type_ ## n = sigc::signal<__VA_ARGS__>; \
+    type_ ## n m_ ## n; \
+    public: \
+    const type_ ## n n() const { \
+    return m_ ## n; \
+    } \
+    type_ ## n n() { \
+    return m_ ## n; \
+    }
 #endif

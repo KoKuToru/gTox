@@ -24,6 +24,7 @@
 #include "types.h"
 #include <giomm.h>
 #include "av.h"
+#include "utils.h"
 
 namespace toxmm {
     class file_manager;
@@ -33,38 +34,6 @@ namespace toxmm {
             friend class contact_manager;
             friend class file_manager;
         public:
-            //signals
-            using type_signal_receipt            = sigc::signal<void, receiptNr>;
-            using type_signal_recv_message       = sigc::signal<void, Glib::ustring>;
-            using type_signal_recv_action        = sigc::signal<void, Glib::ustring>;
-            using type_signal_send_message       = sigc::signal<void, Glib::ustring, std::shared_ptr<receipt>>;
-            using type_signal_send_action        = sigc::signal<void, Glib::ustring, std::shared_ptr<receipt>>;
-            using type_signal_send_file_chunk_rq = sigc::signal<void, fileNr, uint64_t, size_t>;
-            using type_signal_recv_file          = sigc::signal<void, fileNr, TOX_FILE_KIND, size_t, Glib::ustring>;
-            using type_signal_recv_file_chunk    = sigc::signal<void, fileNr, uint64_t, const std::vector<uint8_t>&>;
-            using type_signal_recv_file_control  = sigc::signal<void, fileNr, TOX_FILE_CONTROL>;
-
-            type_signal_receipt            signal_receipt();
-            type_signal_recv_message       signal_recv_message();
-            type_signal_recv_action        signal_recv_action();
-            type_signal_send_message       signal_send_message();
-            type_signal_send_action        signal_send_action();
-            type_signal_send_file_chunk_rq signal_send_file_chunk_request();
-            type_signal_recv_file          signal_recv_file();
-            type_signal_recv_file_chunk    signal_recv_file_chunk();
-            type_signal_recv_file_control  signal_recv_file_control();
-
-            //props
-            Glib::PropertyProxy_ReadOnly<contactNr>         property_nr();
-            Glib::PropertyProxy_ReadOnly<contactAddrPublic> property_addr_public();
-            Glib::PropertyProxy_ReadOnly<Glib::ustring>     property_name();
-            Glib::PropertyProxy_ReadOnly<Glib::ustring>     property_name_or_addr();
-            Glib::PropertyProxy_ReadOnly<Glib::ustring>     property_status_message();
-            Glib::PropertyProxy_ReadOnly<TOX_USER_STATUS>   property_status();
-            Glib::PropertyProxy_ReadOnly<TOX_CONNECTION>    property_connection();
-            Glib::PropertyProxy<bool>                       property_typing();
-            Glib::PropertyProxy_ReadOnly<bool>              property_remote_typing();
-
             //functions
             std::shared_ptr<receipt> send_message(const std::string& message);
             std::shared_ptr<receipt> send_action (const std::string& action);
@@ -78,26 +47,6 @@ namespace toxmm {
             std::weak_ptr<toxmm::contact_manager> m_contact_manager;
             std::shared_ptr<toxmm::file_manager>  m_file_manager;
             std::shared_ptr<toxmm::call>          m_call;
-
-            Glib::Property<contactNr>         m_property_nr;
-            Glib::Property<contactAddrPublic> m_property_addr;
-            Glib::Property<Glib::ustring>     m_property_name;
-            Glib::Property<Glib::ustring>     m_property_name_or_addr;
-            Glib::Property<Glib::ustring>     m_property_status_message;
-            Glib::Property<TOX_USER_STATUS>   m_property_status;
-            Glib::Property<TOX_CONNECTION>    m_property_connection;
-            Glib::Property<bool>              m_property_typing;
-            Glib::Property<bool>              m_property_remote_typing;
-
-            type_signal_receipt            m_signal_receipt;
-            type_signal_recv_message       m_signal_recv_message;
-            type_signal_recv_action        m_signal_recv_action;
-            type_signal_send_message       m_signal_send_message;
-            type_signal_send_action        m_signal_send_action;
-            type_signal_send_file_chunk_rq m_signal_send_file_chunk_rq;
-            type_signal_recv_file          m_signal_recv_file;
-            type_signal_recv_file_chunk    m_signal_recv_file_chunk;
-            type_signal_recv_file_control  m_signal_recv_file_control;
 
             std::shared_ptr<toxmm::file>  m_avatar_send;
             Glib::RefPtr<Gio::FileMonitor> m_avatar_send_monitor;
@@ -113,6 +62,28 @@ namespace toxmm {
             Glib::ustring     toxcore_get_status_message();
             TOX_USER_STATUS   toxcore_get_status();
             TOX_CONNECTION    toxcore_get_connection();
+
+            // Install all properties
+            INST_PROP_RO (contactNr        , property_nr, "contact-nr")
+            INST_PROP_RO (contactAddrPublic, property_addr_public, "contact-addr-public")
+            INST_PROP_RO (Glib::ustring    , property_name, "contact-name")
+            INST_PROP_RO (Glib::ustring    , property_name_or_addr, "contact-name-or-addr")
+            INST_PROP_RO (Glib::ustring    , property_status_message, "contact-status-message")
+            INST_PROP_RO (TOX_USER_STATUS  , property_status, "contact-status")
+            INST_PROP_RO (TOX_CONNECTION   , property_connection, "contact-connection")
+            INST_PROP    (bool             , property_typing, "contact-typing")
+            INST_PROP_RO (bool             , property_remote_typing, "contact-remote-typing")
+
+            // Install all signals
+            INST_SIGNAL (signal_receipt                , void, receiptNr)
+            INST_SIGNAL (signal_recv_message           , void, Glib::ustring)
+            INST_SIGNAL (signal_recv_action            , void, Glib::ustring)
+            INST_SIGNAL (signal_send_message           , void, Glib::ustring, std::shared_ptr<receipt>)
+            INST_SIGNAL (signal_send_action            , void, Glib::ustring, std::shared_ptr<receipt>)
+            INST_SIGNAL (signal_send_file_chunk_request, void, fileNr, uint64_t, size_t)
+            INST_SIGNAL (signal_recv_file              , void, fileNr, TOX_FILE_KIND, size_t, Glib::ustring)
+            INST_SIGNAL (signal_recv_file_chunk        , void, fileNr, uint64_t, const std::vector<uint8_t>&)
+            INST_SIGNAL (signal_recv_file_control      , void, fileNr, TOX_FILE_CONTROL)
     };
 
 }

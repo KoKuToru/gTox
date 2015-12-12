@@ -56,55 +56,11 @@ static const std::vector<bootstrap_node>& get_bootstrap_nodes() {
     return bootstrap_nodes;
 }
 
-//SIGNALS
-core::type_signal_contact_request           core::signal_contact_request() { return m_signal_contact_request; }
-core::type_signal_contact_message           core::signal_contact_message() { return m_signal_contact_message; }
-core::type_signal_contact_action            core::signal_contact_action()  { return m_signal_contact_action; }
-core::type_signal_contact_name              core::signal_contact_name()    { return m_signal_contact_name; }
-core::type_signal_contact_status_message    core::signal_contact_status_message()  { return m_signal_contact_status_message; }
-core::type_signal_contact_status            core::signal_contact_status()  { return m_signal_contact_status; }
-core::type_signal_contact_typing            core::signal_contact_typing()  { return m_signal_contact_typing; }
-core::type_signal_contact_read_receipt      core::signal_contact_read_receipt()  { return m_signal_contact_read_receipt; }
-core::type_signal_contact_connection_status core::signal_contact_connection_status()  { return m_signal_contact_connection_status; }
-core::type_signal_file_chunk_request        core::signal_file_chunk_request()  { return m_signal_file_chunk_request; }
-core::type_signal_file_recv                 core::signal_file_recv()  { return m_signal_file_recv; }
-core::type_signal_file_recv_chunk           core::signal_file_recv_chunk()  { return m_signal_file_recv_chunk; }
-core::type_signal_file_recv_control         core::signal_file_recv_control() { return m_signal_file_recv_control; }
-
-Glib::PropertyProxy_ReadOnly<contactAddr> core::property_addr() {
-    return {this, "self-addr"};
-}
-Glib::PropertyProxy_ReadOnly<contactAddrPublic> core::property_addr_public() {
-    return {this, "self-addr-public"};
-}
-Glib::PropertyProxy<Glib::ustring> core::property_name() {
-    return m_property_name.get_proxy();
-}
-Glib::PropertyProxy_ReadOnly<Glib::ustring> core::property_name_or_addr() {
-    return {this, "self-name-or-addr"};
-}
-Glib::PropertyProxy<Glib::ustring> core::property_status_message() {
-    return m_property_status_message.get_proxy();
-}
-Glib::PropertyProxy<TOX_USER_STATUS> core::property_status() {
-    return m_property_status.get_proxy();
-}
-Glib::PropertyProxy_ReadOnly<TOX_CONNECTION> core::property_connection() {
-    return {this, "self-connection"};
-}
-
 core::core(const std::string& profile_path,
            const std::shared_ptr<toxmm::storage>& storage):
     Glib::ObjectBase(typeid(core)),
     m_profile_path(profile_path),
-    m_storage(storage),
-    m_property_addr(*this, "self-addr"),
-    m_property_addr_public(*this, "self-addr-public"),
-    m_property_name(*this, "self-name"),
-    m_property_name_or_addr(*this, "self-name-or-addr"),
-    m_property_status_message(*this, "self-status-message"),
-    m_property_status(*this, "self-status"),
-    m_property_connection(*this, "self-connection") {
+    m_storage(storage) {
     //rest is done in init()
 }
 
@@ -395,6 +351,10 @@ void core::init() {
                 sigc::track_obj(sigc::hide([this]() {
         save();
     }), *this));
+
+    m_update_interval = Glib::signal_timeout()
+                        .connect(sigc::mem_fun(this, &core::update),
+                                 update_optimal_interval());
 }
 
 std::shared_ptr<toxmm::contact_manager> core::contact_manager() {
@@ -413,7 +373,7 @@ std::shared_ptr<toxmm::av> core::av() {
     return m_av;
 }
 
-void core::update() {
+bool core::update() {
     tox_iterate(toxcore());
 
     auto timer_wait = 10;
@@ -466,6 +426,13 @@ void core::update() {
         }
         m_bootstrap_timer.reset();
     }
+
+    //next round:
+    m_update_interval = Glib::signal_timeout()
+                        .connect(sigc::mem_fun(this, &core::update),
+                                 update_optimal_interval(),
+                                 Glib::PRIORITY_DEFAULT_IDLE);
+    return false;
 }
 
 uint32_t core::update_optimal_interval() {

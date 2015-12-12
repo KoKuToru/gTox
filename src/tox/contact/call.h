@@ -22,37 +22,7 @@
 #include <glibmm.h>
 #include "types.h"
 #include "av.h"
-
-// check if these macros are working nice without proplems
-// and use them everywhere
-#define INST_PROP(t, a, n) \
-    private: \
-        Glib::Property<t> m_ ## a{*this, n}; \
-    public: \
-        Glib::PropertyProxy<t> a() { \
-            return {this, n}; \
-        } \
-        Glib::PropertyProxy_ReadOnly<t> a() const { \
-            return {this, n}; \
-        }
-#define INST_PROP_RO(t, a, n) \
-    private: \
-        Glib::Property<t> m_ ## a{*this, n}; \
-    public: \
-        Glib::PropertyProxy_ReadOnly<t> a() { \
-            return {this, n}; \
-        }
-#define INST_SIGNAL(n, ...) \
-    private: \
-        using type_ ## n = sigc::signal<__VA_ARGS__>; \
-        type_ ## n m_ ## n; \
-    public: \
-        const type_ ## n n() const { \
-            return m_ ## n; \
-        } \
-        type_ ## n n() { \
-            return m_ ## n; \
-        }
+#include "utils.h"
 
 namespace toxmm {
     class call : public Glib::Object, public std::enable_shared_from_this<call> {

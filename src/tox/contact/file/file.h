@@ -22,19 +22,7 @@
 #include <glibmm.h>
 #include <memory>
 #include "types.h"
-
-template<typename T, bool writeable = true> using PropProxy = typename std::conditional<writeable, Glib::PropertyProxy<T>, Glib::PropertyProxy_ReadOnly<T>>::type;
-template<typename T> using Prop = typename Glib::Property<T>;
-template<bool writeable = true, typename T> constexpr PropProxy<T, writeable> proxy(Glib::ObjectBase* self, Glib::Property<T>& prop) {
-    class Hack: public Glib::PropertyBase {
-        public:
-            const char* get_name_internal() const {
-                return PropertyBase::get_name_internal();
-            }
-    };
-    const Glib::PropertyBase* base = &prop;
-    return {self, ((const Hack*)base)->get_name_internal()};
-}
+#include "utils.h"
 
 namespace toxmm {
     class file_manager;
@@ -51,21 +39,6 @@ namespace toxmm {
             friend class file_send;
 
         public:
-            //props
-            auto property_uuid()         -> PropProxy<uniqueId, false>;
-            auto property_id()           -> PropProxy<fileId, false>;
-            auto property_nr()           -> PropProxy<fileNr, false>;
-            auto property_kind()         -> PropProxy<TOX_FILE_KIND, false>;
-            auto property_position()     -> PropProxy<uint64_t, false>;
-            auto property_size()         -> PropProxy<uint64_t, false>;
-            auto property_name()         -> PropProxy<Glib::ustring, false>;
-            auto property_path()         -> PropProxy<Glib::ustring, false>;
-            auto property_state()        -> PropProxy<TOX_FILE_CONTROL>;
-            auto property_state_remote() -> PropProxy<TOX_FILE_CONTROL, false>;
-            auto property_progress()     -> PropProxy<double, false>;
-            auto property_complete()     -> PropProxy<bool, false>;
-            auto property_active()       -> PropProxy<bool, false>;
-
             auto core()            -> std::shared_ptr<toxmm::core>;
             auto file_manager()    -> std::shared_ptr<toxmm::file_manager>;
             auto contact_manager() -> std::shared_ptr<toxmm::contact_manager>;
@@ -90,24 +63,25 @@ namespace toxmm {
             void pre_recv_chunk(uint64_t position, const std::vector<uint8_t>& data);
             void seek(uint64_t position);
 
-            Prop<uniqueId>         m_property_uuid;
-            Prop<fileId>           m_property_id;
-            Prop<fileNr>           m_property_nr;
-            Prop<TOX_FILE_KIND>    m_property_kind;
-            Prop<uint64_t>         m_property_position;
-            Prop<uint64_t>         m_property_size;
-            Prop<Glib::ustring>    m_property_name;
-            Prop<Glib::ustring>    m_property_path;
-            Prop<TOX_FILE_CONTROL> m_property_state;
-            Prop<TOX_FILE_CONTROL> m_property_state_remote;
-            Prop<double>           m_property_progress;
-            Prop<bool>             m_property_complete;
-            Prop<bool>             m_property_active;
-
         private:
             std::weak_ptr<toxmm::file_manager> m_file_manager;
 
             void init();
+
+            // Install properties
+            INST_PROP_RO (uniqueId        , property_uuid, "file-uuid")
+            INST_PROP_RO (fileId          , property_id, "file-id")
+            INST_PROP_RO (fileNr          , property_nr, "file-nr")
+            INST_PROP_RO (TOX_FILE_KIND   , property_kind, "file-kind")
+            INST_PROP_RO (uint64_t        , property_position, "file-position")
+            INST_PROP_RO (uint64_t        , property_size, "file-size")
+            INST_PROP_RO (Glib::ustring   , property_name, "file-name")
+            INST_PROP_RO (Glib::ustring   , property_path, "file-path")
+            INST_PROP    (TOX_FILE_CONTROL, property_state, "file-state")
+            INST_PROP_RO (TOX_FILE_CONTROL, property_state_remote, "file-remote")
+            INST_PROP_RO (double          , property_progress, "file-progress")
+            INST_PROP_RO (bool            , property_complete, "file-complete")
+            INST_PROP_RO (bool            , property_active, "file-active")
     };
 }
 #endif
