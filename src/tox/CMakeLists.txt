@@ -30,6 +30,7 @@ set(SOURCES
     contact/file/file_send.cpp
     av.cpp
     contact/call.cpp
+    utils.h
 )
 
 add_library(${PROJECT_NAME} STATIC
