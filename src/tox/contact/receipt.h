@@ -21,30 +21,24 @@
 
 #include <glibmm.h>
 #include "types.h"
+#include "utils.h"
 
 namespace toxmm {
     class receipt : public Glib::Object, public std::enable_shared_from_this<receipt> {
             friend class contact;
-        public:
-            typedef sigc::signal<void> type_signal_okay;
-            typedef sigc::signal<void> type_signal_lost;
-
-            type_signal_okay signal_okay();
-            type_signal_lost signal_lost();
-
-            Glib::PropertyProxy_ReadOnly<receiptNr> property_nr();
-
         private:
-            Glib::Property<receiptNr> m_property_nr;
-
-            type_signal_okay m_signal_okay;
-            type_signal_lost m_signal_lost;
-
             sigc::connection m_connection;
 
             receipt(std::shared_ptr<contact> contact, receiptNr nr);
             receipt(const receipt&) = delete;
             void operator=(const receipt&) = delete;
+
+            // Install properties
+            INST_PROP (receiptNr, property_nr, "receipt-nr")
+
+            // Install signals
+            INST_SIGNAL (signal_okay, void)
+            INST_SIGNAL (signal_lost, void)
     };
 }
 
