@@ -174,13 +174,6 @@ main::main(BaseObjectType* cobject,
 
     load_contacts();
 
-    m_update_interval = Glib::signal_timeout().connect(sigc::track_obj([this]() {
-        utils::debug::scope_log log(DBG_LVL_5("gtox"), {});
-        m_toxcore->update();
-        return true;
-    }, *this), m_toxcore->update_optimal_interval());
-
-
     //Menu items
     auto contact_remove = Gtk::manage(new Gtk::MenuItem(_("Remove contact"), true));
 

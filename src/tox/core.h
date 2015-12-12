@@ -39,7 +39,6 @@ namespace toxmm {
             static std::shared_ptr<core> create(const std::string& profile_path,
                                                 const std::shared_ptr<storage>& storage);
             void save();
-            void update();
             uint32_t update_optimal_interval();
             void destroy();
             ~core();
@@ -61,6 +60,7 @@ namespace toxmm {
             std::shared_ptr<toxmm::storage> m_storage;
             std::shared_ptr<toxmm::contact_manager> m_contact_manager;
             std::shared_ptr<toxmm::av> m_av;
+            sigc::connection m_update_interval;
 
             profile m_profile;
             Glib::Timer m_bootstrap_timer;
@@ -71,6 +71,7 @@ namespace toxmm {
             void operator=(const core&) = delete;
 
             void init();
+            bool update();
 
             // Install properties
             INST_PROP_RO (contactAddr       , property_addr, "core-addr")

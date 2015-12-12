@@ -126,10 +126,6 @@ public:
         tox_bootstrap(tox_b, "127.0.0.1", port_a, dht_a, &bootstrap_error);
         TS_ASSERT_EQUALS(bootstrap_error, TOX_ERR_BOOTSTRAP_OK);
 
-        update_connection = Glib::signal_timeout().connect(sigc::bind_return([this]() {
-            core_a->update();
-            core_b->update();
-        },true), UPDATE_DELAY_MS);
         contact_a = core_b->contact_manager()->find(core_a->property_addr_public());
         contact_b = core_a->contact_manager()->find(core_b->property_addr_public());
     }

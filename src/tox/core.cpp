@@ -351,6 +351,10 @@ void core::init() {
                 sigc::track_obj(sigc::hide([this]() {
         save();
     }), *this));
+
+    m_update_interval = Glib::signal_timeout()
+                        .connect(sigc::mem_fun(this, &core::update),
+                                 update_optimal_interval());
 }
 
 std::shared_ptr<toxmm::contact_manager> core::contact_manager() {
@@ -369,7 +373,7 @@ std::shared_ptr<toxmm::av> core::av() {
     return m_av;
 }
 
-void core::update() {
+bool core::update() {
     tox_iterate(toxcore());
 
     auto timer_wait = 10;
@@ -422,6 +426,13 @@ void core::update() {
         }
         m_bootstrap_timer.reset();
     }
+
+    //next round:
+    m_update_interval = Glib::signal_timeout()
+                        .connect(sigc::mem_fun(this, &core::update),
+                                 update_optimal_interval(),
+                                 Glib::PRIORITY_DEFAULT_IDLE);
+    return false;
 }
 
 uint32_t core::update_optimal_interval() {
