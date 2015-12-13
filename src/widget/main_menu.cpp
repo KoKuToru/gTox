@@ -159,7 +159,7 @@ main_menu::~main_menu() {
 
 void main_menu::set_visible(bool visible) {
     utils::debug::scope_log log(DBG_LVL_1("gtox"), { visible });
-    Gtk::Popover::set_visible(visible);
+    popover::set_visible(visible);
 
     // update data
     if (!visible) {

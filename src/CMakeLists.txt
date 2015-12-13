@@ -71,6 +71,7 @@ set(SOURCES
     widget/chat_file_popover.cpp
     widget/imagescaled.cpp
     widget/videoplayer.cpp
+    widget/popover.cpp
 
     utils/builder.cpp
     utils/dispatcher.h
