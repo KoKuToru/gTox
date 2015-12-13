@@ -64,9 +64,16 @@ void popover::show() {
         return;
     }
 
-    auto visual = get_relative_to()->get_screen()->get_rgba_visual();
-    if (GDK_IS_WAYLAND_DISPLAY(gtk_widget_get_display(GTK_WIDGET(gobj()))) || !visual) {
+#ifdef GDK_IS_WAYLAND_DISPLAY
+    if (GDK_IS_WAYLAND_DISPLAY(gtk_widget_get_display(GTK_WIDGET(gobj())))) {
         // normal simple route
+        Gtk::Popover::show();
+        return;
+    }
+#endif
+    auto visual = get_relative_to()->get_screen()->get_rgba_visual();
+    if (!visual) {
+        // normal route with cropped popover
         Gtk::Popover::show();
         return;
     }
