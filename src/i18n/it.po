@@ -131,7 +131,7 @@ msgstr ""
 
 #: resources/ui/dialog_settings.ui
 msgid "About"
-msgstr ""
+msgstr "About"
 
 #. Button for adding a new contact
 #: resources/ui/popover_settings.ui
@@ -144,7 +144,7 @@ msgstr "Sei sicuro di voler rimuovere questo contatto?"
 
 #: resources/ui/dialog_settings.ui
 msgid "Audio notification on new message"
-msgstr "Notifica audio ad ogni messaggio"
+msgstr "Notifica audio ad ogni nuovo messaggio"
 
 #: resources/ui/dialog_settings.ui
 msgid "Auto accept"
@@ -195,7 +195,7 @@ msgstr "Richiesta di contatto fallita"
 #. Copies tox id into clipboard
 #: resources/ui/popover_settings.ui
 msgid "Copy Tox-ID into clipboard"
-msgstr "Copia il Tox ID negli appunti"
+msgstr "Copia il Tox-ID negli appunti"
 
 #: resources/ui/dialog_settings.ui
 msgid "Copyright © 2014 - the gTox team"
@@ -253,7 +253,7 @@ msgstr "Nuovo"
 
 #: resources/ui/dialog_settings.ui
 msgid "Notification on new message"
-msgstr "Notifica ad ogni messaggio"
+msgstr "Notifica ad ogni nuovo messaggio"
 
 #: resources/ui/status_menu.ui
 msgid "Online"
@@ -284,7 +284,7 @@ msgstr "Ferma il download"
 
 #: resources/ui/dialog_settings.ui
 msgid "Profile"
-msgstr "Seleziona profilo"
+msgstr "Profilo"
 
 #: dialog/profile_selection.cpp
 msgid "Profile couldn't be loaded"
@@ -372,11 +372,11 @@ msgstr "Avvia nella barra di sistema"
 #. Label for the profile statusmessage
 #: resources/ui/dialog_assistant.ui
 msgid "Status message"
-msgstr "Messaggio"
+msgstr "Messaggio di stato"
 
 #: resources/ui/list_item_profile.ui resources/ui/popover_settings.ui
 msgid "Statusmessage"
-msgstr "Messaggio"
+msgstr "Messaggio di stato"
 
 #: resources/ui/popover_settings.ui
 msgid "Submit"
@@ -392,7 +392,7 @@ msgstr "TCP"
 
 #: widget/main_menu.cpp
 msgid "The contact address checksum failed."
-msgstr "La checksum dell'indirizzo del contatto è fallita"
+msgstr "La checksum dell'indirizzo del contatto è fallita."
 
 #: widget/main_menu.cpp
 msgid "The contact request message is not allowed to be empty."
@@ -400,7 +400,7 @@ msgstr "Il messaggio di richiesta di contatto non può essere vuoto."
 
 #: widget/main_menu.cpp
 msgid "The contact was already there, but the nospam value was different."
-msgstr "Il contatto era già lì, ma il valore nospam era diverso"
+msgstr "Il contatto era già tra i tuoi contatti, ma il valore nospam era diverso."
 
 #: widget/main_menu.cpp
 msgid "The length of the contact request message exceeded 1016 bytes."
@@ -420,7 +420,7 @@ msgstr "UDP"
 
 #: resources/ui/list_item_profile.ui resources/ui/popover_settings.ui
 msgid "Username"
-msgstr "Nome"
+msgstr "Nome Utente"
 
 #: resources/ui/dialog_settings.ui
 msgid "Video"
