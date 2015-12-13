@@ -39,10 +39,10 @@ Can't be fixed for X11/Windows/Mac. Go ask Gtk+ why.
 That said, gTox includes a popover hack...
 
 **X does not work...**   
-Create an Issure or it will never work.  
+Create an Issue or it will never work.  
 
 **X does not work on windows...**   
-Create an Issure or it will never work.  
+Create an Issue or it will never work.  
 But windows related bugs are very low priority here.  
 
 **gTox doesn't work with X gtk-theme...**    
