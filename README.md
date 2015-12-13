@@ -4,6 +4,7 @@
 
 Not ready for daily use ! Please wait for the first release (not alpha/beta).
 
+* [Questions and Answers](#questions-and-answers)
 * [Features](#features)
 * [Debug Features](#debug-features)
 * [Audio Notifications](#audio-notifications)
@@ -29,6 +30,30 @@ ru.po       |           24
 
 **If you are a `gettext`-Master, please contact me !  
 I have some serious problems with this..**
+
+Questions and Answers
+============
+**Why is the menu/popover cropped ?**   
+Because you aren't using Wayland.  
+Can't be fixed for X11/Windows/Mac. Go ask Gtk+ why.  
+
+**X does not work...**   
+Create a Issure or it will never work.  
+
+**X does not work on windows...**   
+Create a Issure or it will never work.  
+But windows related bugs are very low priority here.  
+
+**gTox doesn't work with X gtk-theme...**    
+gTox is written for the default gtk/gnome 3 platform.   
+It does tweak styles a little and only really work when the default theme is used.   
+Depending on how hard it is to fix a "x theme" problem it might or might not get fixed.   
+Create a Issue.
+
+**Where is X feature ?**   
+Create a Issue.   
+gTox only includes what I (_KoKuToru_) need/want the most.   
+This will hopefully change in the future.
 
 How to install
 ============
