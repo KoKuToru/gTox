@@ -39,20 +39,20 @@ Can't be fixed for X11/Windows/Mac. Go ask Gtk+ why.
 That said, gTox includes a popover hack...
 
 **X does not work...**   
-Create a Issure or it will never work.  
+Create an Issure or it will never work.  
 
 **X does not work on windows...**   
-Create a Issure or it will never work.  
+Create an Issure or it will never work.  
 But windows related bugs are very low priority here.  
 
 **gTox doesn't work with X gtk-theme...**    
 gTox is written for the default gtk/gnome 3 platform.   
 It does tweak styles a little and only really work when the default theme is used.   
 Depending on how hard it is to fix a "x theme" problem it might or might not get fixed.   
-Create a Issue.
+Create an Issue.
 
 **Where is X feature ?**   
-Create a Issue.   
+Create an Issue.   
 gTox only includes what I (_KoKuToru_) need/want the most.   
 This will hopefully change in the future.
 
