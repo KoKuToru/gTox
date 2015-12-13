@@ -22,10 +22,10 @@ Translation Status
 translation | untranslated
 :-----------|------------:
 de.po       | 
-es.po       |           24
-fr.po       |           24
-it.po       |           27
-ru.po       |           24
+es.po       |           23
+fr.po       |           23
+it.po       |           25
+ru.po       |           23
 
 **If you are a `gettext`-Master, please contact me !  
 I have some serious problems with this..**
