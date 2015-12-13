@@ -24,6 +24,7 @@
 #include "tox/core.h"
 #include "widget/avatar.h"
 #include "utils/debug.h"
+#include "widget/popover.h"
 
 namespace dialog {
     class main;
@@ -31,7 +32,7 @@ namespace dialog {
 }
 
 namespace widget {
-    class main_menu : public Gtk::Popover, public utils::debug::track_obj<main_menu> {
+    class main_menu : public popover, public utils::debug::track_obj<main_menu> {
         private:
             dialog::main& m_main;
             std::shared_ptr<dialog::settings> m_settings;

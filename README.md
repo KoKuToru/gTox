@@ -36,6 +36,7 @@ Questions and Answers
 **Why is the menu/popover cropped ?**   
 Because you aren't using Wayland.  
 Can't be fixed for X11/Windows/Mac. Go ask Gtk+ why.  
+That said, gTox includes a popover hack...
 
 **X does not work...**   
 Create a Issure or it will never work.  
