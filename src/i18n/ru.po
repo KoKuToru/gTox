@@ -16,10 +16,6 @@ msgstr ""
 "X-Source-Language: C\n"
 "X-Generator: Poedit 1.8.4\n"
 
-#: main.cpp
-msgid "TRANSLATION_CHECKER"
-msgstr "Okay"
-
 #: widget/chat_bubble.cpp
 msgid "%1 hr"
 msgstr "%1 ч"
@@ -278,11 +274,6 @@ msgstr "Открыть профиль в файловом менеджере"
 msgid "Path of file"
 msgstr "Путь к файлу"
 
-#. Pauses the download
-#: resources/ui/chat_filerecv.ui
-msgid "Pause download"
-msgstr "Приостановить загрузку"
-
 #: resources/ui/dialog_settings.ui
 msgid "Profile"
 msgstr "Профиль"
@@ -318,11 +309,6 @@ msgstr "Запоминать последний профиль"
 #: dialog/main.cpp
 msgid "Remove contact"
 msgstr "Удалить контакт"
-
-#. Stop/Remove the download
-#: resources/ui/chat_filerecv.ui
-msgid "Remove download"
-msgstr "Удалить загрузку"
 
 #: dialog/error.cpp
 msgid "Report"
@@ -361,11 +347,6 @@ msgstr "Показывать активные чаты"
 msgid "Show in systemtray"
 msgstr "Показывать значок"
 
-#. Starts the download
-#: resources/ui/chat_filerecv.ui
-msgid "Start download"
-msgstr "Начать загрузку"
-
 #: resources/ui/dialog_settings.ui
 msgid "Start in systemtray"
 msgstr "Запускать свернутым"
@@ -386,10 +367,6 @@ msgstr "Отправить"
 #: resources/ui/status_menu.ui
 msgid "Switch Profile"
 msgstr "Сменить профиль"
-
-#: resources/ui/dialog_settings.ui
-msgid "TCP"
-msgstr "TCP"
 
 #: widget/main_menu.cpp
 msgid "The contact address checksum failed."

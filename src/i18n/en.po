@@ -12,10 +12,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 1.8.2\n"
 
-#: main.cpp
-msgid "TRANSLATION_CHECKER"
-msgstr "Okay"
-
 #: widget/chat_bubble.cpp
 msgid "%1 hr"
 msgstr ""
@@ -264,11 +260,6 @@ msgstr ""
 msgid "Path of file"
 msgstr ""
 
-#. Pauses the download
-#: resources/ui/chat_filerecv.ui
-msgid "Pause download"
-msgstr ""
-
 #: resources/ui/dialog_settings.ui
 msgid "Profile"
 msgstr ""
@@ -303,11 +294,6 @@ msgstr ""
 
 #: dialog/main.cpp
 msgid "Remove contact"
-msgstr ""
-
-#. Stop/Remove the download
-#: resources/ui/chat_filerecv.ui
-msgid "Remove download"
 msgstr ""
 
 #: dialog/error.cpp
@@ -347,11 +333,6 @@ msgstr ""
 msgid "Show in systemtray"
 msgstr ""
 
-#. Starts the download
-#: resources/ui/chat_filerecv.ui
-msgid "Start download"
-msgstr ""
-
 #: resources/ui/dialog_settings.ui
 msgid "Start in systemtray"
 msgstr ""
@@ -371,10 +352,6 @@ msgstr ""
 
 #: resources/ui/status_menu.ui
 msgid "Switch Profile"
-msgstr ""
-
-#: resources/ui/dialog_settings.ui
-msgid "TCP"
 msgstr ""
 
 #: widget/main_menu.cpp

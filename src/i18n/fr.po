@@ -13,10 +13,6 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "Language: fr_FR\n"
 
-#: main.cpp
-msgid "TRANSLATION_CHECKER"
-msgstr "Okay"
-
 #: widget/chat_bubble.cpp
 msgid "%1 hr"
 msgstr "%1 h"
@@ -277,11 +273,6 @@ msgstr "Ouvrir ce profil dans le gestionnaire de fichiers"
 msgid "Path of file"
 msgstr "Chemin du fichier"
 
-#. Pauses the download
-#: resources/ui/chat_filerecv.ui
-msgid "Pause download"
-msgstr "Mettre le téléchargement en pause"
-
 #: resources/ui/dialog_settings.ui
 msgid "Profile"
 msgstr "Profil"
@@ -317,11 +308,6 @@ msgstr "Se souvenir du dernier profil utilisé"
 #: dialog/main.cpp
 msgid "Remove contact"
 msgstr "Supprimer le contact"
-
-#. Stop/Remove the download
-#: resources/ui/chat_filerecv.ui
-msgid "Remove download"
-msgstr "Supprimer le téléchargement"
 
 #: dialog/error.cpp
 msgid "Report"
@@ -360,11 +346,6 @@ msgstr "Montrer les discussions actives"
 msgid "Show in systemtray"
 msgstr "Afficher dans la barre de notification"
 
-#. Starts the download
-#: resources/ui/chat_filerecv.ui
-msgid "Start download"
-msgstr "Démarrer le téléchargement"
-
 #: resources/ui/dialog_settings.ui
 msgid "Start in systemtray"
 msgstr "Démarrer dans la barre de notification"
@@ -385,10 +366,6 @@ msgstr "Soumettre"
 #: resources/ui/status_menu.ui
 msgid "Switch Profile"
 msgstr "Changer de profil"
-
-#: resources/ui/dialog_settings.ui
-msgid "TCP"
-msgstr "TCP"
 
 #: widget/main_menu.cpp
 msgid "The contact address checksum failed."

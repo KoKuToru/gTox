@@ -620,26 +620,3 @@ msgstr "unbekanntes Problem mit gstreamer"
 #: resources/ui/dialog_settings.ui
 msgid "white on black"
 msgstr "Weiß auf Schwarz"
-
-#: main.cpp
-msgid "TRANSLATION_CHECKER"
-msgstr "Okay"
-
-#. Pauses the download
-#: resources/ui/chat_filerecv.ui
-msgid "Pause download"
-msgstr "Download pausieren"
-
-#. Stop/Remove the download
-#: resources/ui/chat_filerecv.ui
-msgid "Remove download"
-msgstr "Download entfernen"
-
-#. Starts the download
-#: resources/ui/chat_filerecv.ui
-msgid "Start download"
-msgstr "Download starten"
-
-#: resources/ui/dialog_settings.ui
-msgid "TCP"
-msgstr "TCP"
