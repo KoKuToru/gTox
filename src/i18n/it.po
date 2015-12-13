@@ -126,12 +126,12 @@ msgid ""
 "A contact request has already been sent, or the address belongs to a friend "
 "that is already on the friend list."
 msgstr ""
-"Una richiesta di contatto è già stata inviata, o l'indirizzo appartiene ad un contatto "
-"già presente nella lista amici."
+"Una richiesta di contatto è già stata inviata, o l'indirizzo appartiene ad "
+"un contatto già presente nella lista amici."
 
 #: resources/ui/dialog_settings.ui
 msgid "About"
-msgstr ""
+msgstr "About"
 
 #. Button for adding a new contact
 #: resources/ui/popover_settings.ui
@@ -144,7 +144,7 @@ msgstr "Sei sicuro di voler rimuovere questo contatto?"
 
 #: resources/ui/dialog_settings.ui
 msgid "Audio notification on new message"
-msgstr "Notifica audio ad ogni messaggio"
+msgstr "Notifica audio ad ogni nuovo messaggio"
 
 #: resources/ui/dialog_settings.ui
 msgid "Auto accept"
@@ -195,7 +195,7 @@ msgstr "Richiesta di contatto fallita"
 #. Copies tox id into clipboard
 #: resources/ui/popover_settings.ui
 msgid "Copy Tox-ID into clipboard"
-msgstr "Copia il Tox ID negli appunti"
+msgstr "Copia il Tox-ID negli appunti"
 
 #: resources/ui/dialog_settings.ui
 msgid "Copyright © 2014 - the gTox team"
@@ -253,7 +253,7 @@ msgstr "Nuovo"
 
 #: resources/ui/dialog_settings.ui
 msgid "Notification on new message"
-msgstr "Notifica ad ogni messaggio"
+msgstr "Notifica ad ogni nuovo messaggio"
 
 #: resources/ui/status_menu.ui
 msgid "Online"
@@ -284,7 +284,7 @@ msgstr "Ferma il download"
 
 #: resources/ui/dialog_settings.ui
 msgid "Profile"
-msgstr "Seleziona profilo"
+msgstr "Profilo"
 
 #: dialog/profile_selection.cpp
 msgid "Profile couldn't be loaded"
@@ -372,11 +372,11 @@ msgstr "Avvia nella barra di sistema"
 #. Label for the profile statusmessage
 #: resources/ui/dialog_assistant.ui
 msgid "Status message"
-msgstr "Messaggio"
+msgstr "Messaggio di stato"
 
 #: resources/ui/list_item_profile.ui resources/ui/popover_settings.ui
 msgid "Statusmessage"
-msgstr "Messaggio"
+msgstr "Messaggio di stato"
 
 #: resources/ui/popover_settings.ui
 msgid "Submit"
@@ -392,7 +392,7 @@ msgstr "TCP"
 
 #: widget/main_menu.cpp
 msgid "The contact address checksum failed."
-msgstr "La checksum dell'indirizzo del contatto è fallita"
+msgstr "La checksum dell'indirizzo del contatto è fallita."
 
 #: widget/main_menu.cpp
 msgid "The contact request message is not allowed to be empty."
@@ -400,7 +400,8 @@ msgstr "Il messaggio di richiesta di contatto non può essere vuoto."
 
 #: widget/main_menu.cpp
 msgid "The contact was already there, but the nospam value was different."
-msgstr "Il contatto era già lì, ma il valore nospam era diverso"
+msgstr ""
+"Il contatto era già tra i tuoi contatti, ma il valore nospam era diverso."
 
 #: widget/main_menu.cpp
 msgid "The length of the contact request message exceeded 1016 bytes."
@@ -420,7 +421,7 @@ msgstr "UDP"
 
 #: resources/ui/list_item_profile.ui resources/ui/popover_settings.ui
 msgid "Username"
-msgstr "Nome"
+msgstr "Nome Utente"
 
 #: resources/ui/dialog_settings.ui
 msgid "Video"
@@ -440,8 +441,8 @@ msgstr ""
 "gTox e Tox non sono ancora completi.\n"
 "Non possiamo garantire che quello che funziona oggi, funzionerà anche "
 "domani.\n"
-"gTox e Tox sono software in versione alpha e il codice viene aggiornato "
-"ogni giorno."
+"gTox e Tox sono software in versione alpha e il codice viene aggiornato ogni "
+"giorno."
 
 #: widget/main_menu.cpp
 msgid "Wrong ID length"
@@ -530,3 +531,107 @@ msgstr "errore gstreamer sconosciuto"
 #: resources/ui/dialog_settings.ui
 msgid "white on black"
 msgstr "bianco su nero"
+
+#: widget/chat_file_popover.cpp
+msgid "%1 h and %2 min"
+msgstr ""
+
+#: widget/chat_file_popover.cpp
+msgid "%1 min and %2 s"
+msgstr ""
+
+#: widget/chat_file_popover.cpp
+msgid "%1 s"
+msgstr ""
+
+#: widget/chat_file_popover.cpp
+msgid "/s"
+msgstr ""
+
+#. tooltip
+#: resources/ui/dialog_chat.ui
+msgid "Accept call"
+msgstr ""
+
+#. Tooltip
+#: resources/ui/dialog_chat.ui
+msgid "Decline call"
+msgstr ""
+
+#: widget/chat_file_popover.cpp
+msgid "File transfer is canceled"
+msgstr ""
+
+#. TOX_PROXY_TYPE_HTTP
+#: resources/ui/dialog_settings.ui
+msgid "Http"
+msgstr ""
+
+#: resources/ui/dialog_chat.ui
+msgid "Incoming call"
+msgstr ""
+
+#. Open the downloaded file
+#: resources/ui/chat_filerecv.ui
+msgid "Info"
+msgstr ""
+
+#. proxy type none
+#: resources/ui/dialog_settings.ui
+msgid "None"
+msgstr ""
+
+#. Pauses the download
+#: resources/ui/chat_filerecv.ui
+msgid "Pause file transfer"
+msgstr ""
+
+#: widget/chat_file_popover.cpp
+msgid "Receiver is waitig for you to resume file transfer"
+msgstr ""
+
+#. Stop/Remove the download
+#: resources/ui/chat_filerecv.ui
+msgid "Remove file transfer"
+msgstr ""
+
+#. Starts the download
+#: resources/ui/chat_filerecv.ui
+msgid "Resume file transfer"
+msgstr ""
+
+#: widget/chat_file_popover.cpp
+msgid "Sender is waitig for you to resume file transfer"
+msgstr ""
+
+#. TOX_PROXY_TYPE_SOCKS5
+#: resources/ui/dialog_settings.ui
+msgid "Socks5"
+msgstr ""
+
+#. tooltip
+#: resources/ui/dialog_chat.ui
+msgid "Start call"
+msgstr ""
+
+#. Tooltip
+#: resources/ui/dialog_chat.ui
+msgid "Stop call"
+msgstr ""
+
+#: widget/chat_file_popover.cpp
+msgid "Waiting for receiver to resume file transfer"
+msgstr ""
+
+#: widget/chat_file_popover.cpp
+msgid "Waiting for sender to resume file transfer"
+msgstr ""
+
+#. tooltip
+#: resources/ui/dialog_chat.ui
+msgid "send video"
+msgstr ""
+
+#: resources/ui/chat_filerecv.ui
+msgid "status"
+msgstr ""

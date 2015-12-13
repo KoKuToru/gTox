@@ -400,8 +400,7 @@ msgstr "Le message de la demande de contact n'est pas autorisé à être vide."
 
 #: widget/main_menu.cpp
 msgid "The contact was already there, but the nospam value was different."
-msgstr ""
-"Le contact était déjà présent, mais la valeur nospam était différente."
+msgstr "Le contact était déjà présent, mais la valeur nospam était différente."
 
 #: widget/main_menu.cpp
 msgid "The length of the contact request message exceeded 1016 bytes."
@@ -530,3 +529,107 @@ msgstr "erreur gstreamer inconnue"
 #: resources/ui/dialog_settings.ui
 msgid "white on black"
 msgstr "blanc sur noir"
+
+#: widget/chat_file_popover.cpp
+msgid "%1 h and %2 min"
+msgstr ""
+
+#: widget/chat_file_popover.cpp
+msgid "%1 min and %2 s"
+msgstr ""
+
+#: widget/chat_file_popover.cpp
+msgid "%1 s"
+msgstr ""
+
+#: widget/chat_file_popover.cpp
+msgid "/s"
+msgstr ""
+
+#. tooltip
+#: resources/ui/dialog_chat.ui
+msgid "Accept call"
+msgstr ""
+
+#. Tooltip
+#: resources/ui/dialog_chat.ui
+msgid "Decline call"
+msgstr ""
+
+#: widget/chat_file_popover.cpp
+msgid "File transfer is canceled"
+msgstr ""
+
+#. TOX_PROXY_TYPE_HTTP
+#: resources/ui/dialog_settings.ui
+msgid "Http"
+msgstr ""
+
+#: resources/ui/dialog_chat.ui
+msgid "Incoming call"
+msgstr ""
+
+#. Open the downloaded file
+#: resources/ui/chat_filerecv.ui
+msgid "Info"
+msgstr ""
+
+#. proxy type none
+#: resources/ui/dialog_settings.ui
+msgid "None"
+msgstr ""
+
+#. Pauses the download
+#: resources/ui/chat_filerecv.ui
+msgid "Pause file transfer"
+msgstr ""
+
+#: widget/chat_file_popover.cpp
+msgid "Receiver is waitig for you to resume file transfer"
+msgstr ""
+
+#. Stop/Remove the download
+#: resources/ui/chat_filerecv.ui
+msgid "Remove file transfer"
+msgstr ""
+
+#. Starts the download
+#: resources/ui/chat_filerecv.ui
+msgid "Resume file transfer"
+msgstr ""
+
+#: widget/chat_file_popover.cpp
+msgid "Sender is waitig for you to resume file transfer"
+msgstr ""
+
+#. TOX_PROXY_TYPE_SOCKS5
+#: resources/ui/dialog_settings.ui
+msgid "Socks5"
+msgstr ""
+
+#. tooltip
+#: resources/ui/dialog_chat.ui
+msgid "Start call"
+msgstr ""
+
+#. Tooltip
+#: resources/ui/dialog_chat.ui
+msgid "Stop call"
+msgstr ""
+
+#: widget/chat_file_popover.cpp
+msgid "Waiting for receiver to resume file transfer"
+msgstr ""
+
+#: widget/chat_file_popover.cpp
+msgid "Waiting for sender to resume file transfer"
+msgstr ""
+
+#. tooltip
+#: resources/ui/dialog_chat.ui
+msgid "send video"
+msgstr ""
+
+#: resources/ui/chat_filerecv.ui
+msgid "status"
+msgstr ""
