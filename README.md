@@ -25,7 +25,7 @@ translation | untranslated
 de.po       | 
 es.po       |           23
 fr.po       |           23
-it.po       |           25
+it.po       |           23
 ru.po       |           23
 
 **If you are a `gettext`-Master, please contact me !  
