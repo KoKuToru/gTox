@@ -50,7 +50,7 @@ msgstr ""
 
 #: widget/chat_bubble.cpp
 msgid "%A, %R"
-msgstr ""
+msgstr "%a. %B, %R"
 
 #: widget/chat_bubble.cpp
 msgid "%e. %B %Y, %R"
@@ -58,7 +58,7 @@ msgstr "%A, %e. %B %Y"
 
 #: widget/chat_bubble.cpp
 msgid "%e. %B, %R"
-msgstr ""
+msgstr "%e. %B, %R"
 
 #: dialog/error.cpp
 msgid ""
