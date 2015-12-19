@@ -33,16 +33,27 @@ namespace widget {
     class popover: public Gtk::Popover {
         private:
             class popwin: public Gtk::Window {
+                    Gtk::Widget* m_widget;
                 public:
                     Gtk::Box area;
-                    popwin();
+                    popwin(Gtk::Widget* widget);
                     virtual bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
             };
 
             popwin* m_popwin = nullptr;
 
+            // no idea why I can't do this directly in popover
+            class property_helper: public Glib::Object {
+                public:
+                    Glib::Property<Gtk::Widget*> m_property_relative_to;
+                    property_helper():
+                        Glib::ObjectBase(typeid(property_helper)),
+                        m_property_relative_to(*this, "popover-relative-to") {}
+            } m_property_helper;
+
         public:
             popover();
+            ~popover();
 
             void show();
             void set_visible(bool v) {
@@ -52,6 +63,10 @@ namespace widget {
                     hide();
                 }
             }
+
+            Glib::PropertyProxy<Gtk::Widget*> property_relative_to();
+            void set_relative_to(Gtk::Widget& widget);
+            Gtk::Widget* get_relative_to();
     };
 }
 #endif
