@@ -176,7 +176,8 @@ void main_menu::set_visible(bool visible) {
 
 void main_menu::add_contact() {
     utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
-    Gtk::Window& parent = dynamic_cast<Gtk::Window&>(*this->get_toplevel());
+    Gtk::Window& parent = dynamic_cast<Gtk::Window&>(*get_relative_to()
+                                                     ->get_toplevel());
 
     if (m_add_contact.tox_id->get_text().length() != TOX_ADDRESS_SIZE * 2) {
         dialog::error(parent, false,
