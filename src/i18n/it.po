@@ -127,7 +127,7 @@ msgstr ""
 
 #: resources/ui/dialog_settings.ui
 msgid "About"
-msgstr "About"
+msgstr "Informazioni"
 
 #. Button for adding a new contact
 #: resources/ui/popover_settings.ui
@@ -161,7 +161,7 @@ msgstr "Occupato"
 #. Click here to change avatar, right click to remove
 #: resources/ui/popover_settings.ui
 msgid "Change avatar"
-msgstr "Cambia avatar"
+msgstr "Cambia immagine profilo"
 
 #. Lable for the log enable/disable switch
 #: resources/ui/dialog_settings.ui
