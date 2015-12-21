@@ -38,10 +38,10 @@ Because you aren't using Wayland.
 Can't be fixed for X11/Windows/Mac. Go ask Gtk+ why.  
 That said, gTox includes a popover hack...
 
-**X does not work...**   
+**X feature does not work...**   
 Create an Issue or it will never work.  
 
-**X does not work on windows...**   
+**X feature does not work on correctly on windows...**   
 Create an Issue or it will never work.  
 But windows related bugs are very low priority here.  
 
