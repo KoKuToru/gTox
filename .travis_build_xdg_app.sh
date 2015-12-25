@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #install xdg-app
-/mingw-w64/install_with_yaourt.sh xdg-app || exit $?
+su -c "yaourt -Sy --noconfirm --m-arg \"--skipchecksums --skippgpcheck\" xdg-app" -s /bin/bash nobody || exit $?
 
 xdg-app add-remote --user gnome-sdk http://sdk.gnome.org/repo/ --no-gpg-verify || exit $?
 xdg-app install-runtime --user gnome-sdk org.gnome.Platform 3.18 || exit $?
