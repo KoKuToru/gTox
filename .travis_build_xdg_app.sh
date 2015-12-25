@@ -1,4 +1,6 @@
 #!/bin/bash
+cd ..
+pwd
 
 #install xdg-app
 su -c "yaourt -Sy --noconfirm --m-arg \"--skipchecksums --skippgpcheck\" xdg-app" -s /bin/bash nobody || exit $?
@@ -11,6 +13,6 @@ echo "install org.freedesktop.Platform"
 xdg-app install-runtime --user gnome-sdk org.freedesktop.Platform 1.0 || exit $?
 echo "install org.gnome.Sdk"
 xdg-app install-runtime --user gnome-sdk org.gnome.Sdk 3.18 || exit $?
+
 echo "build org.kokutoru.gtox.json"
-pwd
-xdg-app-builder . ../../xdg-app/org.kokutoru.gtox.json || exit $?
+xdg-app-builder build ../xdg-app/org.kokutoru.gtox.json || exit $?
