@@ -1,0 +1,200 @@
+{
+    "app-id": "org.kokutoru.gtox",
+    "branch": "AUR",
+    "runtime": "org.gnome.Platform",
+    "runtime-version": "3.18",
+    "sdk": "org.gnome.Sdk",
+    "command": "gtox",
+    "rename-desktop-file": "gtox.desktop",
+    "rename-icon": "gtox",
+    "finish-args": ["--share=ipc", "--socket=x11", "--socket=pulseaudio", "--filesystem=host", "--share=network", "--socket=session-bus", "--socket=wayland"],
+    "desktop-file-name-prefix": "(AUR) ",
+    "build-options" : {
+        "cflags": "-O2 -g",
+        "cxxflags": "-O2 -g",
+        "env": {
+            "V": "1"
+        }
+    },
+    "cleanup": ["/include", "/lib/*/include", "/lib/pkgconfig", "/share/pkgconfig", "/share/aclocal", "/man", "/share/man", "/share/info", "/share/gtk-doc", "*.la", "*.a"],
+    "modules": [
+        {
+            "name": "sigc++",
+            "config-opts": [ "--disable-documentation" ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "http://ftp.gnome.org/pub/GNOME/sources/libsigc++/2.6/libsigc++-2.6.2.tar.xz",
+                    "sha256": "fdace7134c31de792c17570f9049ca0657909b28c4c70ec4882f91a03de54437"
+                }
+            ]
+        },
+        {
+            "name": "glibmm",
+            "config-opts": [ "--disable-documentation" ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "http://ftp.gnome.org/pub/GNOME/sources/glibmm/2.46/glibmm-2.46.3.tar.xz",
+                    "sha256": "c78654addeb27a1213bedd7cd21904a45bbb98a5ba2f2f0de2b2f1a5682d86cf"
+                }
+            ]
+        },
+        {
+            "name": "cairomm",
+            "config-opts": [ "--disable-documentation" ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "http://ftp.gnome.org/pub/GNOME/sources/cairomm/1.12/cairomm-1.12.0.tar.xz",
+                    "sha256": "a54ada8394a86182525c0762e6f50db6b9212a2109280d13ec6a0b29bfd1afe6"
+                }
+            ]
+        },
+        {
+            "name": "pangomm",
+            "config-opts": [ "--disable-documentation" ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "http://ftp.gnome.org/pub/GNOME/sources/pangomm/2.38/pangomm-2.38.1.tar.xz",
+                    "sha256": "effb18505b36d81fc32989a39ead8b7858940d0533107336a30bc3eef096bc8b"
+                }
+            ]
+        },
+        {
+            "name": "atkmm",
+            "config-opts": [ "--disable-documentation" ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "http://ftp.gnome.org/pub/GNOME/sources/atkmm/2.24/atkmm-2.24.2.tar.xz",
+                    "sha256": "ff95385759e2af23828d4056356f25376cfabc41e690ac1df055371537e458bd"
+                }
+            ]
+        },
+        {
+            "name": "gtkmm",
+            "config-opts": [ "--disable-documentation" ],
+            "build-options" : { "cxxflags": "-O2 -g -std=c++11" },
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "http://ftp.gnome.org/pub/GNOME/sources/gtkmm/3.18/gtkmm-3.18.0.tar.xz",
+                    "sha256": "829fa113daed74398c49c3f2b7672807f58ba85d0fa463f5bc726e1b0138b86b"
+                }
+            ]
+        },
+        {
+            "name": "gstreamermm",
+            "config-opts": [ "--disable-documentation" ],
+            "build-options" : { "cxxflags": "-O2 -g -std=c++11" },
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "http://ftp.acc.umu.se/pub/GNOME/sources/gstreamermm/1.4/gstreamermm-1.4.3.tar.xz",
+                    "sha256": "f1c11ee1cf7537d77de7f8d486e09c5140cc4bb78882849718cd88959a55462e"
+                }
+            ]
+        },
+        {
+            "name": "libsodium",
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "http://download.dnscrypt.org/libsodium/releases/libsodium-1.0.7.tar.gz",
+                    "sha256": "7ad1e78763510c163ca48f05133057726a825cf97386c581bf12b01d7654204a"
+                }
+            ]
+        },
+        {
+            "name": "opus",
+            "config-opts": ["--enable-custom-modes", "--disable-static"],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "http://downloads.us.xiph.org/releases/opus/opus-1.1.1.tar.gz",
+                    "sha256": "9b84ff56bd7720d5554103c557664efac2b8b18acc4bbcc234cb881ab9a3371e"
+                }
+            ]
+        },
+        {
+            "name": "yasm",
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "http://www.tortall.net/projects/yasm/releases/yasm-1.3.0.tar.gz",
+                    "sha256": "3dce6601b495f5b3d45b59f7d2492a340ee7e84b5beca17e48f862502bd5603f"
+                }
+            ]
+        },
+        {
+            "name": "libvpx",
+            "config-opts": [
+                "--enable-vp8",
+                "--enable-vp9",
+                "--enable-runtime-cpu-detect",
+                "--enable-shared",
+                "--enable-postproc",
+                "--enable-pic",
+                "--enable-experimental",
+                "--enable-spatial-svc",
+                "--disable-install-docs",
+                "--disable-install-srcs"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://github.com/webmproject/libvpx/archive/v1.5.0.tar.gz",
+                    "sha256": "f199b03b67042e8d94a3ae8bc841fb82b6a8430bdf3965aeeaafe8245bcfa699"
+                }
+            ]
+        },
+        {
+            "name": "toxcore",
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "git://github.com/irungentoo/toxcore.git"
+                }
+            ]
+        },
+        {
+            "name": "flatbuffers",
+            "cmake": true,
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://github.com/google/flatbuffers/archive/v1.2.0.tar.gz",
+                    "sha256": "a6cacab3cbcc99e2308d8aa328bff060ba19061ce6eb23be85eccb63fb3446b5"
+                }
+            ]
+        },
+        {
+            "name": "librsvg",
+            "config-opts": ["--disable-static", "--disable-pixbuf-loader"],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "http://ftp.gnome.org/pub/gnome/sources/librsvg/2.40/librsvg-2.40.10.tar.xz",
+                    "sha256": "965c807438ce90b204e930ff80c92eba1606a2f6fd5ccfd09335c99896dd3479"
+                }
+            ]
+            
+        },
+        {
+            "name": "gtox",
+            "build-options" : { "cxxflags": "-O2 -g -std=c++11" },
+            "subdir": "src",
+            "cmake": true,
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://github.com/KoKuToru/gTox.git",
+                    "branch": "AUR"
+                }
+            ]
+        }
+    ]
+}
+
