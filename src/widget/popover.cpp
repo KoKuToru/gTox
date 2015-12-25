@@ -50,12 +50,12 @@ bool popover::popwin::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
                                     x,
                                     y);
 
-    input_shape_combine_region(Cairo::Region::create(Cairo::RectangleInt{
-                                                         x,
-                                                         y,
-                                                         alloc.get_width(),
-                                                         alloc.get_height()
-                                                     }));
+    shape_combine_region(Cairo::Region::create(Cairo::RectangleInt{
+                                                   x,
+                                                   y,
+                                                   alloc.get_width(),
+                                                   alloc.get_height()
+                                               }));
 
     return res;
 }
@@ -101,7 +101,8 @@ void popover::show() {
     }
 #endif
     auto visual = get_relative_to()->get_screen()->get_rgba_visual();
-    if (!visual) {
+    auto composited = get_relative_to()->get_screen()->is_composited();
+    if (!visual || !composited) {
         // normal route with cropped popover
         Gtk::Popover::set_relative_to(*get_relative_to());
         Gtk::Popover::show();
