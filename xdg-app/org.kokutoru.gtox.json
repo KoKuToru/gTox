@@ -1,6 +1,6 @@
 {
     "app-id": "org.kokutoru.gtox",
-    "branch": "AUR",
+    "branch": "master",
     "runtime": "org.gnome.Platform",
     "runtime-version": "3.18",
     "sdk": "org.gnome.Sdk",
@@ -8,7 +8,7 @@
     "rename-desktop-file": "gtox.desktop",
     "rename-icon": "gtox",
     "finish-args": ["--share=ipc", "--socket=x11", "--socket=pulseaudio", "--filesystem=host", "--share=network", "--socket=session-bus", "--socket=wayland"],
-    "desktop-file-name-prefix": "(AUR) ",
+    "desktop-file-name-prefix": "(git) ",
     "build-options" : {
         "cflags": "-O2 -g",
         "cxxflags": "-O2 -g",
@@ -190,8 +190,7 @@
             "sources": [
                 {
                     "type": "git",
-                    "url": "https://github.com/KoKuToru/gTox.git",
-                    "branch": "AUR"
+                    "url": "https://github.com/KoKuToru/gTox.git"
                 }
             ]
         }
