@@ -17,6 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 **/
 #include "chat_input.h"
+#include "tox/tox.h"
 
 #ifndef SIGC_CPP11_HACK
 #define SIGC_CPP11_HACK
@@ -90,6 +91,42 @@ chat_input::chat_input(BaseObjectType* cobject, utils::builder): Gtk::TextView(c
         }
         return false;
     }, false);
+
+    m_buffer->signal_changed().connect(sigc::track_obj([this]() {
+        // this could be pretty expensive for long texts
+        auto begin = m_buffer->begin();
+        auto end = m_buffer->end();
+        bool reset_each_line = true;
+        if (begin.get_chars_in_line() >= 4) {
+            auto cmd_end = m_buffer->begin();
+            cmd_end.forward_chars(4);
+            if (m_buffer->get_text(begin, cmd_end) == "/me ") {
+                reset_each_line = false;
+            }
+        }
+        auto text_size = 0;
+        auto total_size = 0;
+        do {
+            total_size += begin.get_bytes_in_line();
+            if (total_size >= 10 * TOX_MAX_MESSAGE_LENGTH) {
+                //m_buffer->get_iter_at_offset()
+            }
+            text_size += begin.get_bytes_in_line();
+            if (text_size >= TOX_MAX_MESSAGE_LENGTH) {
+                // TODO: The given byte index must be at
+                //       the start of a character, it can’t be
+                //       in the middle of a UTF-8
+                // HOW TO ? MAKE SURE ?
+                begin.set_line_index(TOX_MAX_MESSAGE_LENGTH);
+                // remove everything after
+                m_buffer->erase(begin, end);
+                break;
+            }
+            if (reset_each_line) {
+                text_size = 0;
+            }
+        } while (begin.forward_line());
+    }, *this));
 }
 
 chat_input::~chat_input() {
