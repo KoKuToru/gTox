@@ -36,7 +36,9 @@ namespace widget {
             chat_input(BaseObjectType* cobject, utils::builder);
             virtual ~chat_input();
 
+            [[deprecated("Replaced by get_text_new, markdown support not finalized yet")]]
             Glib::ustring get_serialized_text();
+            std::vector<Glib::ustring> get_text_new();
     };
 }
 
