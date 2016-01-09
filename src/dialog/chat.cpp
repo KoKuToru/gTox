@@ -106,10 +106,13 @@ chat::chat(std::shared_ptr<toxmm::core> core,
                  bool allow_send = text_buffer->get_text().find_first_not_of(" \t\n\v\f\r") != std::string::npos;
                  if (allow_send) {
                      if (Glib::str_has_prefix(text_buffer->get_text(), "/me ")) {
-                         m_contact->send_action(m_input->get_serialized_text()
-                                                                  .substr(4));
+                         for (auto msg : m_input->get_text_new()) {
+                             m_contact->send_action(msg.substr(4));
+                         }
                      } else {
-                         m_contact->send_message(m_input->get_serialized_text());
+                         for (auto msg : m_input->get_text_new()) {
+                             m_contact->send_message(msg);
+                         }
                      }
                      text_buffer->set_text("");
                      return true;
