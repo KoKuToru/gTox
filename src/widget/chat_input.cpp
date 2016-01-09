@@ -17,6 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>
 **/
 #include "chat_input.h"
+#include "tox/tox.h"
 
 #ifndef SIGC_CPP11_HACK
 #define SIGC_CPP11_HACK
@@ -90,14 +91,120 @@ chat_input::chat_input(BaseObjectType* cobject, utils::builder): Gtk::TextView(c
         }
         return false;
     }, false);
+
+    m_buffer->signal_changed().connect(sigc::track_obj([this]() {
+        // this could be pretty expensive for long texts
+        auto iter = m_buffer->begin();
+        bool reset_each_line = true;
+        if (iter.get_chars_in_line() >= 4) {
+            auto cmd_end = m_buffer->begin();
+            cmd_end.forward_chars(4);
+            if (m_buffer->get_text(iter, cmd_end) == "/me ") {
+                reset_each_line = false;
+            }
+        }
+        auto text_size = 0;
+        auto total_size = 0;
+        do {
+            total_size += iter.get_bytes_in_line();
+            if (total_size >= 10 * TOX_MAX_MESSAGE_LENGTH) {
+                // yeah.. uhm.. jump to byte offset is
+                // pretty much impossible ?
+            }
+
+            auto end_line = iter;
+            if (!iter.ends_line()) {
+                end_line.forward_to_line_end();
+            }
+
+            auto line = iter.get_text(end_line);
+            if (!end_line.is_end()) {
+                line += '\n';
+            }
+
+            text_size += line.bytes();
+            if (text_size >= TOX_MAX_MESSAGE_LENGTH) {
+                int counted_size = 0;
+                do {
+                    // this must be a performance killer for sure..
+                    counted_size += Glib::ustring(1, iter.get_char()).bytes();
+                    if (counted_size >= TOX_MAX_MESSAGE_LENGTH) {
+                        break;
+                    }
+                } while (iter.forward_char());
+                // remove everything after
+                m_buffer->erase(iter, m_buffer->end());
+                return;
+            }
+            if (reset_each_line) {
+                text_size = 0;
+            }
+        } while (iter.forward_line());
+    }, *this));
 }
 
 chat_input::~chat_input() {
     utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
 }
 
+std::vector<Glib::ustring> chat_input::get_text_new() {
+    std::vector<Glib::ustring> result;
+    Glib::ustring tmp;
+
+    auto iter = m_buffer->begin();
+
+    if (iter.get_chars_in_line() >= 4) {
+        auto cmd_end = m_buffer->begin();
+        cmd_end.forward_chars(4);
+        if (m_buffer->get_text(iter, cmd_end) == "/me ") {
+            result.push_back(m_buffer->get_text());
+            return result;
+        }
+    }
+
+    do {
+        auto end_line = iter;
+        if (!iter.ends_line()) {
+            end_line.forward_to_line_end();
+        }
+
+        auto line = iter.get_text(end_line);
+        if (!end_line.is_end()) {
+            line += '\n';
+        }
+
+        if (tmp.bytes() + line.bytes() >= TOX_MAX_MESSAGE_LENGTH) {
+            // remove last new line
+            //tmp.erase(tmp.rbegin());
+            auto rbegin = tmp.end();
+            rbegin--;
+            tmp.erase(rbegin);
+            // add to result
+            result.push_back(tmp);
+            tmp.clear();
+        }
+
+        tmp += line;
+    } while (iter.forward_line());
+
+    if (!tmp.empty()) {
+        result.push_back(tmp);
+    }
+
+    for (auto& t : result) {
+        if (t.bytes() >= TOX_MAX_MESSAGE_LENGTH) {
+            // what ?
+            abort();
+        }
+    }
+
+    return result;
+}
+
 Glib::ustring chat_input::get_serialized_text() {
     utils::debug::scope_log log(DBG_LVL_1("gtox"), {});
+
+    // maybe for the future
     Glib::ustring text;
     auto begin = m_buffer->begin();
     auto end = m_buffer->end();
